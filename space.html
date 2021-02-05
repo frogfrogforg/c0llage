@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <style>
+    body {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    main {
+      position: relative;
+    }
+
+    canvas {
+      opacity: 0.9;
+    }
+
+    .Instructions {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .Game {
+      position: relative;
+      z-index: 1;
+      border: 10px solid papayawhip;
+    }
+
+    .Capture {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 10px solid burlywood;
+    }
+
+    .has-capture .Game {
+      margin-top: -256px;
+      margin-left: -256px;
+    }
+
+    .has-capture .Capture {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <span class="Instructions">
+    call
+    <pre>capture()</pre>
+    from the console to snap the image buffer
+  </span>
+
+  <main>
+    <canvas class="Game" id="game"></canvas>
+    <canvas class="Capture" id="capture"></canvas>
+  </main>
+
+  <script>
+    // load bitsy game at remote path
+    async function load(path) {
+      // fetch and parse the html page containing the game
+      const res = await fetch(path)
+      const body = await res.text()
+      const html = new DOMParser().parseFromString(body, "text/html")
+
+      // add all the scripts to a wrapper element
+      const wrapper = document.createElement("object")
+      wrapper.id = path
+
+      // copy scripts into new elements, otherwise they don't execute
+      const scripts = Array.from(html.scripts)
+      for (const s0 of scripts) {
+        const s1 = document.createElement("script")
+
+        // copy the body of the script
+        s1.text = s0.text
+
+        // and any attributes (e.g. type)
+        for (const attr of s0.attributes) {
+          s1.setAttribute(attr.name, attr.value)
+        }
+
+        wrapper.appendChild(s1)
+      }
+
+      // append wrapper to document
+      document.body.appendChild(wrapper)
+
+      // call bitsy bootstrap fn
+      startExportedGame()
+    }
+
+    function capture() {
+      document.body.classList.toggle("has-capture", true)
+
+      // grab game context
+      const game = document.getElementById("game")
+      const w = Number.parseInt(game.getAttribute("width"))
+      const h = Number.parseInt(game.getAttribute("height"))
+
+      // extract image data from it
+      const gctx = game.getContext("2d")
+      const image = gctx.getImageData(0, 0, w, h)
+
+      // resize capture canvas
+      const capt = document.getElementById("capture")
+      capt.setAttribute("width", w)
+      capt.setAttribute("height", h)
+
+      // copy image data into it
+      const cctx = capt.getContext("2d")
+      cctx.putImageData(image, 0, 0)
+    }
+
+    load("./games/bitsy.html")
+  </script>
+</body>
+
+</html>
