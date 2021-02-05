@@ -31,21 +31,37 @@
 
     .Games-frame {
       position: fixed;
-      opacity: 0.9;
-      border: 10px solid;
     }
 
     .Games-live {
+      z-index: 1;
       border-color: papayawhip;
     }
 
     .Games-capture {
-      display: none;
+      visibility: hidden;
       border-color: burlywood;
     }
 
     .Games.has-capture .Games-capture {
-      display: block;
+      visibility: visible;
+    }
+
+    .Game {
+      display: flex;
+      opacity: 0.9;
+      border-width: 10px;
+      border-style: solid;
+    }
+
+    .Game-handle {
+      position: absolute;
+      /* ?? for some reason border-width is calculated from 10px -> 8.933px ?? */
+      width: 8.933px;
+      height: 8.933px;
+      bottom: -8.933px;
+      right: -8.933px;
+      background-color: lightsalmon;
     }
 
     /* maybe bitsy needs this? */
@@ -57,10 +73,16 @@
 
 <body>
   <main>
-    <div id="games" class="Games">
-      <canvas class="Games-live Games-frame" id="game"></canvas>
-      <canvas class="Games-capture Games-frame" id="capture"></canvas>
-    </div>
+    <section id="games" class="Games">
+      <div class="Game Games-live Games-frame">
+        <canvas id="game"></canvas>
+        <div class="Game-handle"></div>
+      </div>
+      <div class="Game Games-capture Games-frame">
+        <canvas id="capture"></canvas>
+        <div class="Game-handle"></div>
+      </div>
+    </section>
 
     <button onclick="Space.capture()">Capture</button>
   </main>
@@ -74,11 +96,19 @@
       }
 
       function init() {
+        // drag any frame of the games container
         const games = document.getElementById("games")
         games.addEventListener("mousedown", onDragStart)
         games.addEventListener("mousemove", onDrag)
         games.addEventListener("mouseup", onDragEnd)
-        window.addEventListener("mouseout", onDragEnd)
+
+        // end drag if mouse exits the window
+        const html = document.body.parentElement
+        html.addEventListener("mouseout", (evt) => {
+          if (evt.target == html) {
+            onDragEnd()
+          }
+        })
       }
 
       // -- commands --
@@ -139,30 +169,55 @@
       }
 
       // -- drag --
+      const widths = {}
+      const move = 0;
+      const scale = 1;
+
       let el = null
+      let op = move;
       let x0 = 0.0
       let y0 = 0.0
       let mx = 0.0
       let my = 0.0
+      let ox = 0.0
+      let oy = 0.0
 
       function onDragStart(evt) {
-        const target = evt.target
+        let target = evt.target
 
-        if (!target.classList.contains("Games-frame")) {
+        // determine operation
+        op = target.classList.contains("Game-handle") ? scale : move
+
+        // find a frame in the ancestor tree, if any
+        while (target != null && !target.classList.contains("Games-frame")) {
+          target = target.parentElement
+        }
+
+        if (target == null) {
           return
         }
 
+        // capture target info
         el = target
 
-        // capture initial x/y position
+        // cache initial width
+        if (widths[el.id] == null) {
+          widths[el.id] = el.getBoundingClientRect().width
+        }
+
+        // record initial x/y position
         const f = el.getBoundingClientRect()
         x0 = f.x
         y0 = f.y
 
-        // get mouse position (we need to calc dx/dy manually on move b/c evt.offset, the pos
-        // within the element, doesn't include borders, etc.)
+        // record mouse position (we need to calc dx/dy manually on move b/c evt.offset,
+        // the pos within the element, doesn't include borders, etc.)
         mx = evt.clientX
         my = evt.clientY
+
+        // record offset for scale op
+        ox = f.right - mx
+        oy = f.bottom - my
       }
 
       function onDrag(evt) {
@@ -170,12 +225,30 @@
           return
         }
 
-        el.style.left = `${x0 + evt.clientX - mx}px`
-        el.style.top = `${y0 + evt.clientY - my}px`
+        // apply the operation
+        const cx = evt.clientX
+        const cy = evt.clientY
+
+        if (op == move) {
+          el.style.left = `${x0 + cx - mx}px`
+          el.style.top = `${y0 + cy - my}px`
+        }
+        // op == scale
+        else {
+          const dx = cx + ox - x0 - 8.933 * 2.0 // lol
+          el.style.width = `${dx}px`
+          el.style.height = `${dx}px`
+        }
+
+        // push the active item to the front
+        el.style.zIndex = 1;
       }
 
       function onDragEnd() {
-        el = null
+        if (el != null) {
+          el.style.zIndex = null;
+          el = null
+        }
       }
 
       // -- bootstrap --
