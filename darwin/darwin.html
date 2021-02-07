@@ -4,7 +4,7 @@
     img {
       width: 50%;
       margin: auto;
-      display:block;
+      display: block;
     }
     #background {
       position: fixed;
@@ -12,12 +12,14 @@
       bottom: 0;
       min-width: 100%;
       min-height: 100%;
+      object-fit: fill;
+      z-index: -1;
     }
   </style>
 </head>
 
 <video autoplay muted loop id="background">
-  <source src="berkeley1.mov" type="video/mp4">
+  <source src="berkeley1.mp4" type="video/mp4">
 </video>
 
 <p>
