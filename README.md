@@ -1,6 +1,6 @@
 # c0llage
 
-live @ https://iatenothingbutriceforthreedays.github.io/c0llage/
+live @ https://frogfrogforg.github.io/c0llage/
 
 Credits:
 
