@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<!-- this a talking Sappho bust -->
+
+<style>
+	#bucket{
+		background-color: rbga(0,0,0,0.4);
+		position:absolute;
+		z-index:1;
+		left:0;
+		top:0;
+	}
+
+</style>
+
+<body>
+
+  <div id="bucket">
+    <img src="img/bucket.png" style="height:150px;">
+  </div>
+
+
+<script>
+	// this 
+	// makes a pop-up div
+	// var modal = document.getElementById("modal");
+
+
+
+
+	// var poetBtn = document.getElementById("poetButton");
+
+	// var closeBtn = document.getElementById("close");
+
+	// poetBtn.onclick = function(){
+	// 	modal.style.display = "block";
+	// }
+
+	// closeBtn.onclick = function(){
+	// 	modal.style.display="none";
+	// }
+	
+	// this 
+	// makes the popup draggable
+	var bucket = document.getElementById("bucket");
+	dragElement(bucket);
+
+	function dragElement(elmnt) {
+  		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  		if (document.getElementById(elmnt.id + "-header")) {
+    		// if present, the header is where you move the div from
+    		document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+  		} else {
+    		// otherwise, move the div from anywhere inside the div
+    		elmnt.onmousedown = dragMouseDown;
+  			}
+
+  	function dragMouseDown(e) {
+	  console.log('dragging bucket!');
+	  e = e || window.event;
+    	  e.preventDefault();
+    	  // get the mouse cursor position at startup
+    	  pos3 = e.clientX;
+    	  pos4 = e.clientY;
+    	  document.onmouseup = closeDragElement;
+    	  // call a function whenever the cursor moves
+    	  document.onmousemove = elementDrag;
+  	}
+
+  	function elementDrag(e) {
+    	e = e || window.event;
+    	e.preventDefault();
+    	// calculate the new cursor position
+    	pos1 = pos3 - e.clientX;
+    	pos2 = pos4 - e.clientY;
+    	pos3 = e.clientX;
+    	pos4 = e.clientY;
+    	// set the element's new position:
+   		elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    	elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  		}
+
+  	function closeDragElement() {
+    	// stop moving when mouse button is released
+    	document.onmouseup = null;
+    	document.onmousemove = null;
+  		}
+	}
+
+</script>
+
+</body>
+
+</html>
