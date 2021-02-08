@@ -8,8 +8,9 @@
 
       // -- bootstrap --
       function Start(id) {
+        initAssets(document.getElementById("assets"))
         initWorld()
-        initDraw(document.getElementById(id), document.getElementById("assets"))
+        initDraw(document.getElementById(id))
         initLoop()
       }
 
@@ -27,14 +28,31 @@
         draw()
       }
 
+      // -- assets --
+      let mAssets
+
+      function initAssets(el) {
+        // aggregate assets
+        mAssets = {}
+        for (const asset of el.children) {
+          mAssets[asset.id] = asset
+        }
+      }
+
       // -- world --
-      let kSize = { x: 512, y: 512 }
+      const kSize = { x: 512, y: 512 }
+      const kNumTeeth = 16
+
       let mObjects
 
       function initWorld() {
         mObjects = []
+
         addObject(makeTitle())
-        addObject(makeSprite("tooth", { x: 50, y: 50 }))
+
+        for (let i = 0; i < kNumTeeth; i++) {
+          addObject(makeTooth(i))
+        }
       }
 
       // -- w/commands
@@ -54,53 +72,73 @@
       function makeTitle() {
         const size = 240.0
 
-        return {
-          ...makeText(
-            "FREESALAD",
-            size,
-            true,
-            { x: (kSize.x - 170.0) / 2, y: kSize.y + size }
-          ),
+        return makeText("FREESALAD", {
+          size,
+          down: true,
+          x: (kSize.x - 170.0) / 2,
+          y: (kSize.y + size),
           update() {
-            this.pos.y -= 0.8 * kFrameInterval
+            this.y -= 0.8 * kFrameInterval
           }
-        }
+        })
       }
 
-      function makeText(text, size, down = false, pos = { x: 0, y: 0 }) {
+      function makeText(text, props) {
         return {
           type: Types.Text,
           text: text,
-          size: size,
-          down: down,
-          pos: pos,
+          x: 0.0,
+          y: 0.0,
+          size: 0.0,
+          down: false,
+          ...props
         }
       }
 
-      function makeSprite(name, pos = { x: 0, y: 0 }) {
+      function makeTooth(i) {
+        const len = Math.floor(kNumTeeth / 2)
+        const row = Math.floor(i / len)
+        const col = i % len
+
+        const sprite = makeSprite("tooth", {
+          a: (row + 1) * Math.PI
+        })
+
+        return {
+          ...sprite,
+          x: 10.0 + col * (sprite.w - 5.0),
+          y: 10.0 + row * (sprite.h),
+        }
+      }
+
+      function makeSprite(name, props) {
+        const asset = mAssets[name]
+
         return {
           type: Types.Sprite,
           name: name,
-          pos: pos,
+          x: 0.0,
+          y: 0.0,
+          w: asset.width,
+          h: asset.height,
+          a: 0.0,
+          ...props
         }
+      }
+
+      function vzero() {
+        return { x: 0, y: 0 }
       }
 
       // -- draw --
       let mCanvas
       let mCtx
-      let mAssets
 
-      function initDraw(canvas, assets) {
+      function initDraw(el) {
         // configure canvas
-        mCanvas = canvas
+        mCanvas = el
         mCanvas.setAttribute("width", kSize.x)
         mCanvas.setAttribute("height", kSize.y)
-
-        // aggregate assets
-        mAssets = {}
-        for (const asset of assets.children) {
-          mAssets[asset.id] = asset
-        }
 
         // grab ref to drawing context
         mCtx = mCanvas.getContext("2d")
@@ -123,8 +161,8 @@
       function drawText(t) {
         mCtx.font = `${t.size}px serif`
 
-        let x = t.pos.x
-        let y = t.pos.y + t.size
+        let x = t.x
+        let y = t.y + t.size
 
         if (!t.down) {
           mCtx.fillText(t.text, x, y)
@@ -139,13 +177,20 @@
       function drawSprite(s) {
         const asset = mAssets[s.name]
 
-        mCtx.drawImage(
-          asset,
-          s.pos.x,
-          s.pos.y,
-          asset.width,
-          asset.height
-        )
+        if (s.a == 0.0) {
+          mCtx.drawImage(asset, s.x, s.y, s.w, s.h)
+        } else {
+          const w2 = s.w / 2
+          const h2 = s.h / 2
+          const cx = s.x + w2
+          const cy = s.y + h2
+
+          mCtx.translate(cx, cy);
+          mCtx.rotate(s.a);
+          mCtx.drawImage(asset, -w2, -h2, s.w, s.h);
+          mCtx.rotate(-s.a);
+          mCtx.translate(-cx, -cy);
+        }
       }
 
       // -- exports --
