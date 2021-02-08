@@ -40,21 +40,148 @@
 
 	}
 
+	.modal{
+		background-color: rbga(0,0,0,0.4);
+		width:300px;
+		height:100px;
+		display:none;
+		position:absolute;
+		z-index:1;
+		left:50%;
+		top:69px;
+	}
+
+	.modal-content{
+		background-color: #f0faf9;
+		width:300px;
+		margin: 20% auto;
+		border:1px solid black;
+	}
+
+	.modal-header{
+		background-color: grey;
+		height:30px;
+		width:300px;
+		border-bottom: 2px double black;
+	}
+
+	.modal-body{
+		text-align:center;
+		padding:20px;
+	}
 
 </style>
 
 <body>
 	<h1><u>‎‎‎‏‏‎ ‎‏‏‎ ‎welcome to my twisted mi</u>nd</h1>
-	<p>
-		<div class="entry">
-		<p style = "border-bottom:double"> <b>2/23</b></p><p>we're trying to make a process.
+		<p><div class="entry">
+			<p style = "border-bottom:double"> <b>2/7</b></p>
+			<p>my last entry here is, somewhat perplexingly, dated for the 23rd of this month, which is over two week away from now. i have to admit, when i first started this HTML document, i was incredibly hungover but doing everything i could to convince myself otherwise. maybe this represson involved a brief episode of time travel (as it always does, actually).
+			<p>anyway. my colleagues have written a lot about the process of making this process so far, visible <a href="../collective-processes.html">here</a> & <a href="../cadavre-exquis.html">here</a>. i think i'm going to encourage the team to continue making exquisite corpses together, i think it'll be a good exercise in seeing how we can blend our aesthetic identities. i guess if you don't know what an exquisite corpse is, that last sentence probably makes me sound like a one-episode antagonist on Hannibal. maybe it'll be good for you & me if i take a sec to explain a few things about the game.
+			<p style = "font-size:1.5em;font-family:lato,sans-serif;"><i>o<u>n the Exquisite Corpse</u></i></p>
+			<p>there are many variations on the game, so here's the most basic version of the rules for producing the version for two people who are drawing:
+				<ol> 
+					<li>The first player draws one half of an object of the choice on one half of a sheet of paper.</li>
+					<li>Once they have completed their drawing of one half of an object, the first player must fold the piece of paper over so that only a very slim section of their drawing is visible.</li>
+					<li>Only by looking at this slim section, the second player must take the piece of paper & draw the second half of the object.</li>
+				</ol>
+			<p>the resulting drawing is almost alway seems to be a collaborative non-sequiter, a single image which can't follow itself. the aesthetic discontinuities are pleasing & curious, while the serendipitous  continuities become puzzling & exciting in their own right.
+			<p>the game of exquisite corpse is often creditted to the author of the <i>Surrealist Manifesto</i>, Andre Breton, & it was formalized as a surrealist practice in either the year 1918CE or 1925CE, i can't really find a clear source. the surrealist project overall was an attempt to access more & more pure artifacts of the unconscious mind. like the psychoanalysts who informed their work, the surrealists intrumentalized unintentional, automatic, &/or senseless thoughts to explore the human psyche. i think its important to establish this because the most important part of any drawing produced by an exquisite corpse is its seam, the point where two individuals have met. rather than an attempt to discover a more authentic psychic experience of oneself, the exquisite corpse explores the pleasing inability of separate human subjects to fully integrate with one another.
+			<p>i'm sorry to interrupt myself, but i've been at this for a bit, & i need to take a break & work on something else for now. i'll finish this thought in a later entry. 
+
+		</div>
+		
+		<p><div class="entry">
+			<p style = "border-bottom:double"> <b>2/23</b></p>
+			<p>we're trying to make a process.
 		<p> 
 		</div>
 
-		<span style="margin-left:25px"><img src="myst.jpg" width="350px"></span>
+		<span style="margin-left:25px"><img src="img/myst.jpg" width="350px"></span>
 
 	<div class="a-cool-circle"></div><div style="background-color:white;width:10px;height:300px;position:absolute;top:250px;left:950px;border-left:2px solid grey;border-bottom:2px solid grey;"></div><div style="background-color:white;width:10px;height:300px;position:absolute;top:300px;left:1000px;border-left:2px solid grey;border-bottom:2px solid grey;"></div>
-	<div class="right-column"></div>
+	
+	<div class="right-column">
+		<button id="poetButton" style="position:absolute;top:300px;left:800px;">consult the poet</button>
+	</div>
+	<div id="modal" class="modal">
+
+
+		<div class ="modal-content">
+			<div id= "modal-header" class="modal-header">click & drag
+			</div>
+
+			<div class="modal-body">
+				<img src="img/irene.gif" style = "height:150px;"><p>neither for me the honey nor the honey bee</p>
+				<button id="close">yeah sure</button>
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+	// this 
+	// makes a pop-up div
+	var modal = document.getElementById("modal");
+
+	var poetBtn = document.getElementById("poetButton");
+
+	var closeBtn = document.getElementById("close");
+
+	poetBtn.onclick = function(){
+		modal.style.display = "block";
+	}
+
+	closeBtn.onclick = function(){
+		modal.style.display="none";
+	}
+	
+	// this 
+	// makes the popup draggable
+	dragElement(modal);
+
+	function dragElement(elmnt) {
+  		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  		if (document.getElementById(elmnt.id + "-header")) {
+    		// if present, the header is where you move the div from
+    		document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+  		} else {
+    		// otherwise, move the div from anywhere inside the div
+    		elmnt.onmousedown = dragMouseDown;
+  			}
+
+  	function dragMouseDown(e) {
+    	e = e || window.event;
+    	e.preventDefault();
+    	// get the mouse cursor position at startup
+    	pos3 = e.clientX;
+    	pos4 = e.clientY;
+    	document.onmouseup = closeDragElement;
+    	// call a function whenever the cursor moves
+    	document.onmousemove = elementDrag;
+  		}
+
+  	function elementDrag(e) {
+    	e = e || window.event;
+    	e.preventDefault();
+    	// calculate the new cursor position
+    	pos1 = pos3 - e.clientX;
+    	pos2 = pos4 - e.clientY;
+    	pos3 = e.clientX;
+    	pos4 = e.clientY;
+    	// set the element's new position:
+   		elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    	elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  		}
+
+  	function closeDragElement() {
+    	// stop moving when mouse button is released
+    	document.onmouseup = null;
+    	document.onmousemove = null;
+  		}
+	}
+
+</script>
 </body>
 
 
