@@ -78,6 +78,10 @@
         <canvas id="game"></canvas>
         <div class="Game-handle"></div>
       </div>
+      <div class="Game Games-live Games-frame">
+        <canvas id="game-salad"></canvas>
+        <div class="Game-handle"></div>
+      </div>
       <div class="Game Games-capture Games-frame">
         <canvas id="capture"></canvas>
         <div class="Game-handle"></div>
@@ -92,7 +96,8 @@
       // -- lifetime --
       function main() {
         init()
-        load("./games/bitsy.html")
+        load({ type: "bitsy", path: "./games/bitsy.html" })
+        load({ type: "custom", path: "./games/salad.html", name: "SaladDaze", id: "game-salad" })
       }
 
       function init() {
@@ -113,15 +118,15 @@
 
       // -- commands --
       // load bitsy game at remote path
-      async function load(path) {
+      async function load(src) {
         // fetch and parse the html page containing the game
-        const res = await fetch(path)
+        const res = await fetch(src.path)
         const body = await res.text()
         const html = new DOMParser().parseFromString(body, "text/html")
 
         // add all the scripts to a wrapper element
         const wrapper = document.createElement("object")
-        wrapper.id = path
+        wrapper.id = src.path
 
         // copy scripts into new elements, otherwise they don't execute
         const scripts = Array.from(html.scripts)
@@ -142,8 +147,17 @@
         // append wrapper to document
         document.body.appendChild(wrapper)
 
-        // call bitsy bootstrap fn
-        startExportedGame()
+        // call bootstrap fn
+        switch (src.type) {
+          case "bitsy": {
+            startExportedGame()
+            break
+          }
+          case "custom": {
+            window[src.name](document.getElementById(src.id))
+            break
+          }
+        }
       }
 
       function capture() {

@@ -1,0 +1,163 @@
+<head>
+  <script type="text/javascript">
+    SaladDaze = (() => {
+      const Types = {
+        Text: 0,
+        Sprite: 1,
+      }
+
+      // -- bootstrap --
+      function Start(id) {
+        initWorld()
+        initDraw(document.getElementById(id), document.getElementById("assets"))
+        initLoop()
+      }
+
+      // -- loop --
+      const kFramerate = 30
+      const kFrameInterval = 1000.0 / kFramerate
+
+      function initLoop() {
+        setInterval(loop, kFrameInterval)
+      }
+
+      // -- l/commands
+      function loop() {
+        update()
+        draw()
+      }
+
+      // -- world --
+      let kSize = { x: 512, y: 512 }
+      let mObjects
+
+      function initWorld() {
+        mObjects = []
+        addObject(makeTitle())
+        addObject(makeSprite("tooth", { x: 50, y: 50 }))
+      }
+
+      // -- w/commands
+      function update() {
+        for (const obj of mObjects) {
+          if (obj.update != null) {
+            obj.update()
+          }
+        }
+      }
+
+      function addObject(obj) {
+        mObjects.push(obj)
+      }
+
+      // -- w/factories
+      function makeTitle() {
+        const size = 240.0
+
+        return {
+          ...makeText(
+            "FREESALAD",
+            size,
+            true,
+            { x: (kSize.x - 170.0) / 2, y: kSize.y + size }
+          ),
+          update() {
+            this.pos.y -= 0.8 * kFrameInterval
+          }
+        }
+      }
+
+      function makeText(text, size, down = false, pos = { x: 0, y: 0 }) {
+        return {
+          type: Types.Text,
+          text: text,
+          size: size,
+          down: down,
+          pos: pos,
+        }
+      }
+
+      function makeSprite(name, pos = { x: 0, y: 0 }) {
+        return {
+          type: Types.Sprite,
+          name: name,
+          pos: pos,
+        }
+      }
+
+      // -- draw --
+      let mCanvas
+      let mCtx
+      let mAssets
+
+      function initDraw(canvas, assets) {
+        // configure canvas
+        mCanvas = canvas
+        mCanvas.setAttribute("width", kSize.x)
+        mCanvas.setAttribute("height", kSize.y)
+
+        // aggregate assets
+        mAssets = {}
+        for (const asset of assets.children) {
+          mAssets[asset.id] = asset
+        }
+
+        // grab ref to drawing context
+        mCtx = mCanvas.getContext("2d")
+      }
+
+      // -- d/commands
+      function draw() {
+        mCtx.clearRect(0.0, 0.0, kSize.x, kSize.y);
+
+        for (const obj of mObjects) {
+          switch (obj.type) {
+            case Types.Text:
+              drawText(obj); break
+            case Types.Sprite:
+              drawSprite(obj); break
+          }
+        }
+      }
+
+      function drawText(t) {
+        mCtx.font = `${t.size}px serif`
+
+        let x = t.pos.x
+        let y = t.pos.y + t.size
+
+        if (!t.down) {
+          mCtx.fillText(t.text, x, y)
+        } else {
+          for (const char of t.text) {
+            mCtx.fillText(char, x, y)
+            y += t.size
+          }
+        }
+      }
+
+      function drawSprite(s) {
+        const asset = mAssets[s.name]
+
+        mCtx.drawImage(
+          asset,
+          s.pos.x,
+          s.pos.y,
+          asset.width,
+          asset.height
+        )
+      }
+
+      // -- exports --
+      return Start
+    })()
+  </script>
+</head>
+
+<body onload='SaladDaze("game")'>
+  <canvas id="game"></canvas>
+  <!-- this probably won't work when loaded externally -->
+  <object id="assets" style="display: none">
+    <img id="tooth" src="./tooth.png">
+  </object>
+</body>
