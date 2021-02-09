@@ -81,15 +81,26 @@
 
       // -- w/factories
       function makeTitle() {
+        const text = "FREESALADFREESALAD"
         const size = 240.0
 
-        return makeText("FREESALAD", {
+        // measure height to loop text
+        const h = text.length * size
+        const h2 = h / 2.0
+
+        return makeText(text, {
           size,
           down: true,
           x: (kSize.x - 170.0) / 2,
           y: (kSize.y + size),
           update() {
+            // animate text up
             this.y -= 0.8 * kFrameInterval
+
+            // loop text once we're below the repeat
+            if (this.y < -h2) {
+              this.y += h2
+            }
           }
         })
       }
@@ -125,9 +136,12 @@
         }
 
         function animY() {
-          let scale = 30.0
-          if (row == 1) {
-            scale += (mFrame % 60) / 59 * 30.0
+          const curve = crv.quad(mFrame % 30, 30)
+
+          if (row == 0) {
+            scale = 25.0 + curve * 5.0
+          } else {
+            scale = 10.0 + curve * 50.0
           }
 
           return 10.0 + row * h + crv.quad(col, len, scale) + oy
