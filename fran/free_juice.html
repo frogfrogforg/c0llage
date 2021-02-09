@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-
-<!-- this a bucket -->
-
+<head>
+  <title>free juice</title>
+</head>
 <style>
   #leak{
   	background-color: rbga(0,0,0,0.4);
@@ -48,7 +48,7 @@
 
 <script type-"text/javascript">
   // this 
-  // makes the popup draggable
+  // makes the bucket draggable
   var bucket = document.getElementById("bucket");
   dragElement(bucket);
   
@@ -94,7 +94,6 @@
 
 // -- bootstrap --
 function Start() {
-  console.log("init game");
   initAssets(document.getElementById("assets"))
   initWorld()
   initLoop()
@@ -168,21 +167,59 @@ function makeDrop() {
   clone.classList.add("drop");
   document.body.appendChild(clone);
 
+
+  // set position
+  let xPos = 300;
+  let yPos = 100;
+  clone.style.left = `${xPos}px`;
+  clone.style.top = `${yPos}px`;
+
+  // prep audio
   // https://freesound.org/people/Mega-X-stream/sounds/546279/     
-  const dripSound = new Audio('audio/drip.wav');
+  let dripSound = new Audio('audio/drip.wav');
+  dripSound.onended = function() {
+    console.log('end of sound!');
+    dripSound.pause();
+  }
+
 
   return {
     elm: clone,
-    sound: dripSound;
-    x: 300,
-    y: 100,
+    // active = "not cleand up"
+    active: true,
+    falling : true,
+    // puddle: false,
+    sound: dripSound,
+    x: xPos,
+    y: yPos,
     update() {
-      this.y += 10;
-      if (this.y > kFloorY) {
-	// todo add to a puddle
-	// todo play some audioclip
+      if (!this.active) {
+	  return;
+      }
+
+
+      if (this.falling) {
+	this.y += 10;
+      	this.elm.style.top = `${this.y}px`;
+      }
+
 	
-	this.elm.style.display = 'none';
+      // bucket :)
+      if (isOverlapping(this.elm, bucket)) {
+	this.sound.play();	
+	this.elm.style.visibility = 'hidden';
+	this.active = false;
+      }
+
+      // leakleakleakleakleak
+      if (this.active && !this.falling) {
+	  this.sound.play();	
+      }
+
+      // become part of the puddle
+      if (this.y > kFloorY) {
+	this.falling = false;
+	this.elm.style.visibility = 'hidden';
 	this.sound.play();	
       }
     }
@@ -222,11 +259,24 @@ function render() {
 }
 
 function renderDrop(d) {
-  d.elm.style.left = `${d.x}px`;
-  d.elm.style.top = `${d.y}px`;
+  // d.elm.style.left = `${d.x}px`;
+  // d.elm.style.top = `${d.y}px`;
 }
  
 Start();
+
+// https://stackoverflow.com/questions/2440377/javascript-collision-detection
+function isOverlapping(a, b) {
+    var aRect = a.getBoundingClientRect();
+    var bRect = b.getBoundingClientRect();
+
+    return !(
+        ((aRect.top + aRect.height) < (bRect.top)) ||
+        (aRect.top > (bRect.top + bRect.height)) ||
+        ((aRect.left + aRect.width) < bRect.left) ||
+        (aRect.left > (bRect.left + bRect.width))
+    );
+}
 
 
 
