@@ -149,6 +149,7 @@
 
         return {
           ...s,
+	  i,
           update() {
             this.x = animX()
             this.y = animY()
@@ -157,6 +158,12 @@
               this.tx = smp.sym(0.5)
               this.ty = smp.sym(0.5)
             }
+	    
+	    // boo
+	    if (this.i == kNumTeeth - 1 && mFrame > 1000) {
+	      this.y = 100 + (mFrame - 1000);
+	    }
+
           }
         }
       }
