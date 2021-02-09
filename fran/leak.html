@@ -16,15 +16,17 @@
   	background-color: rbga(0,0,0,0.4);
   	position:absolute;
   	z-index:1;
-  	left: 100px;
+  	left: 500px;
   	top: 500px;
   }
 
   .drop {
   	position:absolute;
+	/*
   	left: 200px;
 	top: 50px;
-	width: 50px;
+	*/
+	width: 10px;
   }
 
 </style>
@@ -129,6 +131,8 @@ function initAssets(el) {
 const kSize = { x: 512, y: 512 }
 const kNumTeeth = 16
 
+const kFloorY = 600;
+
 let mObjects
 
 function initWorld() {
@@ -141,7 +145,6 @@ function update() {
 
   // add a drop every so often
   if (frameNum % 60 == 0) {
-      console.log('drip!!');
       addObject(makeDrop());
   }
   for (const obj of mObjects) {
@@ -165,12 +168,24 @@ function makeDrop() {
   clone.classList.add("drop");
   document.body.appendChild(clone);
 
-  clone.update = function () {
-      console.log(this.style.left);
-      this.style.left = "100px";
-  }
+  const dripSound = new Audio('audio/drip.wav');
 
-  return clone;
+  return {
+    elm: clone,
+    sound: dripSound;
+    x: 300,
+    y: 100,
+    update() {
+      this.y += 10;
+      if (this.y > kFloorY) {
+	// todo add to a puddle
+	// todo play some audioclip
+	
+	this.elm.style.display = 'none';
+	this.sound.play();	
+      }
+    }
+  }
 
 }
 
@@ -195,16 +210,24 @@ function vzero() {
 
 
 function initDraw() {
-    -
 }
 
 // -- d/commands
 function render() {
+    for (const obj of mObjects) {
+    // for now, just assume they're all drops
+      renderDrop(obj)
+    }
+}
+
+function renderDrop(d) {
+  d.elm.style.left = `${d.x}px`;
+  d.elm.style.top = `${d.y}px`;
 }
  
 Start();
 
-     
+// https://freesound.org/people/Mega-X-stream/sounds/546279/     
 
 
 </script>
