@@ -1,6 +1,16 @@
 <head>
   <script type="text/javascript">
     SaladDaze = (() => {
+      // -- "imports" --
+      const {
+        min,
+        pow,
+        round: rnd,
+        floor: flr,
+        random: rand,
+      } = Math
+
+      // -- types --
       const Types = {
         Text: 0,
         Sprite: 1,
@@ -17,6 +27,7 @@
       // -- loop --
       const kFramerate = 30
       const kFrameInterval = 1000.0 / kFramerate
+      let mFrame = 1
 
       function initLoop() {
         setInterval(loop, kFrameInterval)
@@ -26,6 +37,7 @@
       function loop() {
         update()
         draw()
+        mFrame += 1
       }
 
       // -- assets --
@@ -49,7 +61,6 @@
         mObjects = []
 
         addObject(makeTitle())
-
         for (let i = 0; i < kNumTeeth; i++) {
           addObject(makeTooth(i))
         }
@@ -96,18 +107,43 @@
       }
 
       function makeTooth(i) {
-        const len = Math.floor(kNumTeeth / 2)
-        const row = Math.floor(i / len)
+        const len = flr(kNumTeeth / 2)
+        const row = flr(i / len)
         const col = i % len
 
-        const sprite = makeSprite("tooth", {
+        const s = makeSprite("tooth", {
           a: (row + 1) * Math.PI
         })
 
+        const w = s.w
+        const h = s.h
+        const ox = smp.sym(2.0)
+        const oy = smp.sym(3.0)
+
+        function animX() {
+          return 80.0 + col * (w - 5.0) + ox
+        }
+
+        function animY() {
+          let scale = 30.0
+          if (row == 1) {
+            scale += (mFrame % 60) / 59 * 30.0
+          }
+
+          return 10.0 + row * h + crv.quad(col, len, scale) + oy
+        }
+
         return {
-          ...sprite,
-          x: 10.0 + col * (sprite.w - 5.0),
-          y: 10.0 + row * (sprite.h),
+          ...s,
+          update() {
+            this.x = animX()
+            this.y = animY()
+
+            if (mFrame % 10 == 0) {
+              this.tx = smp.sym(0.5)
+              this.ty = smp.sym(0.5)
+            }
+          }
         }
       }
 
@@ -122,6 +158,8 @@
           w: asset.width,
           h: asset.height,
           a: 0.0,
+          tx: 0.0,
+          ty: 0.0,
           ...props
         }
       }
@@ -146,7 +184,7 @@
 
       // -- d/commands
       function draw() {
-        mCtx.clearRect(0.0, 0.0, kSize.x, kSize.y);
+        drawBackground();
 
         for (const obj of mObjects) {
           switch (obj.type) {
@@ -158,7 +196,13 @@
         }
       }
 
+      function drawBackground() {
+        mCtx.fillStyle = "papayawhip"
+        mCtx.fillRect(0.0, 0.0, kSize.x, kSize.y);
+      }
+
       function drawText(t) {
+        mCtx.fillStyle = "black"
         mCtx.font = `${t.size}px serif`
 
         let x = t.x
@@ -176,14 +220,16 @@
 
       function drawSprite(s) {
         const asset = mAssets[s.name]
+        const x = s.x + s.tx
+        const y = s.y + s.ty
 
         if (s.a == 0.0) {
-          mCtx.drawImage(asset, s.x, s.y, s.w, s.h)
+          mCtx.drawImage(asset, x, y, s.w, s.h)
         } else {
           const w2 = s.w / 2
           const h2 = s.h / 2
-          const cx = s.x + w2
-          const cy = s.y + h2
+          const cx = x + w2
+          const cy = y + h2
 
           mCtx.translate(cx, cy);
           mCtx.rotate(s.a);
@@ -193,7 +239,26 @@
         }
       }
 
-      // -- exports --
+      // -- helpers --
+      function nrm(value, len, scale = 1.0) {
+        return min(value / (len - 1), 1.0) * scale
+      }
+
+      const smp = {
+        sym(scale = 1.0) {
+          return 2.0 * (rand() - 0.5) * scale
+        }
+      }
+
+      const crv = {
+        quad(val, len, scale = 1.0) {
+          const l2 = len / 2
+          const offset = len % 2 == 0 ? 0.5 : 0
+          return (1 - pow((val - l2 + offset) / l2, 2.0)) * scale
+        }
+      }
+
+      // -- "exports" --
       return Start
     })()
   </script>
@@ -201,6 +266,7 @@
 
 <body onload='SaladDaze("game")'>
   <canvas id="game"></canvas>
+
   <!-- this probably won't work when loaded externally -->
   <object id="assets" style="display: none">
     <img id="tooth" src="./tooth.png">
