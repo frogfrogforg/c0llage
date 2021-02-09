@@ -217,6 +217,7 @@
 
         return {
           ...s,
+          i,
           x: animX(),
           y: animY(),
           leaf: null,
@@ -240,6 +241,11 @@
             const leaf = this.leaf
             if (leaf != null) {
               this.updateLeaf(leaf)
+            }
+
+            // boo
+            if (this.i == kNumTeeth - 1 && mFrame > 1000) {
+              this.y = 100 + (mFrame - 1000);
             }
           },
           updateLeaf(leaf) {
