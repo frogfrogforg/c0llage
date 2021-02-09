@@ -93,6 +93,7 @@
           down: true,
           x: (kSize.x - 170.0) / 2,
           y: (kSize.y + size),
+          z: 1,
           update() {
             // animate text up
             this.y -= 0.8 * kFrameInterval
@@ -106,15 +107,14 @@
       }
 
       function makeText(text, props) {
-        return {
-          type: Types.Text,
+        return makeObject(Types.Text, {
           text: text,
           x: 0.0,
           y: 0.0,
           size: 0.0,
           down: false,
           ...props
-        }
+        })
       }
 
       function makeTooth(i) {
@@ -123,7 +123,8 @@
         const col = i % len
 
         const s = makeSprite("tooth", {
-          a: (row + 1) * Math.PI
+          a: (row + 1) * Math.PI,
+          z: row == 0 ? 2 : 0,
         })
 
         const w = s.w
@@ -164,8 +165,7 @@
       function makeSprite(name, props) {
         const asset = mAssets[name]
 
-        return {
-          type: Types.Sprite,
+        return makeObject(Types.Sprite, {
           name: name,
           x: 0.0,
           y: 0.0,
@@ -175,11 +175,15 @@
           tx: 0.0,
           ty: 0.0,
           ...props
-        }
+        })
       }
 
-      function vzero() {
-        return { x: 0, y: 0 }
+      function makeObject(type, props) {
+        return {
+          type: type,
+          z: 0,
+          ...props
+        }
       }
 
       // -- draw --
@@ -200,14 +204,27 @@
       function draw() {
         drawBackground();
 
-        for (const obj of mObjects) {
-          switch (obj.type) {
-            case Types.Text:
-              drawText(obj); break
-            case Types.Sprite:
-              drawSprite(obj); break
+        let z = 0
+        let zMax = 0
+
+        do {
+          for (const obj of mObjects) {
+            if (obj.z > zMax) {
+              zMax = obj.z
+            }
+
+            if (obj.z == z) {
+              switch (obj.type) {
+                case Types.Text:
+                  drawText(obj); break
+                case Types.Sprite:
+                  drawSprite(obj); break
+              }
+            }
           }
-        }
+
+          z += 1
+        } while (z <= zMax)
       }
 
       function drawBackground() {
