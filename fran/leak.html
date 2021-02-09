@@ -1,92 +1,234 @@
 <!DOCTYPE html>
 <html>
 
-<!-- this a talking Sappho bust -->
+<!-- this a bucket -->
 
 <style>
-	#bucket{
-		background-color: rbga(0,0,0,0.4);
-		position:absolute;
-		z-index:1;
-		left:0;
-		top:0;
-	}
+  #leak{
+  	background-color: rbga(0,0,0,0.4);
+  	position:absolute;
+  	z-index:1;
+  	left:1000;
+  	top:1000;
+  }
+  
+  #bucket{
+  	background-color: rbga(0,0,0,0.4);
+  	position:absolute;
+  	z-index:1;
+  	left: 500px;
+  	top: 500px;
+  }
+
+  .drop {
+  	position:absolute;
+	/*
+  	left: 200px;
+	top: 50px;
+	*/
+	width: 10px;
+  }
 
 </style>
 
 <body>
+  <!--
+  <div id="leak">
+    <img src="img/bucket.png" style="height:150px;">
+  </div>
+  -->
 
   <div id="bucket">
     <img src="img/bucket.png" style="height:150px;">
   </div>
 
+  <object id="assets" style="display: none">
+    <img id="drop" src="img/drop.png">
+  </object>
 
-<script>
-	// this 
-	// makes a pop-up div
-	// var modal = document.getElementById("modal");
+<script type-"text/javascript">
+  // this 
+  // makes the popup draggable
+  var bucket = document.getElementById("bucket");
+  dragElement(bucket);
+  
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    // otherwise, move the div from anywhere inside the div
+    elmnt.onmousedown = dragMouseDown;
+  
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // get the mouse cursor position at startup
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves
+      document.onmousemove = elementDrag;
+    }
+    
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // calculate the new cursor position
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set the element's new position:
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    
+    function closeDragElement() {
+    // stop moving when mouse button is released
+    document.onmouseup = null;
+    document.onmousemove = null;
+    }
+  }
 
 
 
+// framework copied from SaladDaze
 
-	// var poetBtn = document.getElementById("poetButton");
+// -- bootstrap --
+function Start() {
+  console.log("init game");
+  initAssets(document.getElementById("assets"))
+  initWorld()
+  initLoop()
+}
 
-	// var closeBtn = document.getElementById("close");
+// -- loop --
+const kFramerate = 30
+const kFrameInterval = 1000.0 / kFramerate
+let frameNum = 0;
 
-	// poetBtn.onclick = function(){
-	// 	modal.style.display = "block";
-	// }
+function initLoop() {
+  setInterval(loop, kFrameInterval)
+}
 
-	// closeBtn.onclick = function(){
-	// 	modal.style.display="none";
-	// }
+// -- l/commands
+function loop() {
+  update()
+  render()
+  frameNum++;
+}
+
+// -- assets --
+let mAssets;
+
+function initAssets(el) {
+  // aggregate assets
+  mAssets = {}
+  for (const asset of el.children) {
+    mAssets[asset.id] = asset
+  }
+}
+
+// -- world --
+const kSize = { x: 512, y: 512 }
+const kNumTeeth = 16
+
+const kFloorY = 600;
+
+let mObjects
+
+function initWorld() {
+  mObjects = []
+
+}
+
+// -- w/commands
+function update() {
+
+  // add a drop every so often
+  if (frameNum % 60 == 0) {
+      addObject(makeDrop());
+  }
+  for (const obj of mObjects) {
+    if (obj.update != null) {
+      obj.update()
+    }
+  }
+}
+
+function addObject(obj) {
+  mObjects.push(obj)
+}
+
+
+// -- w/factories
+
+function makeDrop() {
+  const asset = mAssets["drop"];
+  const clone = asset.cloneNode(true);
+  clone.removeAttribute("id");
+  clone.classList.add("drop");
+  document.body.appendChild(clone);
+
+  const dripSound = new Audio('audio/drip.wav');
+
+  return {
+    elm: clone,
+    sound: dripSound;
+    x: 300,
+    y: 100,
+    update() {
+      this.y += 10;
+      if (this.y > kFloorY) {
+	// todo add to a puddle
+	// todo play some audioclip
 	
-	// this 
-	// makes the popup draggable
-	var bucket = document.getElementById("bucket");
-	dragElement(bucket);
+	this.elm.style.display = 'none';
+	this.sound.play();	
+      }
+    }
+  }
 
-	function dragElement(elmnt) {
-  		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  		if (document.getElementById(elmnt.id + "-header")) {
-    		// if present, the header is where you move the div from
-    		document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
-  		} else {
-    		// otherwise, move the div from anywhere inside the div
-    		elmnt.onmousedown = dragMouseDown;
-  			}
+}
 
-  	function dragMouseDown(e) {
-	  console.log('dragging bucket!');
-	  e = e || window.event;
-    	  e.preventDefault();
-    	  // get the mouse cursor position at startup
-    	  pos3 = e.clientX;
-    	  pos4 = e.clientY;
-    	  document.onmouseup = closeDragElement;
-    	  // call a function whenever the cursor moves
-    	  document.onmousemove = elementDrag;
-  	}
+function makeSprite(name, props) {
+  const asset = mAssets[name]
 
-  	function elementDrag(e) {
-    	e = e || window.event;
-    	e.preventDefault();
-    	// calculate the new cursor position
-    	pos1 = pos3 - e.clientX;
-    	pos2 = pos4 - e.clientY;
-    	pos3 = e.clientX;
-    	pos4 = e.clientY;
-    	// set the element's new position:
-   		elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    	elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  		}
+  return {
+    type: Types.Sprite,
+    name: name,
+    x: 0.0,
+    y: 0.0,
+    w: asset.width,
+    h: asset.height,
+    a: 0.0,
+    ...props
+  }
+}
 
-  	function closeDragElement() {
-    	// stop moving when mouse button is released
-    	document.onmouseup = null;
-    	document.onmousemove = null;
-  		}
-	}
+function vzero() {
+  return { x: 0, y: 0 }
+}
+
+
+function initDraw() {
+}
+
+// -- d/commands
+function render() {
+    for (const obj of mObjects) {
+    // for now, just assume they're all drops
+      renderDrop(obj)
+    }
+}
+
+function renderDrop(d) {
+  d.elm.style.left = `${d.x}px`;
+  d.elm.style.top = `${d.y}px`;
+}
+ 
+Start();
+
+// https://freesound.org/people/Mega-X-stream/sounds/546279/     
+
 
 </script>
 
