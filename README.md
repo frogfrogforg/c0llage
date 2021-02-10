@@ -18,3 +18,7 @@ then you can do `git haunt` and `git unhaunt` and not have to worry about this w
 ## Credits:
 
 [Natalie Lawhead's](https://alienmelon.itch.io/)'s [JUMP_SCARES_FOR_YOUR_WEBSITE.js](http://tetrageddon.com/scaresoft/)
+
+[Pippin Barr's](http://www.pippinbarr.com/) [Let's Play: Ancient Greek Punishment Bitsy Demake](https://github.com/pippinbarr/lets-play-ancient-greek-punishment-bitsy-demake)
+
+[Bitsy Hacks](https://github.com/seleb/bitsy-hacks). But more specifically this awesome tool that helps you add the hacks in a nice way: https://ayolland.itch.io/borksy
