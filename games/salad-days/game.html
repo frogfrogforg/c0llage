@@ -5,6 +5,7 @@
       const {
         min,
         pow,
+        sqrt,
         round: rnd,
         floor: flr,
         random: rand,
@@ -19,12 +20,77 @@
 
       // -- bootstrap --
       function Start(id) {
+        initCanvas(document.getElementById(id))
         initAssets(document.getElementById("assets"))
+        initDraw()
         initWorld()
-        initDraw(document.getElementById(id))
         initLoop()
       }
 
+      // -- canvas --
+      const kSize = { x: 512, y: 512 }
+
+      let mCanvas
+      const mMouse = {
+        x: 0.0,
+        y: 0.0,
+        ix: 0.0,
+        iy: 0.0,
+        down: false,
+        pressed: false,
+        dx() {
+          return this.x - this.ix
+        },
+        dy() {
+          return this.y - this.iy
+        },
+      }
+
+      function initCanvas(el) {
+        // configure canvas
+        mCanvas = el
+        mCanvas.setAttribute("width", kSize.x)
+        mCanvas.setAttribute("height", kSize.y)
+
+        // get mouse events
+        mCanvas.addEventListener("mousemove", didMoveMouse)
+        mCanvas.addEventListener("mousedown", didPressMouseButton)
+        mCanvas.addEventListener("mouseup", didReleaseMouseButton)
+        mCanvas.addEventListener("mouseleave", didReleaseMouseButton)
+      }
+
+      // -- c/events
+      function didMoveMouse(evt) {
+        const m = mMouse
+        m.x = evt.offsetX
+        m.y = evt.offsetY
+      }
+
+      function didPressMouseButton(evt) {
+        const m = mMouse
+        m.down = true
+        m.pressed = true
+        m.ix = evt.offsetX
+        m.iy = evt.offsetY
+      }
+
+      function didReleaseMouseButton(evt) {
+        const m = mMouse
+        m.pressed = false
+        m.ix = 0.0
+        m.iy = 0.0
+      }
+
+      // -- assets --
+      let mAssets
+
+      function initAssets(el) {
+        // aggregate assets
+        mAssets = {}
+        for (const asset of el.children) {
+          mAssets[asset.id] = asset
+        }
+      }
       // -- loop --
       const kFramerate = 30
       const kFrameInterval = 1000.0 / kFramerate
@@ -38,22 +104,11 @@
       function loop() {
         update()
         draw()
+        mMouse.down = false
         mFrame += 1
       }
 
-      // -- assets --
-      let mAssets
-
-      function initAssets(el) {
-        // aggregate assets
-        mAssets = {}
-        for (const asset of el.children) {
-          mAssets[asset.id] = asset
-        }
-      }
-
       // -- world --
-      const kSize = { x: 512, y: 512 }
       const kNumTeeth = 16
 
       let mObjects
@@ -79,9 +134,21 @@
 
       // -- w/commands
       function update() {
-        for (const obj of mObjects) {
+        updateMany(mObjects)
+      }
+
+      function updateMany(objs) {
+        for (const obj of objs) {
+          if (obj.destroyed) {
+            continue
+          }
+
           if (obj.update != null) {
             obj.update()
+          }
+
+          if (obj.children != null) {
+            updateMany(obj.children)
           }
         }
       }
@@ -100,11 +167,11 @@
         const h2 = h / 2.0
 
         return makeText(text, {
-          size,
           down: true,
           skip: [],
           x: (kSize.x - 170.0) / 2,
           y: (kSize.y + size),
+          s: size,
           z: 1,
           hide(index) {
             if (this.skip.includes(index)) {
@@ -127,37 +194,17 @@
       }
 
       function makeMouth(salad, teeth) {
-        // aggregate trigger rect
-        let x0 = Number.MAX_VALUE
-        let y0 = Number.MAX_VALUE
-        let x1 = 0.0
-        let y1 = 0.0
-
-        for (const t in teeth) {
-          if (t.x < x0) {
-            x0 = t.x
-          }
-
-          if (t.y < y0) {
-            y0 = t.y
-          }
-
-          const mx = t.x + t.w
-          if (mx > x1) {
-            x1 = mx
-          }
-
-          const my = t.y + t.h
-          if (my > y1) {
-            y1 = my
-          }
-        }
-
-
         const leaves = []
 
         return makeObject(Types.Empty, {
           update() {
+            for (let i = 0; i < leaves.length; i++) {
+              if (leaves[i].destroyed) {
+                leaves.splice(i, 1)
+                i--
+              }
+            }
+
             if (leaves.length >= 3 || rand() < 0.99) {
               return
             }
@@ -168,7 +215,7 @@
             }
 
             // find letter and hide it temporarily
-            const index = flr(-y / salad.size)
+            const index = flr(-y / salad.s)
             const text = salad.text[index]
             salad.hide(index)
 
@@ -229,23 +276,34 @@
             this.updateLeaf(leaf)
             this.addChild(leaf)
           },
+          remove() {
+            this.destroy()
+          },
           update() {
             this.x = animX()
             this.y = animY()
+
+            // boo
+            if (this.i == kNumTeeth - 1 && mFrame > 1000) {
+              this.y = 100 + (mFrame - 1000);
+            }
 
             if (mFrame % 10 == 0) {
               this.tx = smp.sym(0.5)
               this.ty = smp.sym(0.5)
             }
 
-            const leaf = this.leaf
-            if (leaf != null) {
-              this.updateLeaf(leaf)
-            }
+            const l = this.leaf
+            if (l != null) {
+              this.updateLeaf(l)
 
-            // boo
-            if (this.i == kNumTeeth - 1 && mFrame > 1000) {
-              this.y = 100 + (mFrame - 1000);
+              const d = sqrt(l.tx * l.tx + l.ty + l.ty)
+              if (d > 10.0) {
+                this.remove()
+              } else {
+                this.tx += smp.sym(d)
+                this.ty += smp.sym(d)
+              }
             }
           },
           updateLeaf(leaf) {
@@ -258,22 +316,70 @@
 
       function makeLeaf(text) {
         return makeText(text, {
-          size: 80.0,
+          s: 80.0,
           a: smp.sym(Math.PI * 0.25),
+          grabbing: false,
+          grab() {
+            const m = mMouse
+            if (!m.pressed) {
+              this.release()
+              return
+            }
+
+            this.tx = m.dx() * 0.1
+            this.ty = m.dy() * 0.1
+          },
+          release() {
+            this.grabbing = false
+            this.tx = 0.0
+            this.ty = 0.0
+          },
+          update() {
+            const m = mMouse
+            if (m.down && this.hit(m.x, m.y)) {
+              this.grabbing = true
+            }
+
+            if (this.grabbing) {
+              this.grab()
+            }
+          },
         })
       }
 
       // w/primitives
       function makeText(text, props) {
-        return makeObject(Types.Text, {
+        const t = makeObject(Types.Text, {
           text: text,
           x: 0.0,
           y: 0.0,
+          s: 0.0,
+          w: null,
           a: 0.0,
-          size: 0.0,
+          tx: 0.0,
+          ty: 0.0,
           down: false,
-          ...props
+          ...props,
+          hit(x, y) {
+            if (this.w == null) {
+              return false
+            }
+
+            return (
+              x >= this.x &&
+              x <= this.x + this.w &&
+              y >= this.y &&
+              y <= this.y + this.s
+            )
+          }
         })
+
+        // measure drawn text width for horizontal text
+        if (!t.down) {
+          t.w = mCtx.measureText(t.text).width
+        }
+
+        return t
       }
 
       function makeSprite(name, props) {
@@ -297,7 +403,18 @@
         return {
           type: type,
           z: 0,
+          destroyed: false,
           ...props,
+          destroy() {
+            this.destroyed = true
+
+            const cs = this.children
+            if (cs != null) {
+              for (const c of cs) {
+                c.destroy()
+              }
+            }
+          },
           addChild(child) {
             if (this.children == null) {
               this.children = []
@@ -309,16 +426,9 @@
       }
 
       // -- draw --
-      let mCanvas
       let mCtx
 
-      function initDraw(el) {
-        // configure canvas
-        mCanvas = el
-        mCanvas.setAttribute("width", kSize.x)
-        mCanvas.setAttribute("height", kSize.y)
-
-        // grab ref to drawing context
+      function initDraw() {
         mCtx = mCanvas.getContext("2d")
       }
 
@@ -348,6 +458,10 @@
       }
 
       function drawOne(obj) {
+        if (obj.destroyed) {
+          return
+        }
+
         switch (obj.type) {
           case Types.Text:
             drawText(obj); break
@@ -366,14 +480,14 @@
       }
 
       function drawText(t) {
-        const s = t.size
+        const s = t.s
 
         mCtx.font = `${s}px serif`
         mCtx.fillStyle = "black"
         mCtx.textBaseline = "top"
 
-        let x = t.x
-        let y = t.y
+        let x = t.x + t.tx
+        let y = t.y + t.ty
 
         if (t.down) {
           let i = 0
@@ -386,8 +500,7 @@
             i += 1
           }
         } else if (t.a != 0) {
-          const r = mCtx.measureText(t.text)
-          drawRotated(t.a, x, y, r.width, s, (x, y) => {
+          drawRotated(t.a, x, y, t.w, s, (x, y) => {
             mCtx.fillText(t.text, x, y)
           })
         } else {
