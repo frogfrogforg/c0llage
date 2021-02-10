@@ -162,10 +162,6 @@
         const text = "FREESALADFREESALAD"
         const size = 240.0
 
-        // measure height to loop text
-        const h = text.length * size
-        const h2 = h / 2.0
-
         return makeText(text, {
           down: true,
           skip: [],
@@ -180,11 +176,20 @@
 
             this.skip.push(index)
           },
+          consume() {
+            if (this.consumed) {
+              return
+            }
+
+            this.consumed = true
+            this.text = "FREESALADFOREVERFREESALADFOREVER"
+          },
           update() {
             // animate text up
             this.y -= 0.8 * kFrameInterval
 
             // loop text once we're below the repeat
+            const h2 = this.text.length * size / 2.0
             if (this.y < -h2) {
               this.y += h2
               this.skip = []
@@ -198,11 +203,12 @@
 
         return makeObject(Types.Empty, {
           update() {
-            for (let i = 0; i < leaves.length; i++) {
-              if (leaves[i].destroyed) {
-                leaves.splice(i, 1)
-                i--
-              }
+            purgeDestroyed(teeth)
+            purgeDestroyed(leaves)
+
+            if (teeth.length == 0) {
+              salad.consume()
+              return
             }
 
             if (leaves.length >= 3 || rand() < 0.99) {
@@ -214,19 +220,22 @@
               return
             }
 
-            // find letter and hide it temporarily
-            const index = flr(-y / salad.s)
-            const text = salad.text[index]
-            salad.hide(index)
-
-            // spawn leaf
-            const leaf = makeLeaf(text)
-            leaves.push(leaf)
-
-            // stick the leaf in a random tooth
+            // make sure theres a tooth left
             const smile = teeth.filter((t) => t.isClean())
-            const tooth = smile[flr(rand() * smile.length)]
-            tooth.stick(leaf)
+            if (smile.length != 0) {
+              // find letter and hide it temporarily
+              const index = flr(-y / salad.s)
+              const text = salad.text[index]
+              salad.hide(index)
+
+              // spawn leaf
+              const leaf = makeLeaf(text)
+              leaves.push(leaf)
+
+              // stick the leaf in a random tooth
+              const tooth = smile[flr(rand() * smile.length)]
+              tooth.stick(leaf)
+            }
           }
         })
       }
@@ -286,6 +295,10 @@
             // boo
             if (this.i == kNumTeeth - 1 && mFrame > 1000) {
               this.y = 100 + (mFrame - 1000);
+
+              if (this.y > kSize.y) {
+                this.remove()
+              }
             }
 
             if (mFrame % 10 == 0) {
@@ -315,9 +328,29 @@
       }
 
       function makeLeaf(text) {
+        function smpColor() {
+          switch (flr(rand() * 7)) {
+            case 0:
+              return "firebrick"
+            case 1:
+              return "saddlebrown"
+            case 2:
+              return "darkgoldenrod"
+            case 3:
+              return "brown"
+            case 4:
+              return "darkolivegreen"
+            case 5:
+              return "olive"
+            case 6:
+              return "olivedrab"
+          }
+        }
+
         return makeText(text, {
           s: 80.0,
           a: smp.sym(Math.PI * 0.25),
+          color: smpColor(),
           grabbing: false,
           grab() {
             const m = mMouse
@@ -359,6 +392,7 @@
           tx: 0.0,
           ty: 0.0,
           down: false,
+          color: "black",
           ...props,
           hit(x, y) {
             if (this.w == null) {
@@ -425,6 +459,15 @@
         }
       }
 
+      function purgeDestroyed(objs) {
+        for (let i = 0; i < objs.length; i++) {
+          if (objs[i].destroyed) {
+            objs.splice(i, 1)
+            i--
+          }
+        }
+      }
+
       // -- draw --
       let mCtx
 
@@ -483,7 +526,7 @@
         const s = t.s
 
         mCtx.font = `${s}px serif`
-        mCtx.fillStyle = "black"
+        mCtx.fillStyle = t.color
         mCtx.textBaseline = "top"
 
         let x = t.x + t.tx
