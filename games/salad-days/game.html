@@ -5,6 +5,7 @@
       const {
         min,
         pow,
+        sqrt,
         round: rnd,
         floor: flr,
         random: rand,
@@ -12,18 +13,84 @@
 
       // -- types --
       const Types = {
-        Text: 0,
-        Sprite: 1,
+        Empty: 0,
+        Text: 1,
+        Sprite: 2,
       }
 
       // -- bootstrap --
       function Start(id) {
+        initCanvas(document.getElementById(id))
         initAssets(document.getElementById("assets"))
+        initDraw()
         initWorld()
-        initDraw(document.getElementById(id))
         initLoop()
       }
 
+      // -- canvas --
+      const kSize = { x: 512, y: 512 }
+
+      let mCanvas
+      const mMouse = {
+        x: 0.0,
+        y: 0.0,
+        ix: 0.0,
+        iy: 0.0,
+        down: false,
+        pressed: false,
+        dx() {
+          return this.x - this.ix
+        },
+        dy() {
+          return this.y - this.iy
+        },
+      }
+
+      function initCanvas(el) {
+        // configure canvas
+        mCanvas = el
+        mCanvas.setAttribute("width", kSize.x)
+        mCanvas.setAttribute("height", kSize.y)
+
+        // get mouse events
+        mCanvas.addEventListener("mousemove", didMoveMouse)
+        mCanvas.addEventListener("mousedown", didPressMouseButton)
+        mCanvas.addEventListener("mouseup", didReleaseMouseButton)
+        mCanvas.addEventListener("mouseleave", didReleaseMouseButton)
+      }
+
+      // -- c/events
+      function didMoveMouse(evt) {
+        const m = mMouse
+        m.x = evt.offsetX
+        m.y = evt.offsetY
+      }
+
+      function didPressMouseButton(evt) {
+        const m = mMouse
+        m.down = true
+        m.pressed = true
+        m.ix = evt.offsetX
+        m.iy = evt.offsetY
+      }
+
+      function didReleaseMouseButton(evt) {
+        const m = mMouse
+        m.pressed = false
+        m.ix = 0.0
+        m.iy = 0.0
+      }
+
+      // -- assets --
+      let mAssets
+
+      function initAssets(el) {
+        // aggregate assets
+        mAssets = {}
+        for (const asset of el.children) {
+          mAssets[asset.id] = asset
+        }
+      }
       // -- loop --
       const kFramerate = 30
       const kFrameInterval = 1000.0 / kFramerate
@@ -37,22 +104,11 @@
       function loop() {
         update()
         draw()
+        mMouse.down = false
         mFrame += 1
       }
 
-      // -- assets --
-      let mAssets
-
-      function initAssets(el) {
-        // aggregate assets
-        mAssets = {}
-        for (const asset of el.children) {
-          mAssets[asset.id] = asset
-        }
-      }
-
       // -- world --
-      const kSize = { x: 512, y: 512 }
       const kNumTeeth = 16
 
       let mObjects
@@ -60,61 +116,128 @@
       function initWorld() {
         mObjects = []
 
-        addObject(makeTitle())
+        // add infinite salad
+        const salad = makeSalad()
+        spawn(salad)
+
+        // add teeth
+        const teeth = []
         for (let i = 0; i < kNumTeeth; i++) {
-          addObject(makeTooth(i))
+          const tooth = makeTooth(i)
+          teeth.push(tooth)
+          spawn(tooth)
         }
+
+        // add mouth trigger from teeth
+        spawn(makeMouth(salad, teeth))
       }
 
       // -- w/commands
       function update() {
-        for (const obj of mObjects) {
+        updateMany(mObjects)
+      }
+
+      function updateMany(objs) {
+        for (const obj of objs) {
+          if (obj.destroyed) {
+            continue
+          }
+
           if (obj.update != null) {
             obj.update()
+          }
+
+          if (obj.children != null) {
+            updateMany(obj.children)
           }
         }
       }
 
-      function addObject(obj) {
+      function spawn(obj) {
         mObjects.push(obj)
       }
 
-      // -- w/factories
-      function makeTitle() {
+      // -- w/game
+      function makeSalad() {
         const text = "FREESALADFREESALAD"
         const size = 240.0
 
-        // measure height to loop text
-        const h = text.length * size
-        const h2 = h / 2.0
-
         return makeText(text, {
-          size,
           down: true,
+          skip: [],
           x: (kSize.x - 170.0) / 2,
           y: (kSize.y + size),
+          s: size,
+          z: 1,
+          hide(index) {
+            if (this.skip.includes(index)) {
+              return
+            }
+
+            this.skip.push(index)
+          },
+          consume() {
+            if (this.consumed) {
+              return
+            }
+
+            this.consumed = true
+            this.text = "FREESALADFOREVERFREESALADFOREVER"
+          },
           update() {
             // animate text up
             this.y -= 0.8 * kFrameInterval
 
             // loop text once we're below the repeat
+            const h2 = this.text.length * size / 2.0
             if (this.y < -h2) {
               this.y += h2
+              this.skip = []
             }
           }
         })
       }
 
-      function makeText(text, props) {
-        return {
-          type: Types.Text,
-          text: text,
-          x: 0.0,
-          y: 0.0,
-          size: 0.0,
-          down: false,
-          ...props
-        }
+      function makeMouth(salad, teeth) {
+        const leaves = []
+
+        return makeObject(Types.Empty, {
+          update() {
+            purgeDestroyed(teeth)
+            purgeDestroyed(leaves)
+
+            if (teeth.length == 0) {
+              salad.consume()
+              return
+            }
+
+            if (leaves.length >= 3 || rand() < 0.99) {
+              return
+            }
+
+            const y = salad.y
+            if (y > 0) {
+              return
+            }
+
+            // make sure theres a tooth left
+            const smile = teeth.filter((t) => t.isClean())
+            if (smile.length != 0) {
+              // find letter and hide it temporarily
+              const index = flr(-y / salad.s)
+              const text = salad.text[index]
+              salad.hide(index)
+
+              // spawn leaf
+              const leaf = makeLeaf(text)
+              leaves.push(leaf)
+
+              // stick the leaf in a random tooth
+              const tooth = smile[flr(rand() * smile.length)]
+              tooth.stick(leaf)
+            }
+          }
+        })
       }
 
       function makeTooth(i) {
@@ -123,7 +246,8 @@
         const col = i % len
 
         const s = makeSprite("tooth", {
-          a: (row + 1) * Math.PI
+          a: (row + 1) * Math.PI,
+          z: row == 0 ? 2 : 0,
         })
 
         const w = s.w
@@ -149,30 +273,153 @@
 
         return {
           ...s,
-	  i,
+          i,
+          x: animX(),
+          y: animY(),
+          leaf: null,
+          isClean() {
+            return this.leaf == null
+          },
+          stick(leaf) {
+            this.leaf = leaf
+            this.updateLeaf(leaf)
+            this.addChild(leaf)
+          },
+          remove() {
+            this.destroy()
+          },
           update() {
             this.x = animX()
             this.y = animY()
+
+            // boo
+            if (this.i == kNumTeeth - 1 && mFrame > 1000) {
+              this.y = 100 + (mFrame - 1000);
+
+              if (this.y > kSize.y) {
+                this.remove()
+              }
+            }
 
             if (mFrame % 10 == 0) {
               this.tx = smp.sym(0.5)
               this.ty = smp.sym(0.5)
             }
-	    
-	    // boo
-	    if (this.i == kNumTeeth - 1 && mFrame > 1000) {
-	      this.y = 100 + (mFrame - 1000);
-	    }
 
+            const l = this.leaf
+            if (l != null) {
+              this.updateLeaf(l)
+
+              const d = sqrt(l.tx * l.tx + l.ty + l.ty)
+              if (d > 10.0) {
+                this.remove()
+              } else {
+                this.tx += smp.sym(d)
+                this.ty += smp.sym(d)
+              }
+            }
+          },
+          updateLeaf(leaf) {
+            leaf.x = this.x + this.w / 4
+            leaf.y = this.y
+            leaf.z = this.z
           }
         }
+      }
+
+      function makeLeaf(text) {
+        function smpColor() {
+          switch (flr(rand() * 7)) {
+            case 0:
+              return "firebrick"
+            case 1:
+              return "saddlebrown"
+            case 2:
+              return "darkgoldenrod"
+            case 3:
+              return "brown"
+            case 4:
+              return "darkolivegreen"
+            case 5:
+              return "olive"
+            case 6:
+              return "olivedrab"
+          }
+        }
+
+        return makeText(text, {
+          s: 80.0,
+          a: smp.sym(Math.PI * 0.25),
+          color: smpColor(),
+          grabbing: false,
+          grab() {
+            const m = mMouse
+            if (!m.pressed) {
+              this.release()
+              return
+            }
+
+            this.tx = m.dx() * 0.1
+            this.ty = m.dy() * 0.1
+          },
+          release() {
+            this.grabbing = false
+            this.tx = 0.0
+            this.ty = 0.0
+          },
+          update() {
+            const m = mMouse
+            if (m.down && this.hit(m.x, m.y)) {
+              this.grabbing = true
+            }
+
+            if (this.grabbing) {
+              this.grab()
+            }
+          },
+        })
+      }
+
+      // w/primitives
+      function makeText(text, props) {
+        const t = makeObject(Types.Text, {
+          text: text,
+          x: 0.0,
+          y: 0.0,
+          s: 0.0,
+          w: null,
+          a: 0.0,
+          tx: 0.0,
+          ty: 0.0,
+          down: false,
+          color: "black",
+          ...props,
+          hit(x, y) {
+            if (this.w == null) {
+              return false
+            }
+
+            return (
+              x >= this.x &&
+              x <= this.x + this.w &&
+              y >= this.y &&
+              y <= this.y + this.s
+            )
+          }
+        })
+
+        // measure drawn text width for horizontal text
+        if (!t.down) {
+          t.w = mCtx.measureText(t.text).width
+        }
+
+        return t
       }
 
       function makeSprite(name, props) {
         const asset = mAssets[name]
 
-        return {
-          type: Types.Sprite,
+        return makeObject(Types.Sprite, {
           name: name,
           x: 0.0,
           y: 0.0,
@@ -181,39 +428,92 @@
           a: 0.0,
           tx: 0.0,
           ty: 0.0,
+          hide: false,
           ...props
+        })
+      }
+
+      function makeObject(type, props) {
+        return {
+          type: type,
+          z: 0,
+          destroyed: false,
+          ...props,
+          destroy() {
+            this.destroyed = true
+
+            const cs = this.children
+            if (cs != null) {
+              for (const c of cs) {
+                c.destroy()
+              }
+            }
+          },
+          addChild(child) {
+            if (this.children == null) {
+              this.children = []
+            }
+
+            this.children.push(child)
+          }
         }
       }
 
-      function vzero() {
-        return { x: 0, y: 0 }
+      function purgeDestroyed(objs) {
+        for (let i = 0; i < objs.length; i++) {
+          if (objs[i].destroyed) {
+            objs.splice(i, 1)
+            i--
+          }
+        }
       }
 
       // -- draw --
-      let mCanvas
       let mCtx
 
-      function initDraw(el) {
-        // configure canvas
-        mCanvas = el
-        mCanvas.setAttribute("width", kSize.x)
-        mCanvas.setAttribute("height", kSize.y)
-
-        // grab ref to drawing context
+      function initDraw() {
         mCtx = mCanvas.getContext("2d")
       }
 
       // -- d/commands
       function draw() {
         drawBackground();
+        drawMany(mObjects)
+      }
 
-        for (const obj of mObjects) {
-          switch (obj.type) {
-            case Types.Text:
-              drawText(obj); break
-            case Types.Sprite:
-              drawSprite(obj); break
+      function drawMany(objs) {
+        let z = 0
+        let zMax = 0
+
+        do {
+          for (const obj of objs) {
+            if (obj.z > zMax) {
+              zMax = obj.z
+            }
+
+            if (obj.z == z) {
+              drawOne(obj)
+            }
           }
+
+          z += 1
+        } while (z <= zMax)
+      }
+
+      function drawOne(obj) {
+        if (obj.destroyed) {
+          return
+        }
+
+        switch (obj.type) {
+          case Types.Text:
+            drawText(obj); break
+          case Types.Sprite:
+            drawSprite(obj); break
+        }
+
+        if (obj.children != null) {
+          drawMany(obj.children)
         }
       }
 
@@ -223,19 +523,31 @@
       }
 
       function drawText(t) {
-        mCtx.fillStyle = "black"
-        mCtx.font = `${t.size}px serif`
+        const s = t.s
 
-        let x = t.x
-        let y = t.y + t.size
+        mCtx.font = `${s}px serif`
+        mCtx.fillStyle = t.color
+        mCtx.textBaseline = "top"
 
-        if (!t.down) {
-          mCtx.fillText(t.text, x, y)
-        } else {
+        let x = t.x + t.tx
+        let y = t.y + t.ty
+
+        if (t.down) {
+          let i = 0
           for (const char of t.text) {
-            mCtx.fillText(char, x, y)
-            y += t.size
+            if (t.skip == null || !t.skip.includes(i)) {
+              mCtx.fillText(char, x, y)
+            }
+
+            y += s
+            i += 1
           }
+        } else if (t.a != 0) {
+          drawRotated(t.a, x, y, t.w, s, (x, y) => {
+            mCtx.fillText(t.text, x, y)
+          })
+        } else {
+          mCtx.fillText(t.text, x, y)
         }
       }
 
@@ -247,17 +559,27 @@
         if (s.a == 0.0) {
           mCtx.drawImage(asset, x, y, s.w, s.h)
         } else {
-          const w2 = s.w / 2
-          const h2 = s.h / 2
-          const cx = x + w2
-          const cy = y + h2
-
-          mCtx.translate(cx, cy);
-          mCtx.rotate(s.a);
-          mCtx.drawImage(asset, -w2, -h2, s.w, s.h);
-          mCtx.rotate(-s.a);
-          mCtx.translate(-cx, -cy);
+          drawRotated(s.a, x, y, s.w, s.h, (x, y) => {
+            mCtx.drawImage(asset, x, y, s.w, s.h);
+          })
         }
+      }
+
+      function drawRotated(a, x, y, w, h, draw) {
+        if (a < 0) {
+          a = 2 * Math.PI + a
+        }
+
+        const w2 = w / 2
+        const h2 = h / 2
+        const cx = x + w2
+        const cy = y + h2
+
+        mCtx.translate(cx, cy);
+        mCtx.rotate(a);
+        draw(-w2, -h2)
+        mCtx.rotate(-a);
+        mCtx.translate(-cx, -cy);
       }
 
       // -- helpers --
