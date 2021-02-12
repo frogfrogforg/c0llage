@@ -1,5 +1,9 @@
 <head>
     <style>
+        body {
+          background-color: blue;
+        }
+
         .modal{
             background-color: rbga(0,0,0,0.4);
             width:300px;
@@ -29,6 +33,11 @@
             text-align:center;
             padding:20px;
         }
+
+        .modal-body iframe {
+          width: 420px;
+          height: 420px;
+        }
     </style>
 </head>
 
@@ -38,7 +47,8 @@
             <div class="modal-header">click & drag
             </div>
             <div class="modal-body">
-                <iframe width="420" height="420" src="/games/salad-days/game.html"></iframe>
+                <iframe
+                  src="/games/salad-days/game.html"></iframe>
             </div>
         </div>
     </div>
@@ -48,17 +58,66 @@
             <div class="modal-header">click & drag
             </div>
             <div class="modal-body">
-                <iframe width="420" height="420" src="/fran/free_juice.html"></iframe>
+                <iframe
+                  src="/fran/free_juice.html"></iframe>
             </div>
         </div>
     </div>
 
+    <div id="salada-gratuita" class="modal">
+      <div class ="modal-content">
+        <div class="modal-header">click & drag
+        </div>
+        <div class="modal-body">
+          <iframe
+            src="/mut/salada-gratuita.html"
+            title="Salada Gratuita"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="guttersour" class="modal">
+      <div class ="modal-content">
+        <div class="modal-header">click & drag
+        </div>
+        <div class="modal-body">
+          <iframe
+            src="/games/guttersour/WEB/index.html"
+            title="guttersour"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="tender-morning" class="modal">
+      <div class ="modal-content">
+        <div class="modal-header">click & drag
+        </div>
+        <div class="modal-body">
+          <iframe
+            src="/d/tender morning.html"
+            title="tender morning"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="jen-game-1" class="modal">
+      <div class ="modal-content">
+        <div class="modal-header">click & drag
+        </div>
+        <div class="modal-body">
+          <iframe
+            src="/jenGame1.html"
+            title="jen game 1"></iframe>
+        </div>
+      </div>
+    </div>
+
     <script>
-    // this 
+    // this
     // makes a pop-up div
     var modals = document.getElementsByClassName("modal");
 
-    // this 
+    // this
     // makes the popup draggable
     [].forEach.call(modals, (modal) => dragElement(modal));
 
