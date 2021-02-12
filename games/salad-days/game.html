@@ -281,7 +281,19 @@
               return
             }
 
-            if (leaves.length >= 3 || rand() < 0.96) {
+            // occasionally randomly add green leaves,
+            // or force-add a red leaf when there's a 'drop-in-bucket' event
+
+            var newEvents = window.parent.getEvents("salad-daze");
+            var forceAddRedLeaf = false;
+            console.log(newEvents);
+            newEvents.forEach((event) => {
+              if (event == "drop-in-bucket") {
+                forceAddRedLeaf = true;
+              }
+            });
+
+            if (!forceAddRedLeaf && (leaves.length >= 3 || rand() < 0.96)) {
               return
             }
 
@@ -299,7 +311,11 @@
               salad.hide(index)
 
               // spawn leaf
-              const leaf = makeLeaf(text)
+              var color = undefined; // default random color
+              if (forceAddRedLeaf) {
+                color = "darkred";
+              }
+              const leaf = makeLeaf(text, color)
               leaves.push(leaf)
 
               // stick the leaf in a random tooth
@@ -407,7 +423,7 @@
         }
       }
 
-      function makeLeaf(text) {
+      function makeLeaf(text, color) {
         function smpColor() {
           switch (flr(rand() * 7)) {
             case 0:
@@ -432,7 +448,7 @@
         return makeText(text, {
           s: 80.0,
           a: smp.sym(Math.PI * 0.25),
-          color: smpColor(),
+          color: color || smpColor(),
           grabbing: false,
           grab() {
             this.grabbing = true
