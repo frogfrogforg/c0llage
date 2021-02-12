@@ -280,7 +280,7 @@ function start_ghost () {
 
 // just controls the message (not audio) -- see ghost_playSound for both
 function ghost_say (str_message) {
-  ghost_showThis('id_message')
+  // ghost_showThis('id_message') // disable text box
   txt_message.innerHTML = str_message
   // always re-align message (incase of resize - not important to constantly do)
   message.style.top = String(ghost_returnDocHeight() - 150) + 'px'

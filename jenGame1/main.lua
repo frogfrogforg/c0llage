@@ -1,6 +1,11 @@
+
+
 function love.load()
-    RoombaCatI = love.graphics.newImage("RoombaCat.png")
-    RoombaCat = {image = RoombaCatI, x = 100, y = 100, r = 0, sx = 0.5, sy = 0.5}
+    FreeSaladBg = love.graphics.newImage("FreeSaladBg.png")
+    FreeSaladCharI1 = love.graphics.newImage("FreeSaladChar1.png")
+    FreeSaladCharI2 = love.graphics.newImage("FreeSaladChar2.png")
+    FreeSaladFg = love.graphics.newImage("FreeSaladFg.png")
+    FreeSaladChar = {image = FreeSaladCharI1, x = 0, y = 0, r = 0, sx = 0.55, sy = 0.55}
 end
 
 
@@ -13,10 +18,10 @@ end
 
 function love.mousepressed(x, y, button, istouch, presses)
     if button == 1 then
-        if RoombaCat.x == 100 then
-            RoombaCat.x = 150
-        elseif RoombaCat.x == 150 then
-            RoombaCat.x = 100
+        if FreeSaladChar.image == FreeSaladCharI1 then
+            FreeSaladChar.image = FreeSaladCharI2
+        elseif FreeSaladChar.image == FreeSaladCharI2 then
+            FreeSaladChar.image = FreeSaladCharI1
         end
     end
 end
@@ -24,5 +29,7 @@ end
 
 
 function love.draw()
-    love.graphics.draw(RoombaCat.image, RoombaCat.x, RoombaCat.y, RoombaCat.r, RoombaCat.sx, RoombaCat.sy)
+    love.graphics.draw(FreeSaladBg, 0, 0, 0, 0.55, 0.55);
+    love.graphics.draw(FreeSaladChar.image, FreeSaladChar.x, FreeSaladChar.y, FreeSaladChar.r, FreeSaladChar.sx, FreeSaladChar.sy)
+    love.graphics.draw(FreeSaladFg, 0, 0, 0, 0.55, 0.55);
 end

@@ -1,0 +1,188 @@
+<head>
+    <style>
+        body {
+          background-color: blue;
+        }
+
+        .modal {
+            background-color: rbga(0,0,0,0.4);
+            width:auto;
+            height:auto;
+            display:block;
+            position:absolute;
+            z-index:1;
+            left:50%;
+            top:69px;
+        }
+
+        .modal-content{
+            background-color: #f0faf9;
+            width:auto;
+            margin: 20% auto;
+            border:1px solid black;
+        }
+
+        .modal-header{
+            background-color: grey;
+            height:30px;
+            width:auto;
+            border-bottom: 2px double black;
+        }
+
+        .modal-body{
+            text-align:center;
+            padding:20px;
+        }
+
+        .modal-body iframe {
+          width: 420px;
+          height: 420px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="salad-daze" class="modal" style="left:20px;">
+        <div class ="modal-content">
+            <div class="modal-header">click & drag
+            </div>
+            <div class="modal-body">
+                <iframe
+                  src="../games/salad-days/game.html"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="free-juice" class="modal" style="left:550px;">
+        <div class ="modal-content">
+            <div class="modal-header">click & drag
+            </div>
+            <div class="modal-body">
+                <iframe
+                  src="../fran/free_juice.html"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="frame-aware-demo" class="modal" style="top:100px; left:400px;">
+        <div class ="modal-content">
+            <div class="modal-header">click & drag
+            </div>
+            <div class="modal-body">
+                <iframe
+                  style="width:100px; height:100px"
+                  src="../games/frame-aware-demo.html"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Event management (very rough right now)
+        events = [];
+        eventIndexByCallerId = {}; // keep track of which events each caller has already seen
+
+        function addEvent(event) { // can be any string
+            events.push(event);
+        }
+
+        function getEvents(callerId) {
+            // Return all events if no caller id provided
+            if (callerId === undefined) return events;
+
+            // Otherwise return events that this caller hasn't seen yet
+            var newEventsForCaller;
+            var startIndex = eventIndexByCallerId[callerId];
+            if (startIndex === undefined) {
+                // first time calling, return all events
+                startIndex = 0;
+            } else {
+            }
+            newEventsForCaller = events.slice(startIndex);
+            eventIndexByCallerId[callerId]= events.length;
+            return newEventsForCaller;
+        }
+
+        window.addEvent = addEvent;
+        window.getEvents = getEvents;
+
+        // Other metadata that frames can look at:
+        function getAllFrameMetadata () {
+            var frame = Array.from(document.getElementsByClassName("modal"));
+            return frame.map(metadataFromElement);
+        }
+
+        function getFrameMetadata (frameId) {
+            var el = document.getElementById(frameId);
+            if (!el) return undefined;
+            return metadataFromElement(el);
+        }
+
+        // helper
+        function metadataFromElement(element) {
+            var md = {
+                "id": element.id,
+                "x": element.offsetLeft,
+                "y": element.offsetTop,
+                "height": element.offsetHeight,
+                "width": element.offsetWidth
+            }
+            md.centreX = md.x + md.width/2;
+            md.centreY = md.y + md.height/2;
+            return md;
+        }
+
+        window.getAllFrameMetadata = getAllFrameMetadata;
+        window.getFrameMetadata = getFrameMetadata;
+
+
+        // this
+        // makes a pop-up div
+        var modals = document.getElementsByClassName("modal");
+
+        // this
+        // makes the popup draggable
+        [].forEach.call(modals, (modal) => dragElement(modal)); // todo probably shouldn't use es6
+
+        function dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "-header")) {
+                // if present, the header is where you move the div from
+                document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+            } else {
+                // otherwise, move the div from anywhere inside the div
+                elmnt.onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // get the mouse cursor position at startup
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                // call a function whenever the cursor moves
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // set the element's new position:
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                // stop moving when mouse button is released
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+    </script>
+</body>

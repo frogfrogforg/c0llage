@@ -46,7 +46,7 @@
     <img id="drop" src="img/drop.png">
   </object>
 
-<script type-"text/javascript">
+<script type="text/javascript">
   // this 
   // makes the bucket draggable
   var bucket = document.getElementById("bucket");
@@ -208,6 +208,7 @@ function makeDrop() {
 	this.sound.play();	
 	this.elm.style.visibility = 'hidden';
 	this.active = false;
+  window.parent.addEvent("drop-in-bucket")
       }
 
       // leakleakleakleakleak
