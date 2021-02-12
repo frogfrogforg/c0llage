@@ -1,0 +1,32 @@
+<head>
+    <script>
+        function distanceSq(x1,y1,x2,y2) {
+            var dx = (x2-x1);
+            var dy = (y2-y1);
+            return dx*dx + dy*dy;
+        }
+        function loop() {
+            if (window.parent.getFrameMetadata) {
+                // should probably support doing this as some kind of ondrag callback instead
+                var juice = window.parent.getFrameMetadata('free-juice');
+                var daze = window.parent.getFrameMetadata('salad-daze');
+                var self = window.parent.getFrameMetadata('frame-aware-demo');
+
+                var dazeDistSq = distanceSq(self.centreX, self.centreY, daze.centreX, daze.centreY);
+                var juiceDistSq = distanceSq(self.centreX, self.centreY, juice.centreX, juice.centreY);
+
+                var r = 255/(1 + juiceDistSq/100000);
+                var g = 255/(1 + dazeDistSq/100000);
+                var b = 50;
+
+                document.body.style.background = "rgb("+r+", "+g+", "+b+")";        
+            }
+        }
+        function init() {
+            setInterval(loop, 50);
+        }
+    </script>
+</head>
+
+<body onload="init()">
+</body>
