@@ -1,0 +1,15 @@
+[package]
+name = "ecto"
+version = "0.1.0"
+authors = ["ghost <ghost>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2.70"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = ["console"]
