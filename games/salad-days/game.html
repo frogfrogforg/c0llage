@@ -284,13 +284,15 @@
             // occasionally randomly add green leaves,
             // or force-add a red leaf when there's a 'drop-in-bucket' event
 
-            var newEvents = window.parent.getEvents("salad-daze");
             var forceAddRedLeaf = false;
-            newEvents.forEach((event) => {
-              if (event == "drop-in-bucket") {
-                forceAddRedLeaf = true;
-              }
-            });
+            if (window.parent.getEvents) {
+              var newEvents = window.parent.getEvents("salad-daze");
+              newEvents.forEach((event) => {
+                if (event == "drop-in-bucket") {
+                  forceAddRedLeaf = true;
+                }
+              });
+            }
 
             if (!forceAddRedLeaf && (leaves.length >= 3 || rand() < 0.96)) {
               return
