@@ -183,7 +183,6 @@
       }
 
       // -- drag --
-      const widths = {}
       const move = 0;
       const scale = 1;
 
@@ -213,11 +212,6 @@
 
         // capture target info
         el = target
-
-        // cache initial width
-        if (widths[el.id] == null) {
-          widths[el.id] = el.getBoundingClientRect().width
-        }
 
         // record initial x/y position
         const f = el.getBoundingClientRect()
