@@ -129,12 +129,12 @@ the 1 day marshmallow">
       for (var i = 0; i < scatteredLinks.length; i++) {
         var thisGuy = scatteredLinks[i];
 
-        randomTop = randomizePos(400, winHeight);
-        randomLeft = randomizePos(0, winWidth);
+        randomTop = randomizePos(0, 100);
+        randomLeft = randomizePos(0, 100);
         randomRot = spin(spinRange);
 
-        thisGuy.style.top = randomTop + "px";
-        thisGuy.style.left = randomLeft + "px";
+        thisGuy.style.top = randomTop + "%";
+        thisGuy.style.left = randomLeft + "%";
         thisGuy.style.transform = "rotate(" + randomRot + "deg)";
 
       }
