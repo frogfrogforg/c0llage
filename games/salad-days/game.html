@@ -185,6 +185,7 @@
 
       function initWorld() {
         mObjects = []
+        window.localStorage.teeth = kNumTeeth;
 
         // add infinite salad
         const salad = makeSalad()
@@ -375,6 +376,8 @@
             this.addChild(leaf)
           },
           remove() {
+            console.log(window.localStorage.teeth)
+            window.localStorage.teeth--
             this.destroy()
           },
           update() {

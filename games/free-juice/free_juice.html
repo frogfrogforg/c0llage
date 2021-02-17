@@ -169,7 +169,8 @@ function makeDrop() {
 
 
   // set position
-  let xPos = 300;
+  let xPos = 100 + 25 * window.localStorage.teeth;
+  console.log(xPos)
   let yPos = 100;
   clone.style.left = `${xPos}px`;
   clone.style.top = `${yPos}px`;
@@ -198,7 +199,7 @@ function makeDrop() {
 
 
       if (this.falling) {
-	this.y += 10;
+	this.y += 10 + (20 - window.localStorage.teeth);
       	this.elm.style.top = `${this.y}px`;
       }
 
@@ -208,12 +209,14 @@ function makeDrop() {
 	this.sound.play();	
 	this.elm.style.visibility = 'hidden';
 	this.active = false;
-  window.parent.addEvent("drop-in-bucket")
+  if(window.parent.addEvent) {
+    window.parent.addEvent("drop-in-bucket")
+  }
       }
 
       // leakleakleakleakleak
       if (this.active && !this.falling) {
-	  this.sound.play();	
+	  //this.sound.play();	
       }
 
       // become part of the puddle

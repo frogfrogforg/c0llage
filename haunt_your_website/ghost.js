@@ -89,8 +89,18 @@ function get_randTarg () {
 
 // SOUND
 
+const useOnlyOneAudioFile = true
+const onlyAudioFileName = 'audio/theOnlyGhostAudio.mp3'
+
+function audioName (name) {
+  if (useOnlyOneAudioFile) {
+    return onlyAudioFileName
+  }
+  return name
+}
+
 function play_sleepingMusic () {
-  snd_sleep = new Audio(str_path_ghost + 'audio/AUD_WARMDRYLOOP_01.mp3')
+  snd_sleep = new Audio(str_path_ghost + audioName('audio/AUD_WARMDRYLOOP_01.mp3'))
   snd_sleep.play()
 }
 
@@ -288,7 +298,7 @@ function ghost_playSound (snd_arr, arr_say, str_id) { // lbl = "id_ghost_talk", 
   };
   bool_talking = true
   // start
-  snd_ghost = new Audio(str_path_ghost + 'audio/' + ghost_returnArr(snd_arr) + '.mp3')
+  snd_ghost = new Audio(str_path_ghost + audioName('audio/' + ghost_returnArr(snd_arr) + '.mp3'))
   snd_ghost.play()
   ghost_say(ghost_returnArr(arr_say))
   // talking
@@ -432,7 +442,7 @@ function ghost_init (show_bootup, params) {
     ghost_hideThis('id_bootup')
   }
   // play bootup audio
-  var snd_bootup = new Audio(str_path_ghost + 'audio/AUD_BOOTUP_DEFAULT.mp3')
+  var snd_bootup = new Audio(str_path_ghost + audioName('audio/AUD_BOOTUP_DEFAULT.mp3'))
   snd_bootup.play()
   //
 }

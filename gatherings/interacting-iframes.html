@@ -1,77 +1,73 @@
 <head>
     <style>
         body {
-          background-color: blue;
+            background-color: blue;
         }
 
         .modal {
-            background-color: rbga(0,0,0,0.4);
-            width:auto;
-            height:auto;
-            display:block;
-            position:absolute;
-            z-index:1;
-            left:50%;
-            top:69px;
+            background-color: rbga(0, 0, 0, 0.4);
+            width: auto;
+            height: auto;
+            display: block;
+            position: absolute;
+            z-index: 1;
+            left: 50%;
+            top: 69px;
         }
 
-        .modal-content{
+        .modal-content {
             background-color: #f0faf9;
-            width:auto;
+            width: auto;
             margin: 20% auto;
-            border:1px solid black;
+            border: 1px solid black;
         }
 
-        .modal-header{
+        .modal-header {
             background-color: grey;
-            height:30px;
-            width:auto;
+            height: 30px;
+            width: auto;
             border-bottom: 2px double black;
         }
 
-        .modal-body{
-            text-align:center;
-            padding:20px;
+        .modal-body {
+            text-align: center;
+            padding: 20px;
         }
 
         .modal-body iframe {
-          width: 420px;
-          height: 420px;
+            width: 420px;
+            height: 420px;
         }
     </style>
 </head>
 
 <body>
     <div id="salad-daze" class="modal" style="left:20px;">
-        <div class ="modal-content">
+        <div class="modal-content">
             <div class="modal-header">click & drag
             </div>
             <div class="modal-body">
-                <iframe
-                  src="../games/salad-days/game.html"></iframe>
+                <iframe src="/games/salad-days/game.html"></iframe>
             </div>
         </div>
     </div>
 
     <div id="free-juice" class="modal" style="left:550px;">
-        <div class ="modal-content">
+        <div class="modal-content">
             <div class="modal-header">click & drag
             </div>
             <div class="modal-body">
-                <iframe
-                  src="../games/free-juice/free_juice.html"></iframe>
+                <iframe src="/games/free-juice/free_juice.html"></iframe>
             </div>
         </div>
     </div>
 
     <div id="frame-aware-demo" class="modal" style="top:100px; left:400px;">
-        <div class ="modal-content">
+        <div class="modal-content">
             <div class="modal-header">click & drag
             </div>
             <div class="modal-body">
-                <iframe
-                  style="width:100px; height:100px"
-                  src="../games/frame-aware-demo.html"></iframe>
+                <iframe style="width:100px; height:100px" src="../games/frame-aware-demo.html"></iframe>
             </div>
         </div>
     </div>
@@ -99,7 +95,7 @@
             } else {
             }
             newEventsForCaller = events.slice(startIndex);
-            eventIndexByCallerId[callerId]= events.length;
+            eventIndexByCallerId[callerId] = events.length;
             return newEventsForCaller;
         }
 
@@ -107,12 +103,12 @@
         window.getEvents = getEvents;
 
         // Other metadata that frames can look at:
-        function getAllFrameMetadata () {
+        function getAllFrameMetadata() {
             var frame = Array.from(document.getElementsByClassName("modal"));
             return frame.map(metadataFromElement);
         }
 
-        function getFrameMetadata (frameId) {
+        function getFrameMetadata(frameId) {
             var el = document.getElementById(frameId);
             if (!el) return undefined;
             return metadataFromElement(el);
@@ -127,8 +123,8 @@
                 "height": element.offsetHeight,
                 "width": element.offsetWidth
             }
-            md.centreX = md.x + md.width/2;
-            md.centreY = md.y + md.height/2;
+            md.centreX = md.x + md.width / 2;
+            md.centreY = md.y + md.height / 2;
             return md;
         }
 
