@@ -17,9 +17,16 @@
       height: 100px;
       font-size: 1em;
     }
+	  
+	.scattered{
+		position:absolute;
+		top:auto;
+		left:auto;
+		white-space: nowrap;
+	}
   </style>
   <script>
-    function doGhost() {
+    //function doGhost() {
       ghost_init(false, {
         booHTML: '<iframe src="./games/salad-days/game.html">processes</iframe>',
         talkHTML: '<a href="collective-processes.html">processes</a>',
@@ -43,28 +50,28 @@
 
   <h3> otherthings </h3>
   <br><br><br><br><br><br><br><br><br>
-  <a href="jen.html"> yay </a>
+  <a href="jen.html" class="scattered"> yay </a>
   <br><br><br>
-  <span style="font-size:32;font-family:georgia,serif;"> <a href="d/d.html"><b> d</b> </a></span>
+  <span style="font-size:32;font-family:georgia,serif;"> <a href="d/d.html" class="scattered"><b> d</b> </a></span>
 
 
 
   <br><br><br>
-  <a href="fran/fran.html">fran's campfire</a>
+  <a href="fran/fran.html"class="scattered">fran's campfire</a>
   <br>
-  <a href="games/free-juice/free_juice.html">free juice</a>
+  <a href="games/free-juice/free_juice.html"class="scattered">free juice</a>
   <br><br><br>
 
-  <a href="darwin/darwin.html">✽ ✾ ✿ darwin's zone ✿ ✾ ✽</a>
+  <a href="darwin/darwin.html"class="scattered">✽ ✾ ✿ darwin's zone ✿ ✾ ✽</a>
   <br>
-  <a href="games/guttersour/WEB/index.html">guttersour wip</a>
+  <a href="games/guttersour/WEB/index.html"class="scattered">guttersour wip</a>
   <br><br><br><br><br><br>
 
-  <a href="mut">moooochi</a>
+  <a href="mut"class="scattered">moooochi</a>
   <br><br><br>
 
   <div>
-    <a href="cadavre-exquis.html">
+    <a href="cadavre-exquis.html"class="scattered">
       cadavre
       exquis
     </a>
@@ -77,11 +84,11 @@
   </div>
 
   <br><br><br>
-  <div><a href="./ty.html" timestamp="1612879876">hello</a></div>
-  <div><a href="./games/salad-days/game.html">salad daze</a></div>
+  <div><a href="./ty.html" timestamp="1612879876"class="scattered">hello</a></div>
+  <div><a href="./games/salad-days/game.html"class="scattered">salad daze</a></div>
 
   <br><br><br>
-  <a style="font-family: fantasy; font-size: 24px;" href="./space.html">space</a>
+  <a style="font-family: fantasy; font-size: 24px;" href="./space.html"class="scattered">space</a>
 
   <script>
     // unix time: later() / 1000; iso string: later(14).toISOString()
@@ -91,4 +98,37 @@
       return date
     }
   </script>
+	
+	<!--this scatters the text. yr welcome-->
+<script>
+	//if you totally hate this, you can just remove the "scattered" class from any tag & it'll fit right in again
+	var scatteredLinks = document.getElementsByClassName("scattered");
+	
+	var winWidth = window.innerWidth;
+	var winHeight = window.innerHeight;
+	
+	var spinRange = 69;
+	
+	for (var i=0; i < scatteredLinks.length; i++) {
+		var thisGuy = scatteredLinks[i];
+		
+		randomTop = randomizePos(400, winHeight);
+		randomLeft = randomizePos(0, winWidth);
+		randomRot = spin();
+		
+		thisGuy.style.top = randomTop +"px";
+		thisGuy.style.left = randomLeft +"px";
+		thisGuy.style.transform = "rotate("+randomRot+"deg)";
+		
+	}
+	
+	function randomizePos (min, max) {
+		return Math.random() * (max - min) + min;
+		
+	}
+	
+	function spin(){
+		return (Math.random() - Math.random()) * spinRange;
+	}
+</script>
 </body>
