@@ -120,10 +120,6 @@ Frames = (function () {
       return
     }
 
-    // remove el from active frame
-    frames.appendChild(el)
-    frames.style.pointerEvents = "all"
-
     // re-enable mouse events on iframes
     const iframes = frames.querySelectorAll("iframe")
     for (const iframe of Array.from(iframes)) {

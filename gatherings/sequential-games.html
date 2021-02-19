@@ -55,51 +55,22 @@
 
 <body>
     <section id="frames" class="Frames">
-        <article id="salad-daze" class="Frame" style="left:20px;">
+        <article id="main-frame" class="Frame" style="left:550px;">
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
                 <div class="Frame-body">
-                    <iframe src="../games/salad-days/game.html"></iframe>
+                    <iframe id="alidator" src="/Jen/alidator.html"></iframe>
+                    <iframe id="salada" style="display: none" src="/mut/salada-gratuita.html"></iframe>
                 </div>
                 <div class="Frame-handle"></div>
             </div>
         </article>
 
-        <article id="free-juice" class="Frame" style="left:550px;">
+        <article id="free-juice" style="display: none" class="Frame" style="left:550px;">
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
                 <div class="Frame-body">
-                    <iframe src="../games/free-juice/free_juice.html"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="frame-aware-demo" class="Frame" style="top:100px; left:400px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe style="width:100px; height:100px" src="../games/frame-aware-demo.html"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="free-space" class="Frame" style="top:200px; left:590px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe src="https://v6p9d9t4.ssl.hwcdn.net/html/3371575/WebGL/index.html"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="free-poetry" class="Frame" style="top:270px; left:240px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe src="/external/i-touch-you.html"></iframe>
+                    <iframe src="/games/free-juice/free_juice.html"></iframe>
                 </div>
                 <div class="Frame-handle"></div>
             </div>
@@ -110,6 +81,28 @@
         function main() {
             Frames.Init()
         }
+
+        function loop() {
+            if (window.parent.getEvents) {
+                var newEvents = window.parent.getEvents("cat");
+                newEvents.forEach((event) => {
+                    if (event == "cat") {
+                        document.getElementById("alidator").style.display = "none"
+                        document.getElementById("salada").style.display = "block"
+                    }
+                    if (event == "salada") {
+                        document.getElementById("alidator").style.display = "block"
+                        document.getElementById("salada").style.display = "none"
+                    }
+                    if (event == "juice") {
+                        document.getElementById("free-juice").style.display = "block"
+                    }
+                });
+            }
+            window.requestAnimationFrame(loop)
+        }
+
+        window.requestAnimationFrame(loop)
 
         // Event management (very rough right now)
         events = [];

@@ -1,0 +1,149 @@
+@media all and (max-width:699px){
+.mobile-hide{
+	display:none;
+}
+aside, section.main, nav, nav ul, #cover{
+	width:100%;
+	margin:0;
+}
+#wrapper{
+	margin:0 auto;
+}
+aside{
+	position:static;
+	min-height:0;
+	margin-bottom: 5px;
+	margin-top:10px;
+	padding:0;
+}
+section.main{
+	padding-bottom:75px;
+}
+.list-wrap{
+	width:100%;
+	max-width:100%;
+	margin:0;
+	clear:both;
+}
+.list-wrap ul li span.title{
+	padding-left:0;
+}
+.list-wrap > ul > li{
+	padding-left:0px;
+}
+#toc-wrap{
+	width:70%;
+	margin:0 15%;
+}
+nav ul li, nav ul li a{
+	text-align:center;
+	width:100%;
+	font-size:16pt;
+	margin-bottom:4px;
+}
+li.submit{
+	font-size:12pt;
+	margin-top:12px;
+	margin-bottom:8px;
+}
+li.submit a{
+	font-size:12pt;
+}
+header div img{
+	margin-bottom:15px;
+	width:90%;
+	padding:0 5%;
+}
+.main{
+	margin-bottom:2em;
+}
+#mobile-logo{
+	width:100px;
+	height:100px;
+	margin:-50px auto 0 -50px;
+	padding-left:50%;
+	float:left;
+}
+#mobile-logo a img{
+	width:100%;
+}
+.desktop-hide{
+	display:block;
+}
+
+/* MASTHEAD */
+.editorLeft h2,h3,h4{
+	-webkit-margin-before: 0px;
+	-webkit-margin-after: 0px;
+	margin-bottom: 0px;
+}
+.editorRight h2,h3,h4{
+	-webkit-margin-before: 0px;
+	-webkit-margin-after: 0px;
+	margin-bottom:0px;
+}
+.editorLeft img, .editorRight img{
+	display:block;
+	clear:none;
+	margin:1em auto;
+	float:none;
+}
+.editorLeft h2, .editorRight h2{
+	clear:both;
+	text-align:center;
+	width:100%;
+	
+}
+.editorLeft h3, .editorRight h3{
+	clear:both;
+	text-align:center;
+	width:100%;
+}
+.editorLeft h4, .editorRight h4{
+	clear:both;
+	text-align:center;
+	display:inline-block;
+	width:100%;
+}
+
+/* Writing */
+section.writing article{
+	margin:auto 15px;
+	width:70%;
+}
+footer{
+	width:100%;
+	margin:auto 0;
+	padding:0 0 75px 0;
+}
+footer div.author-image {
+	float:none;
+	margin:-20px auto 0 auto;
+}
+footer div.author-info, footer div.author-info h3 {
+	width:100%;
+	text-align: center;
+}
+
+.author-info p {
+	text-align: left;
+	width:90%;
+	margin:0 5%;
+}
+
+/* ARCHIVE */
+.issue img{
+	float:none;
+	margin:0 auto;
+	display:block;
+}
+.issue h3, .issue em{
+	float:none;
+	text-align:center;
+}
+
+.author-other-works {
+	margin: 5%;
+}
+
+}
