@@ -1,5 +1,14 @@
 <head>
   <title>a de/collage?</title>
+  <meta property="og:title" content="c0llage">
+  <meta property="og:type" content="FROGCUBE">
+  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
+  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
+  <meta property="og:description" content="In 1884, meridian time personnel met
+in Washington to change Forg time.
+First words said was that only 1 day
+could be used on Forg to not change
+the 1 day marshmallow">
   <script src="haunt_your_website/ghost.js"></script>
   <style>
     body {
@@ -58,7 +67,7 @@
   <br><br><br>
   <span style="font-size:32;font-family:georgia,serif;"> <a href="d/d.html" class="scattered"><b> d</b> </a></span>
 
-
+  <a href="./notes/index.html">some notes</a>
 
   <br><br><br>
   <a href="fran/fran.html" class="scattered">fran's campfire</a>
@@ -120,12 +129,12 @@
       for (var i = 0; i < scatteredLinks.length; i++) {
         var thisGuy = scatteredLinks[i];
 
-        randomTop = randomizePos(400, winHeight);
-        randomLeft = randomizePos(0, winWidth);
+        randomTop = randomizePos(0, 100);
+        randomLeft = randomizePos(0, 100);
         randomRot = spin(spinRange);
 
-        thisGuy.style.top = randomTop + "px";
-        thisGuy.style.left = randomLeft + "px";
+        thisGuy.style.top = randomTop + "%";
+        thisGuy.style.left = randomLeft + "%";
         thisGuy.style.transform = "rotate(" + randomRot + "deg)";
 
       }
