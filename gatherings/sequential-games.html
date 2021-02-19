@@ -86,6 +86,12 @@
             if (window.parent.getEvents) {
                 var newEvents = window.parent.getEvents("cat");
                 newEvents.forEach((event) => {
+                    // ctrl+f search for `#LISTEN` to get to this part of the code
+                    // THIS IS THE IMPORTANT PART
+                    // TO ADD NEW EVENTS ADD A NEW IF BLOCK HERE, AS FOLLOWS:
+                    // if (event == <eventName>) {
+                    //// Write code that happens here
+                    //}
                     if (event == "cat") {
                         document.getElementById("alidator").style.display = "none"
                         document.getElementById("salada").style.display = "block"
@@ -97,6 +103,7 @@
                     if (event == "juice") {
                         document.getElementById("free-juice").style.display = "block"
                     }
+
                 });
             }
             window.requestAnimationFrame(loop)
