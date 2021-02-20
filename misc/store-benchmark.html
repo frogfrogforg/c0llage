@@ -1,0 +1,174 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script type="module">
+    // modes
+    const Mode = {
+      InMemory: 1,
+      KeyValueStorage: 2,
+      JsonStorage: 3,
+    }
+
+    // parameters
+    const nLoops = 5
+    const nFrames = 60 * 10
+    const nKeys = 150
+    const nKeyRange = Math.pow(2, 20)
+    const nReads = 10
+    const nWrites = 10
+
+    // props
+    let mMode = Mode.InMemory
+    let mStore = null
+    let mFrame = {}
+    let mKeys = []
+    let mElapsed = {}
+
+    // work
+    function main() {
+      start(Mode.InMemory)
+    }
+
+    function start(mode) {
+      console.log(`starting ${getModeName(mode)}`)
+
+      // update the storage mode
+      mMode = mode
+      mStore = kStores[mode]
+      mElapsed[mode] = 0
+
+      // generate some random keys (numbers < 1000)
+      mKeys = []
+      for (let i = 0; i < nKeys; i++) {
+        const key = `${Math.floor(Math.random() * nKeyRange)}`
+        mKeys.push(key)
+
+        // seed a value so that we start with a dense obj
+        mStore.set(key, Math.random())
+      }
+
+      // start a bunch of "update" loops
+      for (let i = 0; i < nLoops; i++) {
+        mFrame[i] = 0
+        loop(i)
+      }
+    }
+
+    function loop(i) {
+      const start = performance.now()
+
+      // perform some io
+      for (let i = 0; i < nReads; i++) {
+        mStore.get(getKey())
+      }
+
+      for (let i = 0; i < nWrites; i++) {
+        mStore.set(getKey(), Math.random())
+      }
+
+      // aggregate frame timing for mode
+      const end = performance.now()
+      const delta = end - start
+      mElapsed[mMode] += delta
+
+      // update frame for this loop, quiting if necessary
+      if (++mFrame[i] >= nFrames) {
+        finish(i)
+        return
+      }
+
+      requestAnimationFrame(() => loop(i))
+    }
+
+    function finish(i) {
+      console.log(`finished ${getModeName(mMode)} - ${i}`)
+
+      // see if every loop finished
+      for (let i = 0; i < nLoops; i++) {
+        if (mFrame[i] != nFrames) {
+          return
+        }
+      }
+
+      console.log(`finished ${getModeName(mMode)}`)
+
+      // if all done, start the next mode
+      if (mMode != Mode.JsonStorage) {
+        start(mMode + 1)
+      } else {
+        report()
+      }
+
+    }
+
+    function report() {
+      const nLoopFrames = nFrames * nLoops
+
+      console.log("")
+      console.log("-- report --")
+      console.log("-- io frames took < 1ms may be rounded to 0 in firefox -- ")
+      console.log("-- https://developer.mozilla.org/en-US/docs/Web/API/Performance/now -- ")
+      console.log("")
+
+      for (let m = Mode.InMemory; m <= Mode.JsonStorage; m++) {
+        const elapsed = mElapsed[m]
+        const average = elapsed / nLoopFrames
+        console.log(`${getModeName(m)} - elapsed: ${elapsed}ms mean: ${average}ms`)
+      }
+    }
+
+    // helpers
+    // get a random key
+    function getKey() {
+      return mKeys[Math.floor(Math.random() * nKeys)]
+    }
+
+    function getModeName(m) {
+      switch (m) {
+        case Mode.InMemory:
+          return "memory"
+        case Mode.KeyValueStorage:
+          return "keyval"
+        case Mode.JsonStorage:
+          return "jsonst"
+      }
+    }
+
+    // storage apis
+    const kStores = {
+      [Mode.InMemory]: {
+        data: {},
+        get(key) {
+          return this.data[key]
+        },
+        set(key, value) {
+          this.data[key] = value
+        },
+      },
+      [Mode.KeyValueStorage]: {
+        get(key) {
+          return localStorage.getItem(key)
+        },
+        set(key, value) {
+          localStorage.setItem(key, value)
+        },
+      },
+      [Mode.JsonStorage]: {
+        data: {},
+        get(key) {
+          return this.data[key]
+        },
+        set(key, value) {
+          this.data[key] = value
+          localStorage.setItem(key, JSON.stringify(this.data))
+        },
+      }
+    }
+
+    // bootstrap
+    main()
+  </script>
+</body>
+</html>
