@@ -2,6 +2,10 @@
 
 live @ https://frogfrogforg.github.io/c0llage/
 
+## Events
+
+  [This page](Events.md) describes how to use the event system we currently have in place.
+
 ## how 2 haunt
 
 `git config --local user.name "ghost"; git config --local user.email "ghost";`
