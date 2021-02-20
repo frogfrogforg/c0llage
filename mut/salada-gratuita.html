@@ -38,8 +38,8 @@ ROOM 0
 0,k,j,j,j,j,j,j,p,j,p,j,j,j,l,0
 0,k,j,j,j,j,j,j,p,j,p,12,s,t,l,0
 0,k,r,t,j,j,j,j,p,j,p,13,11,u,l,0
-0,k,v,z,p,p,p,p,p,j,p,w,y,x,l,0
-0,k,v,u,j,j,j,j,j,j,p,j,j,j,l,0
+0,k,v,z,p,p,p,p,p,j,p,w,y,x,p,1
+0,k,v,u,j,j,j,j,j,j,j,j,j,j,l,0
 ITM 2 6,5
 ITM 3 2,3
 ITM 3 13,4
@@ -73,15 +73,30 @@ ITM 3 10,4
 ITM 3 6,12
 ITM 3 2,15
 ITM 5 10,6
-ITM 5 15,15
 ITM 5 0,11
 ITM 5 12,0
 ITM 8 12,14
 ITM 9 11,14
 ITM a 11,13
 ITM b 12,13
+ITM c 15,15
+ITM j 15,0
+ITM j 15,4
+ITM j 15,8
+ITM j 15,12
 END spu 3,15
 PAL 0
+
+TIL 1
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+WAL true
 
 TIL 10
 00000000
@@ -371,6 +386,7 @@ TIL w
 00111111
 00000000
 00000000
+WAL true
 
 TIL x
 00000010
@@ -381,6 +397,7 @@ TIL x
 11111100
 00000000
 00000000
+WAL true
 
 TIL y
 00000011
@@ -391,6 +408,7 @@ TIL y
 11111111
 00000000
 00000000
+WAL true
 
 TIL z
 00000010
@@ -696,6 +714,29 @@ ITM b
 10000000
 00010000
 
+ITM c
+00111100
+01000010
+10000001
+11111111
+11111111
+11111111
+01111110
+01111110
+NAME bucket
+DLG bucket
+
+ITM j
+00000000
+00000000
+00000000
+00000000
+00010000
+00000000
+00000000
+00000000
+NAME juice
+
 DLG SPR_1
 You struggle in place to little effect. 
 
@@ -704,6 +745,12 @@ You struggle in place to little effect.
 
 DLG SPR_3
 You struggle in place to little effect.
+
+DLG bucket
+"""
+There's something in there... looks like juice.
+But it's half-frozen, like a slushie.
+"""
 
 DLG sps
 """
@@ -5961,6 +6008,9 @@ function movePlayer(direction) {
 	var end = getEnding( player().room, player().x, player().y );
 	var itmIndex = getItemIndex( player().room, player().x, player().y );
 
+	// move juice
+	moveJuice(player().room);
+
 	// do items first, because you can pick up an item AND go through a door
 	if (itmIndex > -1) {
 		var itm = room[player().room].items[itmIndex];
@@ -6052,6 +6102,27 @@ function getItemIndex( roomId, x, y ) {
 			return i;
 	}
 	return -1;
+}
+
+function moveJuice(roomId) {
+	var juiceId = "j"
+	for (i in room[roomId].items) {
+		var item = room[roomId].items[i];
+		if (item.id == juiceId) {
+			item.y = (item.y + 1)%15; // start from top again when it hits the bottom
+		}
+	}
+
+}
+
+function getItem(roomId, x, y) {
+	for (i in room[roomId].items) {
+		var item = room[roomId].items[i];
+		if (x == item.x && y == item.y) {
+			return item;
+		}
+	}
+	return null;
 }
 
 function getSpriteLeft() { //repetitive?
