@@ -66,6 +66,26 @@
             </div>
         </article>
 
+        <article id="free-tanooki" class="Frame" style="left:200px;">
+            <div class="Frame-content">
+                <div class="Frame-header">click & drag</div>
+                <div class="Frame-body">
+                    <iframe src="../games/free-tanooki"></iframe>
+                </div>
+                <div class="Frame-handle"></div>
+            </div>
+        </article>
+
+        <article id="button" class="Frame" style="left:200px;">
+            <div class="Frame-content">
+                <div class="Frame-header">click & drag</div>
+                <div class="Frame-body">
+                    <button id="pressed-me">PRESS ME</button>
+                </div>
+                <div class="Frame-handle"></div>
+            </div>
+        </article>
+
         <article id="free-juice" style="display: none" class="Frame" style="left:550px;">
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
@@ -78,9 +98,20 @@
     </section>
 
     <script>
+        document.getElementById("pressed-me").onclick = () => {
+            console.log("pressed me")
+            raiseJsEvent("pressed-me")
+        }
+
+        window.top.addEventListener('pressed-me', (event) => {
+            console.log("PRESSED MEEEEEEJk  oo yes")
+        })
+
         function main() {
             Frames.Init()
         }
+
+
 
         function loop() {
             if (window.parent.getEvents) {
@@ -103,6 +134,10 @@
                     if (event == "juice") {
                         document.getElementById("free-juice").style.display = "block"
                     }
+                    if (event == "mario-level-over") {
+                        // TODO: figure out how to stop iframe sound
+                        document.getElementById("free-tanooki").style.display = "none"
+                    }
 
                 });
             }
@@ -115,6 +150,14 @@
         events = [];
         eventIndexByCallerId = {}; // keep track of which events each caller has already seen
 
+        const jsEvents = {}
+
+        function raiseJsEvent(eventName) { // can be any string
+            if (jsEvents[eventName] == null) {
+                jsEvents[eventName] = jsEvents[eventName]
+            }
+            window.top.dispatchEvent(new Event(eventName))
+        }
         function addEvent(event) { // can be any string
             events.push(event);
         }

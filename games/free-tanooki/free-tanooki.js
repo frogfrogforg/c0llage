@@ -61,7 +61,7 @@ function onAnimationFrame () {
 
   currentObjectSet = nes.cpu.load(0x070A) // Changes from 0 to 1 (started level)
   const pipeFrame = nes.cpu.load(0x0510)
-  console.log(pipeFrame + ' ' + lastPipe + ' ' + currentObjectSet)
+  // console.log(pipeFrame + ' ' + lastPipe + ' ' + currentObjectSet)
   if (currentObjectSet === 1 && pipeFrame === 0 && lastPipe > 0 && lastPipe !== 192) {
     if (window.top.addEvent != null) {
       window.top.addEvent('mario-level-over')
@@ -217,3 +217,17 @@ function downloadObjectAsJson (exportObj, exportName) {
 
 document.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
 document.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
+
+window.top.addEventListener('pressed-me', (event) => {
+  nes.buttonDown(1, jsnes.Controller.BUTTON_A)
+  setTimeout(() => nes.buttonUp(1, jsnes.Controller.BUTTON_A), 100)
+  if (currentObjectSet === 0) {
+    nes.buttonDown(1, jsnes.Controller.BUTTON_START)
+    setTimeout(() => nes.buttonUp(1, jsnes.Controller.BUTTON_START), 100)
+  }
+})
+
+window.top.addEventListener('mario-jump', (event) => {
+  nes.buttonDown(jsnes.Controller.BUTTON_A)
+  setTimeout(() => nes.buttonUp(jsnes.Controller.BUTTON_A), 100)
+})
