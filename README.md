@@ -8,16 +8,28 @@ live @ https://frogfrogforg.github.io/c0llage/
 
 ## how 2 haunt
 
-`git config --local user.name "ghost"; git config --local user.email "ghost";`
+To start haunting:
+```
+git config --local user.name "<ghost name>"; git config --local user.email "<ghost name>";
+```
 
-(unhaunt: `git config --local user.name "<your name>"; git config --local user.email "<your email>";`)
+To unhaunt (stop haunting): 
+```
+git config --local user.name "<your name>"; git config --local user.email "<your email>";
+```
 
-I made some aliases for myself, which make it really nice
-`git config --global alias.haunt "!git config --local user.name \"ghost\" && git config --local user.email \"ghost\""`
+You can make some aliases so that you can write only `git haunt` and `git unhaunt` and not have to remember the rest, which make it really nice:
+```sh
+git config --global alias.haunt "!git config --local user.name \"ghost\" && git config --local user.email \"ghost\""
+```
 
-`git config --global alias.unhaunt "!git config --local user.name \"<your name>\" && git config --local user.email \"<your email>\""`
+```sh
+git config --global alias.unhaunt "!git config --local user.name \"<your name>\" && git config --local user.email \"<your email>\""
+```
 
-then you can do `git haunt` and `git unhaunt` and not have to worry about this whole stuff. And also, we could all just be eternally haunting.
+And also, we could all just be eternally haunting, but if we have fixed ghost names it's easier to figure out.
+
+TODO: is there a way to create an alias command that has parameters, so I can change my ghost name more easily?
 
 ## Credits:
 
@@ -26,3 +38,5 @@ then you can do `git haunt` and `git unhaunt` and not have to worry about this w
 [Pippin Barr's](http://www.pippinbarr.com/) [Let's Play: Ancient Greek Punishment Bitsy Demake](https://github.com/pippinbarr/lets-play-ancient-greek-punishment-bitsy-demake)
 
 [Bitsy Hacks](https://github.com/seleb/bitsy-hacks). But more specifically this awesome tool that helps you add the hacks in a nice way: https://ayolland.itch.io/borksy
+
+[jsnes](https://github.com/bfirsh/jsnes) browser snes emulator
