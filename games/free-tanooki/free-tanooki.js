@@ -242,24 +242,25 @@ async function start () {
   // sequence to get to level select
 
   // wait for the initial game load
-  await wait_ms(2500)
+  await wait_ms(5000)
 
   // press start to skip cutscene
   await press_button(jsnes.Controller.BUTTON_START)
 
   // wait for the cutscene skip
-  await wait_ms(800)
+  await wait_ms(2000)
 
   // press start to go to overworld
   await press_button(jsnes.Controller.BUTTON_START)
 
   // wait for the load
-  await wait_ms(4200)
+  await wait_ms(5000)
+  console.log('LOOOADED MARIO')
 
   // go right then up
 
   press_button(jsnes.Controller.BUTTON_RIGHT)
-  await wait_ms(100)
+  await wait_ms(2000)
   press_button(jsnes.Controller.BUTTON_UP)
 }
 
@@ -271,8 +272,8 @@ function Update () {
   // console.log(pipeFrame + ' ' + lastPipe + ' ' + currentObjectSet)
   if (currentObjectSet === 1 && pipeFrame === 0 && lastPipe > 0 && lastPipe !== 192) {
     if (window.top.addEvent != null && !finishedLevel) {
-      window.top.addEvent('mario-level-over')
-      window.top.raiseEvent('mario-level-over')
+      // window.top.addEvent('mario-level-over')
+      window.top.raiseEvent('mario.exitlevel')
       finishedLevel = true
     }
   }
@@ -304,4 +305,21 @@ window.top.addEventListener('pressed-me-up', (event) => {
   if (currentObjectSet === 0) {
     nes.buttonUp(1, jsnes.Controller.BUTTON_START)
   }
+})
+
+let hasBucketControl = false
+window.top.addEventListener('juice.appeared', () => {
+  hasBucketControl = true
+})
+
+window.top.addEventListener('juice.inbucket', () => {
+  if (!hasBucketControl) return
+  nes.buttonUp(1, jsnes.Controller.BUTTON_LEFT)
+  nes.buttonDown(1, jsnes.Controller.BUTTON_RIGHT)
+})
+
+window.top.addEventListener('juice.outbucket', () => {
+  if (!hasBucketControl) return
+  nes.buttonDown(1, jsnes.Controller.BUTTON_LEFT)
+  nes.buttonUp(1, jsnes.Controller.BUTTON_RIGHT)
 })

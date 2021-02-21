@@ -96,73 +96,16 @@
             </div>
         </article>
     </section>
-
     <script>
-        document.getElementById("pressed-me").onpointerdown = () => {
-            raiseEvent("pressed-me-down")
-        }
-
-        document.getElementById("pressed-me").onpointerout = () => {
-            raiseEvent("pressed-me-up")
-        }
-
-        document.getElementById("pressed-me").onpointerup = () => {
-            raiseEvent("pressed-me-up")
-        }
-
-        document.getElementById("pressed-me").onclick = () => {
-            raiseEvent("pressed-me")
-        }
-
-        window.top.addEventListener('pressed-me', (event) => {
-            console.log("PRESSED MEEEEEEJk  oo yes")
-        })
-
-        window.top.addEventListener('alidator.tea', (event) => {
-            document.getElementById("free-tanooki").style.display = "block"
-        })
-
-        function main() {
-            Frames.Init()
-        }
-
-        function loop() {
-            if (window.parent.getEvents) {
-                var newEvents = window.parent.getEvents("cat");
-                newEvents.forEach((event) => {
-                    // ctrl+f search for `#LISTEN` to get to this part of the code
-                    // THIS IS THE IMPORTANT PART
-                    // TO ADD NEW EVENTS ADD A NEW IF BLOCK HERE, AS FOLLOWS:
-                    // if (event == <eventName>) {
-                    //// Write code that happens here
-                    //}
-                    if (event == "cat") {
-                        document.getElementById("alidator").style.display = "none"
-                        document.getElementById("salada").style.display = "block"
-                    }
-                    if (event == "salada") {
-                        document.getElementById("alidator").style.display = "block"
-                        document.getElementById("salada").style.display = "none"
-                    }
-                    if (event == "found-tea") {
-                        document.getElementById("free-tanooki").style.display = "none"
-                    }
-                    if (event == "mario-level-over") {
-                        // TODO: figure out how to stop iframe sound
-                        document.getElementById("free-tanooki").style.display = "none"
-                    }
-                });
-            }
-            window.requestAnimationFrame(loop)
-        }
-
-        window.requestAnimationFrame(loop)
-
-        // Event management (very rough right now)
-        events = [];
-        eventIndexByCallerId = {}; // keep track of which events each caller has already seen
-
         const jsEvents = {}
+
+
+        window.raiseEvent = raiseEvent
+        window.listenEvent = listenEvent
+
+        function listenEvent(eventName, callback) {
+            window.top.addEventListener(eventName, callback)
+        }
 
         function raiseEvent(eventName) { // can be any string
             if (jsEvents[eventName] == null) {
@@ -171,6 +114,68 @@
             console.log(`Raising event: ${eventName}`)
             window.top.dispatchEvent(new Event(eventName))
         }
+    </script>
+    <script>
+        // Button logic
+        document.getElementById('pressed-me').onpointerdown = () => {
+            raiseEvent('pressed-me-down')
+        }
+
+        document.getElementById('pressed-me').onpointerout = () => {
+            raiseEvent('pressed-me-up')
+        }
+
+        document.getElementById('pressed-me').onpointerup = () => {
+            raiseEvent('pressed-me-up')
+        }
+
+        document.getElementById('pressed-me').onclick = () => {
+            raiseEvent('pressed-me')
+        }
+
+        // Event listening
+        // copy the template below to add your own! (you can add anywhere!)
+        window.top.listenEvent('event.name', () => {
+            // Write the code that should happen in response for the event
+        })
+
+        window.top.listenEvent('pressed-me', () => {
+            console.log("Thank you for pressing me")
+        })
+
+        window.top.listenEvent('alidator.tea', () => {
+            document.getElementById('free-tanooki').style.display = 'block'
+        })
+
+        window.top.listenEvent('salada.bucket', () => {
+            document.getElementById('free-juice').style.display = 'block'
+            window.top.raiseEvent('juice.appeared')
+        })
+
+        window.top.listenEvent('alidator.cat', () => {
+            console.log(
+                "ALIDATOR CAT!!!"
+            )
+            document.getElementById("alidator").style.display = "none"
+            document.getElementById("salada").style.display = "block"
+        })
+
+        window.top.listenEvent('salada.end', () => {
+            document.getElementById("alidator").style.display = "block"
+            document.getElementById("salada").style.display = "none"
+        })
+
+        window.top.listenEvent('mario.exitlevel', () => {
+            document.getElementById("free-tanooki").style.display = "none"
+        })
+
+        function main() {
+            Frames.Init()
+        }
+
+        // Event management (very rough right now)
+        events = [];
+        eventIndexByCallerId = {}; // keep track of which events each caller has already seen
 
         function addEvent(event) { // can be any string
             events.push(event);

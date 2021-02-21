@@ -211,6 +211,7 @@ function makeDrop() {
 	this.active = false;
   if(window.parent.addEvent) {
     window.parent.addEvent("drop-in-bucket")
+    window.top.raiseEvent('juice.inbucket')
   }
       }
 
@@ -220,10 +221,12 @@ function makeDrop() {
       }
 
       // become part of the puddle
-      if (this.y > kFloorY) {
+      if (this.y > kFloorY && this.active) {
 	this.falling = false;
+  this.active = false
 	this.elm.style.visibility = 'hidden';
 	this.sound.play();	
+  window.top.raiseEvent('juice.outbucket')
       }
     }
   }
