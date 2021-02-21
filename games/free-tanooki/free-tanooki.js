@@ -1,3 +1,10 @@
+//
+//
+// BIG NOTE GO TO THE END OF THE FILE FOR THE ACTUAL USEFUL STUFF
+//
+//
+
+// #region copied implementation from jsnes mostly and some attempts to write a save state
 var SCREEN_WIDTH = 256
 var SCREEN_HEIGHT = 240
 var FRAMEBUFFER_SIZE = SCREEN_WIDTH * SCREEN_HEIGHT
@@ -48,26 +55,12 @@ function loadJSON (path, success, error) {
 //     err => console.log(err)), 1
 // })
 
-let lastPipe = 0
-let currentObjectSet = 0 // 0 for overworld 1 for level
-const pip = 0
 function onAnimationFrame () {
   window.requestAnimationFrame(onAnimationFrame)
 
   image.data.set(framebuffer_u8)
   canvas_ctx.putImageData(image, 0, 0)
-
-  // http://datacrystal.romhacking.net/wiki/Super_Mario_Bros._3:RAM_map
-
-  currentObjectSet = nes.cpu.load(0x070A) // Changes from 0 to 1 (started level)
-  const pipeFrame = nes.cpu.load(0x0510)
-  // console.log(pipeFrame + ' ' + lastPipe + ' ' + currentObjectSet)
-  if (currentObjectSet === 1 && pipeFrame === 0 && lastPipe > 0 && lastPipe !== 192) {
-    if (window.top.addEvent != null) {
-      window.top.addEvent('mario-level-over')
-    }
-  }
-  lastPipe = pipeFrame
+  Update()
 }
 
 function audio_remain () {
@@ -176,6 +169,7 @@ function nes_init (canvas_id) {
 function nes_boot (rom_data) {
   nes.loadROM(rom_data)
   window.requestAnimationFrame(onAnimationFrame)
+  start()
 }
 
 function nes_load_data (canvas_id, rom_data) {
@@ -215,19 +209,99 @@ function downloadObjectAsJson (exportObj, exportName) {
   downloadAnchorNode.remove()
 }
 
-document.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
-document.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
+// #endregion
 
-window.top.addEventListener('pressed-me', (event) => {
+// ACTUAL USEFUL STUFF
+
+// TODO: set some of this to global state?
+let lastPipe = 0
+let currentObjectSet = 0 // 0 for overworld 1 for level
+let startedLevel = false
+let finishedLevel = false
+
+function wait_frames (x) {
+  return wait_ms(x * 1000 / 60)
+}
+function wait_ms (x) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, x)
+  })
+}
+
+async function press_button (button) {
+  nes.buttonDown(1, button)
+  await wait_ms(1000 / 60)
+  nes.buttonUp(1, button)
+}
+
+async function start () {
+  console.log('HELLO IM MARIO')
+
+  // sequence to get to level select
+
+  // wait for the initial game load
+  await wait_ms(2500)
+
+  // press start to skip cutscene
+  await press_button(jsnes.Controller.BUTTON_START)
+
+  // wait for the cutscene skip
+  await wait_ms(800)
+
+  // press start to go to overworld
+  await press_button(jsnes.Controller.BUTTON_START)
+
+  // wait for the load
+  await wait_ms(4200)
+
+  // go right then up
+
+  press_button(jsnes.Controller.BUTTON_RIGHT)
+  await wait_ms(100)
+  press_button(jsnes.Controller.BUTTON_UP)
+}
+
+function Update () {
+  // http://datacrystal.romhacking.net/wiki/Super_Mario_Bros._3:RAM_map
+
+  currentObjectSet = nes.cpu.load(0x070A) // Changes from 0 to 1 (started level)
+  const pipeFrame = nes.cpu.load(0x0510)
+  // console.log(pipeFrame + ' ' + lastPipe + ' ' + currentObjectSet)
+  if (currentObjectSet === 1 && pipeFrame === 0 && lastPipe > 0 && lastPipe !== 192) {
+    if (window.top.addEvent != null && !finishedLevel) {
+      window.top.addEvent('mario-level-over')
+      window.top.raiseEvent('mario-level-over')
+      finishedLevel = true
+    }
+  }
+
+  if (currentObjectSet === 1 && !startedLevel) {
+    startedLevel = true
+  }
+
+  lastPipe = pipeFrame
+}
+
+// Events
+
+// TODO: remove keyboard input?
+window.top.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
+window.top.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
+
+window.top.addEventListener('pressed-me-down', (event) => {
   nes.buttonDown(1, jsnes.Controller.BUTTON_A)
-  setTimeout(() => nes.buttonUp(1, jsnes.Controller.BUTTON_A), 100)
+  nes.buttonDown(1, jsnes.Controller.BUTTON_UP)
   if (currentObjectSet === 0) {
     nes.buttonDown(1, jsnes.Controller.BUTTON_START)
-    setTimeout(() => nes.buttonUp(1, jsnes.Controller.BUTTON_START), 100)
   }
 })
 
-window.top.addEventListener('mario-jump', (event) => {
-  nes.buttonDown(jsnes.Controller.BUTTON_A)
-  setTimeout(() => nes.buttonUp(jsnes.Controller.BUTTON_A), 100)
+window.top.addEventListener('pressed-me-up', (event) => {
+  nes.buttonUp(1, jsnes.Controller.BUTTON_A)
+  nes.buttonUp(1, jsnes.Controller.BUTTON_UP)
+  if (currentObjectSet === 0) {
+    nes.buttonUp(1, jsnes.Controller.BUTTON_START)
+  }
 })
