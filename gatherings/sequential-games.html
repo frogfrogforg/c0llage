@@ -86,7 +86,7 @@
         <article id="recursive-frame" class="Frame resize-frame-content" style="top:200px; left:50px;">
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
-                <div class="Frame-body recursive-frame-body">
+                <div class="Frame-body">
                     <iframe id="recursive-iframe" src="./sequential-games.html?x=10"></iframe>
                 </div>
                 <div class="Frame-handle"></div>
@@ -145,8 +145,14 @@
     <script>
         // hack to allow the iframe to recurse
         const urlParams = new URLSearchParams(window.location.search);
-        const x = urlParams.get('x');
-        document.getElementById('recursive-iframe').src = "./sequential-games.html?x="+x+"x"
+        const x = urlParams.get('recurse');
+        debugger;
+        if (x) {
+            document.getElementById('recursive-iframe').src = "./sequential-games.html?recurse="+x+"x"
+        } else {
+            // don't show the recursive window
+            document.getElementById('recursive-frame').style.display="none";
+        }
 
         // Button logic
         document.getElementById('pressed-me').onpointerdown = () => {
