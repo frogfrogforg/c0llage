@@ -26,11 +26,11 @@
 
         .Frame-content {
             background-color: #f0faf9;
-            display:flex;
+            display: flex;
             flex-flow: column;
             border: 1px solid black;
-            height:100%;
-            width:100%;
+            height: 100%;
+            width: 100%;
         }
 
         .Frame-header {
@@ -43,12 +43,12 @@
         .Frame-body {
             flex: 1;
             padding: 25px;
-            height:100%;
+            height: 100%;
         }
 
         .Frame-body iframe {
-            width:100%;
-            height:100%;
+            width: 100%;
+            height: 100%;
         }
 
         .Frame-handle {
@@ -61,11 +61,12 @@
         }
 
         #recursive-iframe {
-            --scaleFactor: 0.5; /*scale iframe content by this factor (probably breaks on older browsers)*/
-            width:calc(100%/var(--scaleFactor)) !important;
-            height:calc(100%/var(--scaleFactor)) !important;
-            transform:scale(var(--scaleFactor));
-            transform-origin:top left
+            --scaleFactor: 0.5;
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor)) !important;
+            height: calc(100%/var(--scaleFactor)) !important;
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left
         }
     </style>
 </head>
@@ -87,7 +88,7 @@
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
                 <div class="Frame-body">
-                    <iframe id="recursive-iframe" src="./sequential-games.html?x=10"></iframe>
+                    <iframe id="recursive-iframe" src=""></iframe>
                 </div>
                 <div class="Frame-handle"></div>
             </div>
@@ -147,10 +148,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const x = urlParams.get('recurse');
         if (x) {
-            document.getElementById('recursive-iframe').src = "./sequential-games.html?recurse="+x+"x"
+            document.getElementById('recursive-iframe').src = "./sequential-games.html?recurse=" + x + "x"
         } else {
             // don't show the recursive window
-            document.getElementById('recursive-frame').style.display="none";
+            document.getElementById('recursive-frame').remove()
         }
 
         // Button logic
