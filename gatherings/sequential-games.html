@@ -146,7 +146,6 @@
         // hack to allow the iframe to recurse
         const urlParams = new URLSearchParams(window.location.search);
         const x = urlParams.get('recurse');
-        debugger;
         if (x) {
             document.getElementById('recursive-iframe').src = "./sequential-games.html?recurse="+x+"x"
         } else {
