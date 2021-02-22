@@ -19,11 +19,18 @@
             position: fixed;
             left: 50%;
             top: 69px;
+
+            height: 420px;
+            width: 420px;
         }
 
         .Frame-content {
             background-color: #f0faf9;
+            display:flex;
+            flex-flow: column;
             border: 1px solid black;
+            height:100%;
+            width:100%;
         }
 
         .Frame-header {
@@ -34,12 +41,14 @@
         }
 
         .Frame-body {
-            padding: 20px;
+            flex: 1;
+            padding: 25px;
+            height:100%;
         }
 
         .Frame-body iframe {
-            width: 420px;
-            height: 420px;
+            width:100%;
+            height:100%;
         }
 
         .Frame-handle {
@@ -49,6 +58,14 @@
             right: 0;
             bottom: 0;
             background-color: rebeccapurple;
+        }
+
+        #recursive-iframe {
+            --scaleFactor: 0.5; /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width:calc(100%/var(--scaleFactor)) !important;
+            height:calc(100%/var(--scaleFactor)) !important;
+            transform:scale(var(--scaleFactor));
+            transform-origin:top left
         }
     </style>
 </head>
@@ -66,6 +83,16 @@
             </div>
         </article>
 
+        <article id="recursive-frame" class="Frame resize-frame-content" style="top:200px; left:50px;">
+            <div class="Frame-content">
+                <div class="Frame-header">click & drag</div>
+                <div class="Frame-body recursive-frame-body">
+                    <iframe id="recursive-iframe" src="./sequential-games.html?x=10"></iframe>
+                </div>
+                <div class="Frame-handle"></div>
+            </div>
+        </article>
+
         <article id="free-tanooki" class="Frame" style="top:100px; left:50px; display: none;">
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
@@ -76,7 +103,7 @@
             </div>
         </article>
 
-        <article id="button" class="Frame" style="left:200px;">
+        <article id="button" class="Frame" style="width:200px; height:200px; left:200px;">
             <div class="Frame-content">
                 <div class="Frame-header">click & drag</div>
                 <div class="Frame-body">
@@ -116,6 +143,11 @@
         }
     </script>
     <script>
+        // hack to allow the iframe to recurse
+        const urlParams = new URLSearchParams(window.location.search);
+        const x = urlParams.get('x');
+        document.getElementById('recursive-iframe').src = "./sequential-games.html?x="+x+"x"
+
         // Button logic
         document.getElementById('pressed-me').onpointerdown = () => {
             raiseEvent('pressed-me-down')

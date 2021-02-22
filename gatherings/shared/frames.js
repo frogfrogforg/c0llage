@@ -147,11 +147,10 @@ Frames = (function () {
   }
 
   function onScale(cx, cy) {
-    const inset = 20.0 * 2
-    const dx = cx + ox - x0 - inset
+    var newWidth = cx + ox - x0;
 
-    iframe.style.width = `${dx}px`
-    iframe.style.height = `${dx}px`
+    el.style.width = `${newWidth}px`
+    el.style.height = `${newWidth}px`
   }
 
   // -- export --
