@@ -1,5 +1,4 @@
 <head>
-    <script src="./shared/frames.js"></script>
     <style>
         body {
             position: relative;
@@ -124,26 +123,10 @@
             </div>
         </article>
     </section>
-    <script>
-        const jsEvents = {}
+    <script type="module">
+        import "/core/events.js"
+        import * as Frames from "./shared/Frames.js"
 
-
-        window.raiseEvent = raiseEvent
-        window.listenEvent = listenEvent
-
-        function listenEvent(eventName, callback) {
-            window.top.addEventListener(eventName, callback)
-        }
-
-        function raiseEvent(eventName) { // can be any string
-            if (jsEvents[eventName] == null) {
-                jsEvents[eventName] = jsEvents[eventName]
-            }
-            console.log(`Raising event: ${eventName}`)
-            window.top.dispatchEvent(new Event(eventName))
-        }
-    </script>
-    <script>
         // hack to allow the iframe to recurse
         const urlParams = new URLSearchParams(window.location.search);
         const x = urlParams.get('recurse');
@@ -156,42 +139,42 @@
 
         // Button logic
         document.getElementById('pressed-me').onpointerdown = () => {
-            raiseEvent('pressed-me-down')
+            Events.raise('pressed-me-down')
         }
 
         document.getElementById('pressed-me').onpointerout = () => {
-            raiseEvent('pressed-me-up')
+            Events.raise('pressed-me-up')
         }
 
         document.getElementById('pressed-me').onpointerup = () => {
-            raiseEvent('pressed-me-up')
+            Events.raise('pressed-me-up')
         }
 
         document.getElementById('pressed-me').onclick = () => {
-            raiseEvent('pressed-me')
+            Events.raise('pressed-me')
         }
 
         // Event listening
         // ctrl+f "#listen" to get here on file 'gatherings/sequential-games.html'
         // copy the template below to add your own! (you can add anywhere!)
-        window.top.listenEvent('event.name', () => {
+        Events.listen('event.name', () => {
             // Write the code that should happen in response for the event
         })
 
-        window.top.listenEvent('pressed-me', () => {
+        Events.listen('pressed-me', () => {
             console.log("Thank you for pressing me")
         })
 
-        window.top.listenEvent('alidator.tea', () => {
+        Events.listen('alidator.tea', () => {
             document.getElementById('free-tanooki').style.display = 'block'
         })
 
-        window.top.listenEvent('salada.bucket', () => {
+        Events.listen('salada.bucket', () => {
             document.getElementById('free-juice').style.display = 'block'
-            window.top.raiseEvent('juice.appeared')
+            Events.raise('juice.appeared')
         })
 
-        window.top.listenEvent('alidator.cat', () => {
+        Events.listen('alidator.cat', () => {
             console.log(
                 "ALIDATOR CAT!!!"
             )
@@ -199,46 +182,18 @@
             document.getElementById("salada").style.display = "block"
         })
 
-        window.top.listenEvent('salada.end', () => {
+        Events.listen('salada.end', () => {
             document.getElementById("alidator").style.display = "block"
             document.getElementById("salada").style.display = "none"
         })
 
-        window.top.listenEvent('mario.exitlevel', () => {
+        Events.listen('mario.exitlevel', () => {
             document.getElementById("free-tanooki").style.display = "none"
         })
 
         function main() {
-            Frames.Init()
+            Frames.init()
         }
-
-        // Event management (very rough right now)
-        events = [];
-        eventIndexByCallerId = {}; // keep track of which events each caller has already seen
-
-        function addEvent(event) { // can be any string
-            events.push(event);
-        }
-
-        function getEvents(callerId) {
-            // Return all events if no caller id provided
-            if (callerId === undefined) return events;
-
-            // Otherwise return events that this caller hasn't seen yet
-            var newEventsForCaller;
-            var startIndex = eventIndexByCallerId[callerId];
-            if (startIndex === undefined) {
-                // first time calling, return all events
-                startIndex = 0;
-            } else {
-            }
-            newEventsForCaller = events.slice(startIndex);
-            eventIndexByCallerId[callerId] = events.length;
-            return newEventsForCaller;
-        }
-
-        window.addEvent = addEvent;
-        window.getEvents = getEvents;
 
         // Other metadata that frames can look at:
         function getAllFrameMetadata() {

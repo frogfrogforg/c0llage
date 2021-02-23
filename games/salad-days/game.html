@@ -1,6 +1,8 @@
 <head>
-  <script type="text/javascript">
-    SaladDaze = (() => {
+  <script type="module">
+    import "/core/events.js"
+
+    window.SaladDaze = (() => {
       // -- "imports" --
       const {
         min,
@@ -272,6 +274,12 @@
       function makeMouth(salad, teeth) {
         const leaves = []
 
+        // force-add a red leaf when there's a "juice.inbucket" event
+        let forceAddRedLeaf = false
+        Events.listen("juice.inbucket", () => {
+          forceAddRedLeaf = true
+        })
+
         return makeObject(Types.Empty, {
           update() {
             purgeDestroyed(teeth)
@@ -282,19 +290,7 @@
               return
             }
 
-            // occasionally randomly add green leaves,
-            // or force-add a red leaf when there's a 'drop-in-bucket' event
-
-            var forceAddRedLeaf = false;
-            if (window.parent.getEvents) {
-              var newEvents = window.parent.getEvents("salad-daze");
-              newEvents.forEach((event) => {
-                if (event == "drop-in-bucket") {
-                  forceAddRedLeaf = true;
-                }
-              });
-            }
-
+            // randomly add leaves
             if (!forceAddRedLeaf && (leaves.length >= 3 || rand() < 0.96)) {
               return
             }
@@ -315,8 +311,10 @@
               // spawn leaf
               var color = undefined; // default random color
               if (forceAddRedLeaf) {
-                color = "darkred";
+                color = "darkred"
+                forceAddRedLeaf = false
               }
+
               const leaf = makeLeaf(text, color)
               leaves.push(leaf)
 
@@ -350,6 +348,7 @@
         function animY() {
           const curve = crv.quad(mFrame % 30, 30)
 
+          let scale
           if (row == 0) {
             scale = 25.0 + curve * 5.0
           } else {

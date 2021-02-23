@@ -12,6 +12,7 @@
 
 	<title>My Bitsy Game By Me</title>
 
+  <script src="/core/events.js"></script>
 	<script type="text/bitsyGameData" id="exportedGameData">
 Prometheus (Let the eagle eat your liver.)
 
@@ -739,7 +740,7 @@ ITM j
 NAME juice
 
 DLG SPR_1
-You struggle in place to little effect. 
+You struggle in place to little effect.
 
 DLG SPR_2
 You struggle in place to little effect.
@@ -751,7 +752,7 @@ DLG bucket
 """
 There's something in there... looks like juice.
 But it's half-frozen, like a slushie.
-(js "window.top.raiseEvent('salada.bucket')")
+(js "Events.raise('salada.bucket')")
 """
 
 DLG sps
@@ -779,17 +780,16 @@ NAME eagle dialog
 
 DLG spu
 """
-(js "window.parent.addEvent('salada')")
-(js "window.top.raiseEvent('salada.end')")
+(js "Events.raise('salada.end')")
 {
   - hungry == true ?
      You are hungry...
   - else ?
     {end}
     You are glad you are back home.
-    
+
     It's warm, the fire is on.
-    
+
     You're thankful for the house.
 }
 """
@@ -891,7 +891,7 @@ true
 		// source : http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
 		/* accepts parameters
 		 * h  Object = {h:x, s:y, v:z}
-		 * OR 
+		 * OR
 		 * h, s, v
 		*/
 		function HSVtoRGB(h, s, v) {
@@ -921,7 +921,7 @@ true
 
 		/* accepts parameters
 		 * r  Object = {r:x, g:y, b:z}
-		 * OR 
+		 * OR
 		 * r, g, b
 		*/
 		function RGBtoHSV(r, g, b) {
@@ -2640,7 +2640,7 @@ true
 						var shouldIndentCodeBlock = i > 0 && curNodeIsNonInlineCode;
 						var shouldIndentAfterCodeBlock = prevNodeIsNonInlineCode;
 
-						// need to insert a newline before the first block of non-inline code that isn't 
+						// need to insert a newline before the first block of non-inline code that isn't
 						// preceded by a {br}, since those will create their own newline
 						if (i > 0 && curNodeIsNonInlineCode && !prevNodeIsNonInlineCode && !shouldIndentAfterLinebreak) {
 							str += "\n";
@@ -3348,7 +3348,7 @@ true
 					interleaved with bracketed code nodes for functions and flow control,
 					such as text effects {shk} {wvy} or sequences like {cycle} and {shuffle}.
 					The parsing of those code blocks is handled by ParseCode.
-			
+
 					Note on parsing newline characters:
 					- there should be an implicit linebreak {br} after each dialog line
 					- a "dialog line" is defined as any line that either:
@@ -3356,7 +3356,7 @@ true
 						- 2) is entirely empty (no text, no code)
 						- *or* 3) contains a list block (sequence, cycle, shuffle, or conditional)
 					- lines *only* containing {code} blocks are not dialog lines
-			
+
 					NOTE TO SELF: all the state I'm storing in here feels like
 					evidence that the parsing system kind of broke down at this point :(
 					Maybe it would feel better if I move into the "state" object
@@ -3426,7 +3426,7 @@ true
 							addCodeNodeToList();
 						}
 						else if (state.MatchAhead(Sym.Linebreak)) { // process new line
-							// add any buffered text to a print node, 
+							// add any buffered text to a print node,
 							// and add a linebreak if we are between two dialog lines
 							tryAddTextNodeToList();
 							tryAddLinebreakNodeToList();
@@ -3606,11 +3606,11 @@ true
 					- sequence: each child node evaluated once in order
 					- cycle: repeats from the beginning after all nodes evaluate
 					- shuffle: evaluate in a random order
-			
+
 					Each item in a sequence is sepearated by a "-" character.
 					The seperator must come at the beginning of the line,
 					but may be preceded by whitespace (in any amount).
-			
+
 					About whitespace: Whitespace at the start of a line
 					is ignored if it less than or equal to the count of
 					whitespace that preceded the list separator ("-") at
@@ -4695,7 +4695,7 @@ true
 						buffer.splice(buffer.length - 1, 1);
 					}
 
-					//finish up 
+					//finish up
 					lastPage = buffer[buffer.length - 1];
 					lastRow = lastPage[lastPage.length - 1];
 					if (lastRow.length > 0) {
@@ -5447,7 +5447,7 @@ true
 
 			update_interval = setInterval(update, 16);
 
-			if (startWithTitle) { // used by editor 
+			if (startWithTitle) { // used by editor
 				startNarrating(getTitle());
 			}
 		}
@@ -9626,16 +9626,16 @@ CHAR 9835
 		@version 15.4.2
 		@requires Bitsy Version: 4.5, 4.6
 		@author Sean S. LeBlanc
-		
+
 		@description
 		Lets you execute arbitrary JavaScript from dialog (including inside conditionals).
 		If you're familiar with the Bitsy source, this will let you write one-shot hacks
 		for a wide variety of situations.
-		
+
 		Usage:
 			(js "<JavaScript code to evaluate after dialog is closed>")
 			(jsNow "<JavaScript code to evaluate immediately>")
-		
+
 		Examples:
 			move a sprite:
 			(js "sprite['a'].x = 10;")
@@ -9645,16 +9645,16 @@ CHAR 9835
 			(js "room[curRoom].items.push({id:'0',x:player().x+1,y:player().y});")
 			verbose facsimile of exit-from-dialog:
 			(js "var _onExitDialog=onExitDialog;onExitDialog=function(){player().room=curRoom='3';_onExitDialog.apply(this,arguments);onExitDialog=_onExitDialog;};")
-		
+
 		HOW TO USE:
 		1. Copy-paste into a script tag after the bitsy source
 		2. Add (js "<code>") to your dialog as needed
-		
+
 		NOTE: This uses parentheses "()" instead of curly braces "{}" around function
 					calls because the Bitsy editor's fancy dialog window strips unrecognized
 					curly-brace functions from dialog text. To keep from losing data, write
 					these function calls with parentheses like the examples above.
-		
+
 					For full editor integration, you'd *probably* also need to paste this
 					code at the end of the editor's `bitsy.js` file. Untested.
 		*/
@@ -9718,23 +9718,23 @@ CHAR 9835
 			}
 
 			/**
-			
+
 			@file kitsy-script-toolkit
 			@summary makes it easier and cleaner to run code before and after Bitsy functions or to inject new code into Bitsy script tags
 			@license WTFPL (do WTF you want)
 			@requires Bitsy Version: 4.5, 4.6
 			@author @mildmojo
-			
+
 			@description
 			HOW TO USE:
 				import {before, after, inject, addDialogTag, addDeferredDialogTag} from "./helpers/kitsy-script-toolkit";
-			
+
 				before(targetFuncName, beforeFn);
 				after(targetFuncName, afterFn);
 				inject(searchRegex, replaceString);
 				addDialogTag(tagName, dialogFn);
 				addDeferredDialogTag(tagName, dialogFn);
-			
+
 				For more info, see the documentation at:
 				https://github.com/seleb/bitsy-hacks/wiki/Coding-with-kitsy
 			*/
@@ -10001,10 +10001,10 @@ CHAR 9835
 		@version 15.4.2
 		@requires 7.0
 		@author Sean S. LeBlanc
-		
+
 		@description
 		Prevents certain items from being picked up, but allows them to be walked over and triggers their dialog.
-		
+
 		HOW TO USE:
 		1. Copy-paste this script into a script tag after the bitsy source
 		2. Update the `itemIsPermanent` function below to match your needs
@@ -10085,23 +10085,23 @@ CHAR 9835
 			}
 
 			/**
-			
+
 			@file kitsy-script-toolkit
 			@summary makes it easier and cleaner to run code before and after Bitsy functions or to inject new code into Bitsy script tags
 			@license WTFPL (do WTF you want)
 			@requires Bitsy Version: 4.5, 4.6
 			@author @mildmojo
-			
+
 			@description
 			HOW TO USE:
 				import {before, after, inject, addDialogTag, addDeferredDialogTag} from "./helpers/kitsy-script-toolkit";
-			
+
 				before(targetFuncName, beforeFn);
 				after(targetFuncName, afterFn);
 				inject(searchRegex, replaceString);
 				addDialogTag(tagName, dialogFn);
 				addDeferredDialogTag(tagName, dialogFn);
-			
+
 				For more info, see the documentation at:
 				https://github.com/seleb/bitsy-hacks/wiki/Coding-with-kitsy
 			*/
@@ -10286,11 +10286,11 @@ CHAR 9835
 		@version 15.4.2
 		@requires Bitsy Version: 6.1
 		@author Sean S. LeBlanc
-		
+
 		@description
 		Makes all sprites have transparent backgrounds.
 		i.e. tiles can be seen underneath the player, sprites, and items.
-		
+
 		HOW TO USE:
 		1. Copy-paste this script into a script tag after the bitsy source
 		2. Edit hackOptions below as needed
@@ -10364,23 +10364,23 @@ CHAR 9835
 			}
 
 			/**
-			
+
 			@file kitsy-script-toolkit
 			@summary makes it easier and cleaner to run code before and after Bitsy functions or to inject new code into Bitsy script tags
 			@license WTFPL (do WTF you want)
 			@requires Bitsy Version: 4.5, 4.6
 			@author @mildmojo
-			
+
 			@description
 			HOW TO USE:
 				import {before, after, inject, addDialogTag, addDeferredDialogTag} from "./helpers/kitsy-script-toolkit";
-			
+
 				before(targetFuncName, beforeFn);
 				after(targetFuncName, afterFn);
 				inject(searchRegex, replaceString);
 				addDialogTag(tagName, dialogFn);
 				addDeferredDialogTag(tagName, dialogFn);
-			
+
 				For more info, see the documentation at:
 				https://github.com/seleb/bitsy-hacks/wiki/Coding-with-kitsy
 			*/

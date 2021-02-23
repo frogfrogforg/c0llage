@@ -1,5 +1,4 @@
 <head>
-    <script src="./shared/frames.js"></script>
     <style>
         body {
             position: relative;
@@ -106,38 +105,13 @@
         </article>
     </section>
 
-    <script>
+    <script type="module">
+        import "/core/events.js"
+        import * as Frames from "./shared/Frames.js"
+
         function main() {
-            Frames.Init()
+            Frames.init()
         }
-
-        // Event management (very rough right now)
-        events = [];
-        eventIndexByCallerId = {}; // keep track of which events each caller has already seen
-
-        function addEvent(event) { // can be any string
-            events.push(event);
-        }
-
-        function getEvents(callerId) {
-            // Return all events if no caller id provided
-            if (callerId === undefined) return events;
-
-            // Otherwise return events that this caller hasn't seen yet
-            var newEventsForCaller;
-            var startIndex = eventIndexByCallerId[callerId];
-            if (startIndex === undefined) {
-                // first time calling, return all events
-                startIndex = 0;
-            } else {
-            }
-            newEventsForCaller = events.slice(startIndex);
-            eventIndexByCallerId[callerId] = events.length;
-            return newEventsForCaller;
-        }
-
-        window.addEvent = addEvent;
-        window.getEvents = getEvents;
 
         // Other metadata that frames can look at:
         function getAllFrameMetadata() {

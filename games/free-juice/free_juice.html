@@ -11,7 +11,7 @@
   	left:1000;
   	top:1000;
   }
-  
+
   #bucket{
   	background-color: rbga(0,0,0,0.4);
   	position:absolute;
@@ -46,17 +46,19 @@
     <img id="drop" src="img/drop.png">
   </object>
 
-<script type="text/javascript">
-  // this 
+<script type="module">
+  import "/core/events.js"
+
+  // this
   // makes the bucket draggable
   var bucket = document.getElementById("bucket");
   dragElement(bucket);
-  
+
   function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     // otherwise, move the div from anywhere inside the div
     elmnt.onmousedown = dragMouseDown;
-  
+
     function dragMouseDown(e) {
       e = e || window.event;
       e.preventDefault();
@@ -67,7 +69,7 @@
       // call a function whenever the cursor moves
       document.onmousemove = elementDrag;
     }
-    
+
     function elementDrag(e) {
       e = e || window.event;
       e.preventDefault();
@@ -80,7 +82,7 @@
       elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
       elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
     }
-    
+
     function closeDragElement() {
     // stop moving when mouse button is released
     document.onmouseup = null;
@@ -176,7 +178,7 @@ function makeDrop() {
   clone.style.top = `${yPos}px`;
 
   // prep audio
-  // https://freesound.org/people/Mega-X-stream/sounds/546279/     
+  // https://freesound.org/people/Mega-X-stream/sounds/546279/
   let dripSound = new Audio('audio/drip.wav');
   dripSound.onended = function() {
     dripSound.pause();
@@ -203,21 +205,18 @@ function makeDrop() {
       	this.elm.style.top = `${this.y}px`;
       }
 
-	
+
       // bucket :)
       if (isOverlapping(this.elm, bucket)) {
-	this.sound.play();	
+	this.sound.play();
 	this.elm.style.visibility = 'hidden';
 	this.active = false;
-  if(window.parent.addEvent) {
-    window.parent.addEvent("drop-in-bucket")
-    window.top.raiseEvent('juice.inbucket')
-  }
+  Events.raise("juice.inbucket")
       }
 
       // leakleakleakleakleak
       if (this.active && !this.falling) {
-	  //this.sound.play();	
+	  //this.sound.play();
       }
 
       // become part of the puddle
@@ -225,8 +224,8 @@ function makeDrop() {
 	this.falling = false;
   this.active = false
 	this.elm.style.visibility = 'hidden';
-	this.sound.play();	
-  window.top.raiseEvent('juice.outbucket')
+	this.sound.play();
+  Events.raise('juice.outbucket')
       }
     }
   }
@@ -268,7 +267,7 @@ function renderDrop(d) {
   // d.elm.style.left = `${d.x}px`;
   // d.elm.style.top = `${d.y}px`;
 }
- 
+
 Start();
 
 // https://stackoverflow.com/questions/2440377/javascript-collision-detection
