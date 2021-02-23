@@ -58,7 +58,7 @@ With that you now have the power to write any arbitrary javascript in your bitsy
 
 2. Raise events __after the dialogue is over__
 ```
-(js"window.parent.addEvent('eventName')")
+(js"window.top.raiseEvent('event.name')")
 ```
 ### Unity 
 
