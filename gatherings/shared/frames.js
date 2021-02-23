@@ -3,19 +3,19 @@ Frames = (function () {
   let frames = null
 
   // -- lifetime --
-  function Init() {
+  function Init () {
     // capture elements
-    frames = document.getElementById("frames")
+    frames = document.getElementById('frames')
 
     // drag any frame in the container
     const body = document.body
-    body.addEventListener("mousedown", onMouseDown)
-    body.addEventListener("mousemove", onMouseMove)
-    body.addEventListener("mouseup", onMouseUp)
+    body.addEventListener('pointerdown', onMouseDown)
+    body.addEventListener('pointermove', onMouseMove)
+    body.addEventListener('pointerup', onMouseUp)
 
     // end drag if mouse exits the window
     const html = document.body.parentElement
-    html.addEventListener("mouseout", (evt) => {
+    html.addEventListener('pointerout', (evt) => {
       if (evt.target == html) {
         onMouseUp()
       }
@@ -25,7 +25,7 @@ Frames = (function () {
   // -- events --
   const Ops = {
     Move: 0,
-    Scale: 1,
+    Scale: 1
   }
 
   // the manipulated element
@@ -33,7 +33,7 @@ Frames = (function () {
   // the nested iframe
   let iframe = null
   // the current manipulation
-  let op = Ops.Move;
+  let op = Ops.Move
   // the initial el x-pos
   let x0 = 0.0
   // the initial el y-pos
@@ -43,14 +43,14 @@ Frames = (function () {
   // the initial mouse y-pos
   let my = 0.0
 
-  function onMouseDown(evt) {
-    let target = evt.target
+  function onMouseDown (evt) {
+    const target = evt.target
 
     // determine operation
     const classes = target.classList
-    if (classes.contains("Frame-header")) {
+    if (classes.contains('Frame-header')) {
       op = Ops.Move
-    } else if (classes.contains("Frame-handle")) {
+    } else if (classes.contains('Frame-handle')) {
       op = Ops.Scale
     } else {
       op = null
@@ -62,7 +62,7 @@ Frames = (function () {
 
     // find a frame in the ancestor tree, if any
     el = target
-    while (el != null && !el.classList.contains("Frame")) {
+    while (el != null && !el.classList.contains('Frame')) {
       el = el.parentElement
     }
 
@@ -72,12 +72,12 @@ Frames = (function () {
 
     // prepare the element
     el.style.zIndex = 1
-    iframe = el.querySelector("iframe")
+    iframe = el.querySelector('iframe')
 
     // disable collisions with iframes
-    const iframes = frames.querySelectorAll("iframe")
+    const iframes = frames.querySelectorAll('iframe')
     for (const iframe of Array.from(iframes)) {
-      iframe.style.pointerEvents = "none"
+      iframe.style.pointerEvents = 'none'
     }
 
     // record initial x/y position
@@ -94,11 +94,11 @@ Frames = (function () {
     // start the operation
     switch (op) {
       case Ops.Scale:
-        onScaleStart(f); break;
+        onScaleStart(f); break
     }
   }
 
-  function onMouseMove(evt) {
+  function onMouseMove (evt) {
     if (el == null) {
       return
     }
@@ -109,19 +109,19 @@ Frames = (function () {
 
     switch (op) {
       case Ops.Move:
-        onDrag(cx, cy); break;
+        onDrag(cx, cy); break
       case Ops.Scale:
-        onScale(cx, cy); break;
+        onScale(cx, cy); break
     }
   }
 
-  function onMouseUp() {
+  function onMouseUp () {
     if (el == null) {
       return
     }
 
     // re-enable mouse events on iframes
-    const iframes = frames.querySelectorAll("iframe")
+    const iframes = frames.querySelectorAll('iframe')
     for (const iframe of Array.from(iframes)) {
       iframe.style.pointerEvents = null
     }
@@ -133,7 +133,7 @@ Frames = (function () {
   }
 
   // -- e/drag
-  function onDrag(cx, cy) {
+  function onDrag (cx, cy) {
     el.style.left = `${x0 + cx - mx}px`
     el.style.top = `${y0 + cy - my}px`
   }
@@ -142,12 +142,12 @@ Frames = (function () {
   // the offset between the mouse click and the right edge
   let ox = 0.0
 
-  function onScaleStart(f) {
+  function onScaleStart (f) {
     ox = f.right - mx
   }
 
-  function onScale(cx, cy) {
-    var newWidth = cx + ox - x0;
+  function onScale (cx, cy) {
+    var newWidth = cx + ox - x0
 
     el.style.width = `${newWidth}px`
     el.style.height = `${newWidth}px`
