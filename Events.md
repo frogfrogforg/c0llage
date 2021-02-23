@@ -16,45 +16,30 @@ There are 2 things you can do with events:
 - __Listen__(get): you write code so that when an event happens, the code reacts to it in some way.
 - __Raise__(add): you write code to broadcast that an event has happened causing all the listeners respond.
 
+I (mut) used in sequential-games.html used a pattern I think Darwin suggested in the chat of calling the events with some sort of namespace, like `alidator.tea` `salada.bucket`. Hopefully we might keep some nice pattern like this.
+
 Listening to events
 -------------------
 
-Currently there's not a very straightforward way of listening of events, it's mostly a case by case basis. But you can see the current implementations in [the function loop() in gatherings/sequential-games.html](gatherings/sequential-games.html) and in [salad daze line 289](games/salad-days/game.html).
+THERE IS NOW A WAY TO LISTEN TO EVENTS NICELY.
 
-Particularly [sequential-games.html](gatherings/sequential-games.html), is reacting to events and opening/replacing windows, or executing code in the page containing other games. You can see it in the following code: 
+If your current window has events enabled, or if it's embedded in a page that does  (TODO: move the events code to a separate script to make this easier). The only code you need to add to listen to events is the following:
 
 ```js
-function loop() {
-  if (window.parent.getEvents) {
-    var newEvents = window.parent.getEvents("cat");
-    newEvents.forEach((event) => {
-      // search (ctrl+f) "#LISTEN" to get to this part of the code
-      // THIS IS THE IMPORTANT PART
-      // TO ADD NEW EVENTS ADD A NEW IF BLOCK HERE, AS FOLLOWS:
-      // if (event == <eventName>) {
-        //// Write code that happens here
-      //}
-      if (event == "cat") {
-        document.getElementById("alidator").style.display = "none"
-        document.getElementById("salada").style.display = "block"
-      }
-      if (event == "salada") {
-        document.getElementById("alidator").style.display = "block"
-        document.getElementById("salada").style.display = "none"
-      }
-      if (event == "juice") {
-        document.getElementById("free-juice").style.display = "block"
-      }
-    });
-  }
-  window.requestAnimationFrame(loop)
-}
+// Event listening
+// ctrl+f "#listen" to get here on file 'gatherings/sequential-games.html'
+// copy the template below to add your own! (you can add anywhere!)
+window.top.listenEvent('event.name', () => {
+    // Write the code that should happen in response for the event
+})
 ```
+
+See that part of the code to see how some events currently work. You can also look at `./games/free-tanooki.js` in the end of the file there are some events specific for that game.
 
 Raising events
 --------------
 
-The current way to raise events is to call `window.parent.addEvent("<eventName>")` from the game (that is embedded in the current page). Therefore the challenge is to make being able to execute javascript code in whatever tool we are using for our games to be able to call the events.
+The current way to raise events is to call `window.top.raiseEvent("event.name")` from the game (that is embedded in the current page). Therefore the challenge is to make being able to execute javascript code in whatever tool we are using for our games to be able to call the events.
 
 So far, we have instructions for the following:
   - [Bitsy](#bitsy)
@@ -68,7 +53,7 @@ With that you now have the power to write any arbitrary javascript in your bitsy
 
 1. Raise events __immediately in chat__
 ```
-(jsNow "window.parent.addEvent('eventName')")
+(jsNow "window.top.raiseEvent('event.name')")
 ```
 
 2. Raise events __after the dialogue is over__
