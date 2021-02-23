@@ -16,7 +16,7 @@ There are 2 things you can do with events:
 - __Listen__(get): you write code so that when an event happens, the code reacts to it in some way.
 - __Raise__(add): you write code to broadcast that an event has happened causing all the listeners respond.
 
-I (mut) used in sequential-games.html used a pattern I think Darwin suggested in the chat of calling the events with some sort of namespace, like `alidator.tea` `salada.bucket`. Hopefully we might keep some nice pattern like this.
+> I (mut) used in sequential-games.html used a pattern I think Darwin suggested in the chat of calling the events with some sort of namespace, like `alidator.tea` or `salada.bucket`. Hopefully we might keep some nice pattern like this.
 
 Listening to events
 -------------------
@@ -74,12 +74,12 @@ With that you now have the power to write any arbitrary javascript in your bitsy
 
 1. Raise events __immediately in chat__
 ```
-(jsNow "window.top.Events.raise('event.name')")
+(jsNow "Events.raise('event.name')")
 ```
 
 2. Raise events __after the dialogue is over__
 ```
-(js "window.top.Events.raise('event.name')")
+(js "Events.raise('event.name')")
 ```
 ### Unity
 
