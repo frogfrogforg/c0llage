@@ -122,6 +122,16 @@
                 <div class="Frame-handle"></div>
             </div>
         </article>
+
+        <article id="guttersour" style="display: none; top: 150px" class="Frame">
+            <div class=" Frame-content">
+                <div class="Frame-header">click & drag</div>
+                <div class="Frame-body">
+                    <iframe id="guttersour-iframe" title="guttersour"></iframe>
+                </div>
+                <div class="Frame-handle"></div>
+            </div>
+        </article>
     </section>
     <script type="module">
         import "/core/events.js"
@@ -189,6 +199,16 @@
 
         Events.listen('mario.exitlevel', () => {
             document.getElementById("free-tanooki").style.display = "none"
+        })
+
+        Events.listen('mario.freesalad', () => {
+            console.log("Hello salad")
+            document.getElementById("guttersour-iframe").src = "../games/guttersour/WEB/index.html"
+            console.log("Hello salad load")
+            // TODO: do something to hide unity loader?
+            // make guttersour raise an event on start
+            document.getElementById("guttersour").style.display = "block"
+            console.log("Hello salad show")
         })
 
         function main() {

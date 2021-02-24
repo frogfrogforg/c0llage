@@ -30,7 +30,7 @@ var nes = new jsnes.NES({
   }
 })
 
-function loadJSON(path, success, error) {
+function loadJSON (path, success, error) {
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
     if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -55,7 +55,7 @@ function loadJSON(path, success, error) {
 //     err => console.log(err)), 1
 // })
 
-function onAnimationFrame() {
+function onAnimationFrame () {
   window.requestAnimationFrame(onAnimationFrame)
 
   image.data.set(framebuffer_u8)
@@ -63,11 +63,11 @@ function onAnimationFrame() {
   Update()
 }
 
-function audio_remain() {
+function audio_remain () {
   return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK
 }
 
-function audio_callback(event) {
+function audio_callback (event) {
   var dst = event.outputBuffer
   var len = dst.length
 
@@ -87,7 +87,7 @@ function audio_callback(event) {
 
 let save
 
-function keyboard(callback, event) {
+function keyboard (callback, event) {
   var player = 1
   switch (event.keyCode) {
     case 38: // UP
@@ -102,7 +102,6 @@ function keyboard(callback, event) {
     case 90: // 'z' - azerty
     case 32: // space
       if (currentObjectSet === 1) {
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAA')
         callback(player, jsnes.Controller.BUTTON_A)
       } else {
         console.log('START')
@@ -146,7 +145,7 @@ function keyboard(callback, event) {
   }
 }
 
-function nes_init(canvas_id) {
+function nes_init (canvas_id) {
   var canvas = document.getElementById(canvas_id)
   canvas_ctx = canvas.getContext('2d')
   image = canvas_ctx.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -166,18 +165,18 @@ function nes_init(canvas_id) {
   script_processor.connect(audio_ctx.destination)
 }
 
-function nes_boot(rom_data) {
+function nes_boot (rom_data) {
   nes.loadROM(rom_data)
   window.requestAnimationFrame(onAnimationFrame)
   start()
 }
 
-function nes_load_data(canvas_id, rom_data) {
+function nes_load_data (canvas_id, rom_data) {
   nes_init(canvas_id)
   nes_boot(rom_data)
 }
 
-function nes_load_url(canvas_id, path) {
+function nes_load_url (canvas_id, path) {
   nes_init(canvas_id)
 
   var req = new XMLHttpRequest()
@@ -198,7 +197,7 @@ function nes_load_url(canvas_id, path) {
   req.send()
 }
 
-function downloadObjectAsJson(exportObj, exportName) {
+function downloadObjectAsJson (exportObj, exportName) {
   return // TODO: figure a way to properly save a savestate (hope that people fix jsnes)
   var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj))
   var downloadAnchorNode = document.createElement('a')
@@ -219,10 +218,10 @@ let currentObjectSet = 0 // 0 for overworld 1 for level
 let startedLevel = false
 let finishedLevel = false
 
-function wait_frames(x) {
+function wait_frames (x) {
   return wait_ms(x * 1000 / 60)
 }
-function wait_ms(x) {
+function wait_ms (x) {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve()
@@ -230,13 +229,13 @@ function wait_ms(x) {
   })
 }
 
-async function press_button(button) {
+async function press_button (button) {
   nes.buttonDown(1, button)
   await wait_ms(1000 / 60)
   nes.buttonUp(1, button)
 }
 
-async function start() {
+async function start () {
   console.log('HELLO IM MARIO')
 
   // sequence to get to level select
@@ -264,7 +263,10 @@ async function start() {
   press_button(jsnes.Controller.BUTTON_UP)
 }
 
-function Update() {
+let ypos = 0
+let lastY = 0
+let gotToTop = false
+function Update () {
   // http://datacrystal.romhacking.net/wiki/Super_Mario_Bros._3:RAM_map
 
   currentObjectSet = nes.cpu.load(0x070A) // Changes from 0 to 1 (started level)
@@ -277,9 +279,31 @@ function Update() {
     }
   }
 
+  if (startedLevel) {
+    const curY = nes.cpu.load(0x000A2)
+    let dy = (lastY - curY)
+    if (Math.abs(dy) > 10) {
+      console.log(dy)
+    }
+    if (dy > 128) dy -= 256
+    if (dy < -128) dy += 256
+    ypos += dy
+    console.log('y pos: ' + ypos)
+    lastY = curY
+  }
+
   if (currentObjectSet === 1 && !startedLevel) {
     startedLevel = true
+    lastY = 128
   }
+
+  const xpos = nes.cpu.load(0x00090)
+  if (ypos > 235 && xpos > 150 && xpos < 160 && !gotToTop) {
+    gotToTop = true
+    Events.raise('mario.freesalad')
+  }
+
+  // console.log('xpos = ' + xpos)
 
   lastPipe = pipeFrame
 }
@@ -287,8 +311,8 @@ function Update() {
 // Events
 
 // TODO: remove keyboard input?
-window.top.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
-window.top.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
+// window.top.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
+// window.top.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
 
 Events.listen('pressed-me-down', (event) => {
   nes.buttonDown(1, jsnes.Controller.BUTTON_A)
