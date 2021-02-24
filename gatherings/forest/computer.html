@@ -110,13 +110,13 @@
     </section>
 
     <script type="module">
-        import "/c0llage/core/events.js"
+        import "../../core/events.js"
         import * as Frames from "../shared/frames.js"
 
         // Button logic
         ['forest', 'alidator'].forEach((name) => {
             var frame = document.getElementById(name+"-frame");
-            var icon = document.getElementById(name+"-icon"); 
+            var icon = document.getElementById(name+"-icon");
             icon.onclick = () => {
                 // very hacky sorry
                 if (frame.style.display == "none") {
