@@ -25,9 +25,9 @@ var nes = new jsnes.NES({
   },
   onAudioSample: function (l, r) {
     // TODO: figure out sound
-    // audio_samples_L[audio_write_cursor] = l
-    // audio_samples_R[audio_write_cursor] = r
-    // audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
+    audio_samples_L[audio_write_cursor] = l
+    audio_samples_R[audio_write_cursor] = r
+    audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
   }
 })
 
@@ -160,8 +160,11 @@ function nes_init (canvas_id) {
   framebuffer_u32 = new Uint32Array(buffer)
 
   // Setup audio.
-  var audio_ctx = new window.AudioContext()
-  var script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
+  const audio_ctx = new window.AudioContext()
+  // const source = audio_ctx.createMediaStreamSource(stream)
+  const script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
+  // const biquadFilter = audio_ctx.createBiquadFilter()
+
   script_processor.onaudioprocess = audio_callback
   script_processor.connect(audio_ctx.destination)
 }
