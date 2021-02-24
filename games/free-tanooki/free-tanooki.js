@@ -24,9 +24,10 @@ var nes = new jsnes.NES({
     for (var i = 0; i < FRAMEBUFFER_SIZE; i++) framebuffer_u32[i] = 0xFF000000 | framebuffer_24[i]
   },
   onAudioSample: function (l, r) {
-    audio_samples_L[audio_write_cursor] = l
-    audio_samples_R[audio_write_cursor] = r
-    audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
+    // TODO: figure out sound
+    // audio_samples_L[audio_write_cursor] = l
+    // audio_samples_R[audio_write_cursor] = r
+    // audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
   }
 })
 
