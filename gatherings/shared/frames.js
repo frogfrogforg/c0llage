@@ -1,10 +1,44 @@
 // -- props --
 let frames = null
 
+const tagName = 'draggable-frame'
+
+const frameTemplate = `<article id="$id" class="Frame">
+  <div class="Frame-content">
+    <div class="Frame-header">click & drag</div>
+      <div id="$id-body" class="Frame-body">
+      </div>
+    <div class="Frame-handle"></div>
+  </div>
+</article>
+`
+
 // -- lifetime --
-export function init() {
+function create (id, content) {
+  return frameTemplate.replaceAll('$id', id)
+}
+
+export function init () {
   // capture elements
   frames = document.getElementById('frames')
+
+  // fill custom tags
+  // TODO: make a shared customTag function?
+  // https://code.tutsplus.com/tutorials/extending-the-html-by-creating-custom-tags--cms-28622
+  document.createElement(tagName)
+  const tagInstances = document.getElementsByTagName(tagName)
+  while (tagInstances.length > 0) {
+    const element = tagInstances[0]
+    const content = element.innerHTML
+    const hidden = element.attributes.hidden != null
+
+    if (element.attributes.id) {
+      const id = element.attributes.id.value
+      element.outerHTML = create(id)
+      document.getElementById(`${id}-body`).innerHTML = content
+      document.getElementById(`${id}`).classList.add('Frame-Hidden')
+    }
+  }
 
   // drag any frame in the container
   const body = document.body
@@ -42,7 +76,7 @@ let mx = 0.0
 // the initial mouse y-pos
 let my = 0.0
 
-function onMouseDown(evt) {
+function onMouseDown (evt) {
   const target = evt.target
 
   // determine operation
@@ -97,7 +131,7 @@ function onMouseDown(evt) {
   }
 }
 
-function onMouseMove(evt) {
+function onMouseMove (evt) {
   if (el == null) {
     return
   }
@@ -114,7 +148,7 @@ function onMouseMove(evt) {
   }
 }
 
-function onMouseUp() {
+function onMouseUp () {
   if (el == null) {
     return
   }
@@ -132,7 +166,7 @@ function onMouseUp() {
 }
 
 // -- e/drag
-function onDrag(cx, cy) {
+function onDrag (cx, cy) {
   el.style.left = `${x0 + cx - mx}px`
   el.style.top = `${y0 + cy - my}px`
 }
@@ -141,11 +175,11 @@ function onDrag(cx, cy) {
 // the offset between the mouse click and the right edge
 let ox = 0.0
 
-function onScaleStart(f) {
+function onScaleStart (f) {
   ox = f.right - mx
 }
 
-function onScale(cx, cy) {
+function onScale (cx, cy) {
   var newWidth = cx + ox - x0
 
   el.style.width = `${newWidth}px`

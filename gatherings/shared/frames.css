@@ -1,0 +1,55 @@
+.Frames {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.Frame-Hidden {
+    display: none;
+}
+
+.Frame {
+    z-index: 10;
+    background-color: rbga(0, 0, 0, 0.4);
+    position: fixed;
+    left: 50%;
+    top: 69px;
+    height: 420px;
+    width: 420px;
+}
+
+.Frame-content {
+    background-color: #f0faf9;
+    display: flex;
+    flex-flow: column;
+    border: 1px solid black;
+    height: 100%;
+    width: 100%;
+}
+
+.Frame-header {
+    background-color: grey;
+    height: 30px;
+    border-bottom: 2px double black;
+    user-select: none;
+}
+
+.Frame-body {
+    flex: 1;
+    padding: 25px;
+    height: 100%;
+}
+
+.Frame-body iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.Frame-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 0;
+    bottom: 0;
+    background-color: rebeccapurple;
+}

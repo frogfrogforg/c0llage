@@ -1,7 +1,8 @@
 body {
     padding:0;
-    margin:0;
+    margin: 0;
 }
+
 .hotspot {
 	position: absolute;
     display: block;
