@@ -1,5 +1,6 @@
 use web_sys::{self, CanvasRenderingContext2d, HtmlCanvasElement};
 use wasm_bindgen::prelude::*;
+
 // -- modules --
 mod web;
 mod utils;
@@ -11,8 +12,9 @@ pub struct Ecto {
     world: World,
     canvas: Canvas,
 }
+
 #[wasm_bindgen]
-pub struct Frame {
+pub struct Collider {
     x: i32,
     y: i32,
     w: i32,
@@ -28,6 +30,7 @@ pub struct World {
     w: i32,
     h: i32,
     cells: Vec<Cell>,
+    colliders: Vec<Collider>,
 }
 
 pub struct Cell {
@@ -63,8 +66,12 @@ impl Ecto {
         self.canvas.draw(&self.world);
     }
 
-    pub fn set_frame(&mut self, frame: &Frame) {
-        self.world.set_frame(frame)
+    pub fn reset_colliders(&mut self) {
+        self.world.reset_colliders()
+    }
+
+    pub fn add_collider(&mut self, collider: Collider) {
+        self.world.add_collider(collider)
     }
 }
 
@@ -90,40 +97,52 @@ impl Canvas {
 
         // draw cells
         for c in world.cells() {
+            // TODO: correct drawing
             ctx.set_fill_style(&"rebeccapurple".into());
-            ctx.fill_rect(c.x.into(), c.y.into(), 20.0, 20.0);
+            ctx.fill_rect((c.x - 19).into(), (c.y - 19).into(), 20.0, 20.0);
         }
     }
 }
+
+const W_GRAV: i32 = 5;
 
 impl World {
     // -- lifetime --
     pub fn new(w: i32, h: i32) -> World {
         let cells = vec![
-            Cell::new(0, 0),
+            Cell::new(250, 0),
         ];
 
         World {
             w,
             h,
             cells,
+            colliders: Vec::new(),
         }
     }
 
     // -- commands --
     pub fn update(&mut self) {
         for cell in &mut self.cells {
-            cell.y += 1;
+            // apply grav
+            cell.y += W_GRAV;
+
+            // TODO: better collisions? broad-phase, narrow-phase?
+            for collider in &self.colliders {
+                if collider.contains(cell.x, cell.y) {
+                    // TODO: collision direction
+                    cell.y = collider.y - 1;
+                }
+            }
         }
     }
 
-    pub fn set_frame(&mut self, frame: &Frame) {
-        web_sys::console::log_1(&format!("{0} {1} {2} {3}",
-            frame.x,
-            frame.y,
-            frame.w,
-            frame.h,
-        ).into());
+    pub fn reset_colliders(&mut self) {
+        self.colliders.clear();
+    }
+
+    pub fn add_collider(&mut self, collider: Collider) {
+        self.colliders.push(collider);
     }
 
     // -- queries --
@@ -143,14 +162,29 @@ impl Cell {
 }
 
 #[wasm_bindgen]
-impl Frame {
+impl Collider {
     // -- lifetime --
-    pub fn new(x: i32, y: i32, w: i32, h: i32) -> Frame {
-        Frame {
+    pub fn new(x: i32, y: i32, w: i32, h: i32) -> Collider {
+        Collider {
             x,
             y,
             w,
             h,
         }
+    }
+}
+
+impl Collider {
+    // -- queries --
+    pub fn ymax(&self) -> i32 {
+        self.y + self.h
+    }
+
+    pub fn xmax(&self) -> i32 {
+        self.y + self.w
+    }
+
+    pub fn contains(&self, x: i32, y: i32) -> bool {
+        x >= self.x && x <= self.xmax() && y >= self.y && y <= self.ymax()
     }
 }
