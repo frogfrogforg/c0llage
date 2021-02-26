@@ -19,6 +19,15 @@ function create (id, content) {
   return frameTemplate.replaceAll('$id', id)
 }
 
+export function toggle (id) {
+  const element = document.getElementById(id)
+  if (element.classList.contains(hiddenClassName)) {
+    element.classList.remove(hiddenClassName)
+  } else {
+    element.classList.add(hiddenClassName)
+  }
+}
+
 export function hide (id) {
   document.getElementById(id).classList.add(hiddenClassName)
 }
