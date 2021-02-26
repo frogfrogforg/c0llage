@@ -202,6 +202,35 @@ function isLikeNone(x) {
 }
 /**
 */
+export class Collider {
+
+    static __wrap(ptr) {
+        const obj = Object.create(Collider.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    free() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        wasm.__wbg_collider_free(ptr);
+    }
+    /**
+    * @param {number} x
+    * @param {number} y
+    * @param {number} w
+    * @param {number} h
+    * @returns {Collider}
+    */
+    static new(x, y, w, h) {
+        var ret = wasm.collider_new(x, y, w, h);
+        return Collider.__wrap(ret);
+    }
+}
+/**
+*/
 export class Ecto {
 
     static __wrap(ptr) {
@@ -240,40 +269,18 @@ export class Ecto {
         wasm.ecto_tick(this.ptr);
     }
     /**
-    * @param {Frame} frame
     */
-    set_frame(frame) {
-        _assertClass(frame, Frame);
-        wasm.ecto_set_frame(this.ptr, frame.ptr);
-    }
-}
-/**
-*/
-export class Frame {
-
-    static __wrap(ptr) {
-        const obj = Object.create(Frame.prototype);
-        obj.ptr = ptr;
-
-        return obj;
-    }
-
-    free() {
-        const ptr = this.ptr;
-        this.ptr = 0;
-
-        wasm.__wbg_frame_free(ptr);
+    reset_colliders() {
+        wasm.ecto_reset_colliders(this.ptr);
     }
     /**
-    * @param {number} x
-    * @param {number} y
-    * @param {number} w
-    * @param {number} h
-    * @returns {Frame}
+    * @param {Collider} collider
     */
-    static new(x, y, w, h) {
-        var ret = wasm.frame_new(x, y, w, h);
-        return Frame.__wrap(ret);
+    add_collider(collider) {
+        _assertClass(collider, Collider);
+        var ptr0 = collider.ptr;
+        collider.ptr = 0;
+        wasm.ecto_add_collider(this.ptr, ptr0);
     }
 }
 
@@ -370,6 +377,24 @@ async function init(input) {
     };
     imports.wbg.__wbg_fillRect_fc9267fcb85f10fd = function(arg0, arg1, arg2, arg3, arg4) {
         getObject(arg0).fillRect(arg1, arg2, arg3, arg4);
+    };
+    imports.wbg.__wbg_new_59cb74e423758ede = function() {
+        var ret = new Error();
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_stack_558ba5917b466edd = function(arg0, arg1) {
+        var ret = getObject(arg1).stack;
+        var ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        getInt32Memory0()[arg0 / 4 + 1] = len0;
+        getInt32Memory0()[arg0 / 4 + 0] = ptr0;
+    };
+    imports.wbg.__wbg_error_4bb6c2a97407129a = function(arg0, arg1) {
+        try {
+            console.error(getStringFromWasm0(arg0, arg1));
+        } finally {
+            wasm.__wbindgen_free(arg0, arg1);
+        }
     };
     imports.wbg.__wbg_self_77eca7b42660e1bb = handleError(function() {
         var ret = self.self;

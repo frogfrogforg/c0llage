@@ -1,6 +1,10 @@
-import init, { Ecto, Frame } from "./pkg/ecto.js"
+import init, { Ecto, Collider } from "./pkg/ecto.js"
 
-async function main() {
+// -- constants --
+const kColliderSelector = ".Collider"
+
+// -- commands --
+async function start() {
   const _ = await init() // returns the wasm object
 
   // get window size
@@ -18,10 +22,10 @@ async function main() {
 
   // create game
   const ecto = Ecto.new(cid, w, h)
-  ecto.set_frame(Frame.new(5, 3, 10, 8))
 
   // setup js game loop
   function loop() {
+    syncColliders(ecto)
     ecto.tick()
     requestAnimationFrame(loop)
   }
@@ -35,4 +39,29 @@ async function main() {
   start()
 }
 
-main()
+function syncColliders(ecto) {
+  ecto.reset_colliders()
+  for (const collider of getColliders()) {
+    ecto.add_collider(collider)
+  }
+}
+
+// -- queries --
+function getColliders() {
+  const colliders = []
+
+  // TODO: some way to live observe a cached selector?
+  const els = Array.from(document.querySelectorAll(kColliderSelector))
+  for (const el of els) {
+    colliders.push(Collider.new(
+      el.offsetLeft,
+      el.offsetTop,
+      el.offsetWidth,
+      el.offsetHeight,
+    ))
+  }
+
+  return colliders
+}
+
+start()
