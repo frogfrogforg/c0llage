@@ -23,6 +23,14 @@
                 height: '390',
                 width: '640',
                 videoId: 'R8wrT6J8sNo',
+                playerVars: {
+                    autoplay: 0,
+                    controls: 0,
+                    rel: 0,
+                    fs: 0,
+                    showinfo: 0,
+                    modestbranding: 1
+                },
                 events: {
                     'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
@@ -83,7 +91,7 @@
             <span>Don't be rude, they are using <a href="#" onclick="playVideo()">the
                     computer</a></span>
         </draggable-frame>
-        <draggable-frame id="the-computer" hidden x=40 y=300 width=200 height=200>
+        <draggable-frame id="the-computer" hidden x=1234 y=174 width=600 height=600>
             <div id="youtube-computer-video"></div>
         </draggable-frame>
     </section>
