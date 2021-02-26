@@ -87,6 +87,7 @@ export function init () {
   // end drag if mouse exits the window
   const html = document.body.parentElement
   html.addEventListener('pointerout', (evt) => {
+    evt.preventDefault()
     if (evt.target == html) {
       onMouseUp()
     }
@@ -116,6 +117,7 @@ let my = 0.0
 
 function onMouseDown (evt) {
   const target = evt.target
+  evt.preventDefault()
 
   // determine operation
   const classes = target.classList
@@ -173,6 +175,7 @@ function onMouseMove (evt) {
   if (el == null) {
     return
   }
+  evt.preventDefault()
 
   // apply the operation
   const cx = evt.clientX
@@ -212,14 +215,17 @@ function onDrag (cx, cy) {
 // -- e/scale
 // the offset between the mouse click and the right edge
 let ox = 0.0
+let oy = 0.0
 
 function onScaleStart (f) {
   ox = f.right - mx
+  oy = f.bottom - my
 }
 
 function onScale (cx, cy) {
-  var newWidth = cx + ox - x0
+  const newWidth = cx + ox - x0
+  const newHeight = cy + oy - y0
 
   el.style.width = `${newWidth}px`
-  el.style.height = `${newWidth}px`
+  el.style.height = `${newHeight}px`
 }
