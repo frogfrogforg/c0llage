@@ -1,0 +1,36 @@
+<head>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="../shared/frames.css">
+    <script src="common.js"></script>
+    <script type="module">
+        import * as Frames from "../shared/frames.js"
+        Frames.init()
+        window.Frames = Frames
+    </script>
+    <style>
+        .InvertedFrame {
+            background-color: midnightblue;
+            color: blanchedalmond;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="./images/person_on_computer.png">
+    </img>
+    <a class="hotspot" href="./1.html" style="left: 11.3333px; top: 613px; width: 256px; height: 256px;">
+    </a>
+
+    <a class="hotspot" href="#" onclick="Frames.show('rude')"
+        style="left: 762.333px; top: 291px; width: 127px; height: 127px;">
+    </a>
+
+
+    <section id="frames" class="Frames">
+        <draggable-frame id="rude" hidden x=461 y=60 width=255 height=255 bodyClass="InvertedFrame">
+            <span>Don't be rude, they are using the
+                computer</span>
+        </draggable-frame>
+    </section>
+</body>

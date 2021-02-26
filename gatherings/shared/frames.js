@@ -2,6 +2,7 @@
 let frames = null
 
 const tagName = 'draggable-frame'
+const hiddenClassName = 'Frame-Hidden'
 
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
@@ -16,6 +17,14 @@ const frameTemplate = `<article id="$id" class="Frame">
 // -- lifetime --
 function create (id, content) {
   return frameTemplate.replaceAll('$id', id)
+}
+
+export function hide (id) {
+  document.getElementById(id).classList.add(hiddenClassName)
+}
+
+export function show (id) {
+  document.getElementById(id).classList.remove(hiddenClassName)
 }
 
 export function init () {
@@ -35,8 +44,37 @@ export function init () {
     if (element.attributes.id) {
       const id = element.attributes.id.value
       element.outerHTML = create(id)
-      document.getElementById(`${id}-body`).innerHTML = content
-      document.getElementById(`${id}`).classList.add('Frame-Hidden')
+      const body = document.getElementById(`${id}-body`)
+      body.innerHTML = content
+      // I don't understand why I need to do this??
+      const newElement = document.getElementById(`${id}`)
+      if (hidden) {
+        newElement.classList.add(hiddenClassName)
+      }
+
+      if (element.attributes.x) {
+        newElement.style.left = element.attributes.x.value
+      }
+
+      if (element.attributes.y) {
+        newElement.style.top = element.attributes.y.value
+      }
+
+      if (element.attributes.width) {
+        newElement.style.width = element.attributes.width.value
+      }
+
+      if (element.attributes.height) {
+        newElement.style.height = element.attributes.height.value
+      }
+
+      if (element.attributes.class) {
+        newElement.classList.add(element.attributes.class.value)
+      }
+
+      if (element.attributes.bodyClass) {
+        body.classList.add(element.attributes.bodyClass.value)
+      }
     }
   }
 
