@@ -1,5 +1,10 @@
 <head>
   <title>Narrative Stuff?</title>
+  <style>
+  p {
+      background: #fb8d74;
+   }
+  </style>
 <p>
 
 <p style="font-weight:bold;">font-weight: bold</p>
