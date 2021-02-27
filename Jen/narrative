@@ -1,15 +1,10 @@
 <head>
   <title>Narrative Stuff?</title>
-  <style>
-  p {
-      background: #fb8d74;
-   }
-  </style>
 <p>
 
-<p style="font-weight:bold;">font-weight: bold</p>
+
 Forest:
-<p style="font-weight:normal;">font-weight: normal</p>
+
 You step into the forest. There are two paths
 → You walk forward
     There is a frog
@@ -23,9 +18,9 @@ You step into the forest. There are two paths
 </p>
 
 <p>
-<p style="font-weight:bold;">font-weight: bold</p>
+
 Cyberspace:
-<p style="font-weight:normal;">font-weight: normal</p>
+
 You’re in a forest, and there is a sign in gibberish before you.
 If you follow the sign, you see a long hallway of trees
 Along the sides of this tree hallway, there’s rows upon rows of computers as far as your eye can see
@@ -38,9 +33,9 @@ These animals seem like hardcore gamers, they intimidate you
  If you are done spending time with these animals, you can keep walking along the hallway
 At the end of the hallway is the entrance to the Cosmodrome
 
-<p style="font-weight:bold;">font-weight: bold</p>
+
 Cosmodrome:
-<p style="font-weight:normal;">font-weight: normal</p>
+
 The entrance to the Cosmodrome is made of a large stone that juts towards the sky.
 The stone is full of doors, each one leading to an odd room. There is one door, though, that leads to another hallway.
 The hallway is studded with stars, each floating, glowing, and moving in no apparent pattern. 
