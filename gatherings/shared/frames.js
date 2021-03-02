@@ -2,6 +2,7 @@
 let frames = null
 
 const tagName = 'draggable-frame'
+const hiddenClassName = 'Frame-Hidden'
 
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
@@ -16,6 +17,23 @@ const frameTemplate = `<article id="$id" class="Frame">
 // -- lifetime --
 function create (id, content) {
   return frameTemplate.replaceAll('$id', id)
+}
+
+export function toggle (id) {
+  const element = document.getElementById(id)
+  if (element.classList.contains(hiddenClassName)) {
+    element.classList.remove(hiddenClassName)
+  } else {
+    element.classList.add(hiddenClassName)
+  }
+}
+
+export function hide (id) {
+  document.getElementById(id).classList.add(hiddenClassName)
+}
+
+export function show (id) {
+  document.getElementById(id).classList.remove(hiddenClassName)
 }
 
 export function init () {
@@ -35,8 +53,37 @@ export function init () {
     if (element.attributes.id) {
       const id = element.attributes.id.value
       element.outerHTML = create(id)
-      document.getElementById(`${id}-body`).innerHTML = content
-      document.getElementById(`${id}`).classList.add('Frame-Hidden')
+      const body = document.getElementById(`${id}-body`)
+      body.innerHTML = content
+      // I don't understand why I need to do this??
+      const newElement = document.getElementById(`${id}`)
+      if (hidden) {
+        newElement.classList.add(hiddenClassName)
+      }
+
+      if (element.attributes.x) {
+        newElement.style.left = element.attributes.x.value
+      }
+
+      if (element.attributes.y) {
+        newElement.style.top = element.attributes.y.value
+      }
+
+      if (element.attributes.width) {
+        newElement.style.width = element.attributes.width.value
+      }
+
+      if (element.attributes.height) {
+        newElement.style.height = element.attributes.height.value
+      }
+
+      if (element.attributes.class) {
+        newElement.classList.add(element.attributes.class.value)
+      }
+
+      if (element.attributes.bodyClass) {
+        body.classList.add(element.attributes.bodyClass.value)
+      }
     }
   }
 
@@ -49,6 +96,7 @@ export function init () {
   // end drag if mouse exits the window
   const html = document.body.parentElement
   html.addEventListener('pointerout', (evt) => {
+    evt.preventDefault()
     if (evt.target == html) {
       onMouseUp()
     }
@@ -78,6 +126,7 @@ let my = 0.0
 
 function onMouseDown (evt) {
   const target = evt.target
+  evt.preventDefault()
 
   // determine operation
   const classes = target.classList
@@ -135,6 +184,7 @@ function onMouseMove (evt) {
   if (el == null) {
     return
   }
+  evt.preventDefault()
 
   // apply the operation
   const cx = evt.clientX
@@ -174,14 +224,17 @@ function onDrag (cx, cy) {
 // -- e/scale
 // the offset between the mouse click and the right edge
 let ox = 0.0
+let oy = 0.0
 
 function onScaleStart (f) {
   ox = f.right - mx
+  oy = f.bottom - my
 }
 
 function onScale (cx, cy) {
-  var newWidth = cx + ox - x0
+  const newWidth = cx + ox - x0
+  const newHeight = cy + oy - y0
 
   el.style.width = `${newWidth}px`
-  el.style.height = `${newWidth}px`
+  el.style.height = `${newHeight}px`
 }
