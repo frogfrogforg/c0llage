@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <link href="../tools.css" rel="stylesheet">
+
+  <!-- the list of people in the group -->
+  <script id="people" type="text/plain">
+    d, darwin, fran, jen, mut, ty,
+  </script>
+
+  <style>
+    *:not(:empty) + .Action {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="Main">
+    <a href="../tools.html" class="Back">tools</a>
+    <h1 id="names" class="Names"></h1>
+    <h2 id="limit" class="Limit"></h2>
+    <button id="action" class="Action">start</button>
+  </main>
+  <script type="module" src="./hi.js"></script>
+</body>
+</html>

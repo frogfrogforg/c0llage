@@ -34,6 +34,29 @@ the 1 day marshmallow">
       left: auto;
       white-space: nowrap;
     }
+
+    .Tools {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+    }
+
+    .Tools:hover {
+      animation: 0.5s alternate infinite blink;
+      background-color: magenta;
+    }
+
+    @keyframes blink {
+      from {
+        opacity: 0.0;
+      }
+      to {
+        opacity: 0.5;
+      }
+    }
   </style>
   <script>
     function doGhost() {
@@ -111,6 +134,8 @@ the 1 day marshmallow">
 
   <br><br><br>
   <a style="font-family: fantasy; font-size: 24px;" href="./space.html" class="scattered">space</a>
+
+  <a class="Tools" href="./tools/tools.html"></a>
 
   <script>
     // unix time: later() / 1000; iso string: later(14).toISOString()
