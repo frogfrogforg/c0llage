@@ -24,6 +24,7 @@ features = [
   "CanvasRenderingContext2d",
   "Document",
   "Element",
+  "Event",
   "HtmlCanvasElement",
   "Window",
 ]

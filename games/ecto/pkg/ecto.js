@@ -282,6 +282,13 @@ export class Ecto {
         collider.ptr = 0;
         wasm.ecto_add_collider(this.ptr, ptr0);
     }
+    /**
+    * @param {number} x
+    * @param {number} y
+    */
+    on_click(x, y) {
+        wasm.ecto_on_click(this.ptr, x, y);
+    }
 }
 
 async function load(module, imports) {

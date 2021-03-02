@@ -3,8 +3,12 @@ import init, { Ecto, Collider } from "./pkg/ecto.js"
 // -- constants --
 const kColliderSelector = ".Collider"
 
+// -- props --
+let mEcto
+let mCanvas
+
 // -- commands --
-async function start() {
+async function main() {
   const _ = await init() // returns the wasm object
 
   // get window size
@@ -20,29 +24,38 @@ async function start() {
   c.width = w
   c.height = h
 
-  // create game
-  const ecto = Ecto.new(cid, w, h)
-
-  // setup js game loop
-  function loop() {
-    syncColliders(ecto)
-    ecto.tick()
-    requestAnimationFrame(loop)
-  }
+  // initialize props
+  mEcto = Ecto.new(cid, w, h)
+  mCanvas = c
 
   // start game
-  function start() {
-    ecto.start()
-    loop()
-  }
-
   start()
 }
 
-function syncColliders(ecto) {
-  ecto.reset_colliders()
+// start the game loop
+function start() {
+  mEcto.start()
+  subscribe()
+  loop()
+}
+
+// subscribe to events
+function subscribe() {
+  mCanvas.addEventListener("click", (e) => mEcto.on_click(e.clientX, e.clientY))
+}
+
+// runs one iteration of the game loop
+function loop() {
+  syncColliders()
+  mEcto.tick()
+  requestAnimationFrame(loop)
+}
+
+// synchronizes any collidable element with mEcto
+function syncColliders() {
+  mEcto.reset_colliders()
   for (const collider of getColliders()) {
-    ecto.add_collider(collider)
+    mEcto.add_collider(collider)
   }
 }
 
@@ -64,4 +77,4 @@ function getColliders() {
   return colliders
 }
 
-start()
+main()
