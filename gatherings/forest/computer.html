@@ -49,18 +49,18 @@
     </section>
 
     <div id=" icons" class="icons" style="left:50px; top:50px;">
+        <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
+
         <pc-icon target="alidator-frame" src="./images/alidator-icon.png"></pc-icon>
 
         <pc-icon target="forest-frame" src="./images/forest-icon.png"></pc-icon>
 
         <pc-icon target="main-frame" src="./images/main-icon.png"></pc-icon>
 
-	<a href="./computer.html">
-	  <img class="icon" 
-	       style="left: 666px; top: 420px;"
-	       src="/images/aligator.png">
-	  </img>
-	</a>
+        <a href="./computer.html">
+            <img class="icon" style="left: 666px; top: 420px;" src="/images/aligator.png">
+            </img>
+        </a>
     </div>
 
     <script type="module">
@@ -90,7 +90,7 @@
                 const icon = document.getElementById(id);
                 icon.onclick = () => {
                     // very hacky sorry
-		    // <3
+                    // <3
                     if (targetFrame.classList.contains("Frame-Hidden") == true) {
                         icon.style.filter = "invert(1)"
                         targetFrame.classList.remove("Frame-Hidden")
