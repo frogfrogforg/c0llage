@@ -92,50 +92,9 @@ function rollNames() {
 
 function rollLimit() {
   if (roll("1d6") <= 4) {
-    return rollTimeLimit()
+    return initTimeLimit()
   } else {
-    return rollWordLimit()
-  }
-}
-
-function rollTimeLimit() {
-  return {
-    duration: 15 + roll("1d30"),
-    init() {
-      this.loop()
-    },
-    loop() {
-      let now = seconds()
-      if (this.start == null) {
-        this.start = now
-      }
-
-      // draw the time display
-      const elapsed = now - this.start
-      const remaining = Math.max(this.duration - elapsed, 0)
-      drawLimit(`${remaining} seconds`)
-
-      // continue as long as there is time remaining
-      if (remaining >= 0) {
-        this.id = requestAnimationFrame(() => this.loop())
-      }
-    },
-    stop() {
-      if (this.id != null) {
-        cancelAnimationFrame(this.id)
-      }
-    }
-  }
-}
-
-function rollWordLimit() {
-  return {
-    count: 1 + roll("1d6"),
-    init() {
-      drawLimit(`${this.count} words`)
-    },
-    stop() {
-    }
+    return initWordLimit()
   }
 }
 
@@ -162,14 +121,85 @@ function getActionName() {
 
 // -- events --
 function didClickAction() {
-  if (getAction() == Actions.Reset) {
+  if (getAction() === Actions.Reset) {
     reset()
   } else {
     advance()
   }
 }
 
+// -- limits --
+function initTimeLimit() {
+  return initLimit({
+    duration: 15 + roll("1d30"),
+    loop() {
+      let now = seconds()
+      if (this.t0 == null) {
+        this.t0 = now
+      }
+
+      // draw the time display
+      const elapsed = now - this.t0
+      const remaining = Math.max(this.duration - elapsed, 0)
+      drawLimit(`${remaining} seconds`)
+
+      // continue as long as there is time remaining
+      if (remaining <= 0) {
+        this.stop()
+      }
+    },
+  })
+}
+
+function initWordLimit() {
+  return initLimit({
+    count: 1 + roll("1d6"),
+    init() {
+      drawLimit(`${this.count} words`)
+    },
+  })
+}
+
+// -- l/base
+function initLimit(limit) {
+  return {
+    // props
+    request: null,
+    stopped: false,
+    // override point for one-off limits
+    init() {
+      this.start()
+    },
+    // override point for continuous limits
+    loop() {
+    },
+    // start the loop; probably don't override this
+    start() {
+      const thiz = this
+
+      function loop() {
+        if (!thiz.stopped) {
+          thiz.loop()
+          thiz.request = requestAnimationFrame(loop)
+        }
+      }
+
+      loop()
+    },
+    // stop the loop; probably don't modify this
+    stop() {
+      this.stopped = true
+
+      if (this.request != null) {
+        cancelAnimationFrame(this.request)
+      }
+    },
+    ...limit,
+  }
+}
+
 // -- utilities --
+// a resettable shuffle bag
 class Bag {
   constructor(items) {
     this.items = items
@@ -208,6 +238,7 @@ class Bag {
   }
 }
 
+// roll dice in the form "3d10"
 function roll(str) {
   const [count, sides] = str.split("d").map(Number)
 
