@@ -2,37 +2,30 @@
     <link rel="stylesheet" href="common.css">
     <script src="common.js"></script>
     <style>
-        .frame {
-            position:absolute;
+        .monitor {
+            position: relative;
+            pointer-events: none;
         }
 
-        #foreground {
-            position:absolute;
-            z-index: 100;
-            pointer-events:none;
+        .screen {
+            position: absolute;
+            display: flex;
         }
 
-        iframe {
-            border:0;
-            --scaleFactor: 0.6; /*scale iframe content by this factor (probably breaks on older browsers)*/
-            width:calc(100%/var(--scaleFactor));
-            height:calc(100%/var(--scaleFactor));
-            transform:scale(var(--scaleFactor));
-            transform-origin:top left
+        .screen iframe {
+            flex: 1;
         }
     </style>
 </head>
 
 <body>
-    <img id="foreground" src="./images/4.png">
-    </img>
-    <a class="hotspot" href="./3.html" style="left:405px; top:780px; width:90px; height:98px">
-    </a>
-    
-    <div class=frame
-         style="left:50px; top:100px; width:797px; height:596px;">
-        <iframe
-            src="./computer.html">    
-        </iframe>
+    <div class="container">
+        <main class="content">
+            <div class="screen" style="left: 6.000%; top: 11.111%; width: 87.555%; height: 66.222%;">
+                <iframe src="./computer.html"></iframe>
+            </div>
+            <img class="monitor background" src="./images/4.png"></img>
+            <a class="hotspot" href="./3.html" style="left: 45.000%; top: 86.666%; width: 10.000%; height: 10.888%"></a>
+        </main>
     </div>
 </body>
