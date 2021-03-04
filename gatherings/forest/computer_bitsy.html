@@ -57,11 +57,8 @@
 
         <pc-icon target="main-frame" src="./images/main-icon.png"></pc-icon>
 
-        <a href="./computer.html">
-            <img class="icon" style="left: 666px; top: 420px;" src="/images/aligator.png">
-            </img>
-        </a>
     </div>
+    <p> TEST TEXT</p>
 
     <script type="module">
         import "../../core/events.js"
@@ -90,7 +87,6 @@
                 const icon = document.getElementById(id);
                 icon.onclick = () => {
                     // very hacky sorry
-                    // <3
                     if (targetFrame.classList.contains("Frame-Hidden") == true) {
                         icon.style.filter = "invert(1)"
                         targetFrame.classList.remove("Frame-Hidden")
