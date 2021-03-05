@@ -4,11 +4,13 @@ Events
 - [Overview](#overview)
 - [Listening to events](#listening-to-events)
 - [Raising Events](#raising-events)
-  - [Bitsy](#bitsy)
-  - [Unity(WIP)](#unity)
+- [Bitsy](#bitsy)
+- [Unity(WIP)](#unity)
 
 Overview
 --------
+
+(see [this page](../Sharing.md) for an overview of shared globals)
 
 The event system we are currently working on is a simple way of broadcasting something happened in your game/iframe so that other games/iframes can react to it if they want to.
 
@@ -31,38 +33,17 @@ If your current window has events enabled, or if it's embedded in a page that do
 // Event listening
 // ctrl+f "#listen" to get here on file 'gatherings/sequential-games.html'
 // copy the template below to add your own! (you can add anywhere!)
-window.top.Events.listen('event.name', () => {
+window.top.d.Events.listen('event.name', () => {
     // Write the code that should happen in response for the event
 })
 ```
 
-If your page imports the event script, like:
-
-```html
-<script type="module">
-  import "/core/events.js"
-  /* ...game.. */
-</script>
-
-<!-- or -->
-
-<script src="/core/events.js"></script>
-<script> /* ...game.. */ </script>
-```
-
-Then you should be able to access the `Events` globally, like:
-
-```js
-Events.listen('event.name', () => { /*...*/ })
-Events.raise('event.name')
-```
-
-See that part of the code to see how some events currently work. You can also look at `./games/free-tanooki.js` in the end of the file there are some events specific for that game.
+to see how some events currently work. You can also look at `./games/free-tanooki.js` in the end of the file there are some events specific for that game.
 
 Raising events
 --------------
 
-The current way to raise events is to call `Events.raise("event.name")` from the game (that is embedded in the current page). Therefore the challenge is to make being able to execute javascript code in whatever tool we are using for our games to be able to call the events.
+The current way to raise events is to call `d.Events.raise("event.name")` from the game (that is embedded in the current page). Therefore the challenge is to make being able to execute javascript code in whatever tool we are using for our games to be able to call the events.
 
 So far, we have instructions for the following:
   - [Bitsy](#bitsy)
@@ -76,12 +57,12 @@ With that you now have the power to write any arbitrary javascript in your bitsy
 
 1. Raise events __immediately in chat__
 ```
-(jsNow "Events.raise('event.name')")
+(jsNow "window.top.d.Events.raise('event.name')")
 ```
 
 2. Raise events __after the dialogue is over__
 ```
-(js "Events.raise('event.name')")
+(js "window.top.d.Events.raise('event.name')")
 ```
 ### Unity
 

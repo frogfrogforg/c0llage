@@ -1,35 +1,44 @@
-(function () {
-  const root = window.top
+// TODO: ehhhhhh this is a little messy rn
+const root = window.top
+const global = window.top.d = window.top.d || {}
 
-  // -- api --
-  if (root.Events == null) {
-    let raised = new Set()
+// -- api --
+if (root.Events == null) {
+  let raised = new Set()
 
-    const Events = {
-      listen(name, listener) {
-        root.addEventListener(name, listener)
-      },
-      raise(name) {
-        raised.add(name)
-        console.log(`Raising event: ${name}`)
-        root.dispatchEvent(new Event(name))
-      },
-    }
-
-    // store a global ref to the events api in the root window if unset
-    root.Events = Events
+  // the global events api
+  const Events = {
+    listen(name, listener) {
+      root.addEventListener(name, listener)
+    },
+    raise(name) {
+      raised.add(name)
+      console.log(`Raising event: ${name}`)
+      root.dispatchEvent(new Event(name))
+    },
   }
 
-  // -- "exports" --
-  if (window.Events == null) {
-    // a convenience accessor on any window that needs one to get the root window's
-    // events api
-    // usage: `window.Events` or just `Events`
-    Object.defineProperty(window, "Events", {
-      configurable: true,
-      get() {
-        return root.Events
-      }
-    })
+  // a list of known events
+  Events.Juice = {
+    Appeared: "juice.appeared",
+    InBucket: "juice.inbucket",
+    OutBucket: "juice.outbucket",
   }
-})()
+
+  Events.Alidator = {
+    Cat: "alidator.cat",
+    Tea: "alidator.tea",
+  }
+
+  Events.Salada = {
+    Bucket: "salada.bucket",
+    End: "salada.end",
+  }
+
+  Events.Mario = {
+    ExitLevel: "mario.exitlevel",
+  }
+
+  // store a global ref to the events api in the root window
+  global.Events = Events
+}

@@ -134,7 +134,7 @@
         </article>
     </section>
     <script type="module">
-        import "../core/events.js"
+        import "../global.js"
         import * as Frames from "./shared/frames.js"
 
         // hack to allow the iframe to recurse
@@ -149,42 +149,42 @@
 
         // Button logic
         document.getElementById('pressed-me').onpointerdown = () => {
-            Events.raise('pressed-me-down')
+            d.Events.raise('pressed-me-down')
         }
 
         document.getElementById('pressed-me').onpointerout = () => {
-            Events.raise('pressed-me-up')
+            d.Events.raise('pressed-me-up')
         }
 
         document.getElementById('pressed-me').onpointerup = () => {
-            Events.raise('pressed-me-up')
+            d.Events.raise('pressed-me-up')
         }
 
         document.getElementById('pressed-me').onclick = () => {
-            Events.raise('pressed-me')
+            d.Events.raise('pressed-me')
         }
 
         // Event listening
         // ctrl+f "#listen" to get here on file 'gatherings/sequential-games.html'
         // copy the template below to add your own! (you can add anywhere!)
-        Events.listen('event.name', () => {
+        d.Events.listen('event.name', () => {
             // Write the code that should happen in response for the event
         })
 
-        Events.listen('pressed-me', () => {
+        d.Events.listen('pressed-me', () => {
             console.log("Thank you for pressing me")
         })
 
-        Events.listen('alidator.tea', () => {
+        d.Events.listen('alidator.tea', () => {
             document.getElementById('free-tanooki').style.display = 'block'
         })
 
-        Events.listen('salada.bucket', () => {
+        d.Events.listen('salada.bucket', () => {
             document.getElementById('free-juice').style.display = 'block'
-            Events.raise('juice.appeared')
+            d.Events.raise('juice.appeared')
         })
 
-        Events.listen('alidator.cat', () => {
+        d.Events.listen('alidator.cat', () => {
             console.log(
                 "ALIDATOR CAT!!!"
             )
@@ -192,16 +192,16 @@
             document.getElementById("salada").style.display = "block"
         })
 
-        Events.listen('salada.end', () => {
+        d.Events.listen('salada.end', () => {
             document.getElementById("alidator").style.display = "block"
             document.getElementById("salada").style.display = "none"
         })
 
-        Events.listen('mario.exitlevel', () => {
+        d.Events.listen('mario.exitlevel', () => {
             document.getElementById("free-tanooki").style.display = "none"
         })
 
-        Events.listen('mario.freesalad', () => {
+        d.Events.listen('mario.freesalad', () => {
             console.log("Hello salad")
             document.getElementById("guttersour-iframe").src = "../games/guttersour/WEB/index.html"
             console.log("Hello salad load")
