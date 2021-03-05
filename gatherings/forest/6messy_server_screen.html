@@ -1,0 +1,42 @@
+<head>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="../shared/frames.css">
+    <script src="common.js"></script>
+    <script type="module">
+        import * as Frames from "../shared/frames.js"
+        Frames.init()
+        window.Frames = Frames
+
+    </script>
+    <style>
+        .ClearFrame {
+            opacity: 0;
+            font-size: 30px;
+        }
+
+        .hotspot {
+            border: inset 8px brown
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <main class="content">
+            <img src="./images/messyserver.jpg">
+            </img>
+
+            <a class="hotspot" href="./7messy_server_zoom.html" style="left: 48%; top: 64%; width: 15%; height: 14%;">
+            </a>
+
+            <section id="frames" class="Frames">
+                <draggable-frame id="test" x=438 y=511 width=199 height=170>
+                    <a style="font-size: 5vw; text-decoration: none; opacity: 0.5"
+                        href="./8messy_server_transition.html">
+                        🔙
+                    </a>
+                </draggable-frame>
+            </section>
+        </main>
+    </div>
+</body>
