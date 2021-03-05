@@ -5,9 +5,10 @@ const root = window.top
 const keys = ["d", "b"]
 
 // -- global api --
-if (root.d == null) {
+// TODO: ehhhhhh this is a little messy rn
+if (root.d == null || root.b == null) {
   // global obj for other shared modules
-  const global = {}
+  const global = root.d || {}
 
   // share it between every key
   for (const name of keys) {

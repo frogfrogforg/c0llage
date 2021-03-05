@@ -1,4 +1,6 @@
-const root = window.top.d
+// TODO: ehhhhhh this is a little messy rn
+const root = window.top
+const global = window.top.d = window.top.d || {}
 
 // -- api --
 if (root.Events == null) {
@@ -38,5 +40,5 @@ if (root.Events == null) {
   }
 
   // store a global ref to the events api in the root window
-  root.Events = Events
+  global.Events = Events
 }
