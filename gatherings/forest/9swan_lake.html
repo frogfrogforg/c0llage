@@ -7,9 +7,20 @@
         Frames.init()
         window.Frames = Frames
 
+        let swanOpen = false
+        let swanY = 0
+        const swanFlySpeed = 0.25
         window.onclickswan = function () {
             Frames.show('pwnd')
-            document.getElementById('swan').src = "./images/swanglasses_happy.png"
+
+            document.getElementById('swan').src =
+                !swanOpen
+                    ? "./images/swanglasses_happy.png"
+                    : "./images/swanglasses_shady.png"
+            swanOpen = !swanOpen
+
+            swanY -= swanFlySpeed
+            document.getElementById('swan').style.marginTop = swanY + '%'
         }
     </script>
     <style>
@@ -63,9 +74,14 @@
             <a class="hotspot" href="../../games/guttersour/WEB/index.html"
                 style="left: 58%; top: 75.666%; width: 12%; height: 5%"></a>
             <section id="frames" class="Frames">
-                <draggable-frame hidden id="pwnd" x=220 y=320 width=199 height=170 bodyClass="transparentframe">
+                <draggable-frame hidden id="pwnd" x=20 y=30 width=20 height=25 bodyClass="transparentframe">
                     <div class="speechbubble">
-                        u just got PWN`ed n00b!
+                        <span>
+
+                            u just got <a target="_blank" href='https://duckduckgo.com/?q="pwn`ed"'>
+                                PWN`ed
+                            </a> n00b!
+                        </span>
                         <div class="bubbletail"></div>
                     </div>
                 </draggable-frame>

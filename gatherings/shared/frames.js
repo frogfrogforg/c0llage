@@ -62,19 +62,19 @@ export function init () {
       }
 
       if (element.attributes.x) {
-        newElement.style.left = element.attributes.x.value
+        newElement.style.left = element.attributes.x.value + '%'
       }
 
       if (element.attributes.y) {
-        newElement.style.top = element.attributes.y.value
+        newElement.style.top = element.attributes.y.value + '%'
       }
 
       if (element.attributes.width) {
-        newElement.style.width = element.attributes.width.value
+        newElement.style.width = element.attributes.width.value + '%'
       }
 
       if (element.attributes.height) {
-        newElement.style.height = element.attributes.height.value
+        newElement.style.height = element.attributes.height.value + '%'
       }
 
       if (element.attributes.class) {
