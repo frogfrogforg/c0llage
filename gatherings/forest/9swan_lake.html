@@ -9,8 +9,13 @@
 
         let swanOpen = false
         let swanY = 0
+        let clickedSwan = false
         const swanFlySpeed = 0.25
         window.onclickswan = function () {
+            if (!clickedSwan) {
+                document.getElementById('swanvideo').src = "http://www.youtube.com/embed/jjDYW46PjA8?autoplay=1"
+                clickedSwan = true
+            }
             Frames.show('pwnd')
 
             document.getElementById('swan').src =
@@ -69,10 +74,11 @@
 <body>
     <div class="container">
         <main class="content">
-            <img class="background" src="./images/swan_lake.jpg"></img>
-            <img id="swan" class="swan" onclick="window.onclickswan()" src="./images/swanglasses_shady.png"></img>
-            <a class="hotspot" href="../../games/guttersour/WEB/index.html"
-                style="left: 58%; top: 75.666%; width: 12%; height: 5%"></a>
+            <iframe id="swanvideo" style="position: absolute; top:0; left:0; z-index: -1;" width="100%" height="100%"
+                src="about:blank" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+            <img class="background" src="./images/swan_lake.png"></img>
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="pwnd" x=20 y=30 width=20 height=25 bodyClass="transparentframe">
                     <div class="speechbubble">
@@ -86,6 +92,11 @@
                     </div>
                 </draggable-frame>
             </section>
+
+            <a class="hotspot" href="../../games/guttersour/WEB/index.html"
+                style="left: 58%; top: 75.666%; width: 12%; height: 5%"></a>
+            <img id="swan" class="swan" onclick="window.onclickswan()" src="./images/swanglasses_shady.png"></img>
+
         </main>
     </div>
 </body>

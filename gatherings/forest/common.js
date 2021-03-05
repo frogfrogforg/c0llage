@@ -3,7 +3,9 @@ window.onload = () => {
   var links = Array.from(document.getElementsByTagName('a'))
   links.forEach((el) => {
     if (links.attributes && links.attributes.target.value === '_blank') return
-    links.el.href += '?r=' + Math.random()
+    if (links.el) {
+      links.el.href += '?r=' + Math.random()
+    }
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
