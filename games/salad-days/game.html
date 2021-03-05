@@ -1,6 +1,6 @@
 <head>
   <script type="module">
-    import "../../core/events.js"
+    import "../../global.js"
 
     window.SaladDaze = (() => {
       // -- "imports" --
@@ -276,7 +276,7 @@
 
         // force-add a red leaf when there's a "juice.inbucket" event
         let forceAddRedLeaf = false
-        Events.listen("juice.inbucket", () => {
+        d.Events.listen("juice.inbucket", () => {
           forceAddRedLeaf = true
         })
 
