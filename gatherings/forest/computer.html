@@ -25,6 +25,7 @@
             width: 10%;
         }
 
+
         iframe {
             border: 0;
             --scaleFactor: 0.6;
@@ -33,6 +34,13 @@
             height: calc(100%/var(--scaleFactor)) !important;
             transform: scale(var(--scaleFactor));
             transform-origin: top left
+        }
+
+        #claribelle {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: scale(.125);
         }
     </style>
 </head>
@@ -64,6 +72,9 @@
 
     </div>
 
+    <!-- claribelle is unhidden when she escapes from alidator -->
+    <img id="claribelle" src="./images/claribelle.png" hidden></img>
+
     <script type="module">
         import "../../global.js"
         import * as Frames from "../shared/frames.js"
@@ -74,6 +85,16 @@
                 src="$src">
             </img>
         `
+        function openFrame(targetFrame, icon) {
+            icon.style.filter = "invert(1)"
+            targetFrame.classList.remove("Frame-Hidden")
+        }
+
+        function closeFrame(targetFrame, icon) {
+            icon.style.filter = "none"
+            targetFrame.classList.add("Frame-Hidden")
+        }
+
         function initializeIcons(padding) {
             document.createElement(tagName)
             const tagInstances = document.getElementsByTagName(tagName)
@@ -93,11 +114,9 @@
                     // very hacky sorry
                     // <3
                     if (targetFrame.classList.contains("Frame-Hidden") == true) {
-                        icon.style.filter = "invert(1)"
-                        targetFrame.classList.remove("Frame-Hidden")
+                        openFrame(targetFrame, icon);
                     } else {
-                        icon.style.filter = "none"
-                        targetFrame.classList.add("Frame-Hidden")
+                        closeFrame(targetFrame, icon);
                     }
                 }
                 icon.style.left = posx + '%'
@@ -106,9 +125,19 @@
         }
 
 
-        // fran is trying to do something
-        // d.Events.listen('alidator.tea', () => {
-        //   console.log('hellllloooooo');
+
+        // commenting out while fran is still wokring on it
+        // d.Events.listen('alidator.cat', () => {
+        //   // claribelle escapes
+
+        //   // close alidator
+        //   const targetFrame = document.getElementById('alidator-frame');
+        //   const icon = document.getElementById('alidator-frame-icon');
+        //   closeFrame(targetFrame, icon);
+        //   
+        //   // reveal claribelle
+        //   const claribelle = document.getElementById('claribelle');
+        //   claribelle.removeAttribute("hidden");
         // })
 
         function main() {
