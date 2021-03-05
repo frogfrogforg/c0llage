@@ -53,8 +53,23 @@ the 1 day marshmallow">
       from {
         opacity: 0.0;
       }
+
       to {
         opacity: 0.5;
+      }
+    }
+
+    .mobile-only {
+      display: none;
+    }
+
+    .mobile-only a {
+      color: hotpink;
+    }
+
+    @media only screen and (max-width: 768px) {
+      .mobile-only {
+        display: block;
       }
     }
   </style>
@@ -71,6 +86,11 @@ the 1 day marshmallow">
 </head>
 
 <body onload="doGhost()" onclick="RandomizeScattered()">
+  <h1 class="mobile-only">
+    <a target="_blank" style="font-family: cursive;"
+      href="https://www.amazon.com/External-Portable-Compatible-Desktop-Windows/dp/B086WTZYH7/ref=asc_df_B086WTZYH7/?tag=bingshoppinga-20&linkCode=df0&hvadid=&hvpos=&hvnetw=o&hvrand=&hvpone=&hvptwo=&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=&hvtargid=pla-4583863988281870&psc=1">you'll
+      need one of these to play it on your phone</a>
+  </h1>
   <h1>
     <b> welcome to our collective blog :] :] </b>
   </h1>

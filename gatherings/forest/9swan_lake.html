@@ -1,0 +1,75 @@
+<head>
+    <link rel="stylesheet" href="common.css">
+    <script src="common.js"></script>
+    <link rel="stylesheet" href="../shared/frames.css">
+    <script type="module">
+        import * as Frames from "../shared/frames.js"
+        Frames.init()
+        window.Frames = Frames
+
+        window.onclickswan = function () {
+            Frames.show('pwnd')
+            document.getElementById('swan').src = "./images/swanglasses_happy.png"
+        }
+    </script>
+    <style>
+        .hotspot {
+            border: inset 0.5em mediumseagreen
+        }
+
+        .swan {
+            position: absolute;
+            left: 20%;
+            top: 50%;
+            width: 30%;
+            height: 30%;
+        }
+
+        .speechbubble {
+            width: 69.69%;
+            height: 42.069%;
+            position: absolute;
+            border: 2px solid black;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            text-align: center;
+            align-items: center;
+        }
+
+        .bubbletail {
+            width: 1%;
+            height: 1%;
+            position: absolute;
+            top: 90%;
+            left: 70%;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid black;
+            transform: skew(40deg) rotate(214deg);
+        }
+
+        .Frame-content {
+            /* background-color: rgba(0, 0, 0, 0); */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <main class="content">
+            <img class="background" src="./images/swan_lake.jpg"></img>
+            <img id="swan" class="swan" onclick="window.onclickswan()" src="./images/swanglasses_shady.png"></img>
+            <a class="hotspot" href="../../games/guttersour/WEB/index.html"
+                style="left: 58%; top: 75.666%; width: 12%; height: 5%"></a>
+            <section id="frames" class="Frames">
+                <draggable-frame hidden id="pwnd" x=220 y=320 width=199 height=170 bodyClass="transparentframe">
+                    <div class="speechbubble">
+                        u just got PWN`ed n00b!
+                        <div class="bubbletail"></div>
+                    </div>
+                </draggable-frame>
+            </section>
+        </main>
+    </div>
+</body>
