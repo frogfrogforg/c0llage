@@ -9,15 +9,20 @@
         }
 
         .icons {
-            position: fixed;
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
         }
 
         .icon {
             image-rendering: pixelated;
             position: absolute;
             cursor: pointer;
-            width: 128px;
-            height: 128px;
+            width: 10%;
         }
 
         iframe {
@@ -32,7 +37,7 @@
     </style>
 </head>
 
-<body>
+<body style="width:100%; height:100%">
     <section id="frames" class="Frames">
         <draggable-frame id="alidator-frame" hidden>
             <iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></iframe>
@@ -48,7 +53,7 @@
 
     </section>
 
-    <div id=" icons" class="icons" style="left:50px; top:50px;">
+    <div id=" icons" class="icons" style="left:1%; top:1%; width: 100%; height: 100%;">
         <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
 
         <pc-icon target="alidator-frame" src="./images/alidator-icon.png"></pc-icon>
@@ -60,7 +65,7 @@
     </div>
 
     <script type="module">
-        import "../global.js"
+        import "../../global.js"
         import * as Frames from "../shared/frames.js"
 
         const tagName = 'pc-icon'
@@ -95,7 +100,7 @@
                         targetFrame.classList.add("Frame-Hidden")
                     }
                 }
-                icon.style.left = posx
+                icon.style.left = posx + '%'
                 posx += padding
             }
         }
@@ -108,7 +113,7 @@
 
         function main() {
             Frames.init()
-            initializeIcons(200)
+            initializeIcons(12)
         }
 
         main()
