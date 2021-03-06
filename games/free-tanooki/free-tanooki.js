@@ -1,3 +1,5 @@
+import "../../global.js"
+
 //
 //
 // BIG NOTE GO TO THE END OF THE FILE FOR THE ACTUAL USEFUL STUFF
@@ -350,3 +352,7 @@ d.Events.listen('juice.outbucket', () => {
   nes.buttonDown(1, jsnes.Controller.BUTTON_LEFT)
   nes.buttonUp(1, jsnes.Controller.BUTTON_RIGHT)
 })
+
+window.onload = function () {
+  nes_load_url("nes-canvas", "./dontsuemepls.nes");
+}
