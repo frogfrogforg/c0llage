@@ -38,8 +38,8 @@
 
         #claribelle {
           position: absolute;
-          left: 50%;
-          top: 50%;
+          left: 60px;
+          top: 69px;
           transform: scale(.125);
         }
     </style>
@@ -139,6 +139,68 @@
         //   const claribelle = document.getElementById('claribelle');
         //   claribelle.removeAttribute("hidden");
         // })
+
+        // thank you bitsy
+        // https://github.com/frogfrogforg/c0llage/blob/main/Jen/alidator.html#L4924
+        var key = {
+            left: 37,
+            right: 39,
+            up: 38,
+            down: 40,
+            w: 87,
+            a: 65,
+            s: 83,
+            d: 68,
+        }
+
+        // debug
+        // claribelle.removeAttribute("hidden");
+
+        // claribelle stuff position
+        var claribelle_x = 50;
+        var claribelle_y = 50;
+        var claribelle_hidden = true;
+        const k_claribelle_move_incr = 16
+
+        // i'm copying window.top from free_tanooki.js
+        // (instead of using document)
+        // not really sure what it means or why it works 
+        window.top.addEventListener('keydown', (event) => {
+          const claribelle = document.getElementById('claribelle');
+
+          if (event.keyCode == key.left) {
+            claribelle_x -= k_claribelle_move_incr;
+            claribelle.style.left = `${claribelle_x}px`;
+          }
+          if (event.keyCode == key.right) {
+            claribelle_x += k_claribelle_move_incr;
+            claribelle.style.left = `${claribelle_x}px`;
+          }
+          if (event.keyCode == key.up) {
+            claribelle_y -= k_claribelle_move_incr;
+            claribelle.style.top = `${claribelle_y}px`;
+          }
+          if (event.keyCode == key.down) {
+            claribelle_y += k_claribelle_move_incr;
+            claribelle.style.top = `${claribelle_y}px`;
+          }
+
+
+        });
+
+
+        // all the touch/mobile input is untested
+        // but probably important that it works
+        // should probably make an input library that basically copies
+        // the way that bitsy handles touch stuff: 
+        // https://github.com/frogfrogforg/c0llage/blob/main/Jen/alidator.html#L5488
+        // window.top.addEventListener('touchstart', (event) => {
+        // });
+        // window.top.addEventListener('touchmove', (event) => {
+        // });
+        // window.top.addEventListener('touchend', (event) => {
+        // });
+
 
         function main() {
             Frames.init()
