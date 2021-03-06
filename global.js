@@ -1,14 +1,15 @@
-import "./core/events.js"
+import { Events } from "./core/events.js"
 
 // -- props --
 const root = window.top
 const keys = ["d", "b"]
 
-// -- global api --
-// TODO: ehhhhhh this is a little messy rn
-if (root.d == null || root.b == null) {
+// -- api --
+if (root.d == null) {
   // global obj for other shared modules
-  const global = root.d || {}
+  const global = {
+    Events
+  }
 
   // share it between every key
   for (const name of keys) {
