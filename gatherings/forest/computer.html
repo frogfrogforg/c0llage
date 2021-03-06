@@ -9,16 +9,22 @@
         }
 
         .icons {
-            position: fixed;
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
         }
 
         .icon {
             image-rendering: pixelated;
             position: absolute;
             cursor: pointer;
-            width: 128px;
-            height: 128px;
+            width: 10%;
         }
+
 
         iframe {
             border: 0;
@@ -29,10 +35,17 @@
             transform: scale(var(--scaleFactor));
             transform-origin: top left
         }
+
+        #claribelle {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: scale(.125);
+        }
     </style>
 </head>
 
-<body>
+<body style="width:100%; height:100%">
     <section id="frames" class="Frames">
         <draggable-frame id="alidator-frame" hidden>
             <iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></iframe>
@@ -48,7 +61,7 @@
 
     </section>
 
-    <div id=" icons" class="icons" style="left:50px; top:50px;">
+    <div id=" icons" class="icons" style="left:1%; top:1%; width: 100%; height: 100%;">
         <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
 
         <pc-icon target="alidator-frame" src="./images/alidator-icon.png"></pc-icon>
@@ -59,8 +72,11 @@
 
     </div>
 
+    <!-- claribelle is unhidden when she escapes from alidator -->
+    <img id="claribelle" src="./images/claribelle.png" hidden></img>
+
     <script type="module">
-        import "../global.js"
+        import "../../global.js"
         import * as Frames from "../shared/frames.js"
 
         const tagName = 'pc-icon'
@@ -69,6 +85,16 @@
                 src="$src">
             </img>
         `
+        function openFrame(targetFrame, icon) {
+            icon.style.filter = "invert(1)"
+            targetFrame.classList.remove("Frame-Hidden")
+        }
+
+        function closeFrame(targetFrame, icon) {
+            icon.style.filter = "none"
+            targetFrame.classList.add("Frame-Hidden")
+        }
+
         function initializeIcons(padding) {
             document.createElement(tagName)
             const tagInstances = document.getElementsByTagName(tagName)
@@ -88,27 +114,35 @@
                     // very hacky sorry
                     // <3
                     if (targetFrame.classList.contains("Frame-Hidden") == true) {
-                        icon.style.filter = "invert(1)"
-                        targetFrame.classList.remove("Frame-Hidden")
+                        openFrame(targetFrame, icon);
                     } else {
-                        icon.style.filter = "none"
-                        targetFrame.classList.add("Frame-Hidden")
+                        closeFrame(targetFrame, icon);
                     }
                 }
-                icon.style.left = posx
+                icon.style.left = posx + '%'
                 posx += padding
             }
         }
 
 
-        // fran is trying to do something
-        // d.Events.listen('alidator.tea', () => {
-        //   console.log('hellllloooooo');
+
+        // commenting out while fran is still wokring on it
+        // d.Events.listen('alidator.cat', () => {
+        //   // claribelle escapes
+
+        //   // close alidator
+        //   const targetFrame = document.getElementById('alidator-frame');
+        //   const icon = document.getElementById('alidator-frame-icon');
+        //   closeFrame(targetFrame, icon);
+        //   
+        //   // reveal claribelle
+        //   const claribelle = document.getElementById('claribelle');
+        //   claribelle.removeAttribute("hidden");
         // })
 
         function main() {
             Frames.init()
-            initializeIcons(200)
+            initializeIcons(12)
         }
 
         main()

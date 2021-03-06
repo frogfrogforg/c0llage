@@ -62,19 +62,19 @@ export function init () {
       }
 
       if (element.attributes.x) {
-        newElement.style.left = element.attributes.x.value
+        newElement.style.left = element.attributes.x.value + '%'
       }
 
       if (element.attributes.y) {
-        newElement.style.top = element.attributes.y.value
+        newElement.style.top = element.attributes.y.value + '%'
       }
 
       if (element.attributes.width) {
-        newElement.style.width = element.attributes.width.value
+        newElement.style.width = element.attributes.width.value + '%'
       }
 
       if (element.attributes.height) {
-        newElement.style.height = element.attributes.height.value
+        newElement.style.height = element.attributes.height.value + '%'
       }
 
       if (element.attributes.class) {
@@ -123,6 +123,8 @@ let y0 = 0.0
 let mx = 0.0
 // the initial mouse y-pos
 let my = 0.0
+// the zIndex to make the current element be always on top
+let zIndex = 10
 
 function onMouseDown (evt) {
   const target = evt.target
@@ -153,7 +155,7 @@ function onMouseDown (evt) {
   }
 
   // prepare the element
-  el.style.zIndex = 1
+  el.style.zIndex = zIndex++
   iframe = el.querySelector('iframe')
 
   // disable collisions with iframes
@@ -164,8 +166,15 @@ function onMouseDown (evt) {
 
   // record initial x/y position
   const f = el.getBoundingClientRect()
-  x0 = f.x
-  y0 = f.y
+  const p = el.parentElement.getBoundingClientRect()
+
+  x0 = f.x - p.x
+  y0 = f.y - p.y
+
+  console.log('AAAAA left top')
+  console.log(x0, y0)
+  console.log('AAAAA xy')
+  console.log(f.x, f.y)
 
   // record initial mouse position (we need to calc dx/dy manually on move
   // b/c evt.offset, the pos within the element, doesn't seem to include
@@ -176,7 +185,7 @@ function onMouseDown (evt) {
   // start the operation
   switch (op) {
     case Ops.Scale:
-      onScaleStart(f); break
+      onScaleStart(x0 + f.width, y0 + f.height); break
   }
 }
 
@@ -210,7 +219,7 @@ function onMouseUp () {
   }
 
   // clear the element
-  el.style.zIndex = null
+  // el.style.zIndex = null  // removing this to make the element go up
   el = null
   iframe = null
 }
@@ -226,9 +235,9 @@ function onDrag (cx, cy) {
 let ox = 0.0
 let oy = 0.0
 
-function onScaleStart (f) {
-  ox = f.right - mx
-  oy = f.bottom - my
+function onScaleStart (x, y) {
+  ox = x - mx
+  oy = y - my
 }
 
 function onScale (cx, cy) {

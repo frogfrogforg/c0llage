@@ -20,8 +20,8 @@
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-computer-video', {
-                height: '390',
-                width: '640',
+                // height: '390',
+                // width: '640',
                 videoId: 'R8wrT6J8sNo',
                 playerVars: {
                     autoplay: 0,
@@ -85,16 +85,6 @@
 </head>
 
 <body>
-    <section id="frames" class="Frames">
-        <draggable-frame id="rude" hidden x=461 y=100 width=1000 height=100 bodyClass="InvertedFrame">
-            <span>Don't be rude, they are using <a href="#" onclick="playVideo()">the
-                    computer</a></span>
-        </draggable-frame>
-        <draggable-frame id="the-computer" hidden x=1234 y=174 width=600 height=600>
-            <div id="youtube-computer-video"></div>
-        </draggable-frame>
-    </section>
-
     <div class="container">
         <main class="content">
             <img class="background" src="./images/person_on_computer.png"></img>
@@ -103,6 +93,16 @@
             <a class="hotspot" href="./1.html" style="left: 0.974%; top: 69.422%; width: 22.012%; height: 28.992%;"></a>
             <a class="hotspot" href="#" onclick="Frames.toggle('rude')"
                 style="left: 65.549%; top: 32.955%; width: 10.920%; height: 14.383%;"></a>
+            <section id="frames" class="Frames">
+                <draggable-frame hidden id="rude" x=40 y=15 width=70 height=4 bodyClass="InvertedFrame">
+                    <span>Don't be rude, they are using <a href="#" onclick="playVideo()">the
+                            computer</a></span>
+                </draggable-frame>
+                <draggable-frame id="the-computer" hidden x=60 y=28 width=25 height=35>
+                    <div id="youtube-computer-video"></div>
+                </draggable-frame>
+            </section>
+
         </main>
     </div>
 </body>

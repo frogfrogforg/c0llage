@@ -1,7 +1,10 @@
 .Frames {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    pointer-events: none;
 }
 
 .Frame-Hidden {
@@ -11,11 +14,12 @@
 .Frame {
     z-index: 10;
     background-color: rbga(0, 0, 0, 0.0);
-    position: fixed;
+    position: absolute;
     left: 50%;
     top: 69px;
     height: 420px;
     width: 420px;
+    pointer-events:all;
 }
 
 .Frame-content {
