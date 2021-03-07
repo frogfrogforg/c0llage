@@ -10,7 +10,7 @@ Events
 Overview
 --------
 
-(see [this page](../Sharing.md) for an overview of shared globals)
+(see [this page](/docs/Sharing.md) for an overview of shared globals)
 
 The event system we are currently working on is a simple way of broadcasting something happened in your game/iframe so that other games/iframes can react to it if they want to.
 
@@ -20,7 +20,7 @@ There are 2 things you can do with events:
 
 > I (mut) used in sequential-games.html used a pattern I think Darwin suggested in the chat of calling the events with some sort of namespace, like `alidator.tea` or `salada.bucket`. Hopefully we might keep some nice pattern like this.
 
-[Here is a list of currently-in-use events.](/ExistingEvents.md) If you make a new event, add it there so your good-looking colleagues can be aware!
+[Here is a list of currently-in-use events.](/docs/ExistingEvents.md) If you make a new event, add it there!
 
 Listening to events
 -------------------
