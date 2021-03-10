@@ -37,10 +37,10 @@
         }
 
         #claribelle {
-          position: absolute;
-          left: 60px;
-          top: 69px;
-          transform: scale(.125);
+            position: absolute;
+            left: 60px;
+            top: 69px;
+            transform: scale(.125);
         }
     </style>
 </head>
@@ -128,66 +128,66 @@
 
         // commenting out while fran is still wokring on it
         d.Events.listen('alidator.exitright', () => {
-          // claribelle escapes
- 
-          const targetFrame = document.getElementById('alidator-frame');
-          const f = targetFrame.getBoundingClientRect();
+            // claribelle escapes
 
-          const claribelle = document.getElementById('claribelle');
+            const targetFrame = document.getElementById('alidator-frame');
+            const f = targetFrame.getBoundingClientRect();
 
-          // move  claribelle to the left-middle of the frame
-          // i always have to add these magic offsets when i work
-          // with getBoundingClientRect() bc i dont understand it
-          place_claribelle(f.x + f.width - 50,
-                           f.y + f.height/2);
-          
-          // reveal claribelle
-          claribelle.removeAttribute("hidden");
+            const claribelle = document.getElementById('claribelle');
 
-          // switch focus to computer (not alidator) to let keyboard
-          // inputs work
-          window.top.focus()
- 
-          d.Events.raise('computer.claribelleescape');
+            // move  claribelle to the left-middle of the frame
+            // i always have to add these magic offsets when i work
+            // with getBoundingClientRect() bc i dont understand it
+            place_claribelle(f.x + f.width - 50,
+                f.y + f.height / 2);
+
+            // reveal claribelle
+            claribelle.removeAttribute("hidden");
+
+            // switch focus to computer (not alidator) to let keyboard
+            // inputs work
+            window.top.focus()
+
+            d.Events.raise('computer.claribelleescape');
         });
 
         d.Events.listen('alidator.exitleft', () => {
-          // claribelle escapes
- 
-          const targetFrame = document.getElementById('alidator-frame');
-          const f = targetFrame.getBoundingClientRect();
+            // claribelle escapes
 
-          const claribelle = document.getElementById('claribelle');
+            const targetFrame = document.getElementById('alidator-frame');
+            const f = targetFrame.getBoundingClientRect();
 
-          // move  claribelle to the left-middle of the frame
-          // i always have to add these magic offsets when i work
-          // with getBoundingClientRect() bc i dont understand it
-          place_claribelle(f.x - 100,
-                           f.y + f.height/2);
-          
-          // reveal claribelle
-          claribelle.removeAttribute("hidden");
+            const claribelle = document.getElementById('claribelle');
 
-          // switch focus to computer (not alidator) to let keyboard
-          // inputs work
-          window.top.focus()
+            // move  claribelle to the left-middle of the frame
+            // i always have to add these magic offsets when i work
+            // with getBoundingClientRect() bc i dont understand it
+            place_claribelle(f.x - 100,
+                f.y + f.height / 2);
 
-          d.Events.raise('computer.claribelleescape');
+            // reveal claribelle
+            claribelle.removeAttribute("hidden");
+
+            // switch focus to computer (not alidator) to let keyboard
+            // inputs work
+            window.top.focus()
+
+            d.Events.raise('computer.claribelleescape');
         });
 
         function place_claribelle(x, y) {
-          const claribelle = document.getElementById('claribelle');
+            const claribelle = document.getElementById('claribelle');
 
-          // move  claribelle to the left-middle of the frame
-          // i always have to add these magic offsets when i work
-          // with getBoundingClientRect() bc i dont understand it
-          claribelle_x = x;
-          claribelle_y = y;
-          claribelle.style.left = `${claribelle_x}px`;
-          claribelle.style.top = `${claribelle_y}px`;
+            // move  claribelle to the left-middle of the frame
+            // i always have to add these magic offsets when i work
+            // with getBoundingClientRect() bc i dont understand it
+            claribelle_x = x;
+            claribelle_y = y;
+            claribelle.style.left = `${claribelle_x}px`;
+            claribelle.style.top = `${claribelle_y}px`;
 
         }
- 
+
         // thank you bitsy
         // https://github.com/frogfrogforg/c0llage/blob/main/Jen/alidator.html#L4924
         var key = {
@@ -211,25 +211,31 @@
         const k_claribelle_move_incr = 16
 
         window.top.addEventListener('keydown', (event) => {
-          const claribelle = document.getElementById('claribelle');
+            const claribelle = document.getElementById('claribelle');
+            // LIVE HAUNTING
+            const screen = claribelle.parentElement.getBoundingClientRect()
 
-          if (event.keyCode == key.left) {
-            claribelle_x -= k_claribelle_move_incr;
-            claribelle.style.left = `${claribelle_x}px`;
-          }
-          if (event.keyCode == key.right) {
-            claribelle_x += k_claribelle_move_incr;
-            claribelle.style.left = `${claribelle_x}px`;
-          }
-          if (event.keyCode == key.up) {
-            claribelle_y -= k_claribelle_move_incr;
-            claribelle.style.top = `${claribelle_y}px`;
-          }
-          if (event.keyCode == key.down) {
-            claribelle_y += k_claribelle_move_incr;
-            claribelle.style.top = `${claribelle_y}px`;
-          }
+            console.log("AAAAAAAAAA")
 
+            if (event.keyCode == key.left) {
+                claribelle_x -= k_claribelle_move_incr;
+            }
+            if (event.keyCode == key.right) {
+                claribelle_x += k_claribelle_move_incr;
+            }
+            if (event.keyCode == key.up) {
+                claribelle_y -= k_claribelle_move_incr;
+            }
+            if (event.keyCode == key.down) {
+                claribelle_y += k_claribelle_move_incr;
+            }
+
+            const y = screen.height
+            const x = screen.width
+            claribelle_x = (claribelle_x + x) % x
+            claribelle_y = (claribelle_y + y) % y
+            claribelle.style.top = `${claribelle_y}px`;
+            claribelle.style.left = `${claribelle_x}px`;
         });
 
 

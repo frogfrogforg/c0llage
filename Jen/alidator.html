@@ -12,7 +12,7 @@
 
 	<title>My Bitsy Game By Me</title>
 
-  <!--	<script type="module" src="../global.js"></script> -->
+	<!--	<script type="module" src="../global.js"></script> -->
 	<script type="text/bitsyGameData" id="exportedGameData">
 Alidator
 
@@ -4951,7 +4951,7 @@ VAR a
 
 		var renderer = new Renderer(tilesize, scale);
 
-    var claribelle_gone = false;
+		var claribelle_gone = false;
 
 		function getGameNameFromURL() {
 			var game = window.location.hash.substring(1);
@@ -5015,8 +5015,8 @@ VAR a
 
 			input = new InputManager();
 
-			document.addEventListener('keydown', input.onkeydown);
-			document.addEventListener('keyup', input.onkeyup);
+			window.top.addEventListener('keydown', input.onkeydown);
+			window.top.addEventListener('keyup', input.onkeyup);
 
 			if (isPlayerEmbeddedInEditor) {
 				canvas.addEventListener('touchstart', input.ontouchstart, { passive: false });
@@ -5212,10 +5212,10 @@ VAR a
 			var curTime = Date.now();
 			deltaTime = curTime - prevTime;
 
-      // hack
-      if (claribelle_gone) {
-        return;
-      }
+			// hack
+			if (claribelle_gone) {
+				return;
+			}
 
 			if (curRoom == null) {
 				// in the special case where there is no valid room, end the game
@@ -5425,8 +5425,8 @@ VAR a
 			resetAll();
 
 			function stopWindowScrolling(e) {
-				if (e.keyCode == key.left || e.keyCode == key.right || e.keyCode == key.up || e.keyCode == key.down || !isPlayerEmbeddedInEditor)
-					e.preventDefault();
+				//if (e.keyCode == key.left || e.keyCode == key.right || e.keyCode == key.up || e.keyCode == key.down || !isPlayerEmbeddedInEditor)
+				//e.preventDefault();
 			}
 
 			function tryRestartGame(e) {
@@ -6826,9 +6826,9 @@ VAR a
 
 			//draw sprites
 			for (id in sprite) {
-        if (id == playerId && claribelle_gone) {
-          continue;
-        }
+				if (id == playerId && claribelle_gone) {
+					continue;
+				}
 				var spr = sprite[id];
 				if (spr.room === room.id) {
 					drawSprite(getSpriteImage(spr, paletteId, frameIndex), spr.x, spr.y, context);
@@ -9201,7 +9201,7 @@ CHAR 9835
 
 	<!-- BORKSY HACKS -->
 	<script type="module" id="borksyHacks">
-    import "../global.js"
+		import "../global.js"
 		//borksy uses dist versions of hacks from the bitsy hacks repo now
 
 		/**
@@ -9576,32 +9576,32 @@ CHAR 9835
 			}
 
 			addDualDialogTag('js', executeJs);
-  
-      // hack so that claribelle can escape
-      before('movePlayer', function() {
-        // check if we're trying to exit through the street
-        const x = player().x;
-        const y = player().y;
 
-        // pop out on the left
-        if (curPlayerDirection == Direction.Left) {
-          if ((x == 0 && y == 12) || (x == 0 && y == 13)) {
-            d.Events.raise('alidator.exitleft');
-          }
-        }
+			// hack so that claribelle can escape
+			before('movePlayer', function () {
+				// check if we're trying to exit through the street
+				const x = player().x;
+				const y = player().y;
 
-        // pop out on the right
-        if (curPlayerDirection == Direction.Right) {
-          if ((x == 15 && y == 12) || (x == 15 && y == 13)) {
-            d.Events.raise('alidator.exitright');
-          }
-        }
+				// pop out on the left
+				if (curPlayerDirection == Direction.Left) {
+					if ((x == 0 && y == 12) || (x == 0 && y == 13)) {
+						d.Events.raise('alidator.exitleft');
+					}
+				}
 
-      });
+				// pop out on the right
+				if (curPlayerDirection == Direction.Right) {
+					if ((x == 15 && y == 12) || (x == 15 && y == 13)) {
+						d.Events.raise('alidator.exitright');
+					}
+				}
 
-      d.Events.listen('computer.claribelleescape', () => {
-        claribelle_gone = true;
-      });
+			});
+
+			d.Events.listen('computer.claribelleescape', () => {
+				claribelle_gone = true;
+			});
 
 
 		}(window));
