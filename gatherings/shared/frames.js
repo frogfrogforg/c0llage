@@ -70,19 +70,26 @@ export function init () {
       console.log('creating frame element ' + id)
       if (element.attributes.x) {
         newElement.style.left = element.attributes.x.value + '%'
-        console.log('assigning left value to ' + element.attributes.x.value + ' for ' + id)
+      } else {
+        newElement.style.left = (20 + Math.random() * 60) + '%'
       }
 
       if (element.attributes.y) {
         newElement.style.top = element.attributes.y.value + '%'
+      } else {
+        newElement.style.top = (20 + Math.random() * 60) + '%'
       }
 
       if (element.attributes.width) {
         newElement.style.width = element.attributes.width.value + '%'
+      } else {
+        newElement.style.width = (20 + Math.random() * 60) + '%'
       }
 
       if (element.attributes.height) {
         newElement.style.height = element.attributes.height.value + '%'
+      } else {
+        newElement.style.height = (20 + Math.random() * 60) + '%'
       }
 
       if (element.attributes.class) {
