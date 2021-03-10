@@ -5212,18 +5212,13 @@ VAR a
 			var curTime = Date.now();
 			deltaTime = curTime - prevTime;
 
-      // hack by fran
-      // fit by gucci
-      if (claribelle_gone) {
-        return;
-      }
-
 			if (curRoom == null) {
 				// in the special case where there is no valid room, end the game
 				startNarrating("", true /*isEnding*/);
 			}
 
-			if (!transition.IsTransitionActive()) {
+      // hack by fran
+			if (!transition.IsTransitionActive() && !claribelle_gone) {
 				updateInput();
 			}
 
@@ -6827,6 +6822,9 @@ VAR a
 
 			//draw sprites
 			for (id in sprite) {
+        if (id == playerId && claribelle_gone) {
+          continue;
+        }
 				var spr = sprite[id];
 				if (spr.room === room.id) {
 					drawSprite(getSpriteImage(spr, paletteId, frameIndex), spr.x, spr.y, context);
@@ -9599,10 +9597,6 @@ CHAR 9835
 
       d.Events.listen('computer.claribelleescape', () => {
         claribelle_gone = true;
-
-        // hide claribelle :o
-				player().x = 16;
-				player().y = 16;
       });
 
 
