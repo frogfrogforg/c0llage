@@ -36,6 +36,21 @@
     height: 30px;
     border-bottom: 2px double black;
     user-select: none;
+    display: flex;
+}
+
+.Frame-header-blank {
+    flex-grow: 1;
+}
+
+.Frame-header-button {
+    width: 25px;
+    height: 25px;
+    text-align: center;
+}
+
+.Frame-header-button:hover {
+    background-color: darkgray;
 }
 
 .Frame-body {
@@ -48,6 +63,7 @@
     width: 100%;
     height: 100%;
 }
+
 
 .Frame-handle {
     position: absolute;

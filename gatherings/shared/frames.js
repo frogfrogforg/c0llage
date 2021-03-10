@@ -6,7 +6,13 @@ const hiddenClassName = 'Frame-Hidden'
 
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
-    <div class="Frame-header">click & drag</div>
+    <div class="Frame-header">
+      <div class="Frame-header-blank">
+      click & drag
+      </div>
+      <div class="Frame-header-button" id="$id-max"> D </div>
+      <div class="Frame-header-button" id="$id-close"> X </div>
+    </div>
       <div id="$id-body" class="Frame-body">
       </div>
     <div class="Frame-handle"></div>
@@ -61,10 +67,10 @@ export function init () {
         newElement.classList.add(hiddenClassName)
       }
 
-      console.log('creating frame element ' + id);
+      console.log('creating frame element ' + id)
       if (element.attributes.x) {
         newElement.style.left = element.attributes.x.value + '%'
-        console.log('assigning left value to ' + element.attributes.x.value +  ' for ' + id);
+        console.log('assigning left value to ' + element.attributes.x.value + ' for ' + id)
       }
 
       if (element.attributes.y) {
@@ -85,6 +91,24 @@ export function init () {
 
       if (element.attributes.bodyClass) {
         body.classList.add(element.attributes.bodyClass.value)
+      }
+
+      // add button functionality
+
+      // maximize button only exists for iframes
+      const maximizeButton = document.getElementById(`${id}-max`)
+      if (body.firstElementChild.nodeName === 'IFRAME') {
+        maximizeButton.onclick = () => {
+          window.open(body.firstElementChild.src, '_self')
+        }
+      } else {
+        maximizeButton.style.hidden = true
+      }
+
+      // close button
+      const closeButton = document.getElementById(`${id}-close`)
+      closeButton.onclick = () => {
+        hide(id)
       }
     }
   }
@@ -134,7 +158,7 @@ function onMouseDown (evt) {
 
   // determine operation
   const classes = target.classList
-  if (classes.contains('Frame-header')) {
+  if (classes.contains('Frame-header-blank')) {
     op = Ops.Move
   } else if (classes.contains('Frame-handle')) {
     op = Ops.Scale
@@ -152,8 +176,8 @@ function onMouseDown (evt) {
     el = el.parentElement
   }
 
-  console.log('mouse down on ' + el.id);
-  console.log('parent is ' + el.parentElement.id);
+  console.log('mouse down on ' + el.id)
+  console.log('parent is ' + el.parentElement.id)
 
   if (el == null) {
     return
