@@ -8,7 +8,6 @@ let raised = new Set()
 export const Events = {
   // -- commands --
   listen(name, listener) {
-    console.log('ADDING EVENT ' + name);
     root.addEventListener(name, listener)
   },
   raise(name) {
