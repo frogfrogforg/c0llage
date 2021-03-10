@@ -19,20 +19,23 @@
 	}
 
 	.modal-content{
-		background-color: #f0faf9;
+		background-color: #DADADA;
 		color:black;
 		width:270px;
 		margin: 20% auto;
-		border:15px solid #f0faf9;
+		border:15px solid #DADADA;
 	}
 
 	.modal-header{
-		background-color: grey;
-		width:300px;
-		height:30px;
+		background-color: #DADADA;
+		width:295px;
+		height:15px;
 		display:inherit;
-		border-bottom: 2px double black;
+		position:relative;
+		border: 2px solid #DADADA;
 		margin:-15px;
+		overflow: hidden;
+		z-index:1;
 	}
 
 	.modal-body{
@@ -61,7 +64,12 @@
 <body>
 	<div id="modal" class="modal">
 		<div class ="modal-content" id ="modal-content">
+
 			<div id= "modal-header" class="modal-header">
+				<span style="display:inline-flex;">
+					<img src="img/window-close.gif" style="padding-right: 2px;">
+						<img src="img/window-head.gif">
+				</span>
 			</div>
 			
 			<div class="modal-body" id="modal-body">
@@ -97,7 +105,7 @@
 	outBtn.onclick = function(){
 		modal.style.display = "block";
 		drag.style.visibility = "inherit";
-		bod.style.border = "15px solid #f0faf9";
+		bod.style.border = "15px solid #DADADA";
 		stuff.style.animation = "0";
 		stuff.style.transform = "scale(1)";
 
