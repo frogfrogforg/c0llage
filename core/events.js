@@ -8,6 +8,7 @@ let raised = new Set()
 export const Events = {
   // -- commands --
   listen(name, listener) {
+    console.log('ADDING EVENT ' + name);
     root.addEventListener(name, listener)
   },
   raise(name) {
@@ -24,6 +25,8 @@ export const Events = {
   Alidator: {
     Cat: "alidator.cat",
     Tea: "alidator.tea",
+    ExitLeft: "alidator.exitleft",
+    ExitRight: "alidator.exitright",
   },
   Salada: {
     Bucket: "salada.bucket",
@@ -31,5 +34,7 @@ export const Events = {
   },
   Mario: {
     ExitLevel: "mario.exitlevel",
-  }
-}
+  },
+  Computer: {
+    ClaribelleEscape: "computer.claribelleescape",
+  } }

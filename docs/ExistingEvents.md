@@ -16,5 +16,8 @@ Current Events
 - juice.appeared: when the juice window appears in sequential-games.html
 - alidator.cat: immediately when you talk to the ~~cat~~ eagle in alidator
 - alidator.tea: once you finish the interaction with the cup of tea
+- alidator.exitleft: when you try to move offscreen to the left (through the beach)
+- alidator.exitright: same as alidator.exitright but on the right side
 - salada.bucket: when you speak with the bucket in prometheus/salada-gratuita
 - salada.end: when you enter the house in prometheus/salada-gratuita
+- computer.claribelleescape: when claribelle escapes from alidator

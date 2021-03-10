@@ -61,8 +61,10 @@ export function init () {
         newElement.classList.add(hiddenClassName)
       }
 
+      console.log('creating frame element ' + id);
       if (element.attributes.x) {
         newElement.style.left = element.attributes.x.value + '%'
+        console.log('assigning left value to ' + element.attributes.x.value +  ' for ' + id);
       }
 
       if (element.attributes.y) {
@@ -149,6 +151,9 @@ function onMouseDown (evt) {
   while (el != null && !el.classList.contains('Frame')) {
     el = el.parentElement
   }
+
+  console.log('mouse down on ' + el.id);
+  console.log('parent is ' + el.parentElement.id);
 
   if (el == null) {
     return
