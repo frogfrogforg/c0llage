@@ -5212,13 +5212,17 @@ VAR a
 			var curTime = Date.now();
 			deltaTime = curTime - prevTime;
 
+      // hack
+      if (claribelle_gone) {
+        return;
+      }
+
 			if (curRoom == null) {
 				// in the special case where there is no valid room, end the game
 				startNarrating("", true /*isEnding*/);
 			}
 
-      // hack by fran
-			if (!transition.IsTransitionActive() && !claribelle_gone) {
+			if (!transition.IsTransitionActive()) {
 				updateInput();
 			}
 
