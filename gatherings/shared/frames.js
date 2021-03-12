@@ -7,11 +7,12 @@ const hiddenClassName = 'Frame-Hidden'
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
     <div class="Frame-header">
+          <div class="Frame-header-button" id="$id-close">
+            <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+ </div>
+       <div class="Frame-header-button" id="$id-max"> D </div>
       <div class="Frame-header-blank">
-      click & drag
       </div>
-      <div class="Frame-header-button" id="$id-max"> D </div>
-      <div class="Frame-header-button" id="$id-close"> X </div>
     </div>
       <div id="$id-body" class="Frame-body">
       </div>
