@@ -1,0 +1,38 @@
+<head>
+    <link rel="stylesheet" href="../gatherings/forest/common.css">
+    <link rel="stylesheet" href="../gatherings/shared/frames.css">
+    <script src="../gatherings/forest/common.js"></script>    
+    <script type="module">
+        import * as Frames from "../gatherings/shared/frames.js"
+        Frames.init()
+        window.Frames = Frames
+    </script>
+    <script src="./editor.js"></script>
+    <style>
+        body {
+            flex-direction: column;
+        }
+
+        #toolbox {
+            margin: 30px;
+            background-color: #eee;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <div class="container">
+        <main id="frames" class="content">
+            <img id="background" class="background"></img>
+            <draggable-frame>test</draggable-frame>
+        </main>
+    </div>
+    <div id="toolbox">
+        <button onclick="addHotspot()">add hotspot</button>
+        <br>
+        Background image
+        <br>
+        <input type="file" id="background-image-input">
+        <button onclick="exportHtml()">export</button>
+    </div>
+</body>

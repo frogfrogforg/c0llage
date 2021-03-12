@@ -27,9 +27,104 @@ const frameTemplate = `<article id="$id" class="Frame">
 </article>
 `
 
+function htmlToElement(html) {
+    var template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
+function makeId(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 // -- lifetime --
-function create (id, content) {
-  return frameTemplate.replaceAll('$id', id)
+export function create (content, attributes, id) {
+  id = id || makeId(5);
+  const frameHtml = frameTemplate.replaceAll('$id', id);
+  const el = htmlToElement(frameHtml);
+
+  const hidden = attributes.hidden || false;
+
+  const body = el.querySelector(`#${id}-body`)
+  body.innerHTML = content
+
+  if (hidden) {
+    el.classList.add(hiddenClassName)
+  }
+
+  console.log('creating frame element ' + id)
+
+  let width = 0
+  if (attributes.width) {
+    width = attributes.width
+  } else {
+    width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+  }
+  el.style.width = width + '%'
+
+  let height = 0
+  if (attributes.height) {
+    height = attributes.height
+  } else {
+    height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+  }
+  el.style.height = height + '%'
+
+  let x = 0
+  if (attributes.x) {
+    x = attributes.x
+  } else {
+    x =
+      Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
+    console.log(width)
+  }
+  el.style.left = x + '%'
+
+  let y = 0
+  if (attributes.y) {
+    y = attributes.y
+  } else {
+    y =
+      Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
+    console.log(height)
+  }
+  el.style.top = y + '%'
+
+  if (attributes.class) {
+    el.classList.add(attributes.class.value)
+  }
+
+  if (attributes.bodyClass) {
+    body.classList.add(attributes.bodyClass)
+  }
+
+  // add button functionality
+
+  // TODO: fix this when frame has no children:
+  // // maximize button only exists for iframes
+  // const maximizeButton = el.querySelector(`#${id}-max`)
+  // if (body.firstElementChild.nodeName === 'IFRAME') {
+  //   maximizeButton.onclick = () => {
+  //     window.open(body.firstElementChild.src, '_self')
+  //   }
+  // } else {
+  //   maximizeButton.style.hidden = true
+  // }
+
+  // close button
+  const closeButton = el.querySelector(`#${id}-close`)
+  closeButton.onclick = () => {
+    hide(id)
+  }
+
+  return el;
 }
 
 export function toggle (id) {
@@ -49,97 +144,29 @@ export function show (id) {
   document.getElementById(id).classList.remove(hiddenClassName)
 }
 
-export function init () {
+export function init (container) {
   // capture elements
-  frames = document.getElementById('frames')
+  frames = container || document.getElementById('frames')
 
   // fill custom tags
   // TODO: make a shared customTag function?
   // https://code.tutsplus.com/tutorials/extending-the-html-by-creating-custom-tags--cms-28622
   document.createElement(tagName)
   const tagInstances = document.getElementsByTagName(tagName)
-  while (tagInstances.length > 0) {
-    const element = tagInstances[0]
-    const content = element.innerHTML
-    const hidden = element.attributes.hidden != null
+  Array.from(tagInstances).forEach((tag) => {
+    const content = tag.innerHTML
+    const hidden = tag.attributes.hidden != null
 
-    if (element.attributes.id) {
-      const id = element.attributes.id.value
-      element.outerHTML = create(id)
-      const body = document.getElementById(`${id}-body`)
-      body.innerHTML = content
-      // I don't understand why I need to do this??
-      const newElement = document.getElementById(`${id}`)
-      if (hidden) {
-        newElement.classList.add(hiddenClassName)
-      }
-
-      console.log('creating frame element ' + id)
-
-      let width = 0
-      if (element.attributes.width) {
-        width = element.attributes.width.value
-      } else {
-        width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
-      }
-
-      newElement.style.width = width + '%'
-
-      let height = 0
-      if (element.attributes.height) {
-        height = element.attributes.height.value
-      } else {
-        height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
-      }
-      newElement.style.height = height + '%'
-
-      let x = 0
-      if (element.attributes.x) {
-        x = element.attributes.x.value
-      } else {
-        x =
-          Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-        console.log(width)
-      }
-      newElement.style.left = x + '%'
-
-      let y = 0
-      if (element.attributes.y) {
-        y = element.attributes.y.value
-      } else {
-        y =
-          Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-        console.log(height)
-      }
-      newElement.style.top = y + '%'
-
-      if (element.attributes.class) {
-        newElement.classList.add(element.attributes.class.value)
-      }
-
-      if (element.attributes.bodyClass) {
-        body.classList.add(element.attributes.bodyClass.value)
-      }
-
-      // add button functionality
-
-      // maximize button only exists for iframes
-      const maximizeButton = document.getElementById(`${id}-max`)
-      if (body.firstElementChild.nodeName === 'IFRAME') {
-        maximizeButton.onclick = () => {
-          window.open(body.firstElementChild.src, '_self')
-        }
-      } else {
-        maximizeButton.style.hidden = true
-      }
-
-      // close button
-      const closeButton = document.getElementById(`${id}-close`)
-      closeButton.onclick = () => {
-        hide(id)
-      }
+    var id;
+    if (tag.attributes.id) {
+      id = tag.attributes.id.value
     }
-  }
+
+    // TODO: pass other attributes
+
+    const element = create(content, hidden, id);
+    tag.replaceWith(element);
+  });
 
   // drag any frame in the container
   const body = document.body
