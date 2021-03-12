@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<style>
+	body{
+		background-color: palegoldenrod;
+	}
+	
+	.scattered{
+		font-size:1.4em;
+		position:absolute;
+		top:auto;
+		left:auto;
+		white-space: nowrap;
+	}
+
+</style>
+	
+	
+<head>
+	<title>scatter</title>
+	<meta charset="utf-8">
+</head>
+
+<body>
+	<div class="scattered">this is some test text, there is a lot of it.</div>
+	<p class="scattered">this is some test text, there is a lot of it.</p>
+	<p class="scattered">this is some test text, there is a lot of it.</p>
+	
+<!--this scatters the text. yr welcome-->
+<script>
+	//if you totally hate this, you can just remove the "scattered" class from any tag & it'll fit right in again
+	var scatteredLinks = document.getElementsByClassName("scattered");
+	
+	var winWidth = window.innerWidth;
+	var winHeight = window.innerHeight;
+	
+	var spinRange = 69;
+	
+	for (var i=0; i < scatteredLinks.length; i++) {
+		var thisGuy = scatteredLinks[i];
+		
+		randomTop = randomizePos(0, winHeight);
+		randomLeft = randomizePos(0, winWidth);
+		randomRot = spin();
+		
+		thisGuy.style.top = randomTop +"px";
+		thisGuy.style.left = randomLeft +"px";
+		thisGuy.style.transform = "rotate("+randomRot+"deg)";
+		
+	}
+	
+	function randomizePos (min, max) {
+		return Math.random() * (max - min) + min;
+		
+	}
+	
+	function spin(){
+		return Math.random() * spinRange;
+	}
+</script>
+	
+
+</body>
+</html>

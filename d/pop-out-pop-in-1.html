@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+
+<style>
+	body{
+		background-color:#00284d;
+		color:white;
+	}
+
+	.modal{
+		background-color: rbga(0,0,0,0.4);
+		width:300px;
+		height:300px;
+		position:absolute;
+		z-index:1;
+		left:0;
+		top:0;
+	}
+
+	.modal-content{
+		background-color: #DADADA;
+		color:black;
+		width:270px;
+		margin: 20% auto;
+		border:15px solid #DADADA;
+	}
+
+	.modal-header{
+		background-color: #DADADA;
+		width:295px;
+		height:15px;
+		display:inherit;
+		position:relative;
+		border: 2px solid #DADADA;
+		margin:-15px;
+		overflow: hidden;
+		z-index:1;
+	}
+
+	.modal-body{
+		text-align:center;
+		padding:20px;
+		margin-top:0px;
+		border:0;
+	}
+
+	@keyframes shake {
+  		0% { transform: translate(1px, 1px) rotate(0deg) scale(0.98); }
+  		10% { transform: translate(-1px, -2px) rotate(-1deg) scale(0.94); }
+ 		20% { transform: translate(-3px, 0px) rotate(1deg) scale(0.94); }
+  		30% { transform: translate(3px, 2px) rotate(0deg) scale(0.9); }
+		40% { transform: translate(1px, -1px) rotate(1deg) scale(0.9); }
+ 		50% { transform: translate(-1px, 2px) rotate(-1deg) scale(0.9); }
+		60% { transform: translate(-3px, 1px) rotate(0deg) scale(0.9); }
+ 		70% { transform: translate(3px, 1px) rotate(-1deg) scale(0.9); }
+ 		80% { transform: translate(-1px, -1px) rotate(1deg) scale(0.9); }
+  		90% { transform: translate(1px, 2px) rotate(0deg) scale(0.9); }
+  		100% { transform: translate(1px, -2px) rotate(-1deg) scale(0.9); }
+	}
+
+</style>
+
+<body>
+	<div id="modal" class="modal">
+		<div class ="modal-content" id ="modal-content">
+
+			<div id= "modal-header" class="modal-header">
+				<span style="display:inline-flex;">
+					<img src="img/window-close.gif" style="padding-right: 2px;">
+						<img src="img/window-head.gif">
+				</span>
+			</div>
+			
+			<div class="modal-body" id="modal-body">
+				<img src="img/irene.gif" style = "height:150px;"><p>neither for me the honey nor the honey bee</p>
+				<button id="outset">pick it up</button> <button id="inset">put it down</button>
+			</div>
+		</div>
+	</div>
+
+
+
+<script>
+	//this
+	//is the setup or whatever
+	//i probably don't need /all/ of these variables, 
+	//but idk, i'm both drunk & a noob so, like, who 
+	//cares right?
+
+	var modal = document.getElementById("modal");
+
+	var drag = document.getElementById("modal-header");
+
+	var bod = document.getElementById("modal-content");
+
+	var stuff = document.getElementById("modal-body");
+
+	var outBtn = document.getElementById("outset");
+
+	var insBtn = document.getElementById("inset");
+
+	// this 
+	// makes a pop-up div
+	outBtn.onclick = function(){
+		modal.style.display = "block";
+		drag.style.visibility = "inherit";
+		bod.style.border = "15px solid #DADADA";
+		stuff.style.animation = "0";
+		stuff.style.transform = "scale(1)";
+
+	}
+
+	
+	// this 
+	// makes the popup draggable
+	dragElement(modal);
+
+	function dragElement(elmnt) {
+  		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    		drag.onmousedown = dragMouseDown;
+
+  	function dragMouseDown(e) {
+   		e = e || window.event;
+   		e.preventDefault();
+   		// get the mouse cursor position at startup
+    	pos3 = e.clientX;
+    	pos4 = e.clientY;
+    	document.onmouseup = closeDragElement;
+    	// call a function whenever the cursor moves
+    	document.onmousemove = elementDrag;
+  		}
+
+ 	function elementDrag(e) {
+    	e = e || window.event;
+    	e.preventDefault();
+    	// calculate the new cursor position
+    	pos1 = pos3 - e.clientX;
+    	pos2 = pos4 - e.clientY;
+    	pos3 = e.clientX;
+    	pos4 = e.clientY;
+ 	 	// set the element's new position:
+   		elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    	elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  		}
+
+  	function closeDragElement() {
+    	// stop moving when mouse button is released
+    	document.onmouseup = null;
+    	document.onmousemove = null;
+  		}
+
+	//this
+	//makes the modal into an inset
+	insBtn.onclick = function(){
+		drag.style.visibility="hidden";
+		bod.style.border="15px inset #0a4378";
+		stuff.style.animation="shake 0.1s"; 
+		stuff.style.transform="scale(0.9)";
+	}
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,262 @@
+<head>
+    <script src="common.js"></script>
+    <link rel="stylesheet" href="../shared/frames.css">
+    <style>
+        body {
+            position: relative;
+            background-color: blue;
+            overflow: hidden;
+        }
+
+        .icons {
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+        }
+
+        .icon {
+            image-rendering: pixelated;
+            position: absolute;
+            cursor: pointer;
+            width: 10%;
+        }
+
+
+        iframe {
+            border: 0;
+            --scaleFactor: 0.6;
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor)) !important;
+            height: calc(100%/var(--scaleFactor)) !important;
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left
+        }
+
+        #claribelle {
+            position: absolute;
+            left: 60px;
+            top: 69px;
+            transform: scale(.125);
+        }
+    </style>
+</head>
+
+<body style="width:100%; height:100%">
+    <section id="frames" class="Frames">
+        <draggable-frame id="alidator-frame" hidden>
+            <iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></iframe>
+        </draggable-frame>
+
+        <draggable-frame id="forest-frame" hidden>
+            <iframe style="--scaleFactor: 0.5;" id="forest" src="./1.html"></iframe>
+        </draggable-frame>
+
+        <draggable-frame id="main-frame" hidden>
+            <iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></iframe>
+        </draggable-frame>
+
+    </section>
+
+    <div id=" icons" class="icons" style="left:1%; top:1%; width: 100%; height: 100%;">
+        <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
+
+        <pc-icon target="alidator-frame" src="./images/alidator-icon.png"></pc-icon>
+
+        <pc-icon target="forest-frame" src="./images/forest-icon.png"></pc-icon>
+
+        <pc-icon target="main-frame" src="./images/main-icon.png"></pc-icon>
+
+    </div>
+
+    <!-- claribelle is unhidden when she escapes from alidator -->
+    <img id="claribelle" src="./images/Claribelle.png" hidden></img>
+
+    <script type="module">
+        import "../../global.js"
+        import * as Frames from "../shared/frames.js"
+
+        const tagName = 'pc-icon'
+        const iconTemplate = `
+<img class="icon" id="$id"
+                src="$src">
+            </img>
+        `
+        function openFrame(targetFrame, icon) {
+            icon.style.filter = "invert(1)"
+            targetFrame.classList.remove("Frame-Hidden")
+        }
+
+        function closeFrame(targetFrame, icon) {
+            icon.style.filter = "none"
+            targetFrame.classList.add("Frame-Hidden")
+        }
+
+        function initializeIcons(padding) {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            let posx = 0;
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const id = `${target}-icon`
+                element.outerHTML = iconTemplate
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+
+                const targetFrame = document.getElementById(target);
+                const icon = document.getElementById(id);
+                icon.onclick = () => {
+                    // very hacky sorry
+                    // <3
+                    if (targetFrame.classList.contains("Frame-Hidden") == true) {
+                        openFrame(targetFrame, icon);
+                    } else {
+                        closeFrame(targetFrame, icon);
+                    }
+                }
+                icon.style.left = posx + '%'
+                posx += padding
+            }
+        }
+
+
+
+        // commenting out while fran is still wokring on it
+        d.Events.listen('alidator.exitright', () => {
+            // claribelle escapes
+
+            const targetFrame = document.getElementById('alidator-frame');
+            const f = targetFrame.getBoundingClientRect();
+
+            const claribelle = document.getElementById('claribelle');
+
+            // move  claribelle to the left-middle of the frame
+            // i always have to add these magic offsets when i work
+            // with getBoundingClientRect() bc i dont understand it
+            place_claribelle(f.x + f.width - 50,
+                f.y + f.height / 2);
+
+            // reveal claribelle
+            claribelle.removeAttribute("hidden");
+
+            // switch focus to computer (not alidator) to let keyboard
+            // inputs work
+            window.top.focus()
+
+            d.Events.raise('computer.claribelleescape');
+        });
+
+        d.Events.listen('alidator.exitleft', () => {
+            // claribelle escapes
+
+            const targetFrame = document.getElementById('alidator-frame');
+            const f = targetFrame.getBoundingClientRect();
+
+            const claribelle = document.getElementById('claribelle');
+
+            // move  claribelle to the left-middle of the frame
+            // i always have to add these magic offsets when i work
+            // with getBoundingClientRect() bc i dont understand it
+            place_claribelle(f.x - 100,
+                f.y + f.height / 2);
+
+            // reveal claribelle
+            claribelle.removeAttribute("hidden");
+
+            // switch focus to computer (not alidator) to let keyboard
+            // inputs work
+            window.top.focus()
+
+            d.Events.raise('computer.claribelleescape');
+        });
+
+        function place_claribelle(x, y) {
+            const claribelle = document.getElementById('claribelle');
+
+            // move  claribelle to the left-middle of the frame
+            // i always have to add these magic offsets when i work
+            // with getBoundingClientRect() bc i dont understand it
+            claribelle_x = x;
+            claribelle_y = y;
+            claribelle.style.left = `${claribelle_x}px`;
+            claribelle.style.top = `${claribelle_y}px`;
+
+        }
+
+        // thank you bitsy
+        // https://github.com/frogfrogforg/c0llage/blob/main/Jen/alidator.html#L4924
+        var key = {
+            left: 37,
+            right: 39,
+            up: 38,
+            down: 40,
+            w: 87,
+            a: 65,
+            s: 83,
+            d: 68,
+        }
+
+        // debug
+        // claribelle.removeAttribute("hidden");
+
+        // claribelle stuff position
+        var claribelle_x = 50;
+        var claribelle_y = 50;
+        var claribelle_hidden = true;
+        const k_claribelle_move_incr = 16
+
+        window.top.addEventListener('keydown', (event) => {
+            const claribelle = document.getElementById('claribelle');
+            // LIVE HAUNTING
+            const screen = claribelle.parentElement.getBoundingClientRect()
+
+            if (event.keyCode == key.left) {
+                claribelle_x -= k_claribelle_move_incr;
+            }
+            if (event.keyCode == key.right) {
+                claribelle_x += k_claribelle_move_incr;
+            }
+            if (event.keyCode == key.up) {
+                claribelle_y -= k_claribelle_move_incr;
+            }
+            if (event.keyCode == key.down) {
+                claribelle_y += k_claribelle_move_incr;
+            }
+
+            const y = screen.height
+            const x = screen.width
+            claribelle_x = (claribelle_x + x) % x
+            claribelle_y = (claribelle_y + y) % y
+            claribelle.style.top = `${claribelle_y}px`;
+            claribelle.style.left = `${claribelle_x}px`;
+        });
+
+
+        // all the touch/mobile input is untested
+        // but probably important that it works
+        // should probably make an input library that basically copies
+        // the way that bitsy handles touch stuff:
+        // https://github.com/frogfrogforg/c0llage/blob/main/Jen/alidator.html#L5488
+        // window.addEventListener('touchstart', (event) => {
+        // });
+        // window.addEventListener('touchmove', (event) => {
+        // });
+        // window.addEventListener('touchend', (event) => {
+        // });
+
+
+        function main() {
+            Frames.init()
+            initializeIcons(12)
+        }
+
+        main()
+
+
+    </script>
+</body>

@@ -1,0 +1,13 @@
+{
+  "name": "ecto",
+  "collaborators": [
+    "ghost <ghost>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "ecto_bg.wasm",
+    "ecto.js"
+  ],
+  "module": "ecto.js",
+  "sideEffects": false
+}

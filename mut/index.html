@@ -1,0 +1,196 @@
+<head>
+  <title>mutpensamentos</title>
+  <!-- copied from http://txti.es/ -->
+  <style>
+    html {
+      -webkit-text-size-adjust: 100%;
+      padding-bottom: 4em
+    }
+
+    body {
+      font-family: sans-serif;
+      line-height: 1.5em;
+      max-width: 40em;
+      padding: 0 2%;
+      margin: auto;
+      background-image: url("./img/leak-big-compressed-3.jpg");
+      color: rgb(112, 221, 206);
+      text-shadow: 0 4px 0 rgb(98, 9, 214);
+      font-size: 50;
+    }
+
+    p {
+      background: #4b4bc125;
+    }
+
+    .text-input {
+      width: 96%;
+      display: block;
+      padding: .5em 1%;
+      margin-bottom: 1.5em;
+      font-size: 1em
+    }
+
+    fieldset {
+      margin-bottom: 1.5em
+    }
+
+    textarea {
+      height: 10em
+    }
+
+    dt {
+      font-weight: bold
+    }
+
+    a {
+      color: rgb(218, 21, 218);
+    }
+
+    .important {
+      color: red
+    }
+
+
+    .footer {
+      text-align: right
+    }
+
+    .centered {
+      text-align: center
+    }
+
+    .nope {
+      display: none
+    }
+
+    .embedGame {
+      display: block;
+      text-align: center;
+    }
+
+    button {
+      background-color: black;
+      color: white;
+      font-weight: bold;
+      height: 50px;
+      border-color: #FFAAAA;
+      border-width: 12px;
+      border-style: solid;
+      font:
+    }
+
+    iframe {
+      width: 512px;
+      height: 512px;
+    }
+  </style>
+  <script>
+    let showBitsyThing = false;
+    function showBitsyGame() {
+      if (!showBitsyThing) {
+        document.getElementById("salada-gratuita").className = "embedGame"
+      }
+      else {
+        document.getElementById("salada-gratuita").className = "nope"
+      }
+      showBitsyThing = !showBitsyThing;
+    }
+  </script>
+</head>
+
+<body>
+  <h1>
+    mutpensamentos
+  </h1>
+
+
+  <p>
+    I might write some thoughts in portuguese sometimes, I might also try to think something about translation and about
+    the
+    web being in english. And I'll see if I can find any automated solution to easily translate some stuff.
+  </p>
+  <div id="2021.02.22.2">
+    <h2>
+      2021.02.22.1
+    </h2>
+    <p>
+      I am having a hard time keeping up with this blog, so I decided to test a new tool, let's see if it works. Blog
+      continues <a href="./mutthoughts.html">
+        here.
+      </a>
+    </p>
+  </div>
+  <div id="2021.02.09.2">
+    <h2>
+      2021.02.09.1
+    </h2>
+    <p>
+      I decided for now that I'll add one new entry here for new commits so that I can have some sort of reverse history
+      thing
+    </p>
+  </div>
+
+  <div>
+
+    <h2 id="2021.02.09.1">
+      2021.02.09.1
+    </h2>
+    <p id="i-decided-to-create-a-blog-actually">
+      I wasn't sure if I wanted to create my own page until now, but reading everyone else I realized it seems actually
+      cool (and a pretty nice way to put our ideas out and try connecting them with the other ideas people seem to be
+      having)
+    </p>
+    <div id="where-i-talk-a-bit-about-free-salad">
+      <p>
+        Haven't done much work (other than trying to come up with ideas) for my free salad game yet. I think I kind of
+        connect a little to what ty is mentioning in his own page about this game. I don't totally vibe with the theme.
+        But
+        in the other hand I hardly ever really vibe with a theme. Again a parallel to ty, I pretty much vibe with
+        whatever
+        I
+        am actually vibing at the moment. I also really like how silly it is, and giving a bit more credit, it's a more
+        interesting theme than like 90% of gamejams I can think of (<a
+          href="https://itch.io/jam/design-from-sound-jam">this being a counter example</a>)
+      </p>
+      <p>
+        And even more so, I really like collaboration, and sometimes I feel that I am some sort of parasite, where I
+        need
+        to have someone else's creative juice flowing in order to maximize my own stuff. Working on this kind of solo
+        kind
+        of group project seems to be a pretty cool challenge for myself.
+      </p>
+      <p>
+        I've been seeing other people's stuff and kept feeling I wanted to like mess around with everything instead of
+        making my own stuff. Hard to think that I don't mind being invisible in the final thing as long as I personally
+        see I had influence on it? Hopefully in the future I'll be more on the haunting side than on the creating side.
+      </p>
+      <p>
+        However I did have thoughts about free salad. And instead of implementing any of them I decided to start just
+        writing this blog entry and putting them out here. The first thing that came to mind was the <a
+          href="https://en.wikipedia.org/wiki/Prometheus">
+          myth of prometheus</a>, more specifically because I didn't think about the myth itself, but about <a
+          target="_blank" href="https://www.pippinbarr.com/2011/12/30/lets-play-ancient-greek-punishment/">this game by
+          pippin barr</a>
+        (which has been a developer that's been on my mind a lot). <a href="./greek-myths.html"> I've been thinking
+          about
+          greek myths and decided to create a whole page for that</a>.
+      </p>
+      <p>
+        I did end up making
+        <button onclick="showBitsyGame()">a bitsy thing </button></h3>
+      </p>
+      <div id="salada-gratuita" class="nope">
+        <iframe src="./salada-gratuita.html" title="Salada Prometida"></iframe>
+      </div>
+      <p>
+        with <a target="_blank"
+          href="https://www.pippinbarr.com/games/2019/07/17/lets-play-ancient-greek-punishment-bitsy-demake.html">pippin
+          barrs bitsy version of the greek punishment thing</a>. Creative Commons is a beauty.
+      </p>
+      <p>
+        Might write a bit more later on how hard is bitsy and how beautiful the default character actually is.
+      </p>
+    </div>
+  </div>
+</body>

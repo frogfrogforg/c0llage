@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    main {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      position: absolute;
+      top: 20px;
+      cursor: pointer;
+    }
+
+    .Games {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .Games-frame {
+      position: fixed;
+    }
+
+    .Games-live {
+      z-index: 1;
+      border-color: papayawhip;
+    }
+
+    .Games-capture {
+      visibility: hidden;
+      border-color: burlywood;
+    }
+
+    .Games.has-capture .Games-capture {
+      visibility: visible;
+    }
+
+    .Game {
+      display: flex;
+      opacity: 0.9;
+      border-width: 10px;
+      border-style: solid;
+    }
+
+    .Game-handle {
+      position: absolute;
+      /* ?? for some reason border-width is calculated from 10px -> 8.933px ?? */
+      width: 8.933px;
+      height: 8.933px;
+      bottom: -8.933px;
+      right: -8.933px;
+      background-color: lightsalmon;
+    }
+
+    /* maybe bitsy needs this? */
+    #touchTrigger {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section id="games" class="Games">
+      <div class="Game Games-live Games-frame">
+        <canvas id="game"></canvas>
+        <div class="Game-handle"></div>
+      </div>
+      <div class="Game Games-live Games-frame">
+        <canvas id="game-salad"></canvas>
+        <div class="Game-handle"></div>
+      </div>
+      <div class="Game Games-capture Games-frame">
+        <canvas id="capture"></canvas>
+        <div class="Game-handle"></div>
+      </div>
+    </section>
+
+    <button onclick="Space.capture()">Capture</button>
+  </main>
+
+  <script>
+    Space = (() => {
+      // -- lifetime --
+      function main() {
+        init()
+        load({ type: "bitsy", path: "./games/bitsy.html" })
+        load({ type: "custom", path: "./games/salad.html", name: "SaladDaze", id: "game-salad" })
+      }
+
+      function init() {
+        // drag any frame of the games container
+        const games = document.getElementById("games")
+        games.addEventListener("mousedown", onDragStart)
+        games.addEventListener("mousemove", onDrag)
+        games.addEventListener("mouseup", onDragEnd)
+
+        // end drag if mouse exits the window
+        const html = document.body.parentElement
+        html.addEventListener("mouseout", (evt) => {
+          if (evt.target == html) {
+            onDragEnd()
+          }
+        })
+      }
+
+      // -- commands --
+      // load bitsy game at remote path
+      async function load(src) {
+        // fetch and parse the html page containing the game
+        const res = await fetch(src.path)
+        const body = await res.text()
+        const html = new DOMParser().parseFromString(body, "text/html")
+
+        // add all the scripts to a wrapper element
+        const wrapper = document.createElement("object")
+        wrapper.id = src.path
+
+        // copy scripts into new elements, otherwise they don't execute
+        const scripts = Array.from(html.scripts)
+        for (const s0 of scripts) {
+          const s1 = document.createElement("script")
+
+          // copy the body of the script
+          s1.text = s0.text
+
+          // and any attributes (e.g. type)
+          for (const attr of s0.attributes) {
+            s1.setAttribute(attr.name, attr.value)
+          }
+
+          wrapper.appendChild(s1)
+        }
+
+        // append wrapper to document
+        document.body.appendChild(wrapper)
+
+        // call bootstrap fn
+        switch (src.type) {
+          case "bitsy": {
+            startExportedGame()
+            break
+          }
+          case "custom": {
+            window[src.name](document.getElementById(src.id))
+            break
+          }
+        }
+      }
+
+      function capture() {
+        document.getElementById("games").classList.toggle("has-capture", true)
+
+        // grab game context
+        const game = document.getElementById("game")
+        const w = Number.parseInt(game.getAttribute("width"))
+        const h = Number.parseInt(game.getAttribute("height"))
+
+        // extract image data from it
+        const gctx = game.getContext("2d")
+        const image = gctx.getImageData(0, 0, w, h)
+
+        // resize capture canvas
+        const capt = document.getElementById("capture")
+        capt.setAttribute("width", w)
+        capt.setAttribute("height", h)
+
+        // copy image data into it
+        const cctx = capt.getContext("2d")
+        cctx.putImageData(image, 0, 0)
+      }
+
+      // -- drag --
+      const move = 0;
+      const scale = 1;
+
+      let el = null
+      let op = move;
+      let x0 = 0.0
+      let y0 = 0.0
+      let mx = 0.0
+      let my = 0.0
+      let ox = 0.0
+      let oy = 0.0
+
+      function onDragStart(evt) {
+        let target = evt.target
+
+        // determine operation
+        op = target.classList.contains("Game-handle") ? scale : move
+
+        // find a frame in the ancestor tree, if any
+        while (target != null && !target.classList.contains("Games-frame")) {
+          target = target.parentElement
+        }
+
+        if (target == null) {
+          return
+        }
+
+        // capture target info
+        el = target
+
+        // record initial x/y position
+        const f = el.getBoundingClientRect()
+        x0 = f.x
+        y0 = f.y
+
+        // record mouse position (we need to calc dx/dy manually on move b/c evt.offset,
+        // the pos within the element, doesn't include borders, etc.)
+        mx = evt.clientX
+        my = evt.clientY
+
+        // record offset for scale op
+        ox = f.right - mx
+        oy = f.bottom - my
+      }
+
+      function onDrag(evt) {
+        if (el == null) {
+          return
+        }
+
+        // apply the operation
+        const cx = evt.clientX
+        const cy = evt.clientY
+
+        if (op == move) {
+          el.style.left = `${x0 + cx - mx}px`
+          el.style.top = `${y0 + cy - my}px`
+        }
+        // op == scale
+        else {
+          const dx = cx + ox - x0 - 8.933 * 2.0 // lol
+          el.style.width = `${dx}px`
+          el.style.height = `${dx}px`
+        }
+
+        // push the active item to the front
+        el.style.zIndex = 1;
+      }
+
+      function onDragEnd() {
+        if (el != null) {
+          el.style.zIndex = null;
+          el = null
+        }
+      }
+
+      // -- bootstrap --
+      main()
+
+      // -- export --
+      return { capture }
+    })()
+  </script>
+</body>
+
+</html>

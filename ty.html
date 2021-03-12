@@ -1,0 +1,172 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* resets */
+    h1 {
+      font-size: unset;
+      font-weight: unset;
+      margin: 0;
+    }
+
+    /* styles */
+    body {
+      margin: 15%;
+      display: flex;
+      justify-content: center;
+      line-height: 1.3;
+    }
+
+    main {
+      max-width: 600px;
+    }
+
+    .Header {
+      margin-left: -10px;
+      font-size: 170px;
+      line-height: 1;
+    }
+
+    .Header-kern {
+      margin-left: 100px;
+      letter-spacing: -4px;
+    }
+
+    .Header-toggle {
+      color: black;
+      text-decoration: none;
+    }
+
+    .Header-toggle:hover {
+      text-decoration: red line-through;
+    }
+
+    .Articles {
+      margin-top: 100px;
+    }
+
+    article+article {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px dashed black;
+    }
+
+    article p {
+      margin: 0;
+    }
+
+    article p+p {
+      margin-top: 10px;
+    }
+
+    article aside {
+      font-size: 12px;
+      font-family: fixed;
+    }
+  </style>
+
+  <script type="module">
+    let ascending = false
+
+    // grab els
+    let $toggle = document.getElementById("toggle")
+    let $articles = document.getElementById("articles")
+
+    // commands
+    function sort(dir) {
+      ascending = dir
+
+      // sort articles by timestamp
+      const articles = Array.from($articles.children)
+      articles.sort(($l, $r) => {
+        let ordered = $l.getAttribute("timestamp") > $r.getAttribute("timestamp")
+        if (!ascending) {
+          ordered = !ordered
+        }
+
+        return ordered
+      })
+
+      // reappend to dom
+      while ($articles.firstChild) {
+        $articles.removeChild($articles.firstChild);
+      }
+
+      for (const article of articles) {
+        $articles.appendChild(article)
+      }
+
+      // update label
+      $toggle.text = ascending ? "fore" : "back"
+    }
+
+    // bind events
+    $toggle.addEventListener("click", (evt) => {
+      evt.preventDefault()
+      sort(!ascending)
+    })
+  </script>
+</head>
+
+<body>
+  <main>
+    <header class="Header">
+      <h1><a id="toggle" href="#" class="Header-toggle">back</a> <span class="Header-kern">w</span>ords</h1>
+    </header>
+
+    <section id="articles" class="Articles">
+      <article timestamp="1614725234">
+        <p>i'm going to try and wear a lightly yellowed hat, at least for the purposes of rituals we've already attempted but haven't maintained.</p>
+        <p>it feels like d has shouldered a lot of this burden, and id like to relieve some of that. that being said, this decision is also absolutely self-motivated. i think our relative lack of structure is causing me a ton of anxiety. while the corresponding lack of top-down pressure on this project has been nice, and i don't want to exert any such pressure on others, i think i need to exert a little on myself for accountability purposes.</p>
+        <p>yesterday, i started thinking about The Problem again. if we're still attempting to solve it (are we?), then perhaps we should try to translate the same attitude of nonjudgemental openness-to-modification that we apply to "the game" to "the process" (insofar as we are successful at that in any domain). maybe we already do. maybe it's simply unarticulated. it feels like the sort of thing worth articulating, reaffirming.</p>
+        <p>speaking of which, the desire "to re-establish, constantly, whenever we feel it necessary" our "intention of playing well together" feels like it fell by the wayside, a little anyways. wow how insanely hard that last predicate, "whenever we feel it necessary" is to navigate. is it possible to ritualize this without hollowing it out, without its affirmative qualities evaporating? honestly no idea.</p>
+        <p>all things considered, openness-to-modification does seem a degree or two harder, more sensitive when we're modifying process as opposed to artifact. it impacts more people, more directly (though, does it?), at least in terms of the face time consumed (though, does it?). mythical meat months. i think such changes may need to be constantly packaged with reaffirmations of an opennes-to-unrolling them, for a while anyways.</p>
+        <p>p.s. in a recent meeting and a moment of aphasiac foot-in-mouth i referred to my own blog-writing as "truth-telling", which jfc is an insane person thing to say. i am so sorry, yuck. all i really wanted to say was that as a player, i would personally appreciate an authentic window into the creators' minds. i think that window is nice, generally, though definitely shouldn't be obligatory.</p>
+        <p>p.p.s. thinking about a way to syndicate/index blogposts, grab a feed of what's changed. i sort of anticipated this happening as the semester wore on, and i know i am now struggling to notice and read new posts when they're added. maybe a build-time tool that constructs an index page, maybe there's some html-spec tech that address this. maybe a discord bot?</p>
+        <p>p.p.p.s. have some mostly unexplored thoughts rolling around my head about against interpretation. its criticisms, by my reading anyways, were trained mostly on secondary (what is this) interpreters. i feel like the interpretive mode also runs hot at creation time, interpretation often prefiguring the creation itself. i personally don't love it. she talks about authorial interpretation a bit, but does anyone recall specific passages in the text that speak to this?</p>
+      </article>
+
+      <article timestamp="1614212297">
+        <p>play is infinite. is there a set of rules (populous or not? self-or-other-imposed?) capable of limiting it? i don't think so.</p>
+      </article>
+
+      <article timestamp="1612893390">
+        <aside>going to start tagging anything i add to this site with a unix timestamp (e.g. <code>&lt;article timestamp="1612893390"&gt;</code>) s/t maybe a program could deconstruct/linearize/analyze it in the future.</aside>
+        <p>while i need to finish my free-salad-like, there are some thoughts that i've been tossing around in my head that i need to jot down here. on our site of reflection.<p>
+        <p>i've been procrastinating work on my game. i think it's a funny comic, i have a few ideas for things i could make, but i'm not particularly inspried to make them. it reminds of my personal gripes with book clubs. even in the unlikely event that everyone agrees on a book, scheduling is a hard, different people feel more strongly about the book than others, some want to read faster than others are able to commit to. for me, reading successfully means reading the book i'm most interested in at any given moment, regardless of whether or not other people want to read it.</p>
+        <p>much of our group conversation, and at least one version of creative challenge, concerns The Problem. the tension between preserving individual creative voices and creating something together. in the pursuit of creating a Shared Thing, a single game, individual voices are averaged out into a homogenous mean. this has happened. this does happen. this will happen again.</p>
+        <p>in spite of this fact, i derive a lot of joy from working with others, often (but not necessarily) on the Single Shared Thing. from growing my own ideas and seeing them incorporated into an aggregate beyond my personal comprehension or individual capacity for creation. from the unburdening that accompanies the brilliant, insightful contributions of my collaborators unshackling me from my own bad ideas. of repeatedly failing to, but eventually finding the rhythm that gives birth to such moments. i think i like working on the Shared Thing <em>because</em> of the risk of the homogenous mean and the thrill of figuring out how to evade it.</p>
+        <p>during one of our conversations, darwin pointed out that we may be lifting The Problem up from the level of "game" to the level of "process". i think this is right. however, increasingly i feel like it only describes half of what's happening. even as we attempt to design this process, as we discard tradtitional modes that have silenced our individual voices, i feel my own voice being squelched. probably no surprise that we have not found immediate success; we shed a member before the project even started.</p>
+        <p>i'm not sure that my squelched feelings have anything to do with what we make or with how we make it. i don't even think having those feelings is a <em style="color: firebrick;">bad thing</em>; it's necessary. my intution is that The Problem transcends levels, that it can't be lifted. it is an intrinsic feature of working with others on anything, of navigating the inevitable litany of feelings, preferences, behaviors, etc. necessary to learn to trust and understand a new person or group of people. we are right now in the weeds of learning to work together, of understanding our collaborators' creative voices. we are learning how to support each other's expressions rather than carving out space for our own.</p>
+        <p>being in the weeds is beautiful. i think through the unreplicable process of learning to support and lift up the creative voices of the individuals that we are working with, we can avoid the homogoneous mean. i think we can avoid it thusly if we're making a Single Shared Thing or if we're making fifty.</p>
+        <p>this is a thought i have "known" (if such a thing is knowable) for some time. amongst a scattering of other points in time, i think i've known it most clearly after reading the shockingly good <a href="https://www.indiebound.org/book/9781576753323">One from Many</a> by Dee Hock and the embarassingly named <a href="https://www.indiebound.org/book/9780321278654">Extreme Programming Explained</a> by Kent Beck and Cynthia Andres. there is no process, there is only people. no practices, just principles. it has recently re-crystalled for me while reading The Well-Played Game. "to play well" requires that we recognize that "the energy resides not in the game but in playing with people", is "to create well" any different?</p>
+      </article>
+
+      <article timestamp="1612880286">
+        how are we reflecting (now) (processeez)
+        <br>
+        we have this blog (nice to read others' writing now, wonder how it feels in <time datetime="2021-03-02T14:28:41.838Z">4 wks</time>)
+        <br>
+        we have ad-hoc posting on miro/discord
+        <br>
+        we have unstructured conversation during class-time
+        <br>
+        ???
+        <br>
+      </article>
+
+      <article timestamp="1612879939">
+        those free salad days
+        <br>
+        aged (teen) poetry
+        <br>
+        <span style="float: right;">got some free salad malaise</span>
+        mayonnaise
+        <br>
+        oil, egg, lemonj; garlic and salt if you want (i do)
+        <br>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

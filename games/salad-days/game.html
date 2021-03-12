@@ -1,0 +1,733 @@
+<head>
+  <script type="module">
+    import "../../global.js"
+
+    window.SaladDaze = (() => {
+      // -- "imports" --
+      const {
+        min,
+        pow,
+        sqrt,
+        round: rnd,
+        floor: flr,
+        random: rand,
+      } = Math
+
+      // -- types --
+      const Types = {
+        Empty: 0,
+        Text: 1,
+        Sprite: 2,
+      }
+
+      // -- constants --
+      const kSize = {
+        x: 512,
+        y: 512
+      }
+
+      // -- bootstrap --
+      function Start(id) {
+        initCanvas(document.getElementById(id))
+        initAssets(document.getElementById("assets"))
+        initMouse()
+        initAudio()
+        initDraw()
+        initWorld()
+        initLoop()
+      }
+
+      // -- canvas --
+      let mCanvas
+
+      function initCanvas(el) {
+        // configure canvas
+        mCanvas = el
+        mCanvas.setAttribute("width", kSize.x)
+        mCanvas.setAttribute("height", kSize.y)
+      }
+
+      // -- assets --
+      let mAssets
+
+      function initAssets(el) {
+        // aggregate assets
+        mAssets = {}
+        for (const asset of el.children) {
+          mAssets[asset.id] = asset
+        }
+      }
+
+      // -- mouse --
+      const mMouse = {
+        x: 0.0,
+        y: 0.0,
+        ix: 0.0,
+        iy: 0.0,
+        down: false,
+        pressed: false,
+        dx() {
+          return this.x - this.ix
+        },
+        dy() {
+          return this.y - this.iy
+        },
+      }
+
+      function initMouse() {
+        // get mouse events
+        mCanvas.addEventListener("mousemove", didMoveMouse)
+        mCanvas.addEventListener("mousedown", didPressMouseButton)
+        mCanvas.addEventListener("mouseup", didReleaseMouseButton)
+        mCanvas.addEventListener("mouseleave", didReleaseMouseButton)
+      }
+
+      // -- m/events
+      function didMoveMouse(evt) {
+        const m = mMouse
+        m.x = evt.offsetX
+        m.y = evt.offsetY
+      }
+
+      function didPressMouseButton(evt) {
+        const m = mMouse
+        m.down = true
+        m.pressed = true
+        m.ix = evt.offsetX
+        m.iy = evt.offsetY
+      }
+
+      function didReleaseMouseButton(evt) {
+        const m = mMouse
+        m.pressed = false
+        m.ix = 0.0
+        m.iy = 0.0
+      }
+
+      // -- audio --
+      const mAudio = {
+        ctx: null,
+        tracks: null
+      }
+
+      function initAudio() {
+        mAudio.ctx = new AudioContext()
+        mAudio.tracks = {
+          noise: makeTrack(mAssets.noise, {
+            gain: mAudio.ctx.createGain()
+          }),
+          pop1: makeTrack(mAssets.pop1),
+          pop2: makeTrack(mAssets.pop2),
+        }
+      }
+
+      // -- a/factories
+      function makeTrack(el, props) {
+        const ctx = mAudio.ctx
+
+        const t = {
+          el,
+          track: ctx.createMediaElementSource(el),
+          gain: null,
+          ...props,
+          connect() {
+            let node = this.track
+
+            const g = this.gain
+            if (g != null) {
+              node = node.connect(g)
+            }
+
+            node.connect(ctx.destination)
+          },
+          play() {
+            if (ctx.state === "suspended") {
+              ctx.resume()
+            }
+
+            this.el.play()
+          },
+          stop() {
+            this.el.pause()
+          },
+          setVolume(volume) {
+            const g = this.gain
+            if (g != null) {
+              g.gain.value = volume
+            }
+          }
+        }
+
+        t.connect()
+
+        return t
+      }
+
+      // -- loop --
+      const kFramerate = 30
+      const kFrameInterval = 1000.0 / kFramerate
+      let mFrame = 1
+
+      function initLoop() {
+        setInterval(loop, kFrameInterval)
+      }
+
+      // -- l/commands
+      function loop() {
+        update()
+        draw()
+        mMouse.down = false
+        mFrame += 1
+      }
+
+      // -- world --
+      const kNumTeeth = 16
+
+      let mObjects
+
+      function initWorld() {
+        mObjects = []
+        window.localStorage.teeth = kNumTeeth;
+
+        // add infinite salad
+        const salad = makeSalad()
+        spawn(salad)
+
+        // add teeth
+        const teeth = []
+        for (let i = 0; i < kNumTeeth; i++) {
+          const tooth = makeTooth(i)
+          teeth.push(tooth)
+          spawn(tooth)
+        }
+
+        // add mouth trigger from teeth
+        spawn(makeMouth(salad, teeth))
+      }
+
+      // -- w/commands
+      function update() {
+        updateMany(mObjects)
+      }
+
+      function updateMany(objs) {
+        for (const obj of objs) {
+          if (obj.destroyed) {
+            continue
+          }
+
+          if (obj.update != null) {
+            obj.update()
+          }
+
+          if (obj.children != null) {
+            updateMany(obj.children)
+          }
+        }
+      }
+
+      function spawn(obj) {
+        mObjects.push(obj)
+      }
+
+      // -- w/game
+      function makeSalad() {
+        const text = "FREESALADFREESALAD"
+        const size = 240.0
+
+        return makeText(text, {
+          down: true,
+          skip: [],
+          x: (kSize.x - 170.0) / 2,
+          y: (kSize.y + size),
+          s: size,
+          z: 1,
+          hide(index) {
+            if (this.skip.includes(index)) {
+              return
+            }
+
+            this.skip.push(index)
+          },
+          consume() {
+            if (this.consumed) {
+              return
+            }
+
+            this.consumed = true
+            this.text = "FREESALADFOREVERFREESALADFOREVER"
+          },
+          update() {
+            // animate text up
+            this.y -= 0.8 * kFrameInterval
+
+            // loop text once we're below the repeat
+            const h2 = this.text.length * size / 2.0
+            if (this.y < -h2) {
+              this.y += h2
+              this.skip = []
+            }
+          }
+        })
+      }
+
+      function makeMouth(salad, teeth) {
+        const leaves = []
+
+        // force-add a red leaf when there's a "juice.inbucket" event
+        let forceAddRedLeaf = false
+        d.Events.listen("juice.inbucket", () => {
+          forceAddRedLeaf = true
+        })
+
+        return makeObject(Types.Empty, {
+          update() {
+            purgeDestroyed(teeth)
+            purgeDestroyed(leaves)
+
+            if (teeth.length == 0) {
+              salad.consume()
+              return
+            }
+
+            // randomly add leaves
+            if (!forceAddRedLeaf && (leaves.length >= 3 || rand() < 0.96)) {
+              return
+            }
+
+            const y = salad.y
+            if (y > 0) {
+              return
+            }
+
+            // make sure theres a tooth left
+            const smile = teeth.filter((t) => t.isClean())
+            if (smile.length != 0) {
+              // find letter and hide it temporarily
+              const index = flr(-y / salad.s)
+              const text = salad.text[index]
+              salad.hide(index)
+
+              // spawn leaf
+              var color = undefined; // default random color
+              if (forceAddRedLeaf) {
+                color = "darkred"
+                forceAddRedLeaf = false
+              }
+
+              const leaf = makeLeaf(text, color)
+              leaves.push(leaf)
+
+              // stick the leaf in a random tooth
+              const tooth = smile[flr(rand() * smile.length)]
+              tooth.stick(leaf)
+            }
+          }
+        })
+      }
+
+      function makeTooth(i) {
+        const len = flr(kNumTeeth / 2)
+        const row = flr(i / len)
+        const col = i % len
+
+        const s = makeSprite("tooth", {
+          a: (row + 1) * Math.PI,
+          z: row == 0 ? 2 : 0,
+        })
+
+        const w = s.w
+        const h = s.h
+        const ox = smp.sym(2.0)
+        const oy = smp.sym(3.0)
+
+        function animX() {
+          return 80.0 + col * (w - 5.0) + ox
+        }
+
+        function animY() {
+          const curve = crv.quad(mFrame % 30, 30)
+
+          let scale
+          if (row == 0) {
+            scale = 25.0 + curve * 5.0
+          } else {
+            scale = 10.0 + curve * 50.0
+          }
+
+          return 10.0 + row * h + crv.quad(col, len, scale) + oy
+        }
+
+        const noise = mAudio.tracks.noise
+
+        return {
+          ...s,
+          i,
+          x: animX(),
+          y: animY(),
+          leaf: null,
+          isClean() {
+            return this.leaf == null
+          },
+          stick(leaf) {
+            this.leaf = leaf
+            this.updateLeaf(leaf)
+            this.addChild(leaf)
+          },
+          remove() {
+            console.log(window.localStorage.teeth)
+            window.localStorage.teeth--
+            this.destroy()
+          },
+          update() {
+            this.x = animX()
+            this.y = animY()
+
+            // boo
+            if (this.i == kNumTeeth - 1 && mFrame > 1000) {
+              this.y = 100 + (mFrame - 1000);
+
+              if (this.y > kSize.y) {
+                this.remove()
+              }
+            }
+
+            if (mFrame % 10 == 0) {
+              this.tx = smp.sym(0.5)
+              this.ty = smp.sym(0.5)
+            }
+
+            const l = this.leaf
+            if (l != null) {
+              this.updateLeaf(l)
+
+              const d = sqrt(l.tx * l.tx + l.ty + l.ty)
+              if (isFinite(d) && d >= 0.0) {
+                if (d > 10.0) {
+                  this.remove()
+                } else {
+                  noise.setVolume(0.05 + 0.3 * d / 10.0)
+                  this.tx += smp.sym(d)
+                  this.ty += smp.sym(d)
+                }
+              }
+            }
+          },
+          updateLeaf(leaf) {
+            leaf.x = this.x + this.w / 4
+            leaf.y = this.y
+            leaf.z = this.z
+          },
+          onDestroy() {
+            const ts = mAudio.tracks
+            const pop = rand() > 0.5 ? ts.pop1 : ts.pop2
+            pop.play()
+          },
+        }
+      }
+
+      function makeLeaf(text, color) {
+        function smpColor() {
+          switch (flr(rand() * 7)) {
+            case 0:
+              return "firebrick"
+            case 1:
+              return "saddlebrown"
+            case 2:
+              return "darkgoldenrod"
+            case 3:
+              return "brown"
+            case 4:
+              return "darkolivegreen"
+            case 5:
+              return "olive"
+            case 6:
+              return "olivedrab"
+          }
+        }
+
+        const noise = mAudio.tracks.noise
+
+        return makeText(text, {
+          s: 80.0,
+          a: smp.sym(Math.PI * 0.25),
+          color: color || smpColor(),
+          grabbing: false,
+          grab() {
+            this.grabbing = true
+            noise.play()
+          },
+          move() {
+            const m = mMouse
+            if (!m.pressed) {
+              this.release()
+              return
+            }
+
+            this.tx = m.dx() * 0.1
+            this.ty = m.dy() * 0.1
+          },
+          release() {
+            this.grabbing = false
+            this.tx = 0.0
+            this.ty = 0.0
+            noise.stop()
+          },
+          update() {
+            const m = mMouse
+            if (m.down && this.hit(m.x, m.y)) {
+              this.grab()
+            }
+
+            if (this.grabbing) {
+              this.move()
+            }
+          },
+          onDestroy() {
+            noise.stop()
+          }
+        })
+      }
+
+      // w/primitives
+      function makeText(text, props) {
+        const t = makeObject(Types.Text, {
+          text: text,
+          x: 0.0,
+          y: 0.0,
+          s: 0.0,
+          w: null,
+          a: 0.0,
+          tx: 0.0,
+          ty: 0.0,
+          down: false,
+          color: "black",
+          ...props,
+          hit(x, y) {
+            if (this.w == null) {
+              return false
+            }
+
+            return (
+              x >= this.x &&
+              x <= this.x + this.w &&
+              y >= this.y &&
+              y <= this.y + this.s
+            )
+          }
+        })
+
+        // measure drawn text width for horizontal text
+        if (!t.down) {
+          t.w = mCtx.measureText(t.text).width
+        }
+
+        return t
+      }
+
+      function makeSprite(name, props) {
+        const asset = mAssets[name]
+
+        return makeObject(Types.Sprite, {
+          name: name,
+          x: 0.0,
+          y: 0.0,
+          w: asset.width,
+          h: asset.height,
+          a: 0.0,
+          tx: 0.0,
+          ty: 0.0,
+          hide: false,
+          ...props
+        })
+      }
+
+      function makeObject(type, props) {
+        return {
+          type: type,
+          z: 0,
+          destroyed: false,
+          ...props,
+          destroy() {
+            if (this.onDestroy) {
+              this.onDestroy()
+            }
+
+            this.destroyed = true
+
+            const cs = this.children
+            if (cs != null) {
+              for (const c of cs) {
+                c.destroy()
+              }
+            }
+          },
+          addChild(child) {
+            if (this.children == null) {
+              this.children = []
+            }
+
+            this.children.push(child)
+          }
+        }
+      }
+
+      function purgeDestroyed(objs) {
+        for (let i = 0; i < objs.length; i++) {
+          if (objs[i].destroyed) {
+            objs.splice(i, 1)
+            i--
+          }
+        }
+      }
+
+      // -- draw --
+      let mCtx
+
+      function initDraw() {
+        mCtx = mCanvas.getContext("2d")
+      }
+
+      // -- d/commands
+      function draw() {
+        drawBackground();
+        drawMany(mObjects)
+      }
+
+      function drawMany(objs) {
+        let z = 0
+        let zMax = 0
+
+        do {
+          for (const obj of objs) {
+            if (obj.z > zMax) {
+              zMax = obj.z
+            }
+
+            if (obj.z == z) {
+              drawOne(obj)
+            }
+          }
+
+          z += 1
+        } while (z <= zMax)
+      }
+
+      function drawOne(obj) {
+        if (obj.destroyed) {
+          return
+        }
+
+        switch (obj.type) {
+          case Types.Text:
+            drawText(obj); break
+          case Types.Sprite:
+            drawSprite(obj); break
+        }
+
+        if (obj.children != null) {
+          drawMany(obj.children)
+        }
+      }
+
+      function drawBackground() {
+        mCtx.fillStyle = "papayawhip"
+        mCtx.fillRect(0.0, 0.0, kSize.x, kSize.y);
+      }
+
+      function drawText(t) {
+        const s = t.s
+
+        mCtx.font = `${s}px serif`
+        mCtx.fillStyle = t.color
+        mCtx.textBaseline = "top"
+
+        let x = t.x + t.tx
+        let y = t.y + t.ty
+
+        if (t.down) {
+          let i = 0
+          for (const char of t.text) {
+            if (t.skip == null || !t.skip.includes(i)) {
+              mCtx.fillText(char, x, y)
+            }
+
+            y += s
+            i += 1
+          }
+        } else if (t.a != 0) {
+          drawRotated(t.a, x, y, t.w, s, (x, y) => {
+            mCtx.fillText(t.text, x, y)
+          })
+        } else {
+          mCtx.fillText(t.text, x, y)
+        }
+      }
+
+      function drawSprite(s) {
+        const asset = mAssets[s.name]
+        const x = s.x + s.tx
+        const y = s.y + s.ty
+
+        if (s.a == 0.0) {
+          mCtx.drawImage(asset, x, y, s.w, s.h)
+        } else {
+          drawRotated(s.a, x, y, s.w, s.h, (x, y) => {
+            mCtx.drawImage(asset, x, y, s.w, s.h);
+          })
+        }
+      }
+
+      function drawRotated(a, x, y, w, h, draw) {
+        if (a < 0) {
+          a = 2 * Math.PI + a
+        }
+
+        const w2 = w / 2
+        const h2 = h / 2
+        const cx = x + w2
+        const cy = y + h2
+
+        mCtx.translate(cx, cy);
+        mCtx.rotate(a);
+        draw(-w2, -h2)
+        mCtx.rotate(-a);
+        mCtx.translate(-cx, -cy);
+      }
+
+      // -- helpers --
+      function nrm(value, len, scale = 1.0) {
+        return min(value / (len - 1), 1.0) * scale
+      }
+
+      const smp = {
+        sym(scale = 1.0) {
+          return 2.0 * (rand() - 0.5) * scale
+        }
+      }
+
+      const crv = {
+        quad(val, len, scale = 1.0) {
+          const l2 = len / 2
+          const offset = len % 2 == 0 ? 0.5 : 0
+          return (1 - pow((val - l2 + offset) / l2, 2.0)) * scale
+        }
+      }
+
+      // -- "exports" --
+      return Start
+    })()
+  </script>
+</head>
+
+<body onload='SaladDaze("game")'>
+  <canvas id="game"></canvas>
+
+  <!-- this probably won't work when loaded externally -->
+  <object id="assets" style="display: none">
+    <img id="tooth" src="./tooth.png">
+    <audio id="noise" src="./noise.mp3" loop="true"></audio>
+    <audio id="pop1" src="./pop1.mp3"></audio>
+    <audio id="pop2" src="./pop2.mp3"></audio>
+  </object>
+</body>
