@@ -8,6 +8,27 @@ const FrameRandomness = {
   MaxSize: 30
 }
 
+const temperamentData = {
+  sanguine: {
+    emoji: '🏄‍♂️',
+    alert: 'hello gamer'
+  },
+  phlegmatic: {
+    emoji: '🆓',
+    alert: 'go on gamer'
+  },
+  choleric: {
+    emoji: '🥗',
+    alert: 'get at me gamer'
+  },
+  melancholic: {
+    emoji: '🐛',
+    alert: 'im no gamer'
+  }
+}
+
+const DefaultTemperament = 'melancholic'
+
 // TODO:
 const minContentHeight = 100
 const minContentWidth = 100
@@ -18,10 +39,11 @@ const hiddenClassName = 'Frame-Hidden'
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
     <div class="Frame-header">
-          <div class="Frame-header-button" id="$id-close">
-            <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
- </div>
+      <div class="Frame-header-button" id="$id-close">
+        <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+      </div>
        <div class="Frame-header-button" id="$id-max"> D </div>
+       <div class="Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
       </div>
     </div>
@@ -116,11 +138,11 @@ export function init () {
       newElement.style.top = y + '%'
 
       // Set initial data
-      const rect = newElement.getBoundingClientRect()
+      const rect = body.getBoundingClientRect()
       newElement.dataset.initialWidth = rect.width
       newElement.dataset.initialHeight = rect.height
-      body.style.width = rect.width
-      body.style.height = rect.height
+      // body.style.width = rect.width
+      // body.style.height = rect.height
 
       if (element.attributes.class) {
         newElement.classList.add(element.attributes.class.value)
@@ -139,7 +161,7 @@ export function init () {
           window.open(body.firstElementChild.src, '_self')
         }
       } else {
-        maximizeButton.style.hidden = true
+        maximizeButton.style.display = 'none'
       }
 
       if (hidden) {
@@ -150,6 +172,21 @@ export function init () {
       const closeButton = document.getElementById(`${id}-close`)
       closeButton.onclick = () => {
         hide(id)
+      }
+
+      newElement.dataset.temperament = element.attributes.temperament == null
+        ? DefaultTemperament
+        : element.attributes.temperament.value
+
+      console.log(newElement.dataset.temperament)
+
+      const tempData = temperamentData[newElement.dataset.temperament]
+      const feelingsButton = document.getElementById(`${id}-feelings`)
+      feelingsButton.innerHTML =
+        tempData.emoji
+
+      feelingsButton.onclick = () => {
+        window.alert(tempData.alert)
       }
     }
   }
@@ -320,13 +357,31 @@ function onScale (cx, cy) {
       cy + oy - y0,
       minContentHeight)
 
+  const scaleFactorX = newHeight / (el.dataset.initialHeight)
+  const scaleFactorY = newWidth / (el.dataset.initialWidth)
   const scaleFactor = Math.min(
-    newHeight / (el.dataset.initialHeight),
-    newWidth / (el.dataset.initialWidth)
+    scaleFactorX,
+    scaleFactorY
   )
 
   el.style.width = `${newWidth}px`
   el.style.height = `${newHeight}px`
-  document.getElementById(`${el.id}-body`).style.transform = `scale(${scaleFactor})`
-  console.log('aaaa', scaleFactor)
+
+  const body = document.getElementById(`${el.id}-body`)
+
+  const hack = body.firstElementChild.nodeName === 'IFRAME'
+    ? body.firstElementChild.contentDocument.body
+    : body.firstElementChild
+
+  hack.style.transformOrigin = '0 0'
+
+  const temperament = el.dataset.temperament
+  console.log('my temperament is', temperament)
+  if (temperament === 'sanguine') {
+    hack.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
+  } else if (temperament === 'phlegmatic') {
+    // do nothing;
+  } else {
+    hack.style.transform = `scale(${scaleFactor})`
+  }
 }

@@ -60,6 +60,7 @@
 .Frame-header-button {
     height:15px;
     width:15px;
+    font-size: 12px;
     padding-right:2px;
     text-align: center;
 }
@@ -69,17 +70,24 @@
 }
 
 .Frame-body {
+    box-sizing: border-box;
     transform-origin: top left;
     flex: 1;
     padding: 4px;
+    width: 100%;
     height: 100%;
+    min-height: 0;
+    min-width: 0;
 }
 
 .Frame-body iframe {
+    box-sizing: border-box;
+    overflow: hidden;
     width: 100%;
     height: 100%;
+    border: 0;
+    min-height: 0;
 }
-
 
 .Frame-handle {
     position: absolute;
