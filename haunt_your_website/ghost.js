@@ -101,7 +101,7 @@ function audioName (name) {
 
 function play_sleepingMusic () {
   snd_sleep = new Audio(str_path_ghost + audioName('audio/AUD_WARMDRYLOOP_01.mp3'))
-  snd_sleep.play()
+  //snd_sleep.play()
 }
 
 function stop_sleepingMusic () {
@@ -299,7 +299,7 @@ function ghost_playSound (snd_arr, arr_say, str_id) { // lbl = "id_ghost_talk", 
   bool_talking = true
   // start
   snd_ghost = new Audio(str_path_ghost + audioName('audio/' + ghost_returnArr(snd_arr) + '.mp3'))
-  snd_ghost.play()
+  //snd_ghost.play()
   ghost_say(ghost_returnArr(arr_say))
   // talking
   if (str_id == 'id_ghost_talk') {
@@ -443,7 +443,7 @@ function ghost_init (show_bootup, params) {
   }
   // play bootup audio
   var snd_bootup = new Audio(str_path_ghost + audioName('audio/AUD_BOOTUP_DEFAULT.mp3'))
-  snd_bootup.play()
+  //snd_bootup.play()
   //
 }
 

@@ -1,6 +1,13 @@
 // -- props --
 let frames = null
 
+// Frame random spawn tuning parameters, in %
+const FrameRandomness = {
+  margin: 2,
+  MinSize: 10,
+  MaxSize: 30
+}
+
 const tagName = 'draggable-frame'
 const hiddenClassName = 'Frame-Hidden'
 
@@ -69,29 +76,43 @@ export function init () {
       }
 
       console.log('creating frame element ' + id)
-      if (element.attributes.x) {
-        newElement.style.left = element.attributes.x.value + '%'
-      } else {
-        newElement.style.left = (20 + Math.random() * 60) + '%'
-      }
 
-      if (element.attributes.y) {
-        newElement.style.top = element.attributes.y.value + '%'
-      } else {
-        newElement.style.top = (20 + Math.random() * 60) + '%'
-      }
-
+      let width = 0
       if (element.attributes.width) {
-        newElement.style.width = element.attributes.width.value + '%'
+        width = element.attributes.width.value
       } else {
-        newElement.style.width = (20 + Math.random() * 60) + '%'
+        width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
       }
 
+      newElement.style.width = width + '%'
+
+      let height = 0
       if (element.attributes.height) {
-        newElement.style.height = element.attributes.height.value + '%'
+        height = element.attributes.height.value
       } else {
-        newElement.style.height = (20 + Math.random() * 60) + '%'
+        height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
       }
+      newElement.style.height = height + '%'
+
+      let x = 0
+      if (element.attributes.x) {
+        x = element.attributes.x.value
+      } else {
+        x =
+          Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
+        console.log(width)
+      }
+      newElement.style.left = x + '%'
+
+      let y = 0
+      if (element.attributes.y) {
+        y = element.attributes.y.value
+      } else {
+        y =
+          Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
+        console.log(height)
+      }
+      newElement.style.top = y + '%'
 
       if (element.attributes.class) {
         newElement.classList.add(element.attributes.class.value)
