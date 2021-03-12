@@ -8,6 +8,10 @@ const FrameRandomness = {
   MaxSize: 30
 }
 
+// TODO:
+const minContentHeight = 100
+const minContentWidth = 100
+
 const tagName = 'draggable-frame'
 const hiddenClassName = 'Frame-Hidden'
 
@@ -70,9 +74,6 @@ export function init () {
       body.innerHTML = content
       // I don't understand why I need to do this??
       const newElement = document.getElementById(`${id}`)
-      if (hidden) {
-        newElement.classList.add(hiddenClassName)
-      }
 
       console.log('creating frame element ' + id)
 
@@ -113,6 +114,13 @@ export function init () {
       }
       newElement.style.top = y + '%'
 
+      // Set initial data
+      const rect = newElement.getBoundingClientRect()
+      newElement.dataset.initialWidth = rect.width
+      newElement.dataset.initialHeight = rect.height
+      body.style.width = rect.width
+      body.style.height = rect.height
+
       if (element.attributes.class) {
         newElement.classList.add(element.attributes.class.value)
       }
@@ -131,6 +139,10 @@ export function init () {
         }
       } else {
         maximizeButton.style.hidden = true
+      }
+
+      if (hidden) {
+        newElement.classList.add(hiddenClassName)
       }
 
       // close button
@@ -242,7 +254,7 @@ function onMouseDown (evt) {
   // start the operation
   switch (op) {
     case Ops.Scale:
-      onScaleStart(x0 + f.width, y0 + f.height); break
+      onScaleStart(x0 + f.width, y0 + f.height, el); break
   }
 }
 
@@ -292,15 +304,28 @@ function onDrag (cx, cy) {
 let ox = 0.0
 let oy = 0.0
 
-function onScaleStart (x, y) {
+function onScaleStart (x, y, el) {
   ox = x - mx
   oy = y - my
 }
 
 function onScale (cx, cy) {
-  const newWidth = cx + ox - x0
-  const newHeight = cy + oy - y0
+  const newWidth =
+    Math.max(
+      cx + ox - x0,
+      minContentWidth)
+  const newHeight =
+    Math.max(
+      cy + oy - y0,
+      minContentHeight)
+
+  const scaleFactor = Math.min(
+    newHeight / (el.dataset.initialHeight),
+    newWidth / (el.dataset.initialWidth)
+  )
 
   el.style.width = `${newWidth}px`
   el.style.height = `${newHeight}px`
+  document.getElementById(`${el.id}-body`).style.transform = `scale(${scaleFactor})`
+  console.log('aaaa', scaleFactor)
 }

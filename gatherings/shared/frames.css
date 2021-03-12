@@ -54,9 +54,11 @@
 }
 
 .Frame-body {
+    transform-origin: top left;
     flex: 1;
-    padding: 25px;
-    height: 100%;
+    top: 0;
+    left: 0;
+    /* height: 100%; */
 }
 
 .Frame-body iframe {
