@@ -19,9 +19,10 @@ function main() {
     }
 }
 
+
 function addHotspot() {
     const framesElement = document.getElementById("frames");
-    const hotspotFrameElement = Frames.create("content", {});
+    const hotspotFrameElement = Frames.create(null, {});
 
     framesElement.appendChild(hotspotFrameElement);
 }
@@ -29,6 +30,26 @@ function addHotspot() {
 // takes the current state and export an html file
 function exportHtml() {
     const backgroundImageFilename = window.backgroundImageFilename;
+
+    const frames = Array.from(document.getElementsByClassName("Frame")).filter((el) => !Frames.isHidden(el.attributes.id.value))
+
+    const framesElement = document.getElementById("frames");
+    const boundsWidth = framesElement.clientWidth;
+    const boundsHeight = framesElement.clientHeight;
+
+    const hotspotsHtml = frames.map((el) =>
+        {
+            // compute dimensions as percentages of the bounding box
+            const style = window.getComputedStyle(el);
+            const left = 100*parseFloat(style.getPropertyValue('left'))/boundsWidth;
+            const top =  100*parseFloat(style.getPropertyValue('top'))/boundsHeight;
+            const width =  100*parseFloat(style.getPropertyValue('width'))/boundsWidth;
+            const height =  100*parseFloat(style.getPropertyValue('height'))/boundsHeight;
+
+            return `<a class="hotspot" href="./REPLACE-THIS.html" style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
+        }
+    ).join("\n            ");
+
     const html = 
 `<head>
     <link rel="stylesheet" href="common.css">
@@ -39,6 +60,7 @@ function exportHtml() {
     <div class="container">
         <main class="content">
             <img class="background" src="./images/${backgroundImageFilename}"></img>
+            ${hotspotsHtml}
         </main>
     </div>
 </body>

@@ -30,8 +30,8 @@ const temperamentData = {
 const DefaultTemperament = 'melancholic'
 
 // TODO:
-const minContentHeight = 100
-const minContentWidth = 100
+const minContentHeight = 20
+const minContentWidth = 20
 
 const tagName = 'draggable-frame'
 const hiddenClassName = 'Frame-Hidden'
@@ -187,6 +187,11 @@ export function hide (id) {
 
 export function show (id) {
   document.getElementById(id).classList.remove(hiddenClassName)
+}
+
+export function isHidden (id) {
+  const element = document.getElementById(id)
+  return element.classList.contains(hiddenClassName);
 }
 
 export function init (container) {
