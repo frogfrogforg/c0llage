@@ -61,14 +61,16 @@ function loadFromHtml(htmlDoc) {
             x: left,
             y: top,
             width: width,
-            height: height
-        });
+            height: height,
+            temperament: "phlegmatic"
+        }, hotspotEl.getAttribute("href"));
     })
 }
 
-function addHotspot(attributes) {
+function addHotspot(attributes, href) {
     const framesElement = document.getElementById("frames");
-    const hotspotFrameElement = Frames.create(null, attributes || {});
+    const textboxHtml = `<input type='text' size='10' value="${href || "./XXX.html"}"/>`;
+    const hotspotFrameElement = Frames.create(textboxHtml, attributes || {temperament: "phlegmatic", width:30, height:30});
 
     framesElement.appendChild(hotspotFrameElement);
 }
@@ -92,7 +94,9 @@ function exportHtml() {
             const width =  100*parseFloat(style.getPropertyValue('width'))/boundsWidth;
             const height =  100*parseFloat(style.getPropertyValue('height'))/boundsHeight;
 
-            return `<a class="hotspot" href="./REPLACE-THIS.html" style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
+            const href = el.querySelector("input").value;
+
+            return `<a class="hotspot" href="${href || "./REPLACE-THIS.html"}  " style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
         }
     ).join("\n            ");
 

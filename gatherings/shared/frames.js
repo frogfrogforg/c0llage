@@ -283,7 +283,7 @@ let zIndex = 10
 
 function onMouseDown (evt) {
   const target = evt.target
-  evt.preventDefault()
+  //evt.preventDefault()
 
   // determine operation
   const classes = target.classList
