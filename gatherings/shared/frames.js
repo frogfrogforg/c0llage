@@ -30,8 +30,8 @@ const temperamentData = {
 const DefaultTemperament = 'melancholic'
 
 // TODO:
-const minContentHeight = 100
-const minContentWidth = 100
+const minContentHeight = 20
+const minContentWidth = 20
 
 const tagName = 'draggable-frame'
 const hiddenClassName = 'Frame-Hidden'
@@ -39,8 +39,7 @@ const hiddenClassName = 'Frame-Hidden'
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
     <div class="Frame-header">
-      <div class="Frame-header-button" id="$id-close">
-        <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+      <div class="Frame-header-button Frame-close-button" id="$id-close">
       </div>
        <div class="Frame-header-button" id="$id-max"> D </div>
        <div class="Frame-header-button" id="$id-feelings"> ? </div>
@@ -54,9 +53,123 @@ const frameTemplate = `<article id="$id" class="Frame">
 </article>
 `
 
+function htmlToElement(html) {
+    var template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
+function makeId(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 // -- lifetime --
-function create (id, content) {
-  return frameTemplate.replaceAll('$id', id)
+export function create (content, attributes) {
+  const id = attributes.id || makeId(5);
+  const frameHtml = frameTemplate.replaceAll('$id', id);
+  const el = htmlToElement(frameHtml);
+
+  const hidden = attributes.hidden || false;
+
+  const body = el.querySelector(`#${id}-body`)
+  body.innerHTML = content
+
+  if (hidden) {
+    el.classList.add(hiddenClassName)
+  }
+
+  console.log('creating frame element ' + id)
+
+  let width = 0
+  if (attributes.width) {
+    width = attributes.width
+  } else {
+    width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+  }
+  el.style.width = width + '%'
+
+  let height = 0
+  if (attributes.height) {
+    height = attributes.height
+  } else {
+    height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+  }
+  el.style.height = height + '%'
+
+  let x = 0
+  if (attributes.x) {
+    x = attributes.x
+  } else {
+    x =
+      Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
+    console.log(width)
+  }
+  el.style.left = x + '%'
+
+  let y = 0
+  if (attributes.y) {
+    y = attributes.y
+  } else {
+    y =
+      Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
+    console.log(height)
+  }
+  el.style.top = y + '%'
+
+  // body.style.width = rect.width
+  // body.style.height = rect.height
+
+  if (attributes.class) {
+    el.classList.add(attributes.class)
+  }
+
+  if (attributes.bodyclass) {
+    body.classList.add(attributes.bodyclass)
+  }
+
+  // add button functionality
+
+  // maximize button only exists for iframes
+  const maximizeButton = el.querySelector(`#${id}-max`)
+  if (body.firstElementChild && body.firstElementChild.nodeName === 'IFRAME') {
+    maximizeButton.onclick = () => {
+      window.open(body.firstElementChild.src, '_self')
+    }
+  } else {
+    maximizeButton.style.display = 'none'
+  }
+
+  if (hidden) {
+    el.classList.add(hiddenClassName)
+  }
+
+  // close button
+  const closeButton = el.querySelector(`#${id}-close`)
+  closeButton.onclick = () => {
+    hide(id)
+  }
+
+  el.dataset.temperament = attributes.temperament || DefaultTemperament
+
+  console.log(el.dataset.temperament)
+
+  const tempData = temperamentData[el.dataset.temperament]
+  const feelingsButton = el.querySelector(`#${id}-feelings`)
+  feelingsButton.innerHTML =
+    tempData.emoji
+
+  feelingsButton.onclick = () => {
+    window.alert(tempData.alert)
+  }
+
+  return el;
 }
 
 export function toggle (id) {
@@ -76,120 +189,44 @@ export function show (id) {
   document.getElementById(id).classList.remove(hiddenClassName)
 }
 
-export function init () {
+export function isHidden (id) {
+  const element = document.getElementById(id)
+  return element.classList.contains(hiddenClassName);
+}
+
+export function init (container) {
   // capture elements
-  frames = document.getElementById('frames')
+  frames = container || document.getElementById('frames')
 
   // fill custom tags
   // TODO: make a shared customTag function?
   // https://code.tutsplus.com/tutorials/extending-the-html-by-creating-custom-tags--cms-28622
   document.createElement(tagName)
   const tagInstances = document.getElementsByTagName(tagName)
-  while (tagInstances.length > 0) {
-    const element = tagInstances[0]
-    const content = element.innerHTML
-    const hidden = element.attributes.hidden != null
+  Array.from(tagInstances).forEach((tag) => {
+    const content = tag.innerHTML
 
-    if (element.attributes.id) {
-      const id = element.attributes.id.value
-      element.outerHTML = create(id)
-      const body = document.getElementById(`${id}-body`)
-      body.innerHTML = content
-      // I don't understand why I need to do this??
-      const newElement = document.getElementById(`${id}`)
+    // convert tag attributes to plain object
+    let attributes = {};
 
-      console.log('creating frame element ' + id)
+    Array.from(tag.attributes).forEach((a) => {
+      attributes[a.name] = a.value;
+    });
 
-      let width = 0
-      if (element.attributes.width) {
-        width = element.attributes.width.value
-      } else {
-        width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
-      }
+    // const attributes = {
+    //   id: tag.getAttribute("id"),
+    //   hidden: tag.attributes.hidden != null,
+    //   x: tag.getAttribute("x"),
+    //   y: tag.getAttribute("y"),
+    //   width: tag.getAttribute("width"),
+    //   height: tag.getAttribute("height"),
+    //   class: tag.getAttribute("class"),
+    //   bodyClass: tag.getAttribute("bodyClass"),
+    // }
 
-      newElement.style.width = width + '%'
-
-      let height = 0
-      if (element.attributes.height) {
-        height = element.attributes.height.value
-      } else {
-        height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
-      }
-      newElement.style.height = height + '%'
-
-      let x = 0
-      if (element.attributes.x) {
-        x = element.attributes.x.value
-      } else {
-        x =
-          Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-        console.log(width)
-      }
-      newElement.style.left = x + '%'
-
-      let y = 0
-      if (element.attributes.y) {
-        y = element.attributes.y.value
-      } else {
-        y =
-          Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-        console.log(height)
-      }
-      newElement.style.top = y + '%'
-
-      // Set initial data
-      const rect = body.getBoundingClientRect()
-      newElement.dataset.initialWidth = rect.width
-      newElement.dataset.initialHeight = rect.height
-      // body.style.width = rect.width
-      // body.style.height = rect.height
-
-      if (element.attributes.class) {
-        newElement.classList.add(element.attributes.class.value)
-      }
-
-      if (element.attributes.bodyClass) {
-        body.classList.add(element.attributes.bodyClass.value)
-      }
-
-      // add button functionality
-
-      // maximize button only exists for iframes
-      const maximizeButton = document.getElementById(`${id}-max`)
-      if (body.firstElementChild.nodeName === 'IFRAME') {
-        maximizeButton.onclick = () => {
-          window.open(body.firstElementChild.src, '_self')
-        }
-      } else {
-        maximizeButton.style.display = 'none'
-      }
-
-      if (hidden) {
-        newElement.classList.add(hiddenClassName)
-      }
-
-      // close button
-      const closeButton = document.getElementById(`${id}-close`)
-      closeButton.onclick = () => {
-        hide(id)
-      }
-
-      newElement.dataset.temperament = element.attributes.temperament == null
-        ? DefaultTemperament
-        : element.attributes.temperament.value
-
-      console.log(newElement.dataset.temperament)
-
-      const tempData = temperamentData[newElement.dataset.temperament]
-      const feelingsButton = document.getElementById(`${id}-feelings`)
-      feelingsButton.innerHTML =
-        tempData.emoji
-
-      feelingsButton.onclick = () => {
-        window.alert(tempData.alert)
-      }
-    }
-  }
+    const element = create(content, attributes);
+    tag.replaceWith(element);
+  });
 
   // drag any frame in the container
   const body = document.body
@@ -205,6 +242,20 @@ export function init () {
       onMouseUp()
     }
   })
+}
+
+function getInitialWidth (el) {
+  if (!el.dataset.initialWidth) {
+    el.dataset.initialWidth = el.getBoundingClientRect().width;
+  }
+  return el.dataset.initialWidth;
+}
+
+function getInitialHeight (el) {
+  if (!el.dataset.initialHeight) {
+    el.dataset.initialHeight = el.getBoundingClientRect().height;
+  }
+  return el.dataset.initialHeight;
 }
 
 // -- events --
@@ -357,8 +408,8 @@ function onScale (cx, cy) {
       cy + oy - y0,
       minContentHeight)
 
-  const scaleFactorX = newHeight / (el.dataset.initialHeight)
-  const scaleFactorY = newWidth / (el.dataset.initialWidth)
+  const scaleFactorX = newHeight / (getInitialHeight(el))
+  const scaleFactorY = newWidth / (getInitialWidth(el))
   const scaleFactor = Math.min(
     scaleFactorX,
     scaleFactorY
@@ -369,19 +420,21 @@ function onScale (cx, cy) {
 
   const body = document.getElementById(`${el.id}-body`)
 
-  const hack = body.firstElementChild.nodeName === 'IFRAME'
+  if (body.firstElementChild) {
+    const hack = body.firstElementChild.nodeName === 'IFRAME'
     ? body.firstElementChild.contentDocument.body
     : body.firstElementChild
 
-  hack.style.transformOrigin = '0 0'
+    hack.style.transformOrigin = '0 0'
 
-  const temperament = el.dataset.temperament
-  console.log('my temperament is', temperament)
-  if (temperament === 'sanguine') {
-    hack.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
-  } else if (temperament === 'phlegmatic') {
-    // do nothing;
-  } else {
-    hack.style.transform = `scale(${scaleFactor})`
+    const temperament = el.dataset.temperament
+    console.log('my temperament is', temperament)
+    if (temperament === 'sanguine') {
+      hack.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
+    } else if (temperament === 'phlegmatic') {
+      // do nothing;
+    } else {
+      hack.style.transform = `scale(${scaleFactor})`
+    }
   }
 }
