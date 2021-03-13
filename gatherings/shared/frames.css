@@ -13,7 +13,7 @@
 
 .Frame {
     z-index: 10;
-    background-color: rbga(0, 0, 0, 0.0);
+    background-color: rbga(0,0,0,0.4);
     position: absolute;
     left: 50%;
     top: 69px;
@@ -23,30 +23,51 @@
 }
 
 .Frame-content {
-    background-color: #f0faf9;
+    background-color: #DADADA;
+    color:black;
     display: flex;
     flex-flow: column;
-    border: 1px solid black;
+    border:5% solid #DADADA;
     height: 100%;
     width: 100%;
 }
 
 .Frame-header {
-    background-color: grey;
-    height: 30px;
-    border-bottom: 2px double black;
+    background-color: #DADADA;
+    min-height: 15px;
     user-select: none;
     display: flex;
+    position:relative;
+    border: 2px solid #DADADA;
+    overflow: hidden;
+    z-index: 1;
 }
 
 .Frame-header-blank {
     flex-grow: 1;
+    background-image:url("../shared/img/window-head.gif");
+    background-repeat:repeat-x;
+    background-size: 100% 100%;
+}
+
+.frame-header-image{
+    position: absolute;
+    width:100%;
+    display:inline-flex;
+
 }
 
 .Frame-header-button {
-    width: 25px;
-    height: 25px;
+    height:15px;
+    width:15px;
+    font-size: 12px;
+    padding-right:2px;
     text-align: center;
+}
+
+.Frame-close-button {
+    background-image: url("../shared/img/window-close.gif");
+    background-repeat: no-repeat;
 }
 
 .Frame-header-button:hover {
@@ -54,22 +75,45 @@
 }
 
 .Frame-body {
+    box-sizing: border-box;
+    transform-origin: top left;
     flex: 1;
-    padding: 25px;
+    padding: 4px;
+    width: 100%;
     height: 100%;
+    min-height: 0;
+    min-width: 0;
 }
 
 .Frame-body iframe {
+    box-sizing: border-box;
+    overflow: hidden;
     width: 100%;
     height: 100%;
+    border: 0;
+    min-height: 0;
 }
-
 
 .Frame-handle {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     right: 0;
     bottom: 0;
-    background-color: rebeccapurple;
+    background-image: url("../shared/img/window-res.gif");
+    background-repeat: no-repeat;
 }
+
+@keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg) scale(0.98); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg) scale(0.94); }
+        20% { transform: translate(-3px, 0px) rotate(1deg) scale(0.94); }
+        30% { transform: translate(3px, 2px) rotate(0deg) scale(0.9); }
+        40% { transform: translate(1px, -1px) rotate(1deg) scale(0.9); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg) scale(0.9); }
+        60% { transform: translate(-3px, 1px) rotate(0deg) scale(0.9); }
+        70% { transform: translate(3px, 1px) rotate(-1deg) scale(0.9); }
+        80% { transform: translate(-1px, -1px) rotate(1deg) scale(0.9); }
+        90% { transform: translate(1px, 2px) rotate(0deg) scale(0.9); }
+        100% { transform: translate(1px, -2px) rotate(-1deg) scale(0.9); }
+    }

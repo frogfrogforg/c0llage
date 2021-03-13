@@ -8,17 +8,43 @@ const FrameRandomness = {
   MaxSize: 30
 }
 
+const temperamentData = {
+  sanguine: {
+    emoji: '🏄‍♂️',
+    alert: 'hello gamer'
+  },
+  phlegmatic: {
+    emoji: '🆓',
+    alert: 'go on gamer'
+  },
+  choleric: {
+    emoji: '🥗',
+    alert: 'get at me gamer'
+  },
+  melancholic: {
+    emoji: '🐛',
+    alert: 'im no gamer'
+  }
+}
+
+const DefaultTemperament = 'melancholic'
+
+// TODO:
+const minContentHeight = 100
+const minContentWidth = 100
+
 const tagName = 'draggable-frame'
 const hiddenClassName = 'Frame-Hidden'
 
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
     <div class="Frame-header">
-      <div class="Frame-header-blank">
-      click & drag
+      <div class="Frame-header-button Frame-close-button" id="$id-close">
       </div>
-      <div class="Frame-header-button" id="$id-max"> D </div>
-      <div class="Frame-header-button" id="$id-close"> X </div>
+       <div class="Frame-header-button" id="$id-max"> D </div>
+       <div class="Frame-header-button" id="$id-feelings"> ? </div>
+      <div class="Frame-header-blank">
+      </div>
     </div>
       <div id="$id-body" class="Frame-body">
       </div>
@@ -45,8 +71,8 @@ function makeId(length) {
 }
 
 // -- lifetime --
-export function create (content, attributes, id) {
-  id = id || makeId(5);
+export function create (content, attributes) {
+  const id = attributes.id || makeId(5);
   const frameHtml = frameTemplate.replaceAll('$id', id);
   const el = htmlToElement(frameHtml);
 
@@ -97,31 +123,50 @@ export function create (content, attributes, id) {
   }
   el.style.top = y + '%'
 
+  // body.style.width = rect.width
+  // body.style.height = rect.height
+
   if (attributes.class) {
-    el.classList.add(attributes.class.value)
+    el.classList.add(attributes.class)
   }
 
-  if (attributes.bodyClass) {
-    body.classList.add(attributes.bodyClass)
+  if (attributes.bodyclass) {
+    body.classList.add(attributes.bodyclass)
   }
 
   // add button functionality
 
-  // TODO: fix this when frame has no children:
-  // // maximize button only exists for iframes
-  // const maximizeButton = el.querySelector(`#${id}-max`)
-  // if (body.firstElementChild.nodeName === 'IFRAME') {
-  //   maximizeButton.onclick = () => {
-  //     window.open(body.firstElementChild.src, '_self')
-  //   }
-  // } else {
-  //   maximizeButton.style.hidden = true
-  // }
+  // maximize button only exists for iframes
+  const maximizeButton = el.querySelector(`#${id}-max`)
+  if (body.firstElementChild && body.firstElementChild.nodeName === 'IFRAME') {
+    maximizeButton.onclick = () => {
+      window.open(body.firstElementChild.src, '_self')
+    }
+  } else {
+    maximizeButton.style.display = 'none'
+  }
+
+  if (hidden) {
+    el.classList.add(hiddenClassName)
+  }
 
   // close button
   const closeButton = el.querySelector(`#${id}-close`)
   closeButton.onclick = () => {
     hide(id)
+  }
+
+  el.dataset.temperament = attributes.temperament || DefaultTemperament
+
+  console.log(el.dataset.temperament)
+
+  const tempData = temperamentData[el.dataset.temperament]
+  const feelingsButton = el.querySelector(`#${id}-feelings`)
+  feelingsButton.innerHTML =
+    tempData.emoji
+
+  feelingsButton.onclick = () => {
+    window.alert(tempData.alert)
   }
 
   return el;
@@ -155,16 +200,26 @@ export function init (container) {
   const tagInstances = document.getElementsByTagName(tagName)
   Array.from(tagInstances).forEach((tag) => {
     const content = tag.innerHTML
-    const hidden = tag.attributes.hidden != null
 
-    var id;
-    if (tag.attributes.id) {
-      id = tag.attributes.id.value
-    }
+    // convert tag attributes to plain object
+    let attributes = {};
 
-    // TODO: pass other attributes
+    Array.from(tag.attributes).forEach((a) => {
+      attributes[a.name] = a.value;
+    });
 
-    const element = create(content, hidden, id);
+    // const attributes = {
+    //   id: tag.getAttribute("id"),
+    //   hidden: tag.attributes.hidden != null,
+    //   x: tag.getAttribute("x"),
+    //   y: tag.getAttribute("y"),
+    //   width: tag.getAttribute("width"),
+    //   height: tag.getAttribute("height"),
+    //   class: tag.getAttribute("class"),
+    //   bodyClass: tag.getAttribute("bodyClass"),
+    // }
+
+    const element = create(content, attributes);
     tag.replaceWith(element);
   });
 
@@ -182,6 +237,20 @@ export function init (container) {
       onMouseUp()
     }
   })
+}
+
+function getInitialWidth (el) {
+  if (!el.dataset.initialWidth) {
+    el.dataset.initialWidth = el.getBoundingClientRect().width;
+  }
+  return el.dataset.initialWidth;
+}
+
+function getInitialHeight (el) {
+  if (!el.dataset.initialHeight) {
+    el.dataset.initialHeight = el.getBoundingClientRect().height;
+  }
+  return el.dataset.initialHeight;
 }
 
 // -- events --
@@ -269,7 +338,7 @@ function onMouseDown (evt) {
   // start the operation
   switch (op) {
     case Ops.Scale:
-      onScaleStart(x0 + f.width, y0 + f.height); break
+      onScaleStart(x0 + f.width, y0 + f.height, el); break
   }
 }
 
@@ -319,15 +388,48 @@ function onDrag (cx, cy) {
 let ox = 0.0
 let oy = 0.0
 
-function onScaleStart (x, y) {
+function onScaleStart (x, y, el) {
   ox = x - mx
   oy = y - my
 }
 
 function onScale (cx, cy) {
-  const newWidth = cx + ox - x0
-  const newHeight = cy + oy - y0
+  const newWidth =
+    Math.max(
+      cx + ox - x0,
+      minContentWidth)
+  const newHeight =
+    Math.max(
+      cy + oy - y0,
+      minContentHeight)
+
+  const scaleFactorX = newHeight / (getInitialHeight(el))
+  const scaleFactorY = newWidth / (getInitialWidth(el))
+  const scaleFactor = Math.min(
+    scaleFactorX,
+    scaleFactorY
+  )
 
   el.style.width = `${newWidth}px`
   el.style.height = `${newHeight}px`
+
+  const body = document.getElementById(`${el.id}-body`)
+
+  if (body.firstElementChild) {
+    const hack = body.firstElementChild.nodeName === 'IFRAME'
+    ? body.firstElementChild.contentDocument.body
+    : body.firstElementChild
+
+    hack.style.transformOrigin = '0 0'
+
+    const temperament = el.dataset.temperament
+    console.log('my temperament is', temperament)
+    if (temperament === 'sanguine') {
+      hack.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
+    } else if (temperament === 'phlegmatic') {
+      // do nothing;
+    } else {
+      hack.style.transform = `scale(${scaleFactor})`
+    }
+  }
 }
