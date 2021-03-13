@@ -76,7 +76,7 @@ export function create (content, attributes) {
   const frameHtml = frameTemplate.replaceAll('$id', id);
   const el = htmlToElement(frameHtml);
 
-  const hidden = attributes.hidden || false;
+  const hidden = attributes.hidden != null;
 
   const body = el.querySelector(`#${id}-body`)
   body.innerHTML = content
