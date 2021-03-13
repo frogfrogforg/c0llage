@@ -53,30 +53,30 @@ const frameTemplate = `<article id="$id" class="Frame">
 </article>
 `
 
-function htmlToElement(html) {
-    var template = document.createElement('template');
-    html = html.trim(); // Never return a text node of whitespace as the result
-    template.innerHTML = html;
-    return template.content.firstChild;
+function htmlToElement (html) {
+  var template = document.createElement('template')
+    html = html.trim() // Never return a text node of whitespace as the result
+    template.innerHTML = html
+    return template.content.firstChild
 }
 
-function makeId(length) {
-  var result           = '';
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+function makeId (length) {
+  var result = ''
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+  var charactersLength = characters.length
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
   }
-  return result;
+  return result
 }
 
 // -- lifetime --
 export function create (content, attributes) {
-  const id = attributes.id || makeId(5);
-  const frameHtml = frameTemplate.replaceAll('$id', id);
-  const el = htmlToElement(frameHtml);
+  const id = attributes.id || makeId(5)
+  const frameHtml = frameTemplate.replaceAll('$id', id)
+  const el = htmlToElement(frameHtml)
 
-  const hidden = attributes.hidden != null;
+  const hidden = attributes.hidden != null
 
   const body = el.querySelector(`#${id}-body`)
   body.innerHTML = content
@@ -140,7 +140,7 @@ export function create (content, attributes) {
   const maximizeButton = el.querySelector(`#${id}-max`)
   if (body.firstElementChild && body.firstElementChild.nodeName === 'IFRAME') {
     maximizeButton.onclick = () => {
-      window.open(body.firstElementChild.src, '_self')
+      window.open(body.firstElementChild.contentDocument.location, '_self')
     }
   } else {
     maximizeButton.style.display = 'none'
@@ -169,7 +169,7 @@ export function create (content, attributes) {
     window.alert(tempData.alert)
   }
 
-  return el;
+  return el
 }
 
 export function toggle (id) {
@@ -191,7 +191,7 @@ export function show (id) {
 
 export function isHidden (id) {
   const element = document.getElementById(id)
-  return element.classList.contains(hiddenClassName);
+  return element.classList.contains(hiddenClassName)
 }
 
 export function init (container) {
@@ -207,11 +207,11 @@ export function init (container) {
     const content = tag.innerHTML
 
     // convert tag attributes to plain object
-    let attributes = {};
+    const attributes = {}
 
     Array.from(tag.attributes).forEach((a) => {
-      attributes[a.name] = a.value;
-    });
+      attributes[a.name] = a.value
+    })
 
     // const attributes = {
     //   id: tag.getAttribute("id"),
@@ -224,9 +224,9 @@ export function init (container) {
     //   bodyClass: tag.getAttribute("bodyClass"),
     // }
 
-    const element = create(content, attributes);
-    tag.replaceWith(element);
-  });
+    const element = create(content, attributes)
+    tag.replaceWith(element)
+  })
 
   // drag any frame in the container
   const body = document.body
@@ -246,16 +246,16 @@ export function init (container) {
 
 function getInitialWidth (el) {
   if (!el.dataset.initialWidth) {
-    el.dataset.initialWidth = el.getBoundingClientRect().width;
+    el.dataset.initialWidth = el.getBoundingClientRect().width
   }
-  return el.dataset.initialWidth;
+  return el.dataset.initialWidth
 }
 
 function getInitialHeight (el) {
   if (!el.dataset.initialHeight) {
-    el.dataset.initialHeight = el.getBoundingClientRect().height;
+    el.dataset.initialHeight = el.getBoundingClientRect().height
   }
-  return el.dataset.initialHeight;
+  return el.dataset.initialHeight
 }
 
 // -- events --
@@ -422,8 +422,8 @@ function onScale (cx, cy) {
 
   if (body.firstElementChild) {
     const hack = body.firstElementChild.nodeName === 'IFRAME'
-    ? body.firstElementChild.contentDocument.body
-    : body.firstElementChild
+      ? body.firstElementChild.contentDocument.body
+      : body.firstElementChild
 
     hack.style.transformOrigin = '0 0'
 
