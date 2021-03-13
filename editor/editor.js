@@ -1,28 +1,74 @@
 function main() {
     // Background image selection
-    const inputElement = document.getElementById("background-image-input");
-    const backgroundElement = document.getElementById("background");
-    inputElement.addEventListener("change", setBackgroundImage, false);
-    function setBackgroundImage() {
-        const file = this.files[0];
-        window.backgroundImageFilename = file.name;
+    const backgroundImageInput = document.getElementById("background-image-input");
+    backgroundImageInput.addEventListener("change", setBackgroundImage, false);
 
-        const reader = new FileReader();
-        reader.onload = (
-            function(aImg) {
-                return function(e) {
-                    aImg.src = e.target.result;
-                };
-            }
-        )(backgroundElement);
-        reader.readAsDataURL(file);
-    }
+    const htmlInput = document.getElementById("html-input");
+    htmlInput.addEventListener("change", importHtml, false);
 }
 
+function setBackgroundImage() {
+    const backgroundElement = document.getElementById("background");
+    const file = this.files[0];
+    window.backgroundImageFilename = file.name;
 
-function addHotspot() {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        backgroundElement.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+}
+
+function importHtml() {
+    const backgroundElement = document.getElementById("background");
+    const file = this.files[0];
+    window.htmlFilename = file.name;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        var parser = new DOMParser();
+        var htmlDoc = parser.parseFromString(e.target.result, 'text/html');
+        loadFromHtml(htmlDoc);
+    }
+    reader.readAsText(file);
+}
+
+function loadFromHtml(htmlDoc) {
+    // Clear all current hotspot frames
+    Array.from(document.getElementsByClassName("Frame")).forEach((el) => {
+        el.parentNode.removeChild(el);
+    })
+
+    console.log(htmlDoc);
+    const hotspots = htmlDoc.getElementsByClassName("hotspot")
+
+    // Assume each hotspot in the html has width, height, left, & top all specified in %
+    // convert to px values based on the current size of the bounding box
+
     const framesElement = document.getElementById("frames");
-    const hotspotFrameElement = Frames.create(null, {});
+    const boundsWidth = framesElement.clientWidth;
+    const boundsHeight = framesElement.clientHeight;
+
+    Array.from(hotspots).forEach((hotspotEl) => {
+        const left =   parseFloat(hotspotEl.style.left);
+        const top =    parseFloat(hotspotEl.style.top);
+        const width =  parseFloat(hotspotEl.style.width);
+        const height = parseFloat(hotspotEl.style.height);
+
+        console.log(hotspotEl);
+        console.log(left,top,width,height);
+        addHotspot({
+            x: left,
+            y: top,
+            width: width,
+            height: height
+        });
+    })
+}
+
+function addHotspot(attributes) {
+    const framesElement = document.getElementById("frames");
+    const hotspotFrameElement = Frames.create(null, attributes || {});
 
     framesElement.appendChild(hotspotFrameElement);
 }
@@ -65,7 +111,8 @@ function exportHtml() {
     </div>
 </body>
 `
-    saveHtmlFile('123.html', html);
+    const outputFilename = window.htmlFilename || '123.html';
+    saveHtmlFile(outputFilename, html);
 }
 
 function saveHtmlFile(filename, html) {
