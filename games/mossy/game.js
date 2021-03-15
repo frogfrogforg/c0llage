@@ -43,23 +43,24 @@ function main(srcs) {
     return
   }
 
-  // get canvas height from rendered size
-  const { width, height } = mCanvas.getBoundingClientRect()
-
-  // sync canvas el's attribute, webgl needs this
-  mCanvas.width = width
-  mCanvas.height = width
-
   // track viewport/sim sizes
-  mSize = initSize(
-    width,
-    height,
-  )
+  mSize =
+    initViewSize()
 
   mSimSize = initSize(
     mSize.w / kScale,
     mSize.h / kScale
   )
+
+  // abort for now if size is 0 (TODO: maybe listen for window resize events)
+  if (mSize.w == 0) {
+    console.debug("mossy canvas size is 0, not sure what to do")
+    return
+  }
+
+  // sync canvas el's attribute, webgl needs this
+  mCanvas.width = mSize.w
+  mCanvas.height = mSize.h
 
   // init gl props
   mTextures = initTextures()
@@ -507,6 +508,13 @@ function initFramebuffers() {
 }
 
 // -- c/helpers
+// finds the nearest power-of-2 size to the dom width and height
+function initViewSize() {
+  const rect = mCanvas.getBoundingClientRect()
+  const side = Math.pow(2, Math.floor(Math.log(Math.min(rect.width, rect.height)) / Math.log(2)));
+  return initSize(side, side)
+}
+
 function initSize(w, h) {
   return {
     v: new Float32Array([w, h]),

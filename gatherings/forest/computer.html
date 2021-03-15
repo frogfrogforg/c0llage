@@ -47,16 +47,16 @@
 
 <body style="width:100%; height:100%">
     <section id="frames" class="Frames">
-        <draggable-frame id="alidator-frame" hidden>
+        <draggable-frame temperament='phlegmatic' id="alidator-frame" hidden>
             <iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></iframe>
         </draggable-frame>
 
-        <draggable-frame id="forest-frame" hidden>
+        <draggable-frame temperament='phlegmatic' id="forest-frame" hidden>
             <iframe style="--scaleFactor: 0.5;" id="forest" src="./1.html"></iframe>
         </draggable-frame>
 
         <draggable-frame id="main-frame" hidden>
-            <iframe style="--scaleFactor: 1.0;" id="main" src="../../index.html"></iframe>
+            <iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></iframe>
         </draggable-frame>
 
     </section>
@@ -240,7 +240,7 @@
         // all the touch/mobile input is untested
         // but probably important that it works
         // should probably make an input library that basically copies
-        // the way that bitsy handles touch stuff: 
+        // the way that bitsy handles touch stuff:
         // https://github.com/frogfrogforg/c0llage/blob/main/Jen/alidator.html#L5488
         // window.addEventListener('touchstart', (event) => {
         // });

@@ -1,0 +1,57 @@
+<head>
+    <link rel="stylesheet" href="../gatherings/forest/common.css">
+    <link rel="stylesheet" href="../gatherings/shared/frames.css">
+    <script src="../gatherings/forest/common.js"></script>    
+    <script type="module">
+        import * as Frames from "../gatherings/shared/frames.js"
+        Frames.init()
+        window.Frames = Frames
+    </script>
+    <script src="./editor.js"></script>
+    <style>
+        body {
+            flex-direction: column;
+        }
+
+        #toolbox {
+            margin: 30px;
+            background-color: #eee;
+        }
+
+        .Frame-content {
+            background-color: transparent;
+        }
+
+        .Frame-header {
+            background-color: transparent;
+        }
+
+        .Frame-header-blank {
+            background-image: none;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <div class="container">
+        <main id="frames" class="content">
+            <img id="background" class="background"></img>
+        </main>
+    </div>
+    <div id="toolbox">
+        <button onclick="addHotspot()">add hotspot</button>
+        <br>
+        <br>
+        <b>Background image<b>
+        <br>
+        <input type="file" id="background-image-input">
+        <br>
+        <br>
+        <b>import HTML<b>
+        <br>
+        <input type="file" id="html-input">
+        <br>
+        <br>
+        <button onclick="exportHtml()">export HTML</button>
+    </div>
+</body>
