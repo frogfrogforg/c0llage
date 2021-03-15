@@ -13,8 +13,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 40vw;
-    max-height: 40vw;
+    max-width: 69vw;
+    max-height: 69vw;
     width: 100%;
     height: 100%;
 }
@@ -43,3 +43,11 @@ body {
     position: absolute;
     display: block;
 }
+
+/*this is for later. don't worry about it.*/
+
+/*
+.hotspot:hover{
+    outline:4px dotted rgb(255,255,255,0.420);
+}
+*/
