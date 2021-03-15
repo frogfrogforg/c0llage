@@ -1,29 +1,34 @@
-const frameTemplate = `<article id="$id" class="Frame">
+import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.js';
+
+const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
+          <div class="Frame-header-button" id="$id-close">
+            <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+ </div>
+       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
+       <div class="Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
-      click & drag
       </div>
-      <div class="Frame-header-button" id="$id-max"> D </div>
-      <div class="Frame-header-button" id="$id-close"> X </div>
     </div>
       <div id="$id-body" class="Frame-body">
       </div>
     <div class="Frame-handle"></div>
-  </div>
-</article>`
+  </div>`
+
+const hiddenClassName = 'Frame-Hidden'
 
 // Frame random spawn tuning parameters, in %
 const FrameRandomness = {
   margin: 2,
-  MinSize: 10,
-  MaxSize: 30
+  MinSize: 20,
+  MaxSize: 40
 }
 
 // -- events --
 const Ops = {
-  Move: 0,
-  Scale: 1
+  Move: "Move",
+  Scale: "Scale"
 }
 
 function htmlToElement(html) {
@@ -43,19 +48,23 @@ function makeId(length) {
   return result;
 }
 
-class DraggableFrame extends HTMLElement {
+class DraggableFrame extends HTMLParsedElement {
   constructor() {
-    // Always call super first in constructor
     super();
+  }
+
+  parsedCallback() {
 
     const id = this.getAttribute("id") || makeId(5);
-    this.frameId = id;
+    console.log('creating frame element ' + id)
+
+
     this.hidden = this.getAttribute("hidden") != null
 
     // the nested iframe (if there is one)
     this.iframe = null
     // the current manipulation
-    this.op = Ops.Move
+    this.op = null;
     // the initial el x-pos
     this.x0 = 0.0
     // the initial el y-pos
@@ -67,87 +76,53 @@ class DraggableFrame extends HTMLElement {
     // the zIndex to make the current element be always on top
     this.zIndex = 10
 
-    const templateHtml = frameTemplate.replaceAll('$id', id)
+    const templateHtml = frameTemplate.replaceAll('$id', id);
 
-    const shadowRoot = this.attachShadow({mode: 'open'}); // sets and returns 'this.shadowRoot'
-    const newElement = htmlToElement(templateHtml);
-    shadowRoot.append(newElement);
+    // move original children of <draggable-frame> to be children of the body element
+    // (don't use innerhtml to do this, in case those elements had some important hidden state)
+    const originalChildren = [...this.childNodes];
+    this.innerHTML = templateHtml;
+    this.bodyElement = this.querySelector(`#${id}-body`);
+    for (let childNode of originalChildren) {
+      this.bodyElement.appendChild(childNode);
+    }
 
-    const body = shadowRoot.getElementById(`${id}-body`)
-    body.innerHTML = this.innerHTML;
+    // const originalContent = this.innerHTML;
+    // this.innerHTML = templateHtml;
+    // this.bodyElement = this.querySelector(`#${id}-body`)
+    // this.bodyElement.innerHTML = originalContent;
+
+    this.classList.add("Frame");
 
     if (this.hidden) {
-      newElement.classList.add(hiddenClassName)
+      this.classList.add(hiddenClassName)
     }
 
-    console.log('creating frame element ' + id)
-
-    let width = 0
-    if (this.getAttribute("width")) {
-      width = this.attributes.width.value
-    } else {
-      width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
-    }
-
-    newElement.style.width = width + '%'
-
-    let height = 0
-    if (this.attributes.height) {
-      height = this.attributes.height.value
-    } else {
-      height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
-    }
-    newElement.style.height = height + '%'
-
-    let x = 0
-    if (this.attributes.x) {
-      x = this.attributes.x.value
-    } else {
-      x =
-        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-      console.log(width)
-    }
-    newElement.style.left = x + '%'
-
-    let y = 0
-    if (this.attributes.y) {
-      y = this.attributes.y.value
-    } else {
-      y =
-        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-      console.log(height)
-    }
-    newElement.style.top = y + '%'
-
-    if (this.attributes.class) {
-      newElement.classList.add(this.attributes.class.value)
-    }
-
-    if (this.attributes.bodyClass) {
-      body.classList.add(this.attributes.bodyClass.value)
-    }
+    this.initStyleFromAttributes();
 
     // add button functionality
 
     // maximize button only exists for iframes
-    // const maximizeButton = shadowRoot.getElementById(`${id}-max`)
-    // if (body.firstElementChild.nodeName === 'IFRAME') {
-    //   maximizeButton.onclick = () => {
-    //     window.open(body.firstElementChild.src, '_self')
-    //   }
-    // } else {
-    //   maximizeButton.style.hidden = true
-    // }
+    const maximizeButton = this.querySelector(`#${id}-max`);
+    console.log(this.bodyElement.firstElementChild);
+    if (this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
+      maximizeButton.onclick = () => {
+        window.open(this.bodyElement.firstElementChild.src, '_self');
+      }
+    } else {
+      maximizeButton.style.display = "none";
+    }
 
     // close button
-    const closeButton = shadowRoot.getElementById(`${id}-close`)
+    const closeButton = this.querySelector(`#${id}-close`)
     closeButton.onclick = () => {
       this.hide()
     }
 
-    newElement.addEventListener('pointerdown', this.onMouseDown.bind(this))
-    newElement.addEventListener('pointermove', this.onMouseMove.bind(this))
-    newElement.addEventListener('pointerup',   this.onMouseUp.bind(this))
+    // process mousedown on this object, and mousemove / mouseup everywhere
+    this.addEventListener('pointerdown', this.onMouseDown.bind(this))
+    document.body.addEventListener('pointermove', this.onMouseMove.bind(this))
+    document.body.addEventListener('pointerup',   this.onMouseUp.bind(this))
 
     // end drag if mouse exits the window
     // const html = document.getElementByTag("html")
@@ -157,14 +132,47 @@ class DraggableFrame extends HTMLElement {
     //     onMouseUp()
     //   }
     // })
+  }
 
-    // Apply external styles to the shadow dom
-    const linkElem = document.createElement('link');
-    linkElem.setAttribute('rel', 'stylesheet');
-    linkElem.setAttribute('href', '/c0llage/gatherings/shared/frames.css');
+  initStyleFromAttributes() {
+    let width = 0
+    if (this.getAttribute("width")) {
+      width = this.attributes.width.value
+    } else {
+      width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+    }
 
-    // Attach the created element to the shadow dom
-    shadowRoot.appendChild(linkElem);
+    this.style.width = width + '%'
+
+    let height = 0
+    if (this.attributes.height) {
+      height = this.attributes.height.value
+    } else {
+      height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+    }
+    this.style.height = height + '%'
+
+    let x = 0
+    if (this.attributes.x) {
+      x = this.attributes.x.value
+    } else {
+      x =
+        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
+      console.log(width)
+    }
+    this.style.left = x + '%'
+
+    let y = 0
+    if (this.attributes.y) {
+      y = this.attributes.y.value
+    } else {
+      y =
+        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
+      console.log(height)
+    }
+    this.style.top = y + '%'
+
+    this.bodyElement.classList += " " + (this.getAttribute("bodyClass") || "");
   }
 
   toggle () {
@@ -182,15 +190,15 @@ class DraggableFrame extends HTMLElement {
 
   updateStyling() {
     if (this.hidden && !this.classList.contains(hiddenClassName)) {
-      element.classList.add(hiddenClassName);
+      this.classList.add(hiddenClassName);
     } else if (!this.hidden && this.classList.contains(hiddenClassName)) {
-      element.classList.remove(hiddenClassName);
+      this.classList.remove(hiddenClassName);
     }
   }
 
   onMouseDown (evt) {
-    const target = evt.target
-    evt.preventDefault()
+    const target = evt.target;
+    evt.preventDefault() // what does this do ?
 
     // determine operation
     const classes = target.classList
@@ -206,11 +214,11 @@ class DraggableFrame extends HTMLElement {
       return
     }
 
-    console.log('mouse down on ' + this.frameId)
+    console.log('mouse down on ' + this.id)
     console.log('parent is ' + this.parentElement.id)
 
     // prepare the element
-    this.style.zIndex = this.zIndex++
+    this.style.zIndex = this.zIndex++ // !! this doesn't really work now since zIndex is local to each frame
     this.iframe = this.querySelector('iframe')
 
     // disable collisions with iframes
@@ -266,16 +274,11 @@ class DraggableFrame extends HTMLElement {
     //   iframe.style.pointerEvents = null
     // }
 
-    // clear the element
-    // el.style.zIndex = null  // removing this to make the element go up
-
-    // el = null
-    // iframe = null
+    this.op = null;
   }
 
   // -- e/drag
   onDrag (cx, cy) {
-    console.log("onDrag")
     this.style.left = `${this.x0 + cx - this.mx}px`
     this.style.top  = `${this.y0 + cy - this.my}px`
   }
@@ -295,13 +298,3 @@ class DraggableFrame extends HTMLElement {
 }
 
 customElements.define('draggable-frame', DraggableFrame);
-
-// export function toggle (id) {
-//   document.getElementById(id).toggle();
-// }
-// export function hide (id) {
-//   document.getElementById(id).hide();
-// }
-// export function show (id) {
-//   document.getElementById(id).show();
-// }

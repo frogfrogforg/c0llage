@@ -2,12 +2,12 @@
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
-    <script type="module">
+<!--     <script type="module">
         import * as Frames from "../shared/frames.js"
         Frames.init()
         window.Frames = Frames
-
-    </script>
+    </script> -->
+    <script type="module" src="../shared/draggable-frame.js"></script>
     <script>
         var tag = document.createElement('script');
 
@@ -59,8 +59,12 @@
         }
 
         window.playVideo = () => {
-            window.Frames.show('the-computer')
-            player.playVideo()
+            document.getElementById('the-computer').show();
+            player.playVideo();
+        }
+
+        window.toggleFrame = (id) => {
+            document.getElementById(id).toggle(); 
         }
 
         // var rate = player.getPlaybackRate();
@@ -91,7 +95,7 @@
             <a class="hotspot centered" href="./8messy_server_transition.html"
                 style="left: 12.974%; top: 25.422%; width: 19.012%; height: 16.992%;"></a>
             <a class="hotspot" href="./1.html" style="left: 0.974%; top: 69.422%; width: 22.012%; height: 28.992%;"></a>
-            <a class="hotspot centered" href="#" onclick="Frames.toggle('rude')"
+            <a class="hotspot centered" href="#" onclick="toggleFrame('rude')"
                 style="left: 67.549%; top: 42.955%; width: 19.920%; height: 18.383%;"></a>
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
