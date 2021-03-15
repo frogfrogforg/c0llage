@@ -1,11 +1,10 @@
 window.onload = () => {
   // Add random hash to links and iframe src
-  var links = Array.from(document.getElementsByTagName('a'))
+  var links = Array.from(document.getElementsByClassName('hotspot'))
+  console.log(links);
   links.forEach((el) => {
-    if (links.attributes && links.attributes.target.value === '_blank') return
-    if (links.el) {
-      links.el.href += '?r=' + Math.random()
-    }
+    if (el.getAttribute("disable-randomization") != null) return
+    el.href += '?r=' + Math.random();
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))

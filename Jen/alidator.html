@@ -4994,6 +4994,7 @@ VAR a
 		}
 
 		function reset_cur_game() {
+			console.log("RESETTING GAMEEE")
 			if (curGameData == null) {
 				return; //can't reset if we don't have the game data
 			}
@@ -5009,14 +5010,15 @@ VAR a
 
 		var update_interval = null;
 		function onready(startWithTitle) {
+			console.log("HELLO BITSYYYYY")
 			if (startWithTitle === undefined || startWithTitle === null) startWithTitle = true;
 
-			clearInterval(loading_interval);
+			clearInterval(loading_interval)
 
 			input = new InputManager();
 
-			window.top.addEventListener('keydown', input.onkeydown);
-			window.top.addEventListener('keyup', input.onkeyup);
+			top.document.documentElement.addEventListener('keydown', input.onkeydown);
+			top.document.documentElement.addEventListener('keyup', input.onkeyup);
 
 			if (isPlayerEmbeddedInEditor) {
 				canvas.addEventListener('touchstart', input.ontouchstart, { passive: false });
@@ -5213,9 +5215,7 @@ VAR a
 			deltaTime = curTime - prevTime;
 
 			// hack
-			if (claribelle_gone) {
-				return;
-			}
+
 
 			if (curRoom == null) {
 				// in the special case where there is no valid room, end the game
@@ -5223,7 +5223,9 @@ VAR a
 			}
 
 			if (!transition.IsTransitionActive()) {
-				updateInput();
+				if (!claribelle_gone) {
+					updateInput();
+				}
 			}
 
 			if (transition.IsTransitionActive()) {
@@ -5425,8 +5427,10 @@ VAR a
 			resetAll();
 
 			function stopWindowScrolling(e) {
-				//if (e.keyCode == key.left || e.keyCode == key.right || e.keyCode == key.up || e.keyCode == key.down || !isPlayerEmbeddedInEditor)
-				//e.preventDefault();
+				if (e.keyCode == key.left || e.keyCode == key.right || e.keyCode == key.up || e.keyCode == key.down || !isPlayerEmbeddedInEditor) {
+					e.preventDefault();
+					//e.bubble()
+				}
 			}
 
 			function tryRestartGame(e) {
@@ -5456,7 +5460,7 @@ VAR a
 			}
 
 			this.onkeydown = function (event) {
-				// console.log("KEYDOWN -- " + event.keyCode);
+				//console.log("KEYDOWN -- " + event.keyCode);
 
 				stopWindowScrolling(event);
 

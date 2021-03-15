@@ -62,8 +62,14 @@
 .Frame-header-button {
     height:15px;
     width:15px;
+    font-size: 12px;
     padding-right:2px;
     text-align: center;
+}
+
+.Frame-close-button {
+    background-image: url("../shared/img/window-close.gif");
+    background-repeat: no-repeat;
 }
 
 .Frame-header-button:hover {
@@ -71,22 +77,27 @@
 }
 
 .Frame-body {
+    box-sizing: border-box;
+    transform-origin: top left;
     flex: 1;
     padding: 4px;
+    width: 100%;
     height: 100%;
 
 }
 
 .Frame-body iframe {
+    box-sizing: border-box;
     background:white;
+    overflow: hidden;
     width: 100%;
     height: 100%;
     border: 1px solid black;
     display: flex; 
     justify-content: center;
-    
+    min-height: 0;
+    min-width: 0;
 }
-
 
 .Frame-handle {
     position: absolute;
