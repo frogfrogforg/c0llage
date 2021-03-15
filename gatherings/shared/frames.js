@@ -39,9 +39,10 @@ const hiddenClassName = 'Frame-Hidden'
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
     <div class="Frame-header">
-      <div class="Frame-header-button Frame-close-button" id="$id-close">
-      </div>
-       <div class="Frame-header-button" id="$id-max"> D </div>
+          <div class="Frame-header-button" id="$id-close">
+            <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+ </div>
+       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
        <div class="Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
       </div>
