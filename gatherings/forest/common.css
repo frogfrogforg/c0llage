@@ -29,8 +29,6 @@ body {
     max-width: 90vw;
     width: 100%;
     height: 0;
-    padding-bottom: 100%;
-    padding-right:100%;
     border: 10px sienna double;
 
     /* These properties are used to fix the aspect ratio in common.js: */
@@ -51,12 +49,12 @@ body {
 
 .inspect:after {
     content: '👁️';
-    filter:opacity(16.9%);
+    filter:grayscale(100%) opacity(36.9%) blur(1px) ;
     font-size: 3vmin;
     height: 1;
     width: 1;
     position: absolute;
-    right:2;
+    right:0;
 }
 
 .inspect:hover::after {
