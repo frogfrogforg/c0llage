@@ -35,6 +35,9 @@ const frameTemplate = `
 `
 
 const kVisibleClass = 'Frame-Visible'
+const kDraggingClass = 'Frame-Dragging'
+const kScalingClass = 'Frame-Scaling'
+const kUnfocusedClass = 'Frame-Unfocused'
 // TODO: make this an attribute with these as default values?
 const MinContentHeight = 20
 const MinContentWidth = 20
@@ -117,7 +120,6 @@ class DraggableFrame extends HTMLParsedElement {
     this.innerHTML = templateHtml
     this.bodyElement = this.querySelector(`#${id}-body`)
     let bodyContainer = this.bodyElement
-    console.log('node name', originalChildren[0])
 
     if (originalChildren.length > 1 || originalChildren[0].nodeName !== 'IFRAME') {
       bodyContainer = document.createElement('div')
@@ -181,6 +183,12 @@ class DraggableFrame extends HTMLParsedElement {
     feelingsButton.onclick = () => {
       window.alert(temperamentData.alert)
     }
+
+    window.addEventListener('new-top-frame', () => {
+      if (this.style.zIndex != window.Frames.topZIndex) {
+        this.classList.toggle(kUnfocusedClass, true);
+      }
+    });
   }
 
   initStyleFromAttributes () {
@@ -240,6 +248,8 @@ class DraggableFrame extends HTMLParsedElement {
   show () {
     this.setVisible(true)
     this.dispatchEvent(new Event('show-frame'));
+
+    this.bringToTop();
   }
 
   setVisible (isVisible) {
@@ -247,22 +257,32 @@ class DraggableFrame extends HTMLParsedElement {
     this.classList.toggle(kVisibleClass, isVisible)
   }
 
+
+  bringToTop() {
+    this.style.zIndex = window.Frames.topZIndex++
+    window.dispatchEvent(new Event('new-top-frame'));
+    this.classList.toggle(kUnfocusedClass, false);
+  }
+
   onMouseDown (evt) {
     const target = evt.target
     evt.preventDefault() // what does this do ?
 
     // Bring this frame to top of stack
-    this.style.zIndex = window.Frames.topZIndex++
+    this.bringToTop();
 
     // determine operation
     const classes = target.classList
     if (classes.contains('Frame-header-blank')) {
       this.op = Ops.Move
+      this.classList.toggle(kDraggingClass, true);
     } else if (classes.contains('Frame-handle')) {
       this.op = Ops.Scale
+      this.classList.toggle(kScalingClass, true);
     } else {
       this.op = null
     }
+
 
     if (this.op == null) {
       return
@@ -270,9 +290,6 @@ class DraggableFrame extends HTMLParsedElement {
 
     console.log('mouse down on ' + this.id)
     console.log('parent is ' + this.parentElement.id)
-
-    // prepare the element
-    this.iframe = this.querySelector('iframe')
 
     // disable collisions with iframes
     // const iframes = frames.querySelectorAll('iframe')
@@ -326,6 +343,7 @@ class DraggableFrame extends HTMLParsedElement {
     // for (const iframe of Array.from(iframes)) {
     //   iframe.style.pointerEvents = null
     // }
+    this.classList.toggle(kDraggingClass, false);
 
     this.op = null
   }
@@ -379,6 +397,7 @@ class DraggableFrame extends HTMLParsedElement {
     const body = this.querySelector(`#${this.id}-body`)
 
     if (body.firstElementChild) {
+      console.log(body.firstElementChild)
       const hack = body.firstElementChild.nodeName === 'IFRAME'
         ? body.firstElementChild.contentDocument.body
         : body.firstElementChild
