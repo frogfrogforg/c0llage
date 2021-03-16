@@ -2,12 +2,16 @@
     <link rel="stylesheet" href="common.css">
     <script src="common.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
+
     <script type="module">
-        import * as Frames from "../shared/frames.js"
-        Frames.init()
-        window.Frames = Frames
+        import "../shared/draggable-frame.js"
     </script>
+
     <style>
+        draggable-frame {
+          display: none;
+        }
+
         .hotspot {
             /* Uncomment to see the border */
             /* border: inset 1px brown */

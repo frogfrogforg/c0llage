@@ -3,20 +3,21 @@ import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.j
 const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
-          <div class="Frame-header-button" id="$id-close">
-            <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
- </div>
-       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
-       <div class="Frame-header-button" id="$id-feelings"> ? </div>
+      <div class="Frame-header-button" id="$id-close">
+        <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+      </div>
+      <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
+      <div class="Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
       </div>
     </div>
       <div id="$id-body" class="Frame-body">
       </div>
     <div class="Frame-handle"></div>
-  </div>`
+  </div>
+`
 
-const hiddenClassName = 'Frame-Hidden'
+const kVisibleClass = 'Frame-Visible'
 
 // Frame random spawn tuning parameters, in %
 const FrameRandomness = {
@@ -29,13 +30,6 @@ const FrameRandomness = {
 const Ops = {
   Move: "Move",
   Scale: "Scale"
-}
-
-function htmlToElement(html) {
-    var template = document.createElement('template');
-    html = html.trim(); // Never return a text node of whitespace as the result
-    template.innerHTML = html;
-    return template.content.firstChild;
 }
 
 function makeId(length) {
@@ -54,12 +48,10 @@ class DraggableFrame extends HTMLParsedElement {
   }
 
   parsedCallback() {
-
     const id = this.getAttribute("id") || makeId(5);
     console.log('creating frame element ' + id)
 
-
-    this.hidden = this.getAttribute("hidden") != null
+    this.setVisible(this.getAttribute("hidden") == null)
 
     // the nested iframe (if there is one)
     this.iframe = null
@@ -93,10 +85,6 @@ class DraggableFrame extends HTMLParsedElement {
     // this.bodyElement.innerHTML = originalContent;
 
     this.classList.add("Frame");
-
-    if (this.hidden) {
-      this.classList.add(hiddenClassName)
-    }
 
     this.initStyleFromAttributes();
 
@@ -176,24 +164,20 @@ class DraggableFrame extends HTMLParsedElement {
   }
 
   toggle () {
-    this.hidden = !this.hidden;
-    this.updateStyling();
-  }
-  hide () {
-    this.hidden = true;
-    this.updateStyling();
-  }
-  show () {
-    this.hidden = false;
-    this.updateStyling();
+    this.setVisible(!this.visible)
   }
 
-  updateStyling() {
-    if (this.hidden && !this.classList.contains(hiddenClassName)) {
-      this.classList.add(hiddenClassName);
-    } else if (!this.hidden && this.classList.contains(hiddenClassName)) {
-      this.classList.remove(hiddenClassName);
-    }
+  hide () {
+    this.setVisible(true)
+  }
+
+  show () {
+    this.setVisible(true)
+  }
+
+  setVisible(isVisible) {
+    this.visible = !isVisible
+    this.classList.toggle(kVisibleClass, isVisible)
   }
 
   onMouseDown (evt) {
