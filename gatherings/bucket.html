@@ -1,0 +1,170 @@
+<head>
+
+    <link rel="stylesheet" href="/c0llage/gatherings/forest/common.css">
+    <style>
+        body {
+            flex-direction: column;
+        }
+        iframe,img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        #salada {
+            clip-path: url(#mask);
+        }
+    </style>
+    <script>
+        // Redirect keyup/keydown into both iframes
+        ['keydown', 'keyup'].forEach((eventName) => {
+            document.addEventListener(eventName, function (e) {
+                Array.from(document.getElementsByTagName("iframe")).forEach((iframe) => {
+                    // Urgh, can't dispatch the same event for some reason, have to clone it
+                    
+                    // console.log("dispatch", iframe.id, e.type, e.key);
+                    iframe.contentDocument.dispatchEvent(new KeyboardEvent(e.type, e));
+                });
+            });
+        });
+
+
+        makePathD = (coords) => {
+            let d = "";
+            let width = 0;
+            let height = 0;
+            for (c in coords) {
+                let x = Math.max(Math.min(1, coords[c][0]), 0);
+                let y = Math.max(Math.min(1, coords[c][1]), 0);
+                d += d === "" ? "M" : " L";
+                d += `${x},${y}`;
+            }
+            d += "z"
+            return d;
+        }
+
+        makeBezierBlobD = (x, y, size, blobSize) => {
+            const margin = 0.05;
+
+            let s = size;
+            let b = blobSize;
+            const coords = [
+                [-s, -s],
+                [ s, -s,  0, -b],
+                [ s,  s,  b,  0],
+                [-s,  s,  0,  b],
+                [-s, -s, -b,  0],
+            ];
+            let d = "";
+            let width = 0;
+            let height = 0;
+            for (c in coords) {
+                // end point
+                let x1 = Math.max(Math.min(1-margin, x + coords[c][0]), margin);
+                let y1 = Math.max(Math.min(1-margin, y + coords[c][1]), margin);
+                if (d === "") {
+                    d += `M ${x1},${y1}`;
+                } else {
+                    // control point
+                    let xc = Math.max(Math.min(1-margin, x + coords[c][2]), margin);
+                    let yc = Math.max(Math.min(1-margin, y + coords[c][3]), margin);
+                    // let xc = x + coords[c][2];
+                    // let yc = y + coords[c][3];
+                    d += `Q ${xc},${yc} ${x1},${y1}`;
+                }
+            }
+            d += "z"
+            return d;
+        }
+
+        makeParticle = (x, y, velocity, angle) => {
+            let p = {
+                x: x,
+                y: y,
+                vx: velocity*Math.cos(angle),
+                vy: velocity*Math.sin(angle)
+            }
+            p.el = document.createElementNS('http://www.w3.org/2000/svg', "path");
+            renderParticle(p);
+            return p;
+        }
+
+        renderParticle = (p) => {
+            p.el.setAttribute("d", makeBezierBlobD(p.x, p.y, 0.1,0.2));
+        }
+
+        let particles = [];
+
+        window.onload = () => {
+            const svgMask = document.getElementById("mask");
+
+            let box = document.getElementById("content");
+            box.addEventListener('mousedown', (e) => {
+                let bounds = box.getBoundingClientRect();
+                let x = (e.clientX - bounds.left)/bounds.width;
+                let y = (e.clientY - bounds.top) /bounds.height;
+
+                let velocity = 0.0003 + 0.00002*Math.random();
+                let angle = Math.PI*2*Math.random();
+                let p = makeParticle(x, y, velocity, angle);
+                particles.push(p);
+                svgMask.appendChild(p.el);
+            });
+
+            function update(dt) {
+                particles.forEach((p) => {
+                    if (p.x < 0) {
+                        p.vx = Math.abs(p.vx);
+                    } else if (p.x > 1.) {
+                        p.vx = -Math.abs(p.vx);
+                    } else if (p.y < 0.) {
+                        p.vy = Math.abs(p.vy);
+                    }else if (p.y > 1.) {
+                        p.vy = -Math.abs(p.vy);
+                    }
+
+                    p.x += p.vx*dt;
+                    p.y += p.vy*dt;
+                    renderParticle(p);
+                })
+            }
+
+            var frameDuration = 50;
+
+            function loop(timestamp) {
+              let dt = frameDuration; //timestamp - lastRender
+
+              update(dt);
+
+              lastRender = timestamp;
+              window.setTimeout(loop, frameDuration);
+            }
+            var lastRender = 0;
+            window.setTimeout(loop, frameDuration);
+        }
+
+
+        // <path d="M432.1,133.8c-4.2,1.6-9.3,6-8.6,10.8c0.7,5.5,8.7,9.2,15.1,7.9c6.7-1.4,12.4-8.5,10.8-13.7C447.7,133.4,438.5,131.3,432.1,133.8z"/>
+
+    </script>
+</head>
+
+<body>
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+      <defs>
+        <clipPath id="mask" clipPathUnits="objectBoundingBox">
+        </clipPath>
+      </defs>
+    </svg>
+
+    <div class="container">
+        <main id="content" class="content">
+            <iframe id="alidator" src="/c0llage/Jen/alidator.html"></iframe>
+            <iframe id="salada" src="/c0llage/mut/salada-gratuita.html"></iframe>
+        </main>
+        <br>
+    </div>
+    <br>
+    Click the screen!!
+</body>
