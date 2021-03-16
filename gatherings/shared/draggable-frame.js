@@ -208,15 +208,21 @@ class DraggableFrame extends HTMLParsedElement {
   }
 
   toggle () {
-    this.setVisible(!this.visible)
+    if (this.visible) {
+      this.hide()
+    } else {
+      this.show()
+    }
   }
 
   hide () {
     this.setVisible(false)
+    this.dispatchEvent(new Event('hide-frame'));
   }
 
   show () {
     this.setVisible(true)
+    this.dispatchEvent(new Event('show-frame'));
   }
 
   setVisible (isVisible) {

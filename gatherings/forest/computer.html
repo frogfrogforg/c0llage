@@ -85,13 +85,15 @@
                 src="$src">
             </img>
         `
+        function setIconStyle(targetFrame, icon) {
+            icon.style.filter = targetFrame.visible ? "invert(1)" : "none"
+        }
+
         function openFrame(targetFrame, icon) {
-            icon.style.filter = "invert(1)"
             targetFrame.show()
         }
 
         function closeFrame(targetFrame, icon) {
-            icon.style.filter = "none"
             targetFrame.hide()
         }
 
@@ -108,16 +110,18 @@
                     .replaceAll('$id', id)
                     .replaceAll('$src', src)
 
-                const targetFrame = document.getElementById(target);
                 const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+                ['hide-frame', 'show-frame'].forEach((eventName) => {
+                    targetFrame.addEventListener(eventName, (e) => {
+                        console.log(eventName)
+                        setIconStyle(targetFrame, icon);
+                    });
+                });
+
                 icon.onclick = () => {
-                    // very hacky sorry
-                    // <3
-                    if (!targetFrame.visible) {
-                        openFrame(targetFrame, icon);
-                    } else {
-                        closeFrame(targetFrame, icon);
-                    }
+                    targetFrame.toggle();
                 }
                 icon.style.left = posx + '%'
                 posx += padding
