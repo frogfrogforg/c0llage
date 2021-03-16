@@ -96,7 +96,7 @@ function exportHtml() {
 
             const href = el.querySelector("input").value;
 
-            return `<a class="hotspot" href="${href || "./REPLACE-THIS.html"}  " style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
+            return `<a class="hotspot" href="${href || "./REPLACE-THIS.html"}" style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
         }
     ).join("\n            ");
 
