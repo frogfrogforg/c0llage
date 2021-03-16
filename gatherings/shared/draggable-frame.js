@@ -96,11 +96,19 @@ class DraggableFrame extends HTMLParsedElement {
 
     // move original children of <draggable-frame> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)
-    const originalChildren = [...this.childNodes]
+    const originalChildren = [...this.children]
     this.innerHTML = templateHtml
     this.bodyElement = this.querySelector(`#${id}-body`)
+    let bodyContainer = this.bodyElement
+    console.log('node name', originalChildren[0])
+
+    if (originalChildren.length > 1 || originalChildren[0].nodeName !== 'IFRAME') {
+      bodyContainer = document.createElement('div')
+      this.bodyElement.appendChild(bodyContainer)
+    }
+
     for (const childNode of originalChildren) {
-      this.bodyElement.appendChild(childNode)
+      bodyContainer.appendChild(childNode)
     }
 
     // const originalContent = this.innerHTML;
@@ -114,10 +122,10 @@ class DraggableFrame extends HTMLParsedElement {
 
     // add button functionality
 
-    // maximize button only exists for iframes
     const maximizeButton = this.querySelector(`#${id}-max`)
-    console.log(this.bodyElement.firstElementChild)
+
     if (this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
+      // maximize button only exists for iframes
       maximizeButton.onclick = () => {
         window.open(this.bodyElement.firstElementChild.src, '_self')
       }
