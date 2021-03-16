@@ -2,12 +2,12 @@
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
-    <script type="module">
+<!--     <script type="module">
         import * as Frames from "../shared/frames.js"
         Frames.init()
         window.Frames = Frames
-
-    </script>
+    </script> -->
+    <script type="module" src="../shared/draggable-frame.js"></script>
     <script>
         var tag = document.createElement('script');
 
@@ -59,8 +59,12 @@
         }
 
         window.playVideo = () => {
-            window.Frames.show('the-computer')
-            player.playVideo()
+            document.getElementById('the-computer').show();
+            player.playVideo();
+        }
+
+        window.toggleFrame = (id) => {
+            document.getElementById(id).toggle();
         }
 
         // var rate = player.getPlaybackRate();
