@@ -75,9 +75,9 @@
     <!-- claribelle is unhidden when she escapes from alidator -->
     <img id="claribelle" src="./images/Claribelle.png" hidden></img>
 
+    <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module">
         import "../../global.js"
-        import * as Frames from "../shared/frames.js"
 
         const tagName = 'pc-icon'
         const iconTemplate = `
@@ -85,14 +85,16 @@
                 src="$src">
             </img>
         `
+        function setIconStyle(targetFrame, icon) {
+            icon.style.filter = targetFrame.visible ? "invert(1)" : "none"
+        }
+
         function openFrame(targetFrame, icon) {
-            icon.style.filter = "invert(1)"
-            targetFrame.classList.remove("Frame-Hidden")
+            targetFrame.show()
         }
 
         function closeFrame(targetFrame, icon) {
-            icon.style.filter = "none"
-            targetFrame.classList.add("Frame-Hidden")
+            targetFrame.hide()
         }
 
         function initializeIcons(padding) {
@@ -108,16 +110,18 @@
                     .replaceAll('$id', id)
                     .replaceAll('$src', src)
 
-                const targetFrame = document.getElementById(target);
                 const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+                ['hide-frame', 'show-frame'].forEach((eventName) => {
+                    targetFrame.addEventListener(eventName, (e) => {
+                        console.log(eventName)
+                        setIconStyle(targetFrame, icon);
+                    });
+                });
+
                 icon.onclick = () => {
-                    // very hacky sorry
-                    // <3
-                    if (targetFrame.classList.contains("Frame-Hidden") == true) {
-                        openFrame(targetFrame, icon);
-                    } else {
-                        closeFrame(targetFrame, icon);
-                    }
+                    targetFrame.toggle();
                 }
                 icon.style.left = posx + '%'
                 posx += padding
@@ -251,7 +255,6 @@
 
 
         function main() {
-            Frames.init()
             initializeIcons(12)
         }
 
