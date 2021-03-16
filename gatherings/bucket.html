@@ -77,12 +77,13 @@
             return d;
         }
 
-        makeParticle = (x, y, velocity, angle) => {
+        makeParticle = (x, y, velocity, angle, floorY) => {
             let p = {
                 x: x,
                 y: y,
                 vx: velocity*Math.cos(angle),
-                vy: velocity*Math.sin(angle)
+                vy: velocity*Math.sin(angle),
+                floorY: floorY
             }
             p.el = document.createElementNS('http://www.w3.org/2000/svg', "path");
             renderParticle(p);
@@ -106,25 +107,30 @@
 
                 let velocity = 0.0003 + 0.00002*Math.random();
                 let angle = Math.PI*2*Math.random();
-                let p = makeParticle(x, y, velocity, angle);
+                let floorY = 1. - particles.length/100; // fake rising water level
+                let p = makeParticle(x, y, velocity, angle, floorY);
                 particles.push(p);
                 svgMask.appendChild(p.el);
             });
 
+
             function update(dt) {
                 particles.forEach((p) => {
+                    const bounceLoss = 0.7;
                     if (p.x < 0) {
-                        p.vx = Math.abs(p.vx);
+                        p.vx = Math.abs(p.vx) *bounceLoss;
                     } else if (p.x > 1.) {
-                        p.vx = -Math.abs(p.vx);
+                        p.vx = -Math.abs(p.vx)*bounceLoss;
                     } else if (p.y < 0.) {
-                        p.vy = Math.abs(p.vy);
-                    }else if (p.y > 1.) {
-                        p.vy = -Math.abs(p.vy);
+                        p.vy = Math.abs(p.vy) *bounceLoss;
+                    }else if (p.y > p.floorY) {
+                        p.vy = -Math.abs(p.vy)*bounceLoss;
                     }
 
                     p.x += p.vx*dt;
                     p.y += p.vy*dt;
+
+                    p.vy += 0.0001 // gravity
                     renderParticle(p);
                 })
             }
