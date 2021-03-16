@@ -1,4 +1,4 @@
-import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.js';
+import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.js'
 
 const frameTemplate = `
   <div class="Frame-content">
@@ -18,6 +18,30 @@ const frameTemplate = `
 `
 
 const kVisibleClass = 'Frame-Visible'
+// TODO: make this an attribute with these as default values?
+const MinContentHeight = 20
+const MinContentWidth = 20
+
+const TemperamentData = {
+  sanguine: {
+    emoji: '🏄‍♂️',
+    alert: 'hello gamer'
+  },
+  phlegmatic: {
+    emoji: '🆓',
+    alert: 'go on gamer'
+  },
+  choleric: {
+    emoji: '🥗',
+    alert: 'get at me gamer'
+  },
+  melancholic: {
+    emoji: '🐛',
+    alert: 'im no gamer'
+  }
+}
+
+const DefaultTemperament = 'melancholic'
 
 // Frame random spawn tuning parameters, in %
 const FrameRandomness = {
@@ -28,35 +52,35 @@ const FrameRandomness = {
 
 // -- events --
 const Ops = {
-  Move: "Move",
-  Scale: "Scale"
+  Move: 'Move',
+  Scale: 'Scale'
 }
 
-function makeId(length) {
-  var result           = '';
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+function makeId (length) {
+  var result = ''
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  var charactersLength = characters.length
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
   }
-  return result;
+  return result
 }
 
 class DraggableFrame extends HTMLParsedElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
   }
 
-  parsedCallback() {
-    const id = this.getAttribute("id") || makeId(5);
+  parsedCallback () {
+    const id = this.getAttribute('id') || makeId(5)
     console.log('creating frame element ' + id)
 
-    this.setVisible(this.getAttribute("hidden") == null)
+    this.setVisible(this.getAttribute('hidden') == null)
 
     // the nested iframe (if there is one)
     this.iframe = null
     // the current manipulation
-    this.op = null;
+    this.op = null
     // the initial el x-pos
     this.x0 = 0.0
     // the initial el y-pos
@@ -68,15 +92,15 @@ class DraggableFrame extends HTMLParsedElement {
     // the zIndex to make the current element be always on top
     this.zIndex = 10
 
-    const templateHtml = frameTemplate.replaceAll('$id', id);
+    const templateHtml = frameTemplate.replaceAll('$id', id)
 
     // move original children of <draggable-frame> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)
-    const originalChildren = [...this.childNodes];
-    this.innerHTML = templateHtml;
-    this.bodyElement = this.querySelector(`#${id}-body`);
-    for (let childNode of originalChildren) {
-      this.bodyElement.appendChild(childNode);
+    const originalChildren = [...this.childNodes]
+    this.innerHTML = templateHtml
+    this.bodyElement = this.querySelector(`#${id}-body`)
+    for (const childNode of originalChildren) {
+      this.bodyElement.appendChild(childNode)
     }
 
     // const originalContent = this.innerHTML;
@@ -84,21 +108,21 @@ class DraggableFrame extends HTMLParsedElement {
     // this.bodyElement = this.querySelector(`#${id}-body`)
     // this.bodyElement.innerHTML = originalContent;
 
-    this.classList.add("Frame");
+    this.classList.add('Frame')
 
-    this.initStyleFromAttributes();
+    this.initStyleFromAttributes()
 
     // add button functionality
 
     // maximize button only exists for iframes
-    const maximizeButton = this.querySelector(`#${id}-max`);
-    console.log(this.bodyElement.firstElementChild);
+    const maximizeButton = this.querySelector(`#${id}-max`)
+    console.log(this.bodyElement.firstElementChild)
     if (this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
       maximizeButton.onclick = () => {
-        window.open(this.bodyElement.firstElementChild.src, '_self');
+        window.open(this.bodyElement.firstElementChild.src, '_self')
       }
     } else {
-      maximizeButton.style.display = "none";
+      maximizeButton.style.display = 'none'
     }
 
     // close button
@@ -110,7 +134,7 @@ class DraggableFrame extends HTMLParsedElement {
     // process mousedown on this object, and mousemove / mouseup everywhere
     this.addEventListener('pointerdown', this.onMouseDown.bind(this))
     document.body.addEventListener('pointermove', this.onMouseMove.bind(this))
-    document.body.addEventListener('pointerup',   this.onMouseUp.bind(this))
+    document.body.addEventListener('pointerup', this.onMouseUp.bind(this))
 
     // end drag if mouse exits the window
     // const html = document.getElementByTag("html")
@@ -120,11 +144,23 @@ class DraggableFrame extends HTMLParsedElement {
     //     onMouseUp()
     //   }
     // })
+
+    // Temperament Stuff
+    this.temperament = this.getAttribute('temperament') || DefaultTemperament
+
+    const temperamentData = TemperamentData[this.temperament]
+    const feelingsButton = this.querySelector(`#${id}-feelings`)
+    feelingsButton.innerHTML =
+    temperamentData.emoji
+
+    feelingsButton.onclick = () => {
+      window.alert(temperamentData.alert)
+    }
   }
 
-  initStyleFromAttributes() {
+  initStyleFromAttributes () {
     let width = 0
-    if (this.getAttribute("width")) {
+    if (this.getAttribute('width')) {
       width = this.attributes.width.value
     } else {
       width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
@@ -160,7 +196,7 @@ class DraggableFrame extends HTMLParsedElement {
     }
     this.style.top = y + '%'
 
-    this.bodyElement.classList += " " + (this.getAttribute("bodyClass") || "");
+    this.bodyElement.classList += ' ' + (this.getAttribute('bodyClass') || '')
   }
 
   toggle () {
@@ -175,13 +211,13 @@ class DraggableFrame extends HTMLParsedElement {
     this.setVisible(true)
   }
 
-  setVisible(isVisible) {
+  setVisible (isVisible) {
     this.visible = !isVisible
     this.classList.toggle(kVisibleClass, isVisible)
   }
 
   onMouseDown (evt) {
-    const target = evt.target;
+    const target = evt.target
     evt.preventDefault() // what does this do ?
 
     // determine operation
@@ -258,13 +294,27 @@ class DraggableFrame extends HTMLParsedElement {
     //   iframe.style.pointerEvents = null
     // }
 
-    this.op = null;
+    this.op = null
+  }
+
+  getInitialWidth () {
+    if (!this.initialWidth) {
+      this.initialWidth = this.getBoundingClientRect().width
+    }
+    return this.initialWidth
+  }
+
+  getInitialHeight () {
+    if (!this.initialHeight) {
+      this.initialHeight = this.getBoundingClientRect().height
+    }
+    return this.initialHeight
   }
 
   // -- e/drag
   onDrag (cx, cy) {
     this.style.left = `${this.x0 + cx - this.mx}px`
-    this.style.top  = `${this.y0 + cy - this.my}px`
+    this.style.top = `${this.y0 + cy - this.my}px`
   }
 
   onScaleStart (x, y) {
@@ -273,12 +323,46 @@ class DraggableFrame extends HTMLParsedElement {
   }
 
   onScale (cx, cy) {
-    const newWidth = cx + this.ox - this.x0
-    const newHeight = cy + this.oy - this.y0
+    const newWidth =
+    Math.max(
+      cx + this.ox - this.x0,
+      MinContentWidth)
+    const newHeight =
+    Math.max(
+      cy + this.oy - this.y0,
+      MinContentHeight)
+
+    const scaleFactorX = newHeight / (this.getInitialHeight())
+    const scaleFactorY = newWidth / (this.getInitialWidth())
+    const scaleFactor = Math.min(
+      scaleFactorX,
+      scaleFactorY
+    )
 
     this.style.width = `${newWidth}px`
     this.style.height = `${newHeight}px`
+
+    // TODO??
+    const body = this.querySelector(`#${this.id}-body`)
+
+    if (body.firstElementChild) {
+      const hack = body.firstElementChild.nodeName === 'IFRAME'
+        ? body.firstElementChild.contentDocument.body
+        : body.firstElementChild
+
+      hack.style.transformOrigin = 'top left'
+
+      const temperament = this.temperament
+      console.log('my temperament is', temperament)
+      if (temperament === 'sanguine') {
+        hack.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
+      } else if (temperament === 'phlegmatic') {
+      // do nothing;
+      } else {
+        hack.style.transform = `scale(${scaleFactor})`
+      }
+    }
   }
 }
 
-customElements.define('draggable-frame', DraggableFrame);
+customElements.define('draggable-frame', DraggableFrame)
