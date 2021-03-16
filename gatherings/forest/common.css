@@ -13,8 +13,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 69vw;
-    max-height: 69vw;
     width: 100%;
     height: 100%;
 }
@@ -26,11 +24,11 @@ body {
 
 .content {
     position: relative;
-    max-width: 90vw;
-    width: 100%;
-    height: 0;
-    padding-bottom: 100%;
     border: 10px sienna double;
+
+    /* These properties are used to fix the aspect ratio in common.js: */
+    --aspect-ratio: 1.;   /* maintain this width:height ratio */
+    --fill-fraction: 0.69; /* aim to fill this much of the viewport in each dimension */
 }
 
 .background {
