@@ -13,8 +13,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 69vw;
-    max-height: 69vw;
+    max-width: 80vmin;
+    max-height: 80vmin;
     width: 100%;
     height: 100%;
 }
@@ -30,6 +30,7 @@ body {
     width: 100%;
     height: 0;
     padding-bottom: 100%;
+    padding-right:100%;
     border: 10px sienna double;
 }
 
@@ -44,10 +45,16 @@ body {
     display: block;
 }
 
-/*this is for later. don't worry about it.*/
-
-/*
-.hotspot:hover{
-    outline:4px dotted rgb(255,255,255,0.420);
+.inspect:after {
+    content: '👁️';
+    filter:opacity(16.9%);
+    font-size: 3vmin;
+    height: 1;
+    width: 1;
+    position: absolute;
+    right:2;
 }
-*/
+
+.inspect:hover::after {
+    filter: opacity(100%);
+}
