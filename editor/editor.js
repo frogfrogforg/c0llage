@@ -89,12 +89,14 @@ function exportHtml() {
         {
             // compute dimensions as percentages of the bounding box
             const style = window.getComputedStyle(el);
-            const left = 100*parseFloat(style.getPropertyValue('left'))/boundsWidth;
-            const top =  100*parseFloat(style.getPropertyValue('top'))/boundsHeight;
-            const width =  100*parseFloat(style.getPropertyValue('width'))/boundsWidth;
-            const height =  100*parseFloat(style.getPropertyValue('height'))/boundsHeight;
+            const prec = 3;
+            const left =    (100*parseFloat(style.getPropertyValue('left'))  /boundsWidth ).toFixed(prec);
+            const top =     (100*parseFloat(style.getPropertyValue('top'))   /boundsHeight).toFixed(prec);
+            const width =   (100*parseFloat(style.getPropertyValue('width')) /boundsWidth ).toFixed(prec);
+            const height =  (100*parseFloat(style.getPropertyValue('height'))/boundsHeight).toFixed(prec);
 
             const href = el.querySelector("input").value;
+
 
             return `<a class="hotspot" href="${href || "./REPLACE-THIS.html"}" style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
         }
