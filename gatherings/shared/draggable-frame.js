@@ -1,5 +1,22 @@
 import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.js'
 
+window.Frames = {
+  show(id) {
+    const el = document.getElementById(id);
+    el.show();
+  },
+  hide(id) {
+    const el = document.getElementById(id);
+    el.hide();
+  },
+  toggle(id) {
+    const el = document.getElementById(id);
+    el.toggle();
+  },
+
+  topZIndex: 1
+}
+
 const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
@@ -90,7 +107,7 @@ class DraggableFrame extends HTMLParsedElement {
     // the initial mouse y-pos
     this.my = 0.0
     // the zIndex to make the current element be always on top
-    this.zIndex = 10
+    this.zIndex = window.topZIndex; 
 
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
@@ -234,6 +251,9 @@ class DraggableFrame extends HTMLParsedElement {
     const target = evt.target
     evt.preventDefault() // what does this do ?
 
+    // Bring this frame to top of stack
+    this.style.zIndex = window.Frames.topZIndex++
+
     // determine operation
     const classes = target.classList
     if (classes.contains('Frame-header-blank')) {
@@ -252,7 +272,6 @@ class DraggableFrame extends HTMLParsedElement {
     console.log('parent is ' + this.parentElement.id)
 
     // prepare the element
-    this.style.zIndex = this.zIndex++ // !! this doesn't really work now since zIndex is local to each frame
     this.iframe = this.querySelector('iframe')
 
     // disable collisions with iframes
@@ -376,21 +395,6 @@ class DraggableFrame extends HTMLParsedElement {
         hack.style.transform = `scale(${scaleFactor})`
       }
     }
-  }
-}
-
-window.Frames = {
-  show(id) {
-    const el = document.getElementById(id);
-    el.show();
-  },
-  hide(id) {
-    const el = document.getElementById(id);
-    el.hide();
-  },
-  toggle(id) {
-    const el = document.getElementById(id);
-    el.toggle();
   }
 }
 
