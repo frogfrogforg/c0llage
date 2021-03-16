@@ -32,6 +32,10 @@ body {
     padding-bottom: 100%;
     padding-right:100%;
     border: 10px sienna double;
+
+    /* These properties are used to fix the aspect ratio in common.js: */
+    --aspect-ratio: 1.;   /* maintain this width:height ratio */
+    --fill-fraction: 0.69; /* aim to fill this much of the viewport in each dimension */
 }
 
 .background {
