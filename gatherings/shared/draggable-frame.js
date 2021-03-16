@@ -110,7 +110,6 @@ class DraggableFrame extends HTMLParsedElement {
     // the initial mouse y-pos
     this.my = 0.0
     // the zIndex to make the current element be always on top
-    this.zIndex = window.topZIndex
 
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
@@ -146,7 +145,7 @@ class DraggableFrame extends HTMLParsedElement {
     if (this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
       // maximize button only exists for iframes
       maximizeButton.onclick = () => {
-        window.open(this.bodyElement.firstElementChild.src, '_self')
+        window.open(this.bodyElement.firstElementChild.contentDocument.location, '_self')
       }
     } else {
       maximizeButton.style.display = 'none'
@@ -184,6 +183,11 @@ class DraggableFrame extends HTMLParsedElement {
 
     feelingsButton.onclick = () => {
       window.alert(temperamentData.alert)
+    }
+
+    this.bringToTop()
+    if (!this.hasAttribute('focused')) {
+      this.classList.toggle(kUnfocusedClass, true)
     }
 
     window.addEventListener('new-top-frame', () => {
