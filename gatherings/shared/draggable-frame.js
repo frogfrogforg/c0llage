@@ -75,7 +75,7 @@ class DraggableFrame extends HTMLParsedElement {
     const id = this.getAttribute('id') || makeId(5)
     console.log('creating frame element ' + id)
 
-    this.setVisible(this.getAttribute('hidden') == null)
+    this.setVisible(!this.hasAttribute('hidden'))
 
     // the nested iframe (if there is one)
     this.iframe = null
@@ -212,7 +212,7 @@ class DraggableFrame extends HTMLParsedElement {
   }
 
   hide () {
-    this.setVisible(true)
+    this.setVisible(false)
   }
 
   show () {
@@ -220,7 +220,7 @@ class DraggableFrame extends HTMLParsedElement {
   }
 
   setVisible (isVisible) {
-    this.visible = !isVisible
+    this.visible = isVisible
     this.classList.toggle(kVisibleClass, isVisible)
   }
 
@@ -370,6 +370,21 @@ class DraggableFrame extends HTMLParsedElement {
         hack.style.transform = `scale(${scaleFactor})`
       }
     }
+  }
+}
+
+window.Frames = {
+  show(id) {
+    const el = document.getElementById(id);
+    el.show();
+  },
+  hide(id) {
+    const el = document.getElementById(id);
+    el.hide();
+  },
+  toggle(id) {
+    const el = document.getElementById(id);
+    el.toggle();
   }
 }
 

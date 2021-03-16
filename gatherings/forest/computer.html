@@ -75,9 +75,9 @@
     <!-- claribelle is unhidden when she escapes from alidator -->
     <img id="claribelle" src="./images/Claribelle.png" hidden></img>
 
+    <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module">
         import "../../global.js"
-        import * as Frames from "../shared/frames.js"
 
         const tagName = 'pc-icon'
         const iconTemplate = `
@@ -87,12 +87,12 @@
         `
         function openFrame(targetFrame, icon) {
             icon.style.filter = "invert(1)"
-            targetFrame.classList.remove("Frame-Hidden")
+            targetFrame.show()
         }
 
         function closeFrame(targetFrame, icon) {
             icon.style.filter = "none"
-            targetFrame.classList.add("Frame-Hidden")
+            targetFrame.hide()
         }
 
         function initializeIcons(padding) {
@@ -113,7 +113,7 @@
                 icon.onclick = () => {
                     // very hacky sorry
                     // <3
-                    if (targetFrame.classList.contains("Frame-Hidden") == true) {
+                    if (!targetFrame.visible) {
                         openFrame(targetFrame, icon);
                     } else {
                         closeFrame(targetFrame, icon);
@@ -251,7 +251,6 @@
 
 
         function main() {
-            Frames.init()
             initializeIcons(12)
         }
 

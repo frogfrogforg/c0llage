@@ -3,9 +3,8 @@
     <script src="common.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
     <script type="module">
-        import * as Frames from "../shared/frames.js"
-        Frames.init()
-        window.Frames = Frames
+        import "../shared/draggable-frame.js"
+        
         window.DirtTalk  = function(){
             if(Math.random() < .5){
                 Frames.show('rude')
