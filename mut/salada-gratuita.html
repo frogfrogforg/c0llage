@@ -5414,8 +5414,13 @@ true
 
 			input = new InputManager();
 
-			window.top.addEventListener('keydown', input.onkeydown);
-			window.top.addEventListener('keyup', input.onkeyup);
+			// reverting this - darwin
+			// window.top.addEventListener('keydown', input.onkeydown);
+			// window.top.addEventListener('keyup', input.onkeyup);
+
+			window.addEventListener('keydown', input.onkeydown);
+			window.addEventListener('keyup', input.onkeyup);
+
 
 			if (isPlayerEmbeddedInEditor) {
 				canvas.addEventListener('touchstart', input.ontouchstart, { passive: false });

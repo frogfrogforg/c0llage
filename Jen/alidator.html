@@ -5017,8 +5017,12 @@ VAR a
 
 			input = new InputManager();
 
-			top.document.documentElement.addEventListener('keydown', input.onkeydown);
-			top.document.documentElement.addEventListener('keyup', input.onkeyup);
+			// reverting this - darwin
+			// top.document.documentElement.addEventListener('keydown', input.onkeydown);
+			// top.document.documentElement.addEventListener('keyup', input.onkeyup);
+
+			window.addEventListener('keydown', input.onkeydown);
+			window.addEventListener('keyup', input.onkeyup);
 
 			if (isPlayerEmbeddedInEditor) {
 				canvas.addEventListener('touchstart', input.ontouchstart, { passive: false });
