@@ -4,6 +4,24 @@
     <script src="common.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module" src="../shared/d-iframe.js"></script>
+    <script type="module">
+        let state = JSON.parse(window.localStorage.state || '{"flags": []}')
+        window.openNarrative = function() {
+            if(!state.flags.includes('gotNarrative')) {
+                state.flags.push('gotNarrative')
+                localStorage.setItem("state", JSON.stringify(state))
+            }
+            Frames.toggle('narrative')
+        }
+
+        function saveState() {
+            console.log("bye", JSON.stringify(state))
+            localStorage.setItem("state", JSON.stringify(state))
+            alert(" AAAAA")
+        }
+
+        window.onbeforeunload = saveState
+    </script>
     <style>
         .CustomFrameBody {
             background-color: blue;
@@ -23,7 +41,7 @@
             <img class="background" src="./images/messyserver_screen.jpg">
             </img>
 
-            <a class="hotspot inspect" href="#" onclick="Frames.toggle('narrative')"
+            <a class="hotspot inspect" href="#" onclick="openNarrative()"
                 style="left: 22.27%; top: 21.61%; width: 44.49%; height: 37.32%">
             </a>
             <section id="frames" class="Frames">
