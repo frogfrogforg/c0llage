@@ -1,0 +1,52 @@
+<head>
+    <link rel="stylesheet" href="common.css">
+    <script src="common.js"></script>
+    <link rel="stylesheet" href="../shared/frames.css">
+
+    <script type="module">
+        import "../shared/draggable-frame.js"
+    </script>
+
+    <style>
+
+        .welcome {
+            width:100%;
+            color:#B9C2BB;
+            position:absolute;
+            top:52%;
+            left:-16%;
+            font-size:4.20vmin;
+            font-family: "ＭＳ Ｐゴシック", sans-serif;
+            text-rendering:optimizeSpeed;
+            transform-origin:center;
+            transform: perspective(750px) rotate(3deg) rotateY(-20deg) skew(3deg);
+            text-align: right;
+        }
+
+        a {
+            color:#2e26c7;
+        }
+
+
+        .hotspot {
+/*             border: inset 1px brown /* Uncomment to see the border */*/
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <main class="content">
+            <img class="background" src="./images/landing.gif"></img>
+
+            <div class="welcome"><a href="./1.html">this</a> is supposed to be fun<br>— the parks staff</div>
+
+
+            <a class="hotspot centered" href="#" onclick="document.body.remove(); document.querySelector('title').innerHTML = 'goodbye'" 
+                style="left: 29.188%; top: 24.996%; width: 11%; height: 12%"></a>
+
+                <a class="hotspot centered" href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story &"
+                style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
+        </main>
+    </div>
+</body>
