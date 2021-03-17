@@ -2,6 +2,12 @@ draggable-frame {
   display: none;
 }
 
+d-iframe iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
 .Frames {
   position: absolute;
   top: 0;
@@ -40,7 +46,9 @@ draggable-frame {
 .melancholic {
 }
 
-.Frame-Unfocused .Frame-body, .Frame-Dragging .Frame-body, .Frame-Scaling .Frame-body {
+.Frame-Unfocused .Frame-body,
+.Frame-Dragging .Frame-body,
+.Frame-Scaling .Frame-body {
   pointer-events: none;
 }
 
