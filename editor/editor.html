@@ -2,9 +2,7 @@
     <link rel="stylesheet" href="../gatherings/forest/common.css">
     <link rel="stylesheet" href="../gatherings/shared/frames.css">
     <script src="../gatherings/forest/common.js"></script>    
-    <script type="module">
-        import "../shared/draggable-frame.js"
-    </script>
+    <script type="module" src="../gatherings/shared/draggable-frame.js"></script>
     <script src="./editor.js"></script>
     <style>
         body {
@@ -27,6 +25,16 @@
         .Frame-header-blank {
             background-image: none;
         }
+
+        .Frame-Unfocused {
+          filter: none;
+          opacity: 1;
+        }
+
+        .Frame-Dragging {
+          animation: none;
+          box-shadow: none;
+        }
     </style>
 </head>
 
@@ -34,6 +42,7 @@
     <div class="container">
         <main id="frames" class="content">
             <img id="background" class="background"></img>
+            <draggable-frame temperament='phlegmatic' width=30 height=30></draggable-frame>
         </main>
     </div>
     <div id="toolbox">

@@ -70,16 +70,17 @@ function loadFromHtml(htmlDoc) {
 function addHotspot(attributes, href) {
     const framesElement = document.getElementById("frames");
     const textboxHtml = `<input type='text' size='10' value="${href || "./XXX.html"}"/>`;
-    const hotspotFrameElement = Frames.create(textboxHtml, attributes || {temperament: "phlegmatic", width:30, height:30});
-
+    const hotspotFrameElement = document.createElement("draggable-frame");
     framesElement.appendChild(hotspotFrameElement);
+    // not sure what is a better way to do this:
+    // hotspotFrameElement.outerHTML = "<draggable-frame temperament='phlegmatic' width=30 height=30></draggable-frame>"
 }
 
 // takes the current state and export an html file
 function exportHtml() {
     const backgroundImageFilename = window.backgroundImageFilename;
 
-    const frames = Array.from(document.getElementsByClassName("Frame")).filter((el) => !Frames.isHidden(el.attributes.id.value))
+    const frames = Array.from(document.getElementsByClassName("Frame")).filter((el) => el.hidden);
 
     const framesElement = document.getElementById("frames");
     const boundsWidth = framesElement.clientWidth;
