@@ -19,11 +19,14 @@ public class JSCallbacks : MonoBehaviour {
     IEnumerator DelayStartCallback()
     {
 		yield return new WaitForSecondsRealtime(delayBeforeStartCallback);
+#if !UNITY_EDITOR
 		_OnStart();
+#endif
     }
-
     public void SetPointer(bool pointer) {
     	// Debug.Log("SetPointer " + pointer);
+#if !UNITY_EDITOR
     	_SetPointer(pointer);
+#endif
     }
 }

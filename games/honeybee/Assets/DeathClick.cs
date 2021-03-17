@@ -6,6 +6,7 @@ public class DeathClick : MonoBehaviour
 {
 	public JSCallbacks js;
 	public float raycastDistance = 1000f;
+	public LayerMask layerMask;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +19,7 @@ public class DeathClick : MonoBehaviour
 		RaycastHit hit; 
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		Bug bug = null;
-		if (Physics.Raycast (ray, out hit, raycastDistance)){ 
+		if (Physics.Raycast (ray, out hit, raycastDistance, layerMask)){ 
 			bug = hit.transform.gameObject.GetComponent<Bug>();
 		}
 
