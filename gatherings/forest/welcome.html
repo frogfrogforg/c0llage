@@ -1,4 +1,5 @@
 <head>
+    <title>welcome</title>
     <link rel="stylesheet" href="common.css">
     <script src="common.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
@@ -27,7 +28,6 @@
             color:#2e26c7;
         }
 
-
         .hotspot {
 /*             border: inset 1px brown /* Uncomment to see the border */*/
         }
@@ -42,11 +42,18 @@
             <div class="welcome"><a href="./1.html">this</a> is supposed to be fun<br>— the parks staff</div>
 
 
-            <a class="hotspot centered" href="#" onclick="document.body.remove(); document.querySelector('title').innerHTML = 'goodbye'" 
+            <a id="stop" class="hotspot centered" href="#"
                 style="left: 29.188%; top: 24.996%; width: 11%; height: 12%"></a>
 
                 <a class="hotspot centered" href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story &"
                 style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
+
+            <script>
+                document.getElementById("stop").addEventListener("click", (evt) => {
+                    document.body.remove()
+                    document.querySelector("title").innerHTML = "goodbye"
+                })
+            </script>
         </main>
     </div>
 </body>
