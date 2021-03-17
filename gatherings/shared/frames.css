@@ -21,11 +21,23 @@ draggable-frame {
 }
 
 .Frame-Dragging {
-  animation: shake 1s alternate;
+  animation: shake 1s alternate infinite;
   box-shadow: black 20px 20px;
 }
 
 .Frame-Scaling {
+}
+
+.sanguine {
+}
+
+.phlegmatic {
+}
+
+.choleric {
+}
+
+.melancholic {
 }
 
 .Frame-Unfocused .Frame-body, .Frame-Dragging .Frame-body, .Frame-Scaling .Frame-body {

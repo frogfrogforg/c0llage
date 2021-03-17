@@ -1,17 +1,17 @@
 import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.js'
 
 window.Frames = {
-  show(id) {
-    const el = document.getElementById(id);
-    el.show();
+  show (id) {
+    const el = document.getElementById(id)
+    el.show()
   },
-  hide(id) {
-    const el = document.getElementById(id);
-    el.hide();
+  hide (id) {
+    const el = document.getElementById(id)
+    el.hide()
   },
-  toggle(id) {
-    const el = document.getElementById(id);
-    el.toggle();
+  toggle (id) {
+    const el = document.getElementById(id)
+    el.toggle()
   },
 
   topZIndex: 1
@@ -110,7 +110,6 @@ class DraggableFrame extends HTMLParsedElement {
     // the initial mouse y-pos
     this.my = 0.0
     // the zIndex to make the current element be always on top
-    this.zIndex = window.topZIndex; 
 
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
@@ -146,7 +145,7 @@ class DraggableFrame extends HTMLParsedElement {
     if (this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
       // maximize button only exists for iframes
       maximizeButton.onclick = () => {
-        window.open(this.bodyElement.firstElementChild.src, '_self')
+        window.open(this.bodyElement.firstElementChild.contentDocument.location, '_self')
       }
     } else {
       maximizeButton.style.display = 'none'
@@ -180,15 +179,22 @@ class DraggableFrame extends HTMLParsedElement {
     feelingsButton.innerHTML =
     temperamentData.emoji
 
+    this.classList.toggle(this.temperament, true)
+
     feelingsButton.onclick = () => {
       window.alert(temperamentData.alert)
     }
 
+    this.bringToTop()
+    if (!this.hasAttribute('focused')) {
+      this.classList.toggle(kUnfocusedClass, true)
+    }
+
     window.addEventListener('new-top-frame', () => {
-      if (this.style.zIndex != window.Frames.topZIndex) {
-        this.classList.toggle(kUnfocusedClass, true);
+      if (this.style.zIndex !== window.Frames.topZIndex) {
+        this.classList.toggle(kUnfocusedClass, true)
       }
-    });
+    })
   }
 
   initStyleFromAttributes () {
@@ -242,14 +248,14 @@ class DraggableFrame extends HTMLParsedElement {
 
   hide () {
     this.setVisible(false)
-    this.dispatchEvent(new Event('hide-frame'));
+    this.dispatchEvent(new Event('hide-frame'))
   }
 
   show () {
     this.setVisible(true)
-    this.dispatchEvent(new Event('show-frame'));
+    this.dispatchEvent(new Event('show-frame'))
 
-    this.bringToTop();
+    this.bringToTop()
   }
 
   setVisible (isVisible) {
@@ -257,11 +263,10 @@ class DraggableFrame extends HTMLParsedElement {
     this.classList.toggle(kVisibleClass, isVisible)
   }
 
-
-  bringToTop() {
+  bringToTop () {
     this.style.zIndex = window.Frames.topZIndex++
-    window.dispatchEvent(new Event('new-top-frame'));
-    this.classList.toggle(kUnfocusedClass, false);
+    window.dispatchEvent(new Event('new-top-frame'))
+    this.classList.toggle(kUnfocusedClass, false)
   }
 
   onMouseDown (evt) {
@@ -269,20 +274,19 @@ class DraggableFrame extends HTMLParsedElement {
     evt.preventDefault() // what does this do ?
 
     // Bring this frame to top of stack
-    this.bringToTop();
+    this.bringToTop()
 
     // determine operation
     const classes = target.classList
     if (classes.contains('Frame-header-blank')) {
       this.op = Ops.Move
-      this.classList.toggle(kDraggingClass, true);
+      this.classList.toggle(kDraggingClass, true)
     } else if (classes.contains('Frame-handle')) {
       this.op = Ops.Scale
-      this.classList.toggle(kScalingClass, true);
+      this.classList.toggle(kScalingClass, true)
     } else {
       this.op = null
     }
-
 
     if (this.op == null) {
       return
@@ -343,8 +347,8 @@ class DraggableFrame extends HTMLParsedElement {
     // for (const iframe of Array.from(iframes)) {
     //   iframe.style.pointerEvents = null
     // }
-    this.classList.toggle(kDraggingClass, false);
-
+    this.classList.toggle(kDraggingClass, false)
+    this.classList.toggle(kScalingClass, false)
     this.op = null
   }
 
