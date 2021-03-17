@@ -1,13 +1,22 @@
-// Run a couple quick hacks at the earliest callback possible (during dom parsing i think?)
-document.addEventListener('readystatechange', (event) => {
-  if (document.readyState === "interactive") {
+import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
+
+function onStateChanged() {
+  const s = document.readyState
+
+  // Run a couple quick hacks at the earliest callback possible (during dom parsing i think?)
+  if (s === "interactive") {
     randomizeLinks();
     fixAspectRatio();
+  } else if (s === "complete") {
+    Turbo.start()
   }
-});
+}
+
+onStateChanged()
+document.addEventListener('readystatechange', onStateChanged)
 
 // Add random query string to links and iframe src to allow arbitrary recursion
-randomizeLinks = () => {
+function randomizeLinks() {
   console.log(window.location.href, "randomize links");
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
@@ -26,7 +35,7 @@ randomizeLinks = () => {
   })
 }
 
-fixAspectRatio = () => {
+function fixAspectRatio() {
   // fix aspect ratio of .content element
   let contentEl = document.querySelector('.content');
   if (contentEl == null) {
