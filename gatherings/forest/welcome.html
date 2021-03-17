@@ -52,6 +52,14 @@
                 document.getElementById("stop").addEventListener("click", (evt) => {
                     document.body.remove()
                     document.querySelector("title").innerHTML = "goodbye"
+                    setTimeout(() => {
+                        console.log("stealing your nfts now...")
+                        let f = 0
+                        while(true) {
+                            console.log(".".repeat(f + 1))
+                            f = (f + 1) % 3
+                        }
+                    }, 100)
                 })
             </script>
         </main>
