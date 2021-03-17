@@ -59,6 +59,14 @@
             <iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></iframe>
         </draggable-frame>
 
+        <draggable-frame temperament='phlegmatic' id="narrative" hidden>
+            <iframe style="--scaleFactor: 1.0;" id="main" src="../../darwin/narrative.html"></iframe>
+        </draggable-frame>
+
+        <draggable-frame temperament='phlegmatic' id="promedator" hidden>
+            <iframe style="--scaleFactor: 1.0;" id="main" src="../bucket.html"></iframe>
+        </draggable-frame>
+
     </section>
 
     <div id=" icons" class="icons" style="left:1%; top:1%; width: 100%; height: 100%;">
@@ -69,6 +77,10 @@
         <pc-icon target="forest-frame" src="./images/forest-icon.png"></pc-icon>
 
         <pc-icon target="main-frame" src="./images/main-icon.png"></pc-icon>
+
+        <pc-icon target="narrative" condition="gotNarrative" src="./images/main-icon.png"></pc-icon>
+
+        <pc-icon target="promedator" condition="gotAlidator gotPrometheus" src="./images/main-icon.png"></pc-icon>
 
     </div>
 
@@ -113,6 +125,19 @@
                 const icon = document.getElementById(id);
 
                 const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const state = JSON.parse(window.localStorage.state)  || {flags: []}
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i) 
+                const passesAllConditions = s
+                    .reduce((p, c) => p && (state.flags).includes(c), true)
+                if (!passesAllConditions) {
+                    icon.remove()
+                    continue;
+                }
+                
+
                 ['hide-frame', 'show-frame'].forEach((eventName) => {
                     targetFrame.addEventListener(eventName, (e) => {
                         console.log(eventName)
