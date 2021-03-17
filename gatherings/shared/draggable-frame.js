@@ -407,7 +407,14 @@ class DraggableFrame extends HTMLParsedElement {
         ? body.firstElementChild.contentDocument.body
         : body.firstElementChild
 
-      hack.style.transformOrigin = 'top left'
+      if (!hack.dataset.setup) {
+        const r = hack.getBoundingClientRect()
+        // hack.style.transformOrigin = `${r.top} ${r.left}`
+        hack.style.transformOrigin = 'top left'
+        hack.style.width = r.width
+        hack.style.height = r.height
+        hack.dataset.setup = true
+      }
 
       const temperament = this.temperament
       console.log('my temperament is', temperament)

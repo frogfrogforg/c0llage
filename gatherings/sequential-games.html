@@ -1,151 +1,16 @@
 <head>
+    <link rel="stylesheet" href="./forest/common.css">
+    <link rel="stylesheet" href="./shared/frames.css">
+    <script type="module" src="./shared/draggable-frame.js"></script>
     <style>
         body {
             position: relative;
             background-color: blue;
             overflow: hidden;
         }
-
-        .Frames {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .Frame {
-            background-color: rbga(0, 0, 0, 0.4);
-            display: block;
-            position: fixed;
-            left: 50%;
-            top: 69px;
-
-            height: 420px;
-            width: 420px;
-        }
-
-        .Frame-content {
-            background-color: #f0faf9;
-            display: flex;
-            flex-flow: column;
-            border: 1px solid black;
-            height: 100%;
-            width: 100%;
-        }
-
-        .Frame-header {
-            background-color: grey;
-            height: 30px;
-            border-bottom: 2px double black;
-            user-select: none;
-        }
-
-        .Frame-body {
-            flex: 1;
-            padding: 25px;
-            height: 100%;
-        }
-
-        .Frame-body iframe {
-            width: 100%;
-            height: 100%;
-        }
-
-        .Frame-handle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            right: 0;
-            bottom: 0;
-            background-color: rebeccapurple;
-        }
-
-        #recursive-iframe {
-            --scaleFactor: 0.5;
-            /*scale iframe content by this factor (probably breaks on older browsers)*/
-            width: calc(100%/var(--scaleFactor)) !important;
-            height: calc(100%/var(--scaleFactor)) !important;
-            transform: scale(var(--scaleFactor));
-            transform-origin: top left
-        }
     </style>
-</head>
-
-<body>
-    <section id="frames" class="Frames">
-        <article id="main-frame" class="Frame" style="left:550px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe id="alidator" src="../Jen/alidator.html"></iframe>
-                    <iframe id="salada" style="display: none" src="../mut/salada-gratuita.html"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="recursive-frame" class="Frame resize-frame-content" style="top:200px; left:50px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe id="recursive-iframe" src=""></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="free-tanooki" class="Frame" style="top:100px; left:50px; display: none;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe src="../games/free-tanooki"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="button" class="Frame" style="width:200px; height:200px; left:200px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <button id="pressed-me">PRESS ME</button>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="free-juice" style="display: none" class="Frame" style="left:550px;">
-            <div class="Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe src="../games/free-juice/free_juice.html"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-
-        <article id="guttersour" style="display: none; top: 150px" class="Frame">
-            <div class=" Frame-content">
-                <div class="Frame-header">click & drag</div>
-                <div class="Frame-body">
-                    <iframe id="guttersour-iframe" title="guttersour"></iframe>
-                </div>
-                <div class="Frame-handle"></div>
-            </div>
-        </article>
-    </section>
     <script type="module">
         import "../global.js"
-        import * as Frames from "./shared/frames.js"
-
-        // hack to allow the iframe to recurse
-        const urlParams = new URLSearchParams(window.location.search);
-        const x = urlParams.get('recurse');
-        if (x) {
-            document.getElementById('recursive-iframe').src = "./sequential-games.html?recurse=" + x + "x"
-        } else {
-            // don't show the recursive window
-            document.getElementById('recursive-frame').remove()
-        }
 
         // Button logic
         document.getElementById('pressed-me').onpointerdown = () => {
@@ -176,11 +41,11 @@
         })
 
         d.Events.listen('alidator.tea', () => {
-            document.getElementById('free-tanooki').style.display = 'block'
+            document.getElementById('tanooki').show()
         })
 
         d.Events.listen('salada.bucket', () => {
-            document.getElementById('free-juice').style.display = 'block'
+            document.getElementById('bucket').show()
             d.Events.raise('juice.appeared')
         })
 
@@ -198,7 +63,9 @@
         })
 
         d.Events.listen('mario.exitlevel', () => {
-            document.getElementById("free-tanooki").style.display = "none"
+            document.getElementById("tanooki").hide()
+            const iframe = document.getElementById("tanooki-iframe")
+            iframe.src = iframe.src
         })
 
         d.Events.listen('mario.freesalad', () => {
@@ -207,13 +74,8 @@
             console.log("Hello salad load")
             // TODO: do something to hide unity loader?
             // make guttersour raise an event on start
-            document.getElementById("guttersour").style.display = "block"
-            console.log("Hello salad show")
+            document.getElementById("guttersour").show()
         })
-
-        function main() {
-            Frames.init()
-        }
 
         // Other metadata that frames can look at:
         function getAllFrameMetadata() {
@@ -243,7 +105,28 @@
 
         window.getAllFrameMetadata = getAllFrameMetadata;
         window.getFrameMetadata = getFrameMetadata;
-
-        main()
     </script>
+</head>
+
+<body>
+    <draggable-frame id="bitsy" temperament='phlegmatic'>
+        <iframe id="alidator" src="../Jen/alidator.html"></iframe>
+        <iframe id="salada" style="display: none" src="../mut/salada-gratuita.html"></iframe>
+    </draggable-frame>
+
+    <draggable-frame id="tanooki" temperament='phlegmatic' hidden>
+        <iframe id="tanooki-iframe" src="../games/free-tanooki"></iframe>
+    </draggable-frame>
+
+    <draggable-frame id="buttonthing" temperament='sanguine' width=10 height=10>
+        <button style="width:100%; height:100%; resize:none" id="pressed-me">PRESS ME</button>
+    </draggable-frame>
+
+    <draggable-frame id="bucket" temperament='phlegmatic' hidden width=60 height=50>
+        <iframe src="../games/free-juice/free_juice.html"></iframe>
+    </draggable-frame>
+
+    <draggable-frame id="guttersour" temperament='phlegmatic' hidden>
+        <iframe id="guttersour-iframe" title="guttersour"></iframe>
+    </draggable-frame>
 </body>

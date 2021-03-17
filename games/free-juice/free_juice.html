@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>free juice</title>
 </head>
 <style>
-  #leak{
-  	background-color: rbga(0,0,0,0.4);
-  	position:absolute;
-  	z-index:1;
-  	left:1000;
-  	top:1000;
+  #leak {
+    background-color: rbga(0, 0, 0, 0.4);
+    position: absolute;
+    z-index: 1;
+    left: 90%;
+    top: 90%;
   }
 
-  #bucket{
-  	background-color: rbga(0,0,0,0.4);
-  	position:absolute;
-  	z-index:1;
-  	left: 500px;
-  	top: 500px;
+  #bucket {
+    background-color: rbga(0, 0, 0, 0.4);
+    position: absolute;
+    z-index: 1;
+    left: 20%;
+    bottom: 10%;
   }
 
   .drop {
-  	position:absolute;
-	/*
+    position: absolute;
+    /*
   	left: 200px;
 	top: 50px;
 	*/
-	width: 10px;
+    width: 10px;
   }
-
 </style>
 
 <body>
@@ -46,246 +46,246 @@
     <img id="drop" src="img/drop.png">
   </object>
 
-<script type="module">
-  import "../../global.js"
+  <script type="module">
+    import "../../global.js"
 
-  // this
-  // makes the bucket draggable
-  var bucket = document.getElementById("bucket");
-  dragElement(bucket);
+    // this
+    // makes the bucket draggable
+    var bucket = document.getElementById("bucket");
+    dragElement(bucket);
 
-  function dragElement(elmnt) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    // otherwise, move the div from anywhere inside the div
-    elmnt.onpointerdown = dragMouseDown;
+    function dragElement(elmnt) {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      // otherwise, move the div from anywhere inside the div
+      elmnt.onpointerdown = dragMouseDown;
 
-    function dragMouseDown(e) {
-      e = e || window.event;
-      e.preventDefault();
-      // get the mouse cursor position at startup
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onpointerup = closeDragElement;
-      // call a function whenever the cursor moves
-      document.onpointermove = elementDrag;
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onpointerup = closeDragElement;
+        // call a function whenever the cursor moves
+        document.onpointermove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        // stop moving when mouse buttoe is released
+        document.onpointerup = null;
+        document.onpointermove = null;
+      }
     }
 
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      // calculate the new cursor position
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      // set the element's new position:
-      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+
+
+    // framework copied from SaladDaze
+
+    // -- bootstrap --
+    function Start() {
+      initAssets(document.getElementById("assets"))
+      initWorld()
+      initLoop()
     }
 
-    function closeDragElement() {
-    // stop moving when mouse buttoe is released
-    document.onpointerup = null;
-    document.onpointermove = null;
+    // -- loop --
+    const kFramerate = 30
+    const kFrameInterval = 1000.0 / kFramerate
+    let frameNum = 0;
+
+    function initLoop() {
+      setInterval(loop, kFrameInterval)
     }
-  }
 
-
-
-// framework copied from SaladDaze
-
-// -- bootstrap --
-function Start() {
-  initAssets(document.getElementById("assets"))
-  initWorld()
-  initLoop()
-}
-
-// -- loop --
-const kFramerate = 30
-const kFrameInterval = 1000.0 / kFramerate
-let frameNum = 0;
-
-function initLoop() {
-  setInterval(loop, kFrameInterval)
-}
-
-// -- l/commands
-function loop() {
-  update()
-  render()
-  frameNum++;
-}
-
-// -- assets --
-let mAssets;
-
-function initAssets(el) {
-  // aggregate assets
-  mAssets = {}
-  for (const asset of el.children) {
-    mAssets[asset.id] = asset
-  }
-}
-
-// -- world --
-const kSize = { x: 512, y: 512 }
-const kNumTeeth = 16
-
-const kFloorY = 600;
-
-let mObjects
-
-function initWorld() {
-  mObjects = []
-
-}
-
-// -- w/commands
-function update() {
-
-  // add a drop every so often
-  if (frameNum % 60 == 0) {
-      addObject(makeDrop());
-  }
-  for (const obj of mObjects) {
-    if (obj.update != null) {
-      obj.update()
+    // -- l/commands
+    function loop() {
+      update()
+      render()
+      frameNum++;
     }
-  }
-}
 
-function addObject(obj) {
-  mObjects.push(obj)
-}
+    // -- assets --
+    let mAssets;
+
+    function initAssets(el) {
+      // aggregate assets
+      mAssets = {}
+      for (const asset of el.children) {
+        mAssets[asset.id] = asset
+      }
+    }
+
+    // -- world --
+    const kSize = { x: 512, y: 512 }
+    const kNumTeeth = 16
+
+    const kFloorY = 600;
+
+    let mObjects
+
+    function initWorld() {
+      mObjects = []
+
+    }
+
+    // -- w/commands
+    function update() {
+
+      // add a drop every so often
+      if (frameNum % 60 == 0) {
+        addObject(makeDrop());
+      }
+      for (const obj of mObjects) {
+        if (obj.update != null) {
+          obj.update()
+        }
+      }
+    }
+
+    function addObject(obj) {
+      mObjects.push(obj)
+    }
 
 
-// -- w/factories
+    // -- w/factories
 
-function makeDrop() {
-  const asset = mAssets["drop"];
-  const clone = asset.cloneNode(true);
-  clone.removeAttribute("id");
-  clone.classList.add("drop");
-  document.body.appendChild(clone);
-
-
-  // set position
-  let xPos = 100 + 25 * window.localStorage.teeth;
-  console.log(xPos)
-  let yPos = 100;
-  clone.style.left = `${xPos}px`;
-  clone.style.top = `${yPos}px`;
-
-  // prep audio
-  // https://freesound.org/people/Mega-X-stream/sounds/546279/
-  let dripSound = new Audio('audio/drip.wav');
-  dripSound.onended = function() {
-    dripSound.pause();
-  }
+    function makeDrop() {
+      const asset = mAssets["drop"];
+      const clone = asset.cloneNode(true);
+      clone.removeAttribute("id");
+      clone.classList.add("drop");
+      document.body.appendChild(clone);
 
 
-  return {
-    elm: clone,
-    // active = "not cleand up"
-    active: true,
-    falling : true,
-    // puddle: false,
-    sound: dripSound,
-    x: xPos,
-    y: yPos,
-    update() {
-      if (!this.active) {
-	  return;
+      // set position
+      let xPos = 100 + 25 * window.localStorage.teeth;
+      console.log('leakxPos', xPos)
+      let yPos = 100;
+      clone.style.left = `${xPos}px`;
+      clone.style.top = `${yPos}px`;
+
+      // prep audio
+      // https://freesound.org/people/Mega-X-stream/sounds/546279/
+      let dripSound = new Audio('audio/drip.wav');
+      dripSound.onended = function () {
+        dripSound.pause();
       }
 
 
-      if (this.falling) {
-	this.y += 10 + (20 - window.localStorage.teeth);
-      	this.elm.style.top = `${this.y}px`;
+      return {
+        elm: clone,
+        // active = "not cleand up"
+        active: true,
+        falling: true,
+        // puddle: false,
+        sound: dripSound,
+        x: xPos,
+        y: yPos,
+        update() {
+          if (!this.active) {
+            return;
+          }
+
+
+          if (this.falling) {
+            this.y += 10 + (20 - window.localStorage.teeth);
+            this.elm.style.top = `${this.y}px`;
+          }
+
+
+          // bucket :)
+          if (isOverlapping(this.elm, bucket)) {
+            this.sound.play();
+            this.elm.style.visibility = 'hidden';
+            this.active = false;
+            d.Events.raise("juice.inbucket")
+          }
+
+          // leakleakleakleakleak
+          if (this.active && !this.falling) {
+            //this.sound.play();
+          }
+
+          // become part of the puddle
+          if (this.y > kFloorY && this.active) {
+            this.falling = false;
+            this.active = false
+            this.elm.style.visibility = 'hidden';
+            this.sound.play();
+            d.Events.raise('juice.outbucket')
+          }
+        }
       }
 
+    }
 
-      // bucket :)
-      if (isOverlapping(this.elm, bucket)) {
-	this.sound.play();
-	this.elm.style.visibility = 'hidden';
-	this.active = false;
-  d.Events.raise("juice.inbucket")
-      }
+    function makeSprite(name, props) {
+      const asset = mAssets[name]
 
-      // leakleakleakleakleak
-      if (this.active && !this.falling) {
-	  //this.sound.play();
-      }
-
-      // become part of the puddle
-      if (this.y > kFloorY && this.active) {
-	this.falling = false;
-  this.active = false
-	this.elm.style.visibility = 'hidden';
-	this.sound.play();
-  d.Events.raise('juice.outbucket')
+      return {
+        type: Types.Sprite,
+        name: name,
+        x: 0.0,
+        y: 0.0,
+        w: asset.width,
+        h: asset.height,
+        a: 0.0,
+        ...props
       }
     }
-  }
 
-}
-
-function makeSprite(name, props) {
-  const asset = mAssets[name]
-
-  return {
-    type: Types.Sprite,
-    name: name,
-    x: 0.0,
-    y: 0.0,
-    w: asset.width,
-    h: asset.height,
-    a: 0.0,
-    ...props
-  }
-}
-
-function vzero() {
-  return { x: 0, y: 0 }
-}
-
-
-function initDraw() {
-}
-
-// -- d/commands
-function render() {
-    for (const obj of mObjects) {
-    // for now, just assume they're all drops
-      renderDrop(obj)
+    function vzero() {
+      return { x: 0, y: 0 }
     }
-}
 
-function renderDrop(d) {
-  // d.elm.style.left = `${d.x}px`;
-  // d.elm.style.top = `${d.y}px`;
-}
 
-Start();
+    function initDraw() {
+    }
 
-// https://stackoverflow.com/questions/2440377/javascript-collision-detection
-function isOverlapping(a, b) {
-    var aRect = a.getBoundingClientRect();
-    var bRect = b.getBoundingClientRect();
+    // -- d/commands
+    function render() {
+      for (const obj of mObjects) {
+        // for now, just assume they're all drops
+        renderDrop(obj)
+      }
+    }
 
-    return !(
+    function renderDrop(d) {
+      // d.elm.style.left = `${d.x}px`;
+      // d.elm.style.top = `${d.y}px`;
+    }
+
+    Start();
+
+    // https://stackoverflow.com/questions/2440377/javascript-collision-detection
+    function isOverlapping(a, b) {
+      var aRect = a.getBoundingClientRect();
+      var bRect = b.getBoundingClientRect();
+
+      return !(
         ((aRect.top + aRect.height) < (bRect.top)) ||
         (aRect.top > (bRect.top + bRect.height)) ||
         ((aRect.left + aRect.width) < bRect.left) ||
         (aRect.left > (bRect.left + bRect.width))
-    );
-}
+      );
+    }
 
 
 
-</script>
+  </script>
 
 </body>
 
