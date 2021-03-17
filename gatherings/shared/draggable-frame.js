@@ -1,4 +1,4 @@
-import HTMLParsedElement from 'https://unpkg.com/html-parsed-element/esm/index.js'
+import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
 window.Frames = {
   show (id) {
@@ -86,11 +86,12 @@ function makeId (length) {
   return result
 }
 
-class DraggableFrame extends HTMLParsedElement {
-  constructor () {
-    super()
-  }
+export class DraggableFrame extends HTMLParsedElement {
+  // -- constants --
+  static ShowEvent = "show-frame"
+  static HideEvent = "hide-frame"
 
+  // -- lifetime --
   parsedCallback () {
     const id = this.getAttribute('id') || makeId(5)
     console.log('creating frame element ' + id)
@@ -248,12 +249,12 @@ class DraggableFrame extends HTMLParsedElement {
 
   hide () {
     this.setVisible(false)
-    this.dispatchEvent(new Event('hide-frame'))
+    this.dispatchEvent(new Event(DraggableFrame.HideEvent))
   }
 
   show () {
     this.setVisible(true)
-    this.dispatchEvent(new Event('show-frame'))
+    this.dispatchEvent(new Event(DraggableFrame.ShowEvent))
 
     this.bringToTop()
   }

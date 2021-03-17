@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
+    <script type="module" src="../shared/d-iframe.js"></script>
     <style>
         .CustomFrameBody {
             background-color: blue;
@@ -27,7 +28,7 @@
             </a>
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="narrative" x=25 y=27.5 width=40 height=29>
-                    <iframe src="../../Jen/narrative.html"> </iframe>
+                    <d-iframe autoload src="../../Jen/narrative.html"> </d-iframe>
                 </draggable-frame>
                 <draggable-frame temperament='sanguine' id="button" x=110 y=5 width=30 height=90
                     bodyClass="CustomFrameBody">

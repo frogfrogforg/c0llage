@@ -48,15 +48,15 @@
 <body style="width:100%; height:100%">
     <section id="frames" class="Frames">
         <draggable-frame temperament='phlegmatic' id="alidator-frame" hidden>
-            <iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></iframe>
+            <d-iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></d-iframe>
         </draggable-frame>
 
         <draggable-frame temperament='phlegmatic' id="forest-frame" hidden>
-            <iframe style="--scaleFactor: 0.5;" id="forest" src="./1.html"></iframe>
+            <d-iframe style="--scaleFactor: 0.5;" id="forest" src="./1.html"></d-iframe>
         </draggable-frame>
 
         <draggable-frame temperament='phlegmatic' id="main-frame" hidden>
-            <iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></iframe>
+            <d-iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></d-iframe>
         </draggable-frame>
 
     </section>
@@ -75,6 +75,7 @@
     <!-- claribelle is unhidden when she escapes from alidator -->
     <img id="claribelle" src="./images/Claribelle.png" hidden></img>
 
+    <script type="module" src="../shared/d-iframe.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module">
         import "../../global.js"
