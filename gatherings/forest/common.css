@@ -7,6 +7,8 @@ body {
     padding:0;
     margin: 0;
     overflow:visible;
+    background: rgb(226,247,247);
+    background: linear-gradient(180deg, rgba(226,247,247,1) 0%, rgba(207,191,181,1) 100%); 
 }
 
 .container {
