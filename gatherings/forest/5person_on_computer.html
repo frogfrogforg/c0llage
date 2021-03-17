@@ -81,12 +81,28 @@
             border: none;
             filter: blur(0.5px); /* thanks mut */
             cursor: pointer;
+
+            /*pointer-events: none;*/
         }
 
         .hotspot {
             /* border: inset 8px brown; */
         }
     </style>
+    <script>
+        // Redirect keyup/keydown into both iframes
+        // [Why doesn't this work...]
+        // ['click', 'mousemove', 'mousedown', 'mouseup', 'pointerover', 'pointercancel', 'pointerleave', 'gotpointercapture', 'lostpointercapture', 'pointerout', 'pointerenter', 'pointerrawupdate', 'pointerdown', 'pointerup', 'pointermove'].forEach((eventName) => {
+        //     document.addEventListener(eventName, function (e) {
+        //         let honeybee = document.getElementById("honeybee");
+        //         console.log(eventName);
+        //         // console.log("dispatch", iframe.id, e.type, e.key);
+        //         let e2 = new e.constructor(e.type, e);
+        //         console.log(e2);
+        //         honeybee.contentDocument.dispatchEvent(e2);
+        //     });
+        // });
+    </script>
 </head>
 
 <body>
@@ -100,6 +116,7 @@
             <a class="hotspot" href="./1.html" style="left: 0.432%; top: 73.345%; width: 22.125%; height: 22.176%"></a>
             <a class="hotspot centered inspect" href="#" onclick="Frames.toggle('rude')"
                 style="left: 63.114%; top: 31.604%; width: 13.626%; height: 20.160%"></a>
+
 
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">

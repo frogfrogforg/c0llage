@@ -78,7 +78,7 @@ const Ops = {
 
 function makeId (length) {
   var result = ''
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
   var charactersLength = characters.length
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength))
@@ -120,7 +120,7 @@ class DraggableFrame extends HTMLParsedElement {
     this.bodyElement = this.querySelector(`#${id}-body`)
     let bodyContainer = this.bodyElement
 
-    if (originalChildren.length > 1 || originalChildren[0].nodeName !== 'IFRAME') {
+    if (originalChildren.length > 1 || (originalChildren.length > 0 && originalChildren[0].nodeName !== 'IFRAME')) {
       bodyContainer = document.createElement('div')
       this.bodyElement.appendChild(bodyContainer)
     }
@@ -142,7 +142,7 @@ class DraggableFrame extends HTMLParsedElement {
 
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    if (this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
+    if (this.bodyElement.firstElementChild && this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
       // maximize button only exists for iframes
       maximizeButton.onclick = () => {
         window.open(this.bodyElement.firstElementChild.contentDocument.location, '_self')
@@ -296,10 +296,10 @@ class DraggableFrame extends HTMLParsedElement {
     console.log('parent is ' + this.parentElement.id)
 
     // disable collisions with iframes
-    // const iframes = frames.querySelectorAll('iframe')
-    // for (const iframe of Array.from(iframes)) {
-    //   iframe.style.pointerEvents = 'none'
-    // }
+    const iframes = document.querySelectorAll('iframe')
+    for (const iframe of Array.from(iframes)) {
+      iframe.style.pointerEvents = 'none'
+    }
 
     // record initial x/y position
     const f = this.getBoundingClientRect()
@@ -343,10 +343,11 @@ class DraggableFrame extends HTMLParsedElement {
 
   onMouseUp () {
     // re-enable mouse events on iframes
-    // const iframes = frames.querySelectorAll('iframe')
-    // for (const iframe of Array.from(iframes)) {
-    //   iframe.style.pointerEvents = null
-    // }
+    const iframes = document.querySelectorAll('iframe')
+    for (const iframe of Array.from(iframes)) {
+      iframe.style.pointerEvents = null
+    }
+
     this.classList.toggle(kDraggingClass, false)
     this.classList.toggle(kScalingClass, false)
     this.op = null
