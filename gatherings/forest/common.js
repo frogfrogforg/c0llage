@@ -28,22 +28,23 @@ randomizeLinks = () => {
 fixAspectRatio = () => {
   // fix aspect ratio of .content element
   let contentEl = document.querySelector('.content');
+  if (contentEl) {
+    const setContentAspect = () => {
+      console.log("resize");
+      let style = getComputedStyle(contentEl);
+      let aspect = style.getPropertyValue("--aspect-ratio");
+      let fillFraction = style.getPropertyValue("--fill-fraction");
 
-  const setContentAspect = () => {
-    console.log("resize");
-    let style = getComputedStyle(contentEl);
-    let aspect = style.getPropertyValue("--aspect-ratio");
-    let fillFraction = style.getPropertyValue("--fill-fraction");
+      let maxWidth  = window.innerWidth *fillFraction;
+      let maxHeight = window.innerHeight*fillFraction;
+      let width = Math.min(maxHeight*aspect, maxWidth);
+      let height = Math.min(maxWidth*aspect, maxHeight);
 
-    let maxWidth  = window.innerWidth *fillFraction;
-    let maxHeight = window.innerHeight*fillFraction;
-    let width = Math.min(maxHeight*aspect, maxWidth);
-    let height = Math.min(maxWidth*aspect, maxHeight);
+      contentEl.style.width  = width+"px";
+      contentEl.style.height = height+"px";
+    }
 
-    contentEl.style.width  = width+"px";
-    contentEl.style.height = height+"px";
+    setContentAspect();
+    window.addEventListener('resize', setContentAspect); 
   }
-
-  setContentAspect();
-  window.addEventListener('resize', setContentAspect);
 }

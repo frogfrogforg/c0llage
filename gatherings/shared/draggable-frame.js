@@ -401,7 +401,7 @@ class DraggableFrame extends HTMLParsedElement {
     const body = this.querySelector(`#${this.id}-body`)
 
     if (body.firstElementChild) {
-      console.log(body.firstElementChild)
+      // console.log(body.firstElementChild)
       const hack = body.firstElementChild.nodeName === 'IFRAME'
         ? body.firstElementChild.contentDocument.body
         : body.firstElementChild
