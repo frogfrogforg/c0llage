@@ -2,6 +2,8 @@
 
 live @ https://frogfrogforg.github.io/c0llage/
 
+## [Documentation](./docs/index.md)
+
 ## Events
 
   [This page](Events.md) describes how to use the event system we currently have in place.

@@ -1,20 +1,23 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
 window.Frames = {
-  show (id) {
-    const el = document.getElementById(id)
-    el.show()
-  },
-  hide (id) {
-    const el = document.getElementById(id)
-    el.hide()
-  },
-  toggle (id) {
-    const el = document.getElementById(id)
-    el.toggle()
-  },
+  show: staticize('show'),
+  hide: staticize('hide'),
+  toggle: staticize('toggle'),
+  bringToTop: staticize('bringToTop'),
+
+  listen: staticize('addEventListener'),
+  addEventListener: staticize('addEventListener'),
 
   topZIndex: 1
+}
+
+function staticize(methodName) {
+  return function(id, ...args) {
+    //console.log(`draggable-frame ${id} calling ${methodName}, with args: ${args}`)
+    const el = document.getElementById(id)
+    el[methodName](...args)
+  }
 }
 
 const frameTemplate = `
@@ -24,6 +27,7 @@ const frameTemplate = `
         <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
       </div>
       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
+      <div class="Frame-header-button Frame-back-button"> ☚ </div>
       <div class="Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
       </div>
@@ -139,8 +143,17 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.initStyleFromAttributes()
 
-    // add button functionality
+    //#region Header button functionality
 
+    // Close button
+    if(!this.hasAttribute('no-close')) {
+      const closeButton = this.querySelector(`#${id}-close`)
+      closeButton.onclick = () => {
+        this.hide()
+      }
+    }
+
+    // Maximize button
     const maximizeButton = this.querySelector(`#${id}-max`)
 
     if (this.bodyElement.firstElementChild && this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
@@ -152,11 +165,7 @@ export class DraggableFrame extends HTMLParsedElement {
       maximizeButton.style.display = 'none'
     }
 
-    // close button
-    const closeButton = this.querySelector(`#${id}-close`)
-    closeButton.onclick = () => {
-      this.hide()
-    }
+    
 
     // process mousedown on this object, and mousemove / mouseup everywhere
     this.addEventListener('pointerdown', this.onMouseDown.bind(this))
@@ -185,6 +194,8 @@ export class DraggableFrame extends HTMLParsedElement {
     feelingsButton.onclick = () => {
       window.alert(temperamentData.alert)
     }
+
+    //#endregion
 
     this.bringToTop()
     if (!this.hasAttribute('focused')) {
@@ -269,6 +280,8 @@ export class DraggableFrame extends HTMLParsedElement {
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
   }
+
+  listen = addEventListener
 
   onMouseDown (evt) {
     const target = evt.target
