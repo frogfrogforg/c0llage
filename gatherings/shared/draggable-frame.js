@@ -53,19 +53,23 @@ const MinContentWidth = 20
 const TemperamentData = {
   sanguine: {
     emoji: '🏄‍♂️',
-    alert: 'hello gamer'
+    alert: 'hello gamer',
+    noBackMessage: "OH YEAH, I TRY THAT EVERY TIME AS WELL!"
   },
   phlegmatic: {
     emoji: '🆓',
-    alert: 'go on gamer'
+    alert: 'go on gamer',
+    noBackMessage: "great attitude! keep messing around and you might find some fun stuff around here =)"
   },
   choleric: {
     emoji: '🥗',
-    alert: 'get at me gamer'
+    alert: 'get at me gamer',
+    noBackMessage: "you can't do that!"
   },
   melancholic: {
     emoji: '🐛',
-    alert: 'im no gamer'
+    alert: 'im no gamer',
+    noBackMessage: "there's no going back from here..."
   }
 }
 
@@ -147,7 +151,20 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.initStyleFromAttributes()
 
-    //#region Header button functionality
+    //#region Header Button Functionality
+
+    // Temperament Stuff
+    this.temperament = this.getAttribute('temperament') || DefaultTemperament
+    this.classList.toggle(this.temperament, true)
+    const temperamentData = TemperamentData[this.temperament]
+
+    const feelingsButton = this.querySelector(`#${id}-feelings`)
+    feelingsButton.innerHTML =
+      temperamentData.emoji
+
+    feelingsButton.onclick = () => {
+      window.alert(temperamentData.alert)
+    }
 
     // Close button
     if (!this.hasAttribute('no-close')) {
@@ -169,6 +186,23 @@ export class DraggableFrame extends HTMLParsedElement {
       maximizeButton.style.display = 'none'
     }
 
+    // back button
+    const backButton = this.querySelector(`.Frame-back-button`)
+
+    if (iframe != null) {
+      // back button only exists for iframes
+      backButton.onclick = () => {
+        // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
+        if(iframe.contentWindow.history.length > 2){
+          iframe.contentWindow.history.back()
+        } else{
+          alert(temperamentData.noBackMessage)
+        }
+      }
+    } else {
+      backButton.style.display = 'none'
+    }
+
     // process mousedown on this object, and mousemove / mouseup everywhere
     this.addEventListener('pointerdown', this.onMouseDown.bind(this))
     document.body.addEventListener('pointermove', this.onMouseMove.bind(this))
@@ -183,19 +217,7 @@ export class DraggableFrame extends HTMLParsedElement {
       }
     })
 
-    // Temperament Stuff
-    this.temperament = this.getAttribute('temperament') || DefaultTemperament
-
-    const temperamentData = TemperamentData[this.temperament]
-    const feelingsButton = this.querySelector(`#${id}-feelings`)
-    feelingsButton.innerHTML =
-      temperamentData.emoji
-
-    this.classList.toggle(this.temperament, true)
-
-    feelingsButton.onclick = () => {
-      window.alert(temperamentData.alert)
-    }
+    
 
     //#endregion
 
