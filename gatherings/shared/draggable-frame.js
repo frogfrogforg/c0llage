@@ -5,18 +5,23 @@ window.Frames = {
   ...staticize('hide'),
   ...staticize('toggle'),
   ...staticize('bringToTop'),
-  ...staticize('addEventListener'),
-  ...staticize('addEventListener'),
+  ...staticize('addEventListener', "listen"),
   topZIndex: 1
 }
 
-function staticize(methodName) {
-  return {
-    [methodName]: function (id, ...args) {
-      const el = document.getElementById(id)
-      return el[methodName](...args)
-    }
+function staticize(...names) {
+  const methodName = names[0]
+  function action(id, ...args) {
+    const el = document.getElementById(id)
+    return el[methodName](...args)
   }
+
+  const actions = {}
+  for (const name of names) {
+    actions[name] = action
+  }
+
+  return actions
 }
 
 const frameTemplate = `
