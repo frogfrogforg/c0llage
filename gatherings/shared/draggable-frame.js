@@ -1,22 +1,21 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
 window.Frames = {
-  show: staticize('show'),
-  hide: staticize('hide'),
-  toggle: staticize('toggle'),
-  bringToTop: staticize('bringToTop'),
-
-  listen: staticize('addEventListener'),
-  addEventListener: staticize('addEventListener'),
-
+  ...staticize('show'),
+  ...staticize('hide'),
+  ...staticize('toggle'),
+  ...staticize('bringToTop'),
+  ...staticize('addEventListener'),
+  ...staticize('addEventListener'),
   topZIndex: 1
 }
 
 function staticize(methodName) {
-  return function(id, ...args) {
-    //console.log(`draggable-frame ${id} calling ${methodName}, with args: ${args}`)
-    const el = document.getElementById(id)
-    el[methodName](...args)
+  return {
+    [methodName]: function (id, ...args) {
+      const el = document.getElementById(id)
+      return el[methodName](...args)
+    }
   }
 }
 
@@ -80,7 +79,7 @@ const Ops = {
   Scale: 'Scale'
 }
 
-function makeId (length) {
+function makeId(length) {
   var result = ''
   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
   var charactersLength = characters.length
@@ -96,7 +95,7 @@ export class DraggableFrame extends HTMLParsedElement {
   static HideEvent = "hide-frame"
 
   // -- lifetime --
-  parsedCallback () {
+  parsedCallback() {
     const id = this.getAttribute('id') || makeId(5)
     console.log('creating frame element ' + id)
 
@@ -125,7 +124,7 @@ export class DraggableFrame extends HTMLParsedElement {
     this.bodyElement = this.querySelector(`#${id}-body`)
     let bodyContainer = this.bodyElement
 
-    if (originalChildren.length > 1 || (originalChildren.length > 0 && originalChildren[0].nodeName !== 'IFRAME')) {
+    if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
       bodyContainer = document.createElement('div')
       this.bodyElement.appendChild(bodyContainer)
     }
@@ -146,7 +145,7 @@ export class DraggableFrame extends HTMLParsedElement {
     //#region Header button functionality
 
     // Close button
-    if(!this.hasAttribute('no-close')) {
+    if (!this.hasAttribute('no-close')) {
       const closeButton = this.querySelector(`#${id}-close`)
       closeButton.onclick = () => {
         this.hide()
@@ -156,16 +155,14 @@ export class DraggableFrame extends HTMLParsedElement {
     // Maximize button
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    if (this.bodyElement.firstElementChild && this.bodyElement.firstElementChild.nodeName === 'IFRAME') {
-      // maximize button only exists for iframes
+    const iframe = this.findIframe()
+    if (iframe != null) {
       maximizeButton.onclick = () => {
-        window.open(this.bodyElement.firstElementChild.contentDocument.location, '_self')
+        window.open(iframe.contentDocument.location, '_self')
       }
     } else {
       maximizeButton.style.display = 'none'
     }
-
-    
 
     // process mousedown on this object, and mousemove / mouseup everywhere
     this.addEventListener('pointerdown', this.onMouseDown.bind(this))
@@ -173,13 +170,13 @@ export class DraggableFrame extends HTMLParsedElement {
     document.body.addEventListener('pointerup', this.onMouseUp.bind(this))
 
     // end drag if mouse exits the window
-    // const html = document.getElementByTag("html")
-    // html.addEventListener('pointerout', (evt) => {
-    //   evt.preventDefault()
-    //   if (evt.target == html) {
-    //     onMouseUp()
-    //   }
-    // })
+    // TODO: this doesn't work perfectly inside iframes
+    const html = document.querySelector("html")
+    html.addEventListener('pointerout', (evt) => {
+      if (evt.target == html) {
+        this.onMouseUp()
+      }
+    })
 
     // Temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
@@ -187,7 +184,7 @@ export class DraggableFrame extends HTMLParsedElement {
     const temperamentData = TemperamentData[this.temperament]
     const feelingsButton = this.querySelector(`#${id}-feelings`)
     feelingsButton.innerHTML =
-    temperamentData.emoji
+      temperamentData.emoji
 
     this.classList.toggle(this.temperament, true)
 
@@ -209,7 +206,7 @@ export class DraggableFrame extends HTMLParsedElement {
     })
   }
 
-  initStyleFromAttributes () {
+  initStyleFromAttributes() {
     let width = 0
     if (this.getAttribute('width')) {
       width = this.attributes.width.value
@@ -250,7 +247,7 @@ export class DraggableFrame extends HTMLParsedElement {
     this.bodyElement.classList += ' ' + (this.getAttribute('bodyClass') || '')
   }
 
-  toggle () {
+  toggle() {
     if (this.visible) {
       this.hide()
     } else {
@@ -258,24 +255,24 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  hide () {
+  hide() {
     this.setVisible(false)
     this.dispatchEvent(new Event(DraggableFrame.HideEvent))
   }
 
-  show () {
+  show() {
     this.setVisible(true)
     this.dispatchEvent(new Event(DraggableFrame.ShowEvent))
 
     this.bringToTop()
   }
 
-  setVisible (isVisible) {
+  setVisible(isVisible) {
     this.visible = isVisible
     this.classList.toggle(kVisibleClass, isVisible)
   }
 
-  bringToTop () {
+  bringToTop() {
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
@@ -283,7 +280,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
   listen = addEventListener
 
-  onMouseDown (evt) {
+  onMouseDown(evt) {
     const target = evt.target
     evt.preventDefault() // what does this do ?
 
@@ -340,7 +337,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  onMouseMove (evt) {
+  onMouseMove(evt) {
     evt.preventDefault()
 
     // apply the operation
@@ -355,7 +352,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  onMouseUp () {
+  onMouseUp() {
     // re-enable mouse events on iframes
     const iframes = document.querySelectorAll('iframe')
     for (const iframe of Array.from(iframes)) {
@@ -367,14 +364,14 @@ export class DraggableFrame extends HTMLParsedElement {
     this.op = null
   }
 
-  getInitialWidth () {
+  getInitialWidth() {
     if (!this.initialWidth) {
       this.initialWidth = this.getBoundingClientRect().width
     }
     return this.initialWidth
   }
 
-  getInitialHeight () {
+  getInitialHeight() {
     if (!this.initialHeight) {
       this.initialHeight = this.getBoundingClientRect().height
     }
@@ -382,25 +379,25 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 
   // -- e/drag
-  onDrag (cx, cy) {
+  onDrag(cx, cy) {
     this.style.left = `${this.x0 + cx - this.mx}px`
     this.style.top = `${this.y0 + cy - this.my}px`
   }
 
-  onScaleStart (x, y) {
+  onScaleStart(x, y) {
     this.ox = x - this.mx
     this.oy = y - this.my
   }
 
-  onScale (cx, cy) {
+  onScale(cx, cy) {
     const newWidth =
-    Math.max(
-      cx + this.ox - this.x0,
-      MinContentWidth)
+      Math.max(
+        cx + this.ox - this.x0,
+        MinContentWidth)
     const newHeight =
-    Math.max(
-      cy + this.oy - this.y0,
-      MinContentHeight)
+      Math.max(
+        cy + this.oy - this.y0,
+        MinContentHeight)
 
     const scaleFactorX = newHeight / (this.getInitialHeight())
     const scaleFactorY = newWidth / (this.getInitialWidth())
@@ -413,32 +410,65 @@ export class DraggableFrame extends HTMLParsedElement {
     this.style.height = `${newHeight}px`
 
     // TODO??
-    const body = this.querySelector(`#${this.id}-body`)
-
-    if (body.firstElementChild) {
-      // console.log(body.firstElementChild)
-      const hack = body.firstElementChild.nodeName === 'IFRAME'
-        ? body.firstElementChild.contentDocument.body
-        : body.firstElementChild
-
-      if (!hack.dataset.setup) {
-        const r = hack.getBoundingClientRect()
-        // hack.style.transformOrigin = `${r.top} ${r.left}`
-        hack.style.transformOrigin = 'top left'
-        hack.style.width = r.width
-        hack.style.height = r.height
-        hack.dataset.setup = true
+    const target = this.findScaleTarget()
+    if (target != null) {
+      if (!target.dataset.setup) {
+        const r = target.getBoundingClientRect()
+        // target.style.transformOrigin = `${r.top} ${r.left}`
+        target.style.transformOrigin = 'top left'
+        target.style.width = r.width
+        target.style.height = r.height
+        target.dataset.setup = true
       }
 
       const temperament = this.temperament
       console.log('my temperament is', temperament)
       if (temperament === 'sanguine') {
-        hack.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
+        target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
       } else if (temperament === 'phlegmatic') {
-      // do nothing;
+        // do nothing;
       } else {
-        hack.style.transform = `scale(${scaleFactor})`
+        target.style.transform = `scale(${scaleFactor})`
       }
+    }
+  }
+
+  // -- nested [d-]iframe hacks --
+  findIframe() {
+    return this.findIframeInChildren(this.bodyElement.children)
+  }
+
+  findScaleTarget() {
+    const body = this.querySelector(`#${this.id}-body`)
+    const child = body.firstElementChild
+    if (child == null) {
+      return null
+    }
+
+    // d-iframes can be scaled directly?
+    if (child.nodeName === "D-IFRAME") {
+      return child
+    }
+
+    // search for a wrapped iframe (youtube embed is one level deep)
+    const iframe = child.querySelector("iframe")
+    if (iframe != null) {
+      return iframe.contentDocument.body
+    }
+
+    // otherwise, return first child
+    return child
+  }
+
+  findIframeInChildren(children) {
+    const child = children[0]
+    switch (child && child.nodeName) {
+      case "IFRAME":
+        return child
+      case "D-IFRAME":
+        return child.iframe
+      default:
+        return null
     }
   }
 }

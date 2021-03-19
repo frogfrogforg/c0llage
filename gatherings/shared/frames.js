@@ -54,14 +54,14 @@ const frameTemplate = `<article id="$id" class="Frame">
 </article>
 `
 
-function htmlToElement (html) {
+function htmlToElement(html) {
   var template = document.createElement('template')
-    html = html.trim() // Never return a text node of whitespace as the result
-    template.innerHTML = html
-    return template.content.firstChild
+  html = html.trim() // Never return a text node of whitespace as the result
+  template.innerHTML = html
+  return template.content.firstChild
 }
 
-function makeId (length) {
+function makeId(length) {
   var result = ''
   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
   var charactersLength = characters.length
@@ -72,7 +72,7 @@ function makeId (length) {
 }
 
 // -- lifetime --
-export function create (content, attributes) {
+export function create(content, attributes) {
   const id = attributes.id || makeId(5)
   const frameHtml = frameTemplate.replaceAll('$id', id)
   const el = htmlToElement(frameHtml)
@@ -139,9 +139,10 @@ export function create (content, attributes) {
 
   // maximize button only exists for iframes
   const maximizeButton = el.querySelector(`#${id}-max`)
-  if (body.firstElementChild && body.firstElementChild.nodeName === 'IFRAME') {
+  const firstChild = this.bodyElement.firstElementChild
+  if (firstChild && firstChild.nodeName === 'IFRAME') {
     maximizeButton.onclick = () => {
-      window.open(body.firstElementChild.contentDocument.location, '_self')
+      window.open(firstChild.contentDocument.location, '_self')
     }
   } else {
     maximizeButton.style.display = 'none'
@@ -173,7 +174,7 @@ export function create (content, attributes) {
   return el
 }
 
-export function toggle (id) {
+export function toggle(id) {
   const element = document.getElementById(id)
   if (element.classList.contains(hiddenClassName)) {
     element.classList.remove(hiddenClassName)
@@ -182,20 +183,20 @@ export function toggle (id) {
   }
 }
 
-export function hide (id) {
+export function hide(id) {
   document.getElementById(id).classList.add(hiddenClassName)
 }
 
-export function show (id) {
+export function show(id) {
   document.getElementById(id).classList.remove(hiddenClassName)
 }
 
-export function isHidden (id) {
+export function isHidden(id) {
   const element = document.getElementById(id)
   return element.classList.contains(hiddenClassName)
 }
 
-export function init (container) {
+export function init(container) {
   // capture elements
   frames = container || document.getElementById('frames')
 
@@ -245,14 +246,14 @@ export function init (container) {
   })
 }
 
-function getInitialWidth (el) {
+function getInitialWidth(el) {
   if (!el.dataset.initialWidth) {
     el.dataset.initialWidth = el.getBoundingClientRect().width
   }
   return el.dataset.initialWidth
 }
 
-function getInitialHeight (el) {
+function getInitialHeight(el) {
   if (!el.dataset.initialHeight) {
     el.dataset.initialHeight = el.getBoundingClientRect().height
   }
@@ -282,7 +283,7 @@ let my = 0.0
 // the zIndex to make the current element be always on top
 let zIndex = 10
 
-function onMouseDown (evt) {
+function onMouseDown(evt) {
   const target = evt.target
   //evt.preventDefault()
 
@@ -348,7 +349,7 @@ function onMouseDown (evt) {
   }
 }
 
-function onMouseMove (evt) {
+function onMouseMove(evt) {
   if (el == null) {
     return
   }
@@ -366,7 +367,7 @@ function onMouseMove (evt) {
   }
 }
 
-function onMouseUp () {
+function onMouseUp() {
   if (el == null) {
     return
   }
@@ -384,7 +385,7 @@ function onMouseUp () {
 }
 
 // -- e/drag
-function onDrag (cx, cy) {
+function onDrag(cx, cy) {
   el.style.left = `${x0 + cx - mx}px`
   el.style.top = `${y0 + cy - my}px`
 }
@@ -394,12 +395,12 @@ function onDrag (cx, cy) {
 let ox = 0.0
 let oy = 0.0
 
-function onScaleStart (x, y, el) {
+function onScaleStart(x, y, el) {
   ox = x - mx
   oy = y - my
 }
 
-function onScale (cx, cy) {
+function onScale(cx, cy) {
   const newWidth =
     Math.max(
       cx + ox - x0,
