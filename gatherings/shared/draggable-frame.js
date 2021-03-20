@@ -47,8 +47,8 @@ const kDraggingClass = 'Frame-Dragging'
 const kScalingClass = 'Frame-Scaling'
 const kUnfocusedClass = 'Frame-Unfocused'
 // TODO: make this an attribute with these as default values?
-const MinContentHeight = 20
-const MinContentWidth = 20
+const MinContentHeight = 100
+const MinContentWidth = 100
 
 const TemperamentData = {
   sanguine: {
