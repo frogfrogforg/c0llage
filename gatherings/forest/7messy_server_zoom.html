@@ -7,8 +7,8 @@
     <script type="module" src="../shared/d-iframe.js"></script>
     <script type="module">
         window.openNarrative = function() {
-            if(!d.State.flags.includes('gotNarrative')) {
-                d.State.flags.push('gotNarrative')
+            if(!d.State.sawMessyServerNarrative) {
+                d.State.sawMessyServerNarrative = true
             }
 
             Frames.toggle('narrative')

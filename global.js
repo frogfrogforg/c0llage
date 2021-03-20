@@ -4,8 +4,11 @@ import { Events } from "./core/events.js"
 const root = window.top
 const keys = ["d", "b"]
 
+// See ./Docs/State.md
 const initialState = {
-  flags: {}
+  sawMessyServerNarrative: false,
+  visitedAlidator: false,
+  visitedPrometeus: false,
 }
 
 // -- api --

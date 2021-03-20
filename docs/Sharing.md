@@ -10,6 +10,7 @@ overview
 we have a number of ways for games, other parts of the website, to communicate with one another *mysteriously* using shared modules:
 
 - [events](./Events.md)
+- [state](./State.md)
 
 usage
 -----

@@ -27,8 +27,10 @@
             flex-direction: column;
             align-items: center;
             margin: 0 5% 5% 0;
-            font-family: monospace;
             padding: 0.5% 1% 0.3% 1%;
+
+            font-family: monospace;
+            font-size: 3vw;
         }
 
         .icon:hover {
@@ -109,9 +111,9 @@
 
         <pc-icon target="main-frame" name='home' src="./images/icons/home.png"></pc-icon>
 
-        <pc-icon target="narrative" name='narrative' condition="gotNarrative" src="./images/icons/narrative.png"></pc-icon>
+        <pc-icon target="narrative" name='narrative' condition="sawMessyServerNarrative" src="./images/icons/narrative.png"></pc-icon>
 
-        <pc-icon target="promedator" name='promedator' condition="gotAlidator gotPrometheus" src="./images/icons/promedator.png"></pc-icon>
+        <pc-icon target="promedator" name='promedator' condition="visitedAlidator visitedPrometeus" src="./images/icons/promedator.png"></pc-icon>
 
     </div>
 
@@ -161,7 +163,7 @@
                 const conditionsString = element.getAttribute('condition') || ''
                 const s = conditionsString.trim().split(' ').filter(i => i) 
                 const passesAllConditions = s
-                    .reduce((p, c) => p && (d.State.flags).includes(c), true)
+                    .reduce((aggregate, condition) => aggregate && d.State[condition], true)
                 if (!passesAllConditions) {
                     icon.remove()
                     continue;
