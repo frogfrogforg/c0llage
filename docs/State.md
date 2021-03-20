@@ -1,11 +1,8 @@
-Events
-======
+State
+=====
 
 - [Overview](#overview)
 - [Listening to state changes](#listening-to-events)
-- [Raising Events](#raising-events)
-- [Bitsy](#bitsy)
-- [Unity(WIP)](#unity)
 - [Current Events](#current-state-information)
 
 Overview
