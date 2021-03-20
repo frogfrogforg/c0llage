@@ -2,24 +2,16 @@
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
+    <script type="module" src="../../global.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module">
-        let state = JSON.parse(window.localStorage.state || '{"flags": []}')
         window.openNarrative = function() {
-            if(!state.flags.includes('gotNarrative')) {
-                state.flags.push('gotNarrative')
-                localStorage.setItem("state", JSON.stringify(state))
+            if(!d.State.flags.includes('gotNarrative')) {
+                d.State.flags.push('gotNarrative')
             }
+
             Frames.toggle('narrative')
         }
-
-        function saveState() {
-            console.log("bye", JSON.stringify(state))
-            localStorage.setItem("state", JSON.stringify(state))
-            alert(" AAAAA")
-        }
-
-        window.onbeforeunload = saveState
     </script>
     <style>
         .CustomFrameBody {
