@@ -17,11 +17,8 @@
 
         #honeybee {
             border: none;
-            filter: blur(0.5px);
-            /* thanks mut */
-            cursor: pointer;
-
-            /*pointer-events: none;*/
+            filter: blur(0.5px); /* thanks mut */
+            pointer-events: none;
         }
 
         .hotspot {
@@ -29,26 +26,52 @@
         }
     </style>
     <script>
-        // Redirect keyup/keydown into both iframes
-        // [Why doesn't this work...]
-        // ['click', 'mousemove', 'mousedown', 'mouseup', 'pointerover', 'pointercancel', 'pointerleave', 'gotpointercapture', 'lostpointercapture', 'pointerout', 'pointerenter', 'pointerrawupdate', 'pointerdown', 'pointerup', 'pointermove'].forEach((eventName) => {
-        //     document.addEventListener(eventName, function (e) {
-        //         let honeybee = document.getElementById("honeybee");
-        //         console.log(eventName);
-        //         // console.log("dispatch", iframe.id, e.type, e.key);
-        //         let e2 = new e.constructor(e.type, e);
-        //         console.log(e2);
-        //         honeybee.contentDocument.dispatchEvent(e2);
-        //     });
-        // });
+        // Clone mouse input events for the unity iframe
+        // (so that it always receives mouse input, but only blocks other elements when the cursor is over a honeybee)
+        // (this is similar to what's happening in bucket.html, TODO: add a light framework for making this simpler?)
+        window.addEventListener('load', () => {
+            let main = document.getElementById("main");
+            let honeybee = document.getElementById("honeybee");
+            let canvas = honeybee.contentDocument.getElementById("unity-canvas");
+
+            ['click', 'mouseenter', 'mouseleave',
+            'mouseout', 'mouseover', 'mousemove',
+            'mousedown', 'mouseup'].forEach((eventName) => {
+                document.addEventListener(eventName, function (e) {
+                    const rect = honeybee.getBoundingClientRect();
+                    // let e2 = new e.constructor(e.type, e);
+                    let e2 = new MouseEvent(e.type, {
+                        // Adjust client coordinates to be relative to the iframe document:
+                        clientX: e.clientX - rect.x,
+                        clientY: e.clientY - rect.y,
+                        // Everything else stays the same:
+                        screenX: e.screenX,
+                        screenY: e.screenY,
+                        region: e.region,
+                        relatedTarget: e.relatedTarget,
+                        composed: e.composed,
+                        view: e.view,
+                        bubbles: e.bubbles,
+                        cancelable: e.cancelable
+                    });
+
+                    canvas.dispatchEvent(e2);
+                });
+            });
+
+            // Override the setpointer callback from unity to set both the pointer style and pointerEvents
+            honeybee.contentWindow.setUnityPointer = (pointer) => {
+                canvas.style.cursor = pointer ? "pointer" : "default"
+                honeybee.style.pointerEvents = pointer ? "all" : "none"
+            }
+        });
     </script>
 </head>
 
 <body>
     <div class="container">
-        <main class="content">
-            <img class="background" src="./images/person_on_computer.png"></img>
-            <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
+        <main id="main" class="content">
+            <img id="background" class="background" src="./images/person_on_computer.png"></img>
 
             <a class="hotspot centered inspect" href="./8messy_server_transition.html"
                 style="left: 12.987%; top: 25.450%; width: 19.034%; height: 17.011%"></a>
@@ -66,8 +89,9 @@
                 <draggable-frame id="the-computer" hidden x=60 y=28 width=25 height=35>
                     <d-iframe src="https://archive.org/embed/NicholasFedorovTHECOMPUTEROfficialVideo&autoplay=1" width="640" height="480" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></d-iframe>
                 </draggable-frame>
-            </section>
+            </section>            
 
+            <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
         </main>
     </div>
 </body>
