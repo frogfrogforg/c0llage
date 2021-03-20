@@ -92,6 +92,7 @@ d-iframe iframe {
   background-image: url("../shared/img/window-head.gif");
   background-repeat: repeat-x;
   margin-left: 2px;
+  cursor: grab;
 }
 
 .frame-header-image {
@@ -151,6 +152,11 @@ d-iframe iframe {
   padding-bottom: 4px;
   background-image: url("../shared/img/window-res.gif");
   background-repeat: no-repeat;
+  cursor: grab;
+}
+
+.choleric .Frame-handle{
+  cursor: not-allowed;
 }
 
 @keyframes shake {

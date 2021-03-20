@@ -1,5 +1,6 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
+
 window.Frames = {
   ...staticize('show'),
   ...staticize('hide'),
@@ -72,6 +73,11 @@ const TemperamentData = {
     noBackMessage: "there's no going back from here..."
   }
 }
+// for helping with autocomplete
+const sanguine = 'sanguine'
+const choleric = 'choleric'
+const melancholic = 'melancholic'
+const phlegmatic = 'phlegmatic'
 
 const DefaultTemperament = 'melancholic'
 
@@ -433,8 +439,11 @@ export class DraggableFrame extends HTMLParsedElement {
       scaleFactorY
     )
 
-    this.style.width = `${newWidth}px`
-    this.style.height = `${newHeight}px`
+    // choleric doesn't scale
+    if(this.temperament !== 'choleric') {
+      this.style.width = `${newWidth}px`
+      this.style.height = `${newHeight}px`
+    }
 
     // TODO??
     const target = this.findScaleTarget()
@@ -448,15 +457,13 @@ export class DraggableFrame extends HTMLParsedElement {
         target.dataset.setup = true
       }
 
-      const temperament = this.temperament
-      console.log('my temperament is', temperament)
-      if (temperament === 'sanguine') {
+      if (this.temperament === sanguine) {
         target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
-      } else if (temperament === 'phlegmatic') {
+      } else if (temperament === phlegmatic) {
         // revert to basic style
         target.style.width = '100%'
         target.style.height = '100%'
-      } else if(temperament === 'choleric') {
+      } else if(temperament === choleric) {
         // Do nothing, choleric works as it is
       } else { // melancholic
         target.style.transform = `scale(${scaleFactor})`
