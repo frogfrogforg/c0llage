@@ -11,20 +11,51 @@
         .icons {
             position: absolute;
             /* This is becoming a very common pattern */
-            top: 0;
-            left: 0;
+            top: 2%;
+            left: 3%;
             width: 100%;
-            height: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
 
         }
 
         .icon {
-            image-rendering: pixelated;
-            position: absolute;
             cursor: pointer;
             width: 10%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 5% 5% 0;
+            font-family: monospace;
+            padding: 0.5% 1% 0.3% 1%;
         }
 
+        .icon:hover {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-opened {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-opened img {
+            filter: invert(1);
+        }
+
+        .icon img {
+            image-rendering: pixelated;
+            width: 90%;
+            /* width: 2%; */
+            /* height: 2%; */
+        }
+
+        .icon-text {
+            color: white;
+            margin-top: 8%;
+        }
 
         iframe {
             border: 0;
@@ -69,18 +100,18 @@
 
     </section>
 
-    <div id=" icons" class="icons" style="left:1%; top:1%; width: 100%; height: 100%;">
+    <div id=" icons" class="icons">
         <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
 
-        <pc-icon target="alidator-frame" src="./images/alidator-icon.png"></pc-icon>
+        <pc-icon target="alidator-frame" name='alidator' src="./images/icons/alidator.png"></pc-icon>
 
-        <pc-icon target="forest-frame" src="./images/forest-icon.png"></pc-icon>
+        <pc-icon target="forest-frame" name='forest' src="./images/icons/forest.png"></pc-icon>
 
-        <pc-icon target="main-frame" src="./images/main-icon.png"></pc-icon>
+        <pc-icon target="main-frame" name='home' src="./images/icons/home.png"></pc-icon>
 
-        <pc-icon target="narrative" condition="gotNarrative" src="./images/main-icon.png"></pc-icon>
+        <pc-icon target="narrative" name='narrative' condition="gotNarrative" src="./images/icons/narrative.png"></pc-icon>
 
-        <pc-icon target="promedator" condition="gotAlidator gotPrometheus" src="./images/main-icon.png"></pc-icon>
+        <pc-icon target="promedator" name='promedator' condition="gotAlidator gotPrometheus" src="./images/icons/promedator.png"></pc-icon>
 
     </div>
 
@@ -94,13 +125,11 @@
 
         const tagName = 'pc-icon'
         const iconTemplate = `
-<img class="icon" id="$id"
-                src="$src">
-            </img>
+        <div id="$id" class="icon">
+            <img src="$src"></img>
+            <div class='icon-text'>$name</div>
+        </div>
         `
-        function setIconStyle(targetFrame, icon) {
-            icon.style.filter = targetFrame.visible ? "invert(1)" : "none"
-        }
 
         function openFrame(targetFrame, icon) {
             targetFrame.show()
@@ -110,18 +139,19 @@
             targetFrame.hide()
         }
 
-        function initializeIcons(padding) {
+        function initializeIcons() {
             document.createElement(tagName)
             const tagInstances = document.getElementsByTagName(tagName)
-            let posx = 0;
             while (tagInstances.length > 0) {
                 let element = tagInstances[0]
                 const target = element.attributes.target.value
                 const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
                 const id = `${target}-icon`
                 element.outerHTML = iconTemplate
                     .replaceAll('$id', id)
                     .replaceAll('$src', src)
+                    .replaceAll('$name', name)
 
                 const icon = document.getElementById(id);
 
@@ -140,15 +170,13 @@
                 ['hide-frame', 'show-frame'].forEach((eventName) => {
                     targetFrame.addEventListener(eventName, (e) => {
                         console.log(eventName)
-                        setIconStyle(targetFrame, icon);
-                    });
-                });
+                        icon.classList.toggle('icon-opened', targetFrame.visible)
+                    })
+                })
 
                 icon.onclick = () => {
                     targetFrame.toggle();
                 }
-                icon.style.left = posx + '%'
-                posx += padding
             }
         }
 
@@ -280,7 +308,7 @@
 
 
         function main() {
-            initializeIcons(12)
+            initializeIcons()
         }
 
         main()
