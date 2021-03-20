@@ -453,8 +453,12 @@ export class DraggableFrame extends HTMLParsedElement {
       if (temperament === 'sanguine') {
         target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
       } else if (temperament === 'phlegmatic') {
-        // do nothing;
-      } else {
+        // revert to basic style
+        target.style.width = '100%'
+        target.style.height = '100%'
+      } else if(temperament === 'choleric') {
+        // Do nothing, choleric works as it is
+      } else { // melancholic
         target.style.transform = `scale(${scaleFactor})`
       }
     }
