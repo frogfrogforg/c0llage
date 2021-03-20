@@ -63,7 +63,7 @@
             <iframe style="--scaleFactor: 1.0;" id="main" src="../../darwin/narrative.html"></iframe>
         </draggable-frame>
 
-        <draggable-frame temperament='phlegmatic' id="promedator" hidden>
+        <draggable-frame temperament='melancholic' id="promedator" hidden>
             <iframe style="--scaleFactor: 1.0;" id="main" src="../bucket.html"></iframe>
         </draggable-frame>
 
@@ -128,16 +128,14 @@
                 const targetFrame = document.getElementById(target);
 
                 // TODO: move global flags to core?
-                const state = JSON.parse(window.localStorage.state)  || {flags: []}
                 const conditionsString = element.getAttribute('condition') || ''
                 const s = conditionsString.trim().split(' ').filter(i => i) 
                 const passesAllConditions = s
-                    .reduce((p, c) => p && (state.flags).includes(c), true)
+                    .reduce((p, c) => p && (d.State.flags).includes(c), true)
                 if (!passesAllConditions) {
                     icon.remove()
                     continue;
                 }
-                
 
                 ['hide-frame', 'show-frame'].forEach((eventName) => {
                     targetFrame.addEventListener(eventName, (e) => {
