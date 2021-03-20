@@ -3,69 +3,7 @@
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
-    <script>
-        var tag = document.createElement('script');
-
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        // 3. This function creates an <iframe> (and YouTube player)
-        //    after the API code downloads.
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-computer-video', {
-                // height: '390',
-                // width: '640',
-                videoId: 'R8wrT6J8sNo',
-                playerVars: {
-                    autoplay: 0,
-                    controls: 0,
-                    rel: 0,
-                    fs: 0,
-                    showinfo: 0,
-                    modestbranding: 1
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        // 4. The API will call this function when the video player is ready.
-        function onPlayerReady(event) {
-            console.log('video is ready!')
-        }
-
-        // 5. The API calls this function when the player's state changes.
-        //    The function indicates that when playing a video (state=1),
-        //    the player should play for six seconds and then stop.
-        var done = false;
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-                setTimeout(stopVideo, 6000);
-                done = true;
-            }
-        }
-
-        function stopVideo() {
-            player.stopVideo();
-        }
-
-        window.playVideo = () => {
-            document.getElementById('the-computer').show();
-            player.playVideo();
-        }
-
-        window.toggleFrame = (id) => {
-            document.getElementById(id).toggle();
-        }
-
-        // var rate = player.getPlaybackRate();
-        // player.setPlaybackRate(rate + 0.25);
-
-    </script>
+    <script type="module" src="../shared/d-iframe.js"></script>
     <style>
         .InvertedFrame {
             background-color: midnightblue;
@@ -87,7 +25,7 @@
         }
 
         .hotspot {
-            /* border: inset 8px brown; */
+            border: inset 8px brown;
         }
     </style>
     <script>
@@ -116,17 +54,17 @@
                 style="left: 12.987%; top: 25.450%; width: 19.034%; height: 17.011%"></a>
             <a class="hotspot" href="./1.html" style="left: 0.432%; top: 73.345%; width: 22.125%; height: 22.176%"></a>
             <a class="hotspot centered inspect" href="#" onclick="Frames.toggle('rude')"
-                style="left: 63.114%; top: 31.604%; width: 13.626%; height: 20.160%"></a>
+                style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%"></a>
 
 
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-                    <span>Don't be rude, they are using <a href="#" onclick="playVideo()">the
+                    <span>Don't be rude, they are using <a href="#" onclick="Frames.show('the-computer')">the
                             computer</a></span>
                 </draggable-frame>
 
                 <draggable-frame id="the-computer" hidden x=60 y=28 width=25 height=35>
-                    <div id="youtube-computer-video"></div>
+                    <d-iframe src="https://archive.org/embed/NicholasFedorovTHECOMPUTEROfficialVideo&autoplay=1" width="640" height="480" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></d-iframe>
                 </draggable-frame>
             </section>
 

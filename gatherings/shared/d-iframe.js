@@ -64,7 +64,7 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   set src(val) {
-    return this.setAttribute("src", val)
+    return this.iframe.setAttribute("src", val)
   }
 }
 
