@@ -48,14 +48,14 @@
       const firstCommitHash = '3e1d4cdffd68e2bb3c2beaad89ce65a488c3a708'
       const url = "https://api.github.com/repos/frogfrogforg/c0llage"
       const lastCommitRequest = await fetch(`${url}/commits/main`)
-      console.log(`fetching: ${url}/commits/main`)
+      // console.log(`fetching: ${url}/commits/main`)
       const latestCommitJSON = await lastCommitRequest.json()
-      console.log(latestCommitJSON)
+      // console.log(latestCommitJSON)
       const latestCommitHash = latestCommitJSON.sha
       const comparisonRequest = await fetch(`${url}/compare/${firstCommitHash}...${latestCommitHash}`)
-      console.log(`fetching: ${url}/compare/${firstCommitHash}...${latestCommitHash}`)
+      // console.log(`fetching: ${url}/compare/${firstCommitHash}...${latestCommitHash}`)
       const comparisonJSON = await comparisonRequest.json()
-      console.log(comparisonJSON)
+      // console.log(comparisonJSON)
       const totalCommits = comparisonJSON.total_commits
 
       document.getElementById('loading').style.display = 'none'

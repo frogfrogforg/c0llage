@@ -263,7 +263,7 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       x =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-      console.log(width)
+      //console.log(width)
     }
     this.style.left = x + '%'
 
@@ -273,7 +273,7 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       y =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-      console.log(height)
+      //console.log(height)
     }
     this.style.top = y + '%'
 
@@ -351,11 +351,6 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.x0 = f.x - p.x
     this.y0 = f.y - p.y
-
-    console.log('AAAAA left top')
-    console.log(this.x0, this.y0)
-    console.log('AAAAA xy')
-    console.log(f.x, f.y)
 
     // record initial mouse position (we need to calc dx/dy manually on move
     // b/c evt.offset, the pos within the element, doesn't seem to include
@@ -440,7 +435,7 @@ export class DraggableFrame extends HTMLParsedElement {
     )
 
     // choleric doesn't scale
-    if(this.temperament !== 'choleric') {
+    if(this.temperament !== choleric) {
       this.style.width = `${newWidth}px`
       this.style.height = `${newHeight}px`
     }
@@ -459,11 +454,11 @@ export class DraggableFrame extends HTMLParsedElement {
 
       if (this.temperament === sanguine) {
         target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
-      } else if (temperament === phlegmatic) {
+      } else if (this.temperament === phlegmatic) {
         // revert to basic style
         target.style.width = '100%'
         target.style.height = '100%'
-      } else if(temperament === choleric) {
+      } else if(this.temperament === choleric) {
         // Do nothing, choleric works as it is
       } else { // melancholic
         target.style.transform = `scale(${scaleFactor})`
