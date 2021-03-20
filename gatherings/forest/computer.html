@@ -31,11 +31,16 @@
 
             font-family: monospace;
             font-size: 3vw;
+            border: 0.05em rgba(0,0,0,0) solid;
         }
 
         .icon:hover {
             background: rgba(244, 251, 255, 0.2);
             border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-hidden {
+            display: none;
         }
 
         .icon-opened {
@@ -162,12 +167,21 @@
                 // TODO: move global flags to core?
                 const conditionsString = element.getAttribute('condition') || ''
                 const s = conditionsString.trim().split(' ').filter(i => i) 
-                const passesAllConditions = s
-                    .reduce((aggregate, condition) => aggregate && d.State[condition], true)
-                if (!passesAllConditions) {
-                    icon.remove()
-                    continue;
-                }
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+                    console.log('adding listener to', condition, d.State[condition])
+
+                    d.ListenState(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        console.log("AAAAAA", passesAllConditions)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
 
                 ['hide-frame', 'show-frame'].forEach((eventName) => {
                     targetFrame.addEventListener(eventName, (e) => {

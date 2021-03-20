@@ -19,26 +19,39 @@ if (root.d == null) {
   }
   
   const stateCache = JSON.parse((window.localStorage.getItem('state') || 'false'))  || initialState
+  const proxiedStateCache = new Proxy(stateCache, {
+    get: function(target, prop) {
+      return Reflect.get(target, prop);
+    },
+    set: function(target, prop, value) {
+      const r = Reflect.set(target, prop, value);
+      Events.raise(Events.getStateChangeEvent(prop))
+      return r;
+    }
+  });
 
-  // TODO: eventually this should raise events so that state changes can happen without reloading 
-  // State can get extremely complex with proxies and such, since we don't have any use case yet, I decided not to go the whole length
-  // Especially given how annoying it is to observe changes in a deeply nested object
-  // A cool way would be to have a very limited way on how state works
+  // TODO: state cannot work with nested objects yet, would be interesting to do so, but we can also just force state to be shallow
   Object.defineProperty(global, 'State', {
       configurable: true,
       get() {
-        return stateCache
+        return proxiedStateCache
       }
     })
 
-    global.SaveState = function() {
-      console.log('saving state', stateCache)
-      window.localStorage.setItem('state', JSON.stringify(stateCache))
-    }
+  global.SaveState = function() {
+    console.log('saving state', stateCache)
+    window.localStorage.setItem('state', JSON.stringify(stateCache))
+  }
 
-    root.addEventListener('beforeunload', () => {
-      global.SaveState()
-    })
+  global.ListenState = function(property, callback) {
+    Events.listen(
+      Events.getStateChangeEvent(property),
+      callback)
+  }
+
+  root.addEventListener('beforeunload', () => {
+    global.SaveState()
+  })
 
   // share it between every key
   for (const name of keys) {

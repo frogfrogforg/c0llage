@@ -8,14 +8,17 @@ let raised = new Set()
 export const Events = {
   // -- commands --
   listen(name, listener) {
-    root.addEventListener(name, listener)
+    root.addEventListener(name, (e) => listener(e.detail.value))
   },
-  raise(name) {
+  raise(name, value) {
     raised.add(name)
     console.log(`Raising event: ${name}`)
-    root.dispatchEvent(new Event(name))
+    root.dispatchEvent(new CustomEvent(name, {detail: value || false}))
   },
   // -- constants --
+  getStateChangeEvent(propertyName) {
+    return `state.${propertyName}`
+  },
   Juice: {
     Appeared: "juice.appeared",
     InBucket: "juice.inbucket",

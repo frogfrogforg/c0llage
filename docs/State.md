@@ -2,11 +2,11 @@ Events
 ======
 
 - [Overview](#overview)
-- [Listening to events](#listening-to-events)
+- [Listening to state changes](#listening-to-events)
 - [Raising Events](#raising-events)
 - [Bitsy](#bitsy)
 - [Unity(WIP)](#unity)
-- [Current Events](./ExistingEvents.md)
+- [Current Events](#current-state-information)
 
 Overview
 --------
@@ -26,14 +26,28 @@ State is a plain js object, and can store whatever you want. However, it's good 
 Currently the initialState is defined as the following:
 ```js
 const initialState = {
-  sawJensNarrative: false,
+  sawMessyServerNarrative: false,
   visitedAlidator: false,
   visitedPrometeus: false,
 }
 ```
 
+Listening to State Changes
+--------------------------
+
+You can also listen to specific state changes if you want to, the way to do it is with the global `ListenState(propertyName)` function:
+
+For example:
+
+```js
+d.ListenState('sawMessyServerNarrative', (value) => {
+  console.log('sawMessyServerNarrative changed to ' + value)
+})
+```
+
 Current State Information
--------
+-------------------------
+
   - `sawMessyServerNarrative`: set to true when opening the narrative in the messy computer
   - `visitedAlidator`: set to true when getting the sparkling light in alidator
   - `visitedPrometeus`: set to true when talking to the bird in prometheus (salada prometida),
