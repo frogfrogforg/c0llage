@@ -12,12 +12,11 @@ const kPermittedAttrs = new Set([
 // -- impls --
 class DeferredIframeElement extends HTMLParsedElement {
   // -- props --
-  iframe = null
+  iframe = document.createElement("iframe")
 
   // -- lifetime --
   parsedCallback() {
     // add a nested iframe w/ no src
-    this.iframe = document.createElement("iframe")
     this.appendChild(this.iframe)
 
     // copy non-permitted attibutes to the iframe
