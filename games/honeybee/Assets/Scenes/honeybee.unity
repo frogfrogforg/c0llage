@@ -238,6 +238,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1408635665}
+    - target: {fileID: 3453641684462653696, guid: 5b2814bbd58ba4442b1bf755c3a7d181, type: 3}
+      propertyPath: deathSpin
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 3453641684462653699, guid: 5b2814bbd58ba4442b1bf755c3a7d181, type: 3}
       propertyPath: m_Name
       value: BUGGGGGG (1)
@@ -1099,6 +1103,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 319564721}
+    - target: {fileID: 3453641684462653696, guid: 5b2814bbd58ba4442b1bf755c3a7d181, type: 3}
+      propertyPath: deathSpin
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 3453641684462653699, guid: 5b2814bbd58ba4442b1bf755c3a7d181, type: 3}
       propertyPath: m_Name
       value: BUGGGGGG
