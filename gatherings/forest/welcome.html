@@ -37,11 +37,12 @@
 </head>
 
 <body>
-    <turbo-frame id="game" class="container">
+  <!-- <turbo-frame id="game" class="container"> -->
+    <div id="game" class="container">
         <main class="content">
             <img class="background" src="./images/landing.gif"></img>
 
-            <div class="welcome"><a href="./1.html">this</a> is supposed to be fun<br>— the parks staff</div>
+            <div class="welcome"><a href="./1.html" data-turbo-frame="_top">this</a> is supposed to be fun<br>— the parks staff</div>
 
 
             <a id="stop" class="hotspot centered" href="#"
@@ -65,7 +66,8 @@
                 })
             </script>
         </main>
-    </turbo-frame>
+    </div>
+    <!-- </turbo-frame> -->
 
     <!--
     <draggable-frame id='map-frame' x=69 y=69>
