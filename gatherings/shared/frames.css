@@ -110,8 +110,14 @@ d-iframe iframe {
 }
 
 .Frame-close-button {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  margin-top:1px;
+  margin-left:1px;
   background-image: url("./img/window-close.gif");
   background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .Frame-header-button:hover {
