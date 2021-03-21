@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="common.css">
     <script type="module" src="../../global.js"> </script>
     <script type="module" src="../shared/d-iframe.js"></script>
-    <script src="common.js"></script>
+    <script type="module" src="common.js"></script>
     <style>
         .monitor {
             z-index: 1;
@@ -26,7 +26,8 @@
 </head>
 
 <body>
-    <div class="container">
+  <!-- <div class="container"> -->
+    <turbo-frame id=game class="container">
         <main class="content">
             <div class="screen" style="left: 6.000%; top: 11.111%; width: 87.555%; height: 66.222%;">
               <d-iframe src="./computer.html" autoload></d-iframe>
@@ -34,5 +35,6 @@
             <img class="monitor background" src="./images/4.png"></img>
             <a class="hotspot" href="./3.html" style="left: 45.000%; top: 86.666%; width: 10.000%; height: 10.888%"></a>
         </main>
-    </div>
+    </turbo-frame>
+        <!-- </div> -->
 </body>
