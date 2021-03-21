@@ -110,7 +110,7 @@ d-iframe iframe {
 }
 
 .Frame-close-button {
-  background-image: url("../shared/img/window-close.gif");
+  background-image: url("./img/window-close.gif");
   background-repeat: no-repeat;
 }
 
@@ -150,7 +150,7 @@ d-iframe iframe {
   bottom: 0;
   padding-right: 4px;
   padding-bottom: 4px;
-  background-image: url("../shared/img/window-res.gif");
+  background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
   cursor: grab;
 }
