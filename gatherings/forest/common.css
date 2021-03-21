@@ -44,16 +44,16 @@ body {
     display: block;
 }
 
-.inspect:after {
-    content: '👁️';
-    filter:grayscale(100%) opacity(36.9%) blur(1px) ;
-    font-size: 3vmin;
-    height: 1;
-    width: 1;
-    position: absolute;
-    right:0;
+
+/* cursors */
+.inspect {
+    cursor:url("../shared/img/inspect.png") 16 0, auto;
 }
 
-.inspect:hover::after {
-    filter: opacity(100%);
+.talk {
+    cursor: url("../shared/img/talk.png") 16 0, auto;
+}
+
+.move {
+    cursor: url("../shared/img/move.png") 16 0, auto;
 }
