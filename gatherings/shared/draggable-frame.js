@@ -29,7 +29,7 @@ const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
       <div class="Frame-header-button" id="$id-close">
-        <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+        <img src="./img/window-close.gif" style="width:100%;height:100%;">
       </div>
       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
       <div class="Frame-header-button Frame-back-button"> ☚ </div>
@@ -111,6 +111,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
+    console.log(this.attributes)
     const id = this.getAttribute('id') || makeId(5)
     console.log('creating frame element ' + id)
 
@@ -141,6 +142,8 @@ export class DraggableFrame extends HTMLParsedElement {
 
     if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
       bodyContainer = document.createElement('div')
+      bodyContainer.style.width = '100%'
+      bodyContainer.style.height = '100%'
       this.bodyElement.appendChild(bodyContainer)
     }
 
@@ -222,8 +225,6 @@ export class DraggableFrame extends HTMLParsedElement {
         this.onMouseUp()
       }
     })
-
-    
 
     //#endregion
 
