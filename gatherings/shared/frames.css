@@ -92,6 +92,7 @@ d-iframe iframe {
   background-image: url("../shared/img/window-head.gif");
   background-repeat: repeat-x;
   margin-left: 2px;
+  cursor: grab;
 }
 
 .frame-header-image {
@@ -109,8 +110,14 @@ d-iframe iframe {
 }
 
 .Frame-close-button {
-  background-image: url("../shared/img/window-close.gif");
+  position: relative;
+  width: 14px;
+  height: 14px;
+  margin-top:1px;
+  margin-left:1px;
+  background-image: url("./img/window-close.gif");
   background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .Frame-header-button:hover {
@@ -149,8 +156,13 @@ d-iframe iframe {
   bottom: 0;
   padding-right: 4px;
   padding-bottom: 4px;
-  background-image: url("../shared/img/window-res.gif");
+  background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
+  cursor: grab;
+}
+
+.choleric .Frame-handle{
+  cursor: not-allowed;
 }
 
 @keyframes shake {

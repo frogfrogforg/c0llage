@@ -39,7 +39,7 @@ public class Bug : MonoBehaviour
     }
 
     public void Kill() {
-        deathRotation = deathSpin*Random.rotation.eulerAngles;
+        deathRotation = deathSpin*Random.rotation.normalized.eulerAngles;
         dead = true;
     }
 }

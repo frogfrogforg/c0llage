@@ -1,5 +1,6 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
+
 window.Frames = {
   ...staticize('show'),
   ...staticize('hide'),
@@ -27,8 +28,8 @@ function staticize(...names) {
 const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
-      <div class="Frame-header-button" id="$id-close">
-        <img src="../shared/img/window-close.gif" style="width:100%;height:100%;">
+      <div class="Frame-header-button Frame-close-button" id="$id-close">
+
       </div>
       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
       <div class="Frame-header-button Frame-back-button"> ☚ </div>
@@ -47,8 +48,8 @@ const kDraggingClass = 'Frame-Dragging'
 const kScalingClass = 'Frame-Scaling'
 const kUnfocusedClass = 'Frame-Unfocused'
 // TODO: make this an attribute with these as default values?
-const MinContentHeight = 20
-const MinContentWidth = 20
+const MinContentHeight = 100
+const MinContentWidth = 100
 
 const TemperamentData = {
   sanguine: {
@@ -72,6 +73,11 @@ const TemperamentData = {
     noBackMessage: "there's no going back from here..."
   }
 }
+// for helping with autocomplete
+const sanguine = 'sanguine'
+const choleric = 'choleric'
+const melancholic = 'melancholic'
+const phlegmatic = 'phlegmatic'
 
 const DefaultTemperament = 'melancholic'
 
@@ -105,6 +111,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
+    console.log(this.attributes)
     const id = this.getAttribute('id') || makeId(5)
     console.log('creating frame element ' + id)
 
@@ -135,6 +142,8 @@ export class DraggableFrame extends HTMLParsedElement {
 
     if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
       bodyContainer = document.createElement('div')
+      bodyContainer.style.width = '100%'
+      bodyContainer.style.height = '100%'
       this.bodyElement.appendChild(bodyContainer)
     }
 
@@ -217,8 +226,6 @@ export class DraggableFrame extends HTMLParsedElement {
       }
     })
 
-    
-
     //#endregion
 
     this.bringToTop()
@@ -257,7 +264,7 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       x =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-      console.log(width)
+      //console.log(width)
     }
     this.style.left = x + '%'
 
@@ -267,7 +274,7 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       y =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-      console.log(height)
+      //console.log(height)
     }
     this.style.top = y + '%'
 
@@ -345,11 +352,6 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.x0 = f.x - p.x
     this.y0 = f.y - p.y
-
-    console.log('AAAAA left top')
-    console.log(this.x0, this.y0)
-    console.log('AAAAA xy')
-    console.log(f.x, f.y)
 
     // record initial mouse position (we need to calc dx/dy manually on move
     // b/c evt.offset, the pos within the element, doesn't seem to include
@@ -433,8 +435,11 @@ export class DraggableFrame extends HTMLParsedElement {
       scaleFactorY
     )
 
-    this.style.width = `${newWidth}px`
-    this.style.height = `${newHeight}px`
+    // choleric doesn't scale
+    if(this.temperament !== choleric) {
+      this.style.width = `${newWidth}px`
+      this.style.height = `${newHeight}px`
+    }
 
     // TODO??
     const target = this.findScaleTarget()
@@ -448,13 +453,15 @@ export class DraggableFrame extends HTMLParsedElement {
         target.dataset.setup = true
       }
 
-      const temperament = this.temperament
-      console.log('my temperament is', temperament)
-      if (temperament === 'sanguine') {
+      if (this.temperament === sanguine) {
         target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
-      } else if (temperament === 'phlegmatic') {
-        // do nothing;
-      } else {
+      } else if (this.temperament === phlegmatic) {
+        // revert to basic style
+        target.style.width = '100%'
+        target.style.height = '100%'
+      } else if(this.temperament === choleric) {
+        // Do nothing, choleric works as it is
+      } else { // melancholic
         target.style.transform = `scale(${scaleFactor})`
       }
     }
