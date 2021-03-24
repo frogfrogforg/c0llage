@@ -1,7 +1,7 @@
 Documentation
 ====
 
-- [Events](./Event.md)
+- [Events](./Events.md)
 - [Current Events](./ExistingEvents.md)
 - [State](./State.md)
 - [Temperaments](./temperaments.md)
