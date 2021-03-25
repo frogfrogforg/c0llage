@@ -10,7 +10,7 @@
         }
 
         .hotspot {
-            /* border: inset 8px brown */
+            border: inset 8px brown
         }
     </style>
 </head>
@@ -18,8 +18,17 @@
 <body>
     <div class="container">
         <main class="content">
-            <img class="background" src="./images/messyserver.jpg">
-            </img>
+            <img class="background" src="./images/messyserver.jpg" usemap="#image-map">
+
+            <!-- <map name="image-map">
+                <area target="" alt="keyboard" title="keyboard" href="../../games/keyboard"
+                    coords="180,336,285,331,293,369,185,372" shape="poly">
+            </map> -->
+
+
+            <a class="hotspot centered inspect" href="../../games/keyboard/"
+                style="left: 45.5%; top: 68.5%; width: 15%; height: 6%;">
+            </a>
 
             <a class="hotspot centered move" href="./7messy_server_zoom.html"
                 style="left: 56.5%; top: 27.5%; width: 14%; height: 12%;">

@@ -12,7 +12,7 @@ live @ https://frogfrogforg.github.io/c0llage/
 
 To start haunting:
 ```
-git config --local user.name "<ghost name>"; git config --local user.email "<ghost name>";
+git config --local user.name "cire"; git config --local user.email "cire";
 ```
 
 To unhaunt (stop haunting): 
