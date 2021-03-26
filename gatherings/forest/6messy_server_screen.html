@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
+    <script type="module" src="../shared/d-iframe.js"></script>
     <style>
         .ClearFrame {
             opacity: 0;
@@ -10,7 +11,7 @@
         }
 
         .hotspot {
-            border: inset 8px brown
+            /* border: inset 8px brown */
         }
     </style>
 </head>
@@ -26,7 +27,7 @@
             </map> -->
 
 
-            <a class="hotspot centered inspect" href="../../games/keyboard/"
+            <a class="hotspot centered inspect" href="#" onclick="Frames.toggle('keyboard')"
                 style="left: 45.5%; top: 68.5%; width: 15%; height: 6%;">
             </a>
 
@@ -40,6 +41,9 @@
                         href="./8messy_server_transition.html">
                         🔙
                     </a>
+                </draggable-frame>
+                <draggable-frame temperament='choleric' width=160 height=50 x=-30 y=68 id="keyboard" hidden>
+                    <d-iframe src="../../games/keyboard/"></d-iframe>
                 </draggable-frame>
             </section>
         </main>
