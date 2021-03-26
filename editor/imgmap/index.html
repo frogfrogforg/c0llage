@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Online Image Map Editor. Free online image mapper tool. Use images on the web or from your PC. Load your image, map your links, get the code! No software to download." />
+    <meta name="author" content="Adam Maschek,Engelbert Niehaus" />
+    <meta name="keywords" content="image map editor, free, online, imagemap, map, edit, make, area, coordinates, rectangle, circle, poly, polygon">
+
+    <link rel="stylesheet" href="css/simple.css" type="text/css" />
+    <link rel="stylesheet" href="css/suckerfish.css" type="text/css" />
+	  <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <!--
+    <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+	-->
+  <!--[if lte IE 8]><script src="js/excanvas.js"></script><![endif]-->
+  <script src="js/handlebars.js"></script>
+  <script src="js/filesaver.min.js"></script>
+  <script src="js/jszip.min.js"></script>
+  <script src="js/linkparam.js"></script>
+  <script src="js/jquery-1.12.3.min.js"></script>
+
+    <title>Online Image Map Editor </title>
+</head>
+
+<body bgcolor="#f2f2f2">
+
+    <div id="maindivcontainer"  margins="50px">
+        <div id="maindiv">
+            <h1 id="titletext">Online Image Map Editor for MediaWikis</h1>
+            <i>The editor uses HTML and Javascript to create the imagemap interactively in your browser - No images are uploaded to a server</i>
+			<hr/>
+            <div id="div_content">
+
+                <link rel="stylesheet" href="css/imgmap.css?v=3" type="text/css">
+
+                <form id="img_area_form">
+                    <fieldset>
+                        <legend>
+                            <a onclick="toggleFieldset(this.parentNode.parentNode)"><b>Select ONE Image Source</b></a>
+                        </legend>
+                        <div>
+                            <div class="source_desc">(1) Use an image on your computer:</div>
+                            <div class="source_url">
+
+                                <div style="font: 10px Arial;">
+                                    <table id="upload_table">
+                                        <tr>
+                                            <td>
+                                                <input type="text" id="upload_filename" size="40" readonly="1" style="font-size:14px; display:none"/>
+                                                <!--
+                                                <tt id="upload_filename">jkasd.thl</tt>
+                                                <input type="file" id="file-chooser" size="13" style="width: 150px;" />
+                                                <input type="file" id="files" name="files[]" multiple /> -->
+                                                <input type="file" id="file-chooser" name="files[]" style="display:none"/>
+
+                                            </td>
+                                            <td>
+                                            </td>
+                                              <td>
+                                              <div id="upload_div"  Xstyle="display:none">
+                                                </div>
+                                              </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div id="upload_result" style="display:none"></div>
+                                </div>
+                                <div  class="source_url">
+                                </div>
+                            </div>
+                            <a href="#" id="bSourceLocal" onclick="document.getElementById('file-chooser').click();return false;" class="source_accept" style="vertical-align: top">Load Image</a>
+                            &nbsp;
+                            <output id="list"></output>
+                            <hr/>
+
+                            <div class="source_desc">(2) an image on the Internet:</div>
+                            <div class="source_url">
+                              <input type="text" id="source_url2" size="40" value="http://">
+                              <b><a href="https://commons.wikimedia.org" target="_blank">WikiMedia:</a></b> <input type="txt" style="width:200px" id="mediawiki_source" value="" onchange="setLoadImageURL(this.value)">
+                              <a class="linkbutton" href="javascript:el('mediawiki_source').value='Annweiler_Queich_05.JPG';setLoadImageURL('Annweiler_Queich_05.JPG')">&lt;</a>
+                              <a class="linkbutton" href="javascript:alert('Image URL to WikiMedia set!')">OK</a>
+                            </div>
+                            <a href="#" id="bSourceInternet" onclick="gui_loadImage(document.getElementById('source_url2').value);return false;" class="source_accept">Load Image</a>
+                            <br/>
+                            <hr/>
+
+                            <div class="source_desc">(3) use a sample image:</div>
+                            <div class="source_url">
+                                <select id="source_url3">
+                                    <option value="img/sample1.jpg">sample 1</option>
+                                    <option value="img/sample2.jpg">sample 2</option>
+                                    <option value="img/sample3.jpg">sample 3</option>
+                                    <option value="img/sample4.jpg">sample 4</option>
+                                </select>
+                            </div>
+                            <a href="#" id="bSourceInternet" onclick="gui_loadSampleImage(document.getElementById('source_url3').value);return false;" class="source_accept">Load Image</a>
+                            <br/>
+                        </div>
+                    </fieldset>
+                    <fieldset id="field_status" style="display:none">
+                        <legend>
+                            <a onclick="toggleFieldset(this.parentNode.parentNode)">Status</a>
+                        </legend>
+                        <div id="status_container"></div>
+                    </fieldset>
+                   <fieldset id="field_edit_map" style="display:none">
+                        <legend>
+                            <a onclick="toggleFieldset(this.parentNode.parentNode)"><b>Image map areas</b></a>
+                        </legend>
+                        <div id="edit_container" style="border-bottom: solid 1px #efefef">
+                            <table cellspacing="0" width="100%">
+                                <tr>
+                                    <td width="100">
+                                        <div id="button_container">
+                                            <!-- buttons come here -->
+                                            <img src="img/add.gif" onclick="myimgmap.addNewArea()" alt="Add new area" title="Add new area" style="margin: 0 2px; cursor: pointer;" />
+                                            <img src="img/delete.gif" onclick="myimgmap.removeArea(myimgmap.currentid)" alt="Delete selected area" title="Delete selected area" style="margin: 0 2px; cursor: pointer;" />
+                                            <img src="img/zoom.gif" id="i_preview" onclick="myimgmap.togglePreview();" alt="Preview image map" title="Preview image map" style="margin: 0 2px; cursor: pointer;" />
+
+                                            <!--
+                                            <img src="img/html.gif" onclick="gui_htmlShow()" alt="Get image map HTML" title="Get image map HTML" style="margin: 0 2px; cursor: pointer;" />
+                                            -->
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="https://en.wikiversity.org/wiki/Image_Map" target="_blank">Wikiversity</a>
+                                        &nbsp;&nbsp;
+                                        <label for="dd_zoom">Zoom</label>:
+                                        <select onchange="gui_zoom(this)" id="dd_zoom">
+                                            <option value='0.25'>25%</option>
+                                            <option value='0.5'>50%</option>
+                                            <option value='1' selected="1">100%</option>
+                                            <option value='2'>200%</option>
+                                            <option value='3'>300%</option>
+                                        </select>
+                                        <label for="dd_output">Output</label>:
+                                        <select id="dd_output" onchange="return gui_outputChanged(this)">
+                                            <option value='imagemap'>Standard imagemap</option>
+                                            <option value='css'>CSS imagemap</option>
+                                            <option selected value='wiki'>Wiki imagemap</option>
+                                            <option value='panorama'>Panorama360 imagemap</option>
+                                        </select>
+                                    </td>
+                                    <td align="right" width="40%">
+                                        <input type="checkbox" id="bb" onClick="toggleBoundingBox(this)" />
+                                        <label for="bb">bounding box</label>&nbsp;
+                                        <select onchange="changelabeling(this)">
+                                            <option value=''>No labeling</option>
+                                            <option value='%n' selected='1'>Label with numbers</option>
+                                            <option value='%a'>Label with alt text</option>
+                                            <option value='%h'>Label with Link</option>
+                                            <option value='%c'>Label with coords</option>
+                                        </select>
+                                    	<a href="#"  id="bCreateCode" onclick="gui_htmlShow();return false;" class="source_accept">Create Image Map</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                        <div id="form_container" style="clear: both;">
+                            <!-- form elements comehere -->
+                        </div>
+                    </fieldset>
+                    <div id="pic_container">
+                    </div>
+                     <fieldset id="fieldset_html" class="fieldset_off">
+                        <legend>
+                            <a onclick="toggleFieldset(this.parentNode.parentNode)">Code</a>
+                        </legend>
+                        <div>
+                            <div id="output_help">
+                            </div>
+                            <textarea id="html_container" name="imgmap" style="font-family: Consolas, Courier New, monospace;"></textarea>
+                        </div>
+                    </fieldset>
+                </form>
+                <form id="form2panorama" Xstyle="display:none"  method="get" action="https://niebert.github.io/panorama360/index.html" target="_blank" style="display:none">
+                  <input type="text" name="width" id="panowidth" value="">
+                  <input type="text" name="height" id="panoheight" value="">
+                  <input type="text" name="imgurl" id="panoimgurl" value="">
+                  <textarea name="imgmap" id="panoimgmap" style="font-family: Consolas, Courier New, monospace;"></textarea>
+                </form>
+                <div id="sample_image_div" style="display:none">
+                  <!-- loaded hidden so that the images are available for the sample selector -->
+                  <img id="sample1"  src="img/sample1.jpg">
+                  <img id="sample2"  src="img/sample2.jpg">
+                  <img id="sample3"  src="img/sample3.jpg">
+                  <img id="sample4"  src="img/sample4.jpg">
+                </div>
+                <script src="js/imgmap.js"></script>
+                <script src="js/imgupload.js"></script>
+                <script src="js/imgmap_gui.js"></script>
+                <br/>
+
+            </div>
+			<hr/>
+            <div id="div_footer" align="center">
+               <font size="-1">
+
+                <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.5/">
+                        <img alt="Creative Commons License" border="0" src="img/cc.jpg" /> Some Rights Reserved</a>
+				---
+   				  Problems? <a href="https://github.com/niebert/imgmap/issues">Send bug report</a>
+   				---
+   				  <b><a href="https://github.com/niebert/imgmap/archive/master.zip" target="_blank">Download</a></b>
+   				  <hr/>
+   				  Adapted User Interface by NieBert as <a href="https://www.github.com/niebert/imgmap" target="_blank">Fork on GitHub (2017)</a><br/>
+   				  <a href="https://github.com/maschek/imgmap" target="_blank">Code based on Javascript ImageMap Editor by Adam Maschek on GitHub</a>
+               </font>
+            </div>
+
+        </div>
+    </div>
+    <script>
+    //-------------------------------------------------------
+    // LINK PARAMETER: Evaluation link parameter
+    var vLinkParam = new LinkParam();
+    vLinkParam.init(document);
+    if (vLinkParam.exists("imgurl")) {
+        document.getElementById("source_url2").value = vLinkParam.getValue("imgurl");
+    };
+    //-------------------------------------------------------
+    </script>
+
+
+</body>
+
+</html>
