@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="../shared/frames.css">
     <script src="common.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
+    <script type="module" src="../shared/d-iframe.js"></script>
     <style>
         .ClearFrame {
             opacity: 0;
@@ -18,8 +19,17 @@
 <body>
     <div class="container">
         <main class="content">
-            <img class="background" src="./images/messyserver.jpg">
-            </img>
+            <img class="background" src="./images/messyserver.jpg" usemap="#image-map">
+
+            <!-- <map name="image-map">
+                <area target="" alt="keyboard" title="keyboard" href="../../games/keyboard"
+                    coords="180,336,285,331,293,369,185,372" shape="poly">
+            </map> -->
+
+
+            <a class="hotspot centered inspect" href="#" onclick="Frames.toggle('keyboard')"
+                style="left: 45.5%; top: 68.5%; width: 15%; height: 6%;">
+            </a>
 
             <a class="hotspot centered move" href="./7messy_server_zoom.html"
                 style="left: 56.5%; top: 27.5%; width: 14%; height: 12%;">
@@ -31,6 +41,9 @@
                         href="./8messy_server_transition.html">
                         🔙
                     </a>
+                </draggable-frame>
+                <draggable-frame temperament='choleric' width=160 height=50 x=-30 y=68 id="keyboard" hidden>
+                    <d-iframe src="../../games/keyboard/"></d-iframe>
                 </draggable-frame>
             </section>
         </main>
