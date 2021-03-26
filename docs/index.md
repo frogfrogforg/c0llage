@@ -1,9 +1,9 @@
 Documentation
 ====
 
-- [Events](./Event.md)
+- [Events](./Events.md)
 - [Current Events](./ExistingEvents.md)
-- [Sharing](./Sharing.md)
+- [State](./State.md)
 - [Temperaments](./temperaments.md)
 - [Sharing](./Sharing.md)
 

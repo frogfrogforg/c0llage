@@ -49,6 +49,11 @@ if (root.d == null) {
       callback)
   }
 
+  global.ClearState = function() {
+    Object.keys(stateCache).forEach(k => delete stateCache[k]);
+    global.SaveState();
+  }
+
   root.addEventListener('beforeunload', () => {
     global.SaveState()
   })

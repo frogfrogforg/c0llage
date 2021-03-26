@@ -1,0 +1,55 @@
+@import url(style.css);
+html *
+{
+   font-family: Arial !important;
+}
+
+#maindiv {
+	/* background-image: url(img/bg_simple.jpg); */
+	/* background-repeat: no-repeat; */
+}
+
+#div_lang A.engflag {
+	color: #FF9A38;
+}
+
+textarea {
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace,monospace;
+}
+
+.source_accept {
+    background-color: #4286f4; /* blue */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.sidenote {
+	text-align: center;
+	padding: 5px 5px 5px 5px;
+	clear: left;
+	line-height: 1.3;
+}
+
+.sidenote A {
+	border-bottom: 1px dotted #afafaf;
+	color: #353736;
+}
+.sidenote A:hover {
+	border-bottom: 1px dotted black;
+	color: #FF9A38;
+}
+
+.sidenote FORM {
+	margin: 0 50%;
+}
+
+.thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+}

@@ -1,141 +1,142 @@
 <head>
-    <!-- <link rel="stylesheet" href="common.css"> -->
-    <!-- <script src="common.js"></script> -->
-    <script type="module" src="../../global.js"></script>
-    <link rel="stylesheet" href="../../gatherings/shared/frames.css">
-    <script type="module" src="../../gatherings/shared/draggable-frame.js"></script>
-    <script type="module" src="../../gatherings/shared/d-iframe.js"></script>
-    <script type="module">
-        window.openNarrative = function() {
-            if(!d.State.sawMessyServerNarrative) {
-                d.State.sawMessyServerNarrative = true
-            }
+  <!-- <link rel="stylesheet" href="common.css"> -->
+  <!-- <script src="common.js"></script> -->
+  <script type="module" src="../../global.js"></script>
+  <link rel="stylesheet" href="../../gatherings/shared/frames.css">
+  <script type="module" src="../../gatherings/shared/draggable-frame.js"></script>
+  <script type="module" src="../../gatherings/shared/d-iframe.js"></script>
+  <script type="module">
+    window.openNarrative = function () {
+      if (!d.State.sawMessyServerNarrative) {
+        d.State.sawMessyServerNarrative = true
+      }
 
-            Frames.toggle('narrative')
+      Frames.toggle('narrative')
+    }
+
+    const windowsContainer = document.getElementById('container')
+
+    const error = 5
+    function OnPressLetter(keycapElement) {
+      const letter = keycapElement.querySelector('.letter')
+      const letterT = letter.getBoundingClientRect()
+      const newLetter = document.createElement('span')
+
+      newLetter.classList.add('letter')
+      newLetter.style.position = 'absolute'
+      newLetter.style.top = letterT.top + (2 * Math.random() - 1) * error
+      newLetter.style.left = letterT.left + (2 * Math.random() - 1) * error
+      newLetter.style.width = letterT.width
+      newLetter.style.height = letterT.height
+      newLetter.innerHTML = letter.innerHTML
+
+      windowsContainer.appendChild(newLetter)
+    }
+
+    window.addEventListener('keydown', (e) => {
+      console.log(e)
+      const id = `key-${e.keyCode}`
+
+      let frame = document.getElementById(id)
+      if (frame == null) {
+        const contentTemplate = document.getElementById('keycap')
+
+        const keycap = contentTemplate.content.cloneNode(true)
+        keycap.id =
+          keycap.querySelector('.letter').innerHTML = e.key
+
+        if (e.key === 'f' || e.key === 'j') {
+          keycap.querySelector('.dash').style.display = 'block'
         }
 
-        const windowsContainer = document.getElementById('container')
+        frame = document.createElement('draggable-frame')
+        frame.id = id
+        const widthPercentage = 10
+        frame.setAttribute('width', widthPercentage)
+        // hack to make it square
+        const c = windowsContainer.getBoundingClientRect()
+        const widthValue = widthPercentage * c.width
+        const heightValue = widthValue
+        const heightPercentage = heightValue / c.height
+        frame.setAttribute('height', heightPercentage)
 
-        const error = 5
-        function OnPressLetter(keycapElement) {
-          const letter = keycapElement.querySelector('.letter')
-          const letterT = letter.getBoundingClientRect()
-          const newLetter = document.createElement('span')
 
-          newLetter.classList.add('letter')
-          newLetter.style.position = 'absolute'
-          newLetter.style.top = letterT.top + (2*Math.random() - 1) * error
-          newLetter.style.left = letterT.left + (2*Math.random() - 1) * error
-          newLetter.style.width = letterT.width
-          newLetter.style.height = letterT.height
-          newLetter.innerHTML = letter.innerHTML
+        frame.setAttribute('focused', true)
+        frame.setAttribute('temperament', 'choleric')
+        frame.appendChild(keycap)
 
-          windowsContainer.appendChild(newLetter)
-        }
+        windowsContainer.appendChild(frame)
 
-        window.addEventListener('keydown', (e) => {
-          console.log(e)
-          const id = `key-${e.keyCode}`
-
-          let frame = document.getElementById(id)
-          if(frame == null) {
-            const contentTemplate = document.getElementById('keycap')
-
-            const keycap = contentTemplate.content.cloneNode(true)
-            keycap.id = 
-            keycap.querySelector('.letter').innerHTML = e.key
-
-            if(e.key === 'f' || e.key === 'j') {
-              keycap.querySelector('.dash').style.display = 'block'
-            }
-
-            frame = document.createElement('draggable-frame')
-            frame.id = id
-            const widthPercentage = 10
-            frame.setAttribute('width', widthPercentage)
-            // hack to make it square
-            const c = windowsContainer.getBoundingClientRect()
-            const widthValue = widthPercentage * c.width
-            const heightValue = widthValue
-            const heightPercentage = heightValue / c.height
-            frame.setAttribute('height', heightPercentage)
-            
-
-            frame.setAttribute('focused', true)
-            frame.setAttribute('temperament', 'choleric')
-            frame.appendChild(keycap)
-
-            windowsContainer.appendChild(frame)
-
-            const keycapElement = frame.querySelector('.keycap')
-            keycapElement.addEventListener('pointerdown', () => {
-              console.log('pressed ', e.key)
-              OnPressLetter(keycapElement)
-              keycapElement.classList.toggle('pressed', true)
-            })
-
-            const onpointerout = () => {
-              console.log('released ', e.key)
-              keycapElement.classList.toggle('pressed', false)
-            }
-
-            keycapElement.addEventListener('pointerup', onpointerout);
-            keycapElement.addEventListener('pointerout', onpointerout);
-          } else {
-            frame.toggle()
-          }
+        const keycapElement = frame.querySelector('.keycap')
+        keycapElement.addEventListener('pointerdown', () => {
+          console.log('pressed ', e.key)
+          OnPressLetter(keycapElement)
+          keycapElement.classList.toggle('pressed', true)
         })
-    </script>
-    <style>
-      body {
-        background: rgb(213,211,197);
-        background: linear-gradient(180deg, rgba(213,211,197,1) 0%, rgba(113,115,104,1) 100%); 
-        background-size: 100%;
-        height: 100%;
-      }
 
-      .container {
-        height: 100%;
-        width: 100%;
-      }
-    
-      .keycap {
-        background-color: whitesmoke;
-        display: flex;
-        /* justify-content: center; */
-        /* align-items: center; */
-        border: 2vmin outset darkgray;
-        cursor: pointer;
-        height: calc(100% - 4vmin);
-        width: calc(100% - 4vmin);
-      }
-    
-    
-      .keycap.pressed {
-        border-style: inset;
-        background-color: rgb(200, 200, 200);
-      }
-    
-      .letter {
-        font-size: 4vmin;
-        pointer-events: none;
-      }
+        const onpointerout = () => {
+          console.log('released ', e.key)
+          keycapElement.classList.toggle('pressed', false)
+        }
 
-      .dash {
-        font-weight:bolder;
-        color: gray;
+        keycapElement.addEventListener('pointerup', onpointerout);
+        keycapElement.addEventListener('pointerout', onpointerout);
+      } else {
+        frame.toggle()
       }
-    </style>
+    })
+  </script>
+  <style>
+    body {
+      background: rgb(213, 211, 197);
+      background: linear-gradient(180deg, rgba(213, 211, 197, 1) 0%, rgba(113, 115, 104, 1) 100%);
+      background-size: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .container {
+      height: 100%;
+      width: 100%;
+    }
+
+    .keycap {
+      background-color: whitesmoke;
+      display: flex;
+      /* justify-content: center; */
+      /* align-items: center; */
+      border: 2vmin outset darkgray;
+      cursor: pointer;
+      height: calc(100% - 4vmin);
+      width: calc(100% - 4vmin);
+    }
+
+
+    .keycap.pressed {
+      border-style: inset;
+      background-color: rgb(200, 200, 200);
+    }
+
+    .letter {
+      font-size: 8vmin;
+      pointer-events: none;
+    }
+
+    .dash {
+      font-weight: bolder;
+      color: gray;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container" id='container'>
-        <main class="content"></main>
+  <div class="container" id='container'>
+    <main class="content"></main>
+  </div>
+  <template id='keycap'>
+    <div class='keycap'>
+      <span class='letter' style="position: absolute; top:16vmin; left:8.5vmin;"></span>
+      <span class='dash' style="display: none; position: absolute; bottom: 4vmin; left:40%;">—</span>
     </div>
-    <template id='keycap'>
-      <div class='keycap'>
-        <span class='letter' style="position: absolute; top:calc(3vmin + 12%); left:calc(2vmin + 18%);"></span>
-        <span class='dash' style="display: none; position: absolute; bottom: calc(2vmin + 5%); left:50%;">—</span>
-      </div>
-    </template>
+  </template>
 </body>

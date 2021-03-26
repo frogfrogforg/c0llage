@@ -42,6 +42,10 @@ d.ListenState('sawMessyServerNarrative', (value) => {
 })
 ```
 
+Clearing the State
+------------------
+For debugging purposes, you can clear the saved state completely by typing `window.top.d.ClearState()` into the console.
+
 Current State Information
 -------------------------
 

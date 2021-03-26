@@ -1,0 +1,164 @@
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.3.0/lib/p5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+  <style>
+    @font-face {
+      font-family: "TesseraeEx";
+      src: url(./Tesserae-4x4Extended.otf) format("truetype");
+    }
+
+    @font-face {
+      font-family: "Hussar";
+      src: url(./HussarBold-7mRE.otf) format("truetype");
+    }
+
+    html {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3ffff;
+    }
+
+    .bgcanvas {
+      margin: 3em;
+      border-width: 1em;
+      border-style: solid;
+      border-color: #220000;
+      /* position: fixed; */
+      /* width: 100%; */
+      /* height: 100%; */
+      /* top: 0; */
+      /* left: 0; */
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+
+</head>
+
+<body>
+  <div>
+    <form action="javascript:void" onsubmit="setglyphs()">
+      <label for="glyphs">Select your glyphs:</label>
+      <input type="text" id="glyphs" name="glyphs">
+      <input type="submit" value="generate">
+    </form>
+    <canvas name='test' class="bgcanvas" id='pattern' width='1024' height='512'></canvas>
+    <div>
+      <input type='button' value='download' onclick="download()">
+    </div>
+  </div>
+</body>
+<script>
+  // cool ones
+  // 332 334 
+  //385 325 385 
+  //701 702 
+
+  let possibilities = [20, 37]
+  let loadedFont = null
+  let bgColor = '#eeeeee'
+  let color = '#89abdc'
+
+  function setglyphs() {
+    possibilities = document.getElementById('glyphs').value.split(' ').map(s => Number(s));
+    console.log(possibilities)
+    createPattern(loadedFont)
+  }
+
+  function getRandomGlyph() {
+    const choice = Math.floor(Math.random() * possibilities.length)
+    return possibilities[choice]
+
+  }
+
+  const canvas = document.getElementById('pattern')
+  const ctx = canvas.getContext('2d');
+
+  function download() {
+    var link = document.createElement('a');
+    link.download = possibilities.join('-') + '.png'
+    link.href = canvas.toDataURL()
+    link.click();
+  }
+
+  function createPattern(font) {
+    // Now let's display it on a canvas with id "canvas"
+
+    //canvas.width = window.width
+    //canvas.height = window.height
+
+    const tileSize = 32
+    const width = canvas.width / tileSize
+    const height = canvas.height / tileSize
+
+    ctx.fillStyle = bgColor
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // Construct a Path object containing the letter shapes of the given text.
+    // The other parameters are x, y and fontSize.
+    // Note that y is the position of the baseline.
+
+    //const path = font.getPath('abcdefghij', 10, 50, 32);
+    let g = 0
+    for (let y = 0; y <= height; y++) {
+      for (let x = 0; x <= width; x++) {
+        const n = getRandomGlyph()
+        const glyph = font.glyphs.get(n - 1)
+
+        //const rot = x % 4
+        //const rot = 0
+        const rot = Math.floor(Math.random() * 4)
+        const angle = 90 * rot * Math.PI / 180
+
+        //const color = `#${x % 2 == 0 ? 'ff' : '00'}00${Math.floor((x-1) / 2) == 0 ? 'ff' : '00'}`
+        ctx.resetTransform()
+        ctx.translate(x * tileSize, y * tileSize)
+        ctx.rotate(angle)
+        const x1 = -tileSize / 2
+        const y1 = tileSize / 2
+        const x2 = x1 * Math.cos(angle) - y1 * Math.sin(angle)
+        const y2 = x1 * Math.sin(angle) + y1 * Math.cos(angle)
+        ctx.translate(x1, y1)
+
+        const path = glyph.getPath(0, 0, tileSize / 0.8)
+        path.fill = color
+        path.stroke = color
+        path.draw(ctx)
+        ctx.resetTransform()
+
+        /*
+        // Debug numbers
+        ctx.font = "8px Arial";
+        ctx.resetTransform()
+        ctx.translate(x * tileSize, y * tileSize)
+        ctx.fillStyle = "#FF00FF";
+        ctx.fillText(`${g}`, 0, 0); 
+        */
+      }
+    }
+  }
+
+  opentype.load('./Tesserae-4x4Extended.otf', function (err, font) {
+    if (err) {
+      alert('Font could not be loaded: ' + err);
+    } else {
+      loadedFont = font
+      createPattern(font);
+      const canvas = document.getElementById('pattern')
+      const ctx = canvas.getContext('2d');
+      canvas.onpointerdown = () => createPattern(font)
+    }
+  });
+</script>
+
+</html>
