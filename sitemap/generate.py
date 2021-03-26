@@ -13,7 +13,7 @@ def urlbase(url):
 def normjoin(path1, path2):
     return os.path.normpath(os.path.join(path1, path2))
 
-def crawl(startfile, include_external=False, include_iframe=False):
+def crawl(startfile, url_root, include_external=False, include_iframe=False):
     graph = pydot.Dot('my_graph', graph_type='digraph')
 
     seen_paths = set()
@@ -48,19 +48,25 @@ def crawl(startfile, include_external=False, include_iframe=False):
 
             if (not href.startswith("http")):
                 # internal link, normalize path & continue traversing
-                neighbor = normjoin(os.path.dirname(this), href)
+                if (href.startswith('/')):
+                    # handle absolute path
+                    # probably a better way to do this
+                    neighbor = url_root + href
+                else:
+                    neighbor = normjoin(os.path.dirname(this), href)
                 if (not neighbor.endswith('.html')):
                     # kind of a hack to handle links like "<...>/keyboard", where the server still returns keyboard/index.html
                     neighbor = normjoin(neighbor, 'index.html') 
 
                 if (not neighbor in seen_paths):
                     to_process.append((neighbor, this, href))
-
             elif include_external:
                 # external link, just show domain for simplicity
                 neighbor = urlbase(href)
                 # draw as box instead of circle
                 graph.add_node(pydot.Node('"'+neighbor+'"', shape='rect'))
+            else:
+                continue
 
             e = pydot.Edge(this, neighbor)
             if (is_iframe):
@@ -69,8 +75,8 @@ def crawl(startfile, include_external=False, include_iframe=False):
 
     return graph
 
-g = crawl("../gatherings/forest/welcome.html")
-g_extended = crawl("../gatherings/forest/welcome.html", include_external=True, include_iframe=True) # kinda redundant but simplest way
+g = crawl("../gatherings/forest/welcome.html", "..")
+g_extended = crawl("../gatherings/forest/welcome.html", "..", include_external=True, include_iframe=True) # kinda redundant but simplest way
 
 g.set_overlap(False)
 g_extended.set_overlap(False)
