@@ -5,6 +5,11 @@ function onStateChanged() {
   if (s === "interactive") {
     randomizeLinks();
     // fixAspectRatio();
+  } else if (s === "complete") {
+    // HACK: TEMPORARY: PLEASE FIX BETTER
+    // turbo won't re-execute js (by default, you can listen to turbo:load and re-run it yourself)
+    // but if we remove the script from the dom it will append and run it on the next page
+    document.head.querySelector("[src='common.js']").remove()
   }
 }
 
