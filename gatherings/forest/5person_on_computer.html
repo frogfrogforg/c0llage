@@ -1,8 +1,8 @@
 <head>
+    <meta name="turbo-cache-control" content="no-cache">
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="../shared/frames.css">
-    <script src="common.js"></script>
-    <script type="module" src="persistent-windows.js"></script>
+    <script type="module" src="forest.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module" src="../shared/d-iframe.js"></script>
     <style>
@@ -80,11 +80,12 @@
             <a class="hotspot move" href="./1.html"
                 style="left: 0.432%; top: 73.345%; width: 22.125%; height: 22.176%"></a>
             <a class="hotspot centered talk" href="#" onclick="Frames.toggle('rude')"
-                style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%"></a>
+                style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%"
+                data-turbo="false"></a>
 
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-                    <span>Don't be rude, they are using <a href="#" onclick="Frames.show('the-computer')">the
+                    <span>Don't be rude, they are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
                             computer</a></span>
                 </draggable-frame>
 

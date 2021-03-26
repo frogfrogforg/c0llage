@@ -1,12 +1,9 @@
 <head>
+    <meta name="turbo-cache-control" content="no-cache">
     <link rel="stylesheet" href="common.css">
-    <script src="common.js"></script>
-    <script src="persistent-windows.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
-
-    <script type="module">
-        import "../shared/draggable-frame.js"
-    </script>
+    <script type="module" src="forest.js"></script>
+    <script type="module" src="../shared/draggable-frame.js"></script>
 
     <style>
         /* .nest{
@@ -69,7 +66,7 @@
                 <img src="./images/angeleyes.gif" class="eyes" style="top: 67%;left: 57%;transform: rotate(-27deg) scale(120%);">
                 <img src="./images/angel.png" class="angel"></a>
             <section id="frames" class="Frames">
-                
+
                 <draggable-frame x=0 y=0 width=24 height=23>
                     <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="10forest_edge.html">
                         🔙
@@ -99,45 +96,45 @@
                 var div = document.createElement("div");
                 div.setAttribute ("class", "s");
                 div.setAttribute ("style", "z-index:0;");
-        
+
                 document.getElementById("starNest").appendChild(div);
             }
         }
-            
+
             spawnStars();
-        
+
             //scatter the stars
             function RandomizeScattered() {
                 var scattered = document.getElementsByClassName("s");
-            
+
                 var winWidth = window.innerWidth;
                 var winHeight = window.innerHeight;
-            
+
                 var scaleRange = 11;
-            
+
                 for (var i = 0; i < scattered.length; i++) {
                     var thisGuy = scattered[i];
-            
+
                     randomTop = randomizePos(12, 93);
                     randomLeft = randomizePos(1, 93);
                     randomScale = scale(0,42);
-            
+
                     thisGuy.style.top = randomTop + "%";
                     thisGuy.style.left = randomLeft + "%";
                     thisGuy.style.transform = "scale(" + randomScale + "%)";
-            
+
                 }
                 }
-            
+
                 function randomizePos(min, max) {
                     return Math.random() * (max - min) + min;
-            
+
                 }
-            
+
                 function scale(min, max) {
                     return Math.random() * (max - min) + min;
                 }
-            
+
                 RandomizeScattered();
             </script>
 </body>

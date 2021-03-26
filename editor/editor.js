@@ -50,13 +50,13 @@ function loadFromHtml(htmlDoc) {
     const boundsHeight = framesElement.clientHeight;
 
     Array.from(hotspots).forEach((hotspotEl) => {
-        const left =   parseFloat(hotspotEl.style.left);
-        const top =    parseFloat(hotspotEl.style.top);
-        const width =  parseFloat(hotspotEl.style.width);
+        const left = parseFloat(hotspotEl.style.left);
+        const top = parseFloat(hotspotEl.style.top);
+        const width = parseFloat(hotspotEl.style.width);
         const height = parseFloat(hotspotEl.style.height);
 
         console.log(hotspotEl);
-        console.log(left,top,width,height);
+        console.log(left, top, width, height);
         addHotspot({
             x: left,
             y: top,
@@ -86,27 +86,26 @@ function exportHtml() {
     const boundsWidth = framesElement.clientWidth;
     const boundsHeight = framesElement.clientHeight;
 
-    const hotspotsHtml = frames.map((el) =>
-        {
-            // compute dimensions as percentages of the bounding box
-            const style = window.getComputedStyle(el);
-            const prec = 3;
-            const left =    (100*parseFloat(style.getPropertyValue('left'))  /boundsWidth ).toFixed(prec);
-            const top =     (100*parseFloat(style.getPropertyValue('top'))   /boundsHeight).toFixed(prec);
-            const width =   (100*parseFloat(style.getPropertyValue('width')) /boundsWidth ).toFixed(prec);
-            const height =  (100*parseFloat(style.getPropertyValue('height'))/boundsHeight).toFixed(prec);
+    const hotspotsHtml = frames.map((el) => {
+        // compute dimensions as percentages of the bounding box
+        const style = window.getComputedStyle(el);
+        const prec = 3;
+        const left = (100 * parseFloat(style.getPropertyValue('left')) / boundsWidth).toFixed(prec);
+        const top = (100 * parseFloat(style.getPropertyValue('top')) / boundsHeight).toFixed(prec);
+        const width = (100 * parseFloat(style.getPropertyValue('width')) / boundsWidth).toFixed(prec);
+        const height = (100 * parseFloat(style.getPropertyValue('height')) / boundsHeight).toFixed(prec);
 
-            const href = el.querySelector("input").value;
+        const href = el.querySelector("input").value;
 
 
-            return `<a class="hotspot" href="${href || "./REPLACE-THIS.html"}" style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
-        }
+        return `<a class="hotspot" href="${href || "./REPLACE-THIS.html"}" style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%"></a>`
+    }
     ).join("\n            ");
 
-    const html = 
-`<head>
+    const html =
+        `<head>
     <link rel="stylesheet" href="common.css">
-    <script src="common.js"></script>
+    <script type="module" src="forest.js"></script>
 </head>
 
 <body>
@@ -125,7 +124,7 @@ function exportHtml() {
 function saveHtmlFile(filename, html) {
     // https://stackoverflow.com/a/20194533
     var a = window.document.createElement('a');
-    a.href = window.URL.createObjectURL(new Blob([html], {type: 'text/html'}));
+    a.href = window.URL.createObjectURL(new Blob([html], { type: 'text/html' }));
     a.download = filename;
 
     // Append anchor to body.
