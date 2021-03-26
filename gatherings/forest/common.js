@@ -1,5 +1,3 @@
-import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
-
 function onStateChanged() {
   const s = document.readyState
 
@@ -7,8 +5,6 @@ function onStateChanged() {
   if (s === "interactive") {
     randomizeLinks();
     // fixAspectRatio();
-  } else if (s === "complete") {
-    Turbo.start()
   }
 }
 
