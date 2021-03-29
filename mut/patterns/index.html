@@ -47,7 +47,7 @@
   <div>
     <input type='button' value='randomize' onclick="randomize()">
     <form action="javascript:void(0)" onsubmit="setglyphs()">
-      <label for="glyphs">Select your glyphs (space separated):</label>
+      <label for="glyphs">Select your glyphs (space separated, 1 to 965):</label>
       <input type="text" id="glyphs" name="glyphs">
       <input type="submit" value="generate">
     </form>
@@ -126,6 +126,10 @@
       .split(' ')
       .filter(s => s)
       .map(s => Number(s))
+      .filter(s => (s > 0) && (s <= loadedFont.glyphs.length))
+    console.log(possibilities)
+    console.log(possibilities)
+
     createPattern(loadedFont)
     setUrlParams()
     document.getElementById('glyphs').value = possibilities.join(' ')
@@ -261,6 +265,7 @@
           .split(' ')
           .filter(s => s)
           .map(s => Number(s))
+          .filter(s => (s > 0) && (s <= loadedFont.glyphs.length))
       } else {
         randomize()
       }
