@@ -1,8 +1,8 @@
 <html>
 
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.3.0/lib/p5.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+  <script src="../../lib/opentype.min.js"></script>
+  <script src="../../lib/seedrandom.min.js"></script>
   <style>
     @font-face {
       font-family: "TesseraeEx";
@@ -47,8 +47,8 @@
 
 <body>
   <div>
-    <form action="javascript:void" onsubmit="setglyphs()">
-      <label for="glyphs">Select your glyphs:</label>
+    <form action="javascript:void(0)" onsubmit="setglyphs()">
+      <label for="glyphs">Select your glyphs (space separated):</label>
       <input type="text" id="glyphs" name="glyphs">
       <input type="submit" value="generate">
     </form>
@@ -61,28 +61,81 @@
 <script>
   // cool ones
   // 332 334 
-  //385 325 385 
-  //701 702 
+  // 385 325 385 
+  // 701 702 
+  // 519 726
 
-  let possibilities = [20, 37]
-  let loadedFont = null
-  let bgColor = '#eeeeee'
-  let color = '#89abdc'
 
-  function setglyphs() {
-    possibilities = document.getElementById('glyphs').value.split(' ').map(s => Number(s));
-    console.log(possibilities)
-    createPattern(loadedFont)
-  }
+  //636 632 horizontal
+  
+  let possibilities = (new Array(Math.floor(Math.random() * 3 + 1))).fill(0)
+    .map(_ => Math.floor(Math.random() * 950))
 
-  function getRandomGlyph() {
-    const choice = Math.floor(Math.random() * possibilities.length)
-    return possibilities[choice]
+  document.getElementById('glyphs').value = possibilities.join(' ')
 
-  }
+  const tileSize = 32
 
   const canvas = document.getElementById('pattern')
   const ctx = canvas.getContext('2d');
+  const width = canvas.width / tileSize
+  const height = canvas.height / tileSize
+
+
+  let loadedFont = null
+
+  let bgColor = '#eeeeee'
+  let color = '#89abdc'
+  let seed = 'hello'
+
+  const yOffsets = new Array(width).fill(0)
+  const ySpeeds = new Array(width).fill(0)
+
+  const xOffsets = new Array(height).fill(0)
+  const xSpeeds = new Array(height).fill(0)
+
+  for(let i = 0; i < width; i++) {
+    //ySpeeds[i] = (0.01 * Math.sin(i * (2 * Math.PI / width)))
+    //ySpeeds[i] = (0.01 * Math.sin(i * (1 * Math.PI / width)))
+    //ySpeeds[i] = 0.02
+  }
+  for(let i = 0; i < height; i++) {
+    xSpeeds[i] = ((i % 2) - 0.5) * 0.005
+   // xSpeeds[i] = ((Math.random()) - 0.5) * 0.02 //590 2
+    xSpeeds[i] = (0.007 * Math.sin(0.1+i * (8 * Math.PI / width)))
+  }
+
+  //ySpeeds[10] = 0.02
+
+  function setglyphs() {
+    possibilities = document
+      .getElementById('glyphs')
+      .value
+      .trim()
+      .split(' ')
+      .filter(s => s)
+      .map(s => Number(s))
+    createPattern(loadedFont)
+    console.log('aaaa')
+  }
+
+  function rnd(arr) {
+    return arr[Math.floor(Math.random() * arr.length)]
+  }
+
+  function getRandomGlyph() {
+    return rnd(possibilities)
+  }
+
+
+  function getRotation(x, y) {
+    //return Math.floor(Math.random() * 4)
+
+    //return x % 8 < 4 ? rnd([1, 3]) : rnd([0, 2])
+
+    return rnd([1, 3]) // horizontal
+    //return rnd([0, 2]) // vertical
+  }
+
 
   function download() {
     var link = document.createElement('a');
@@ -91,15 +144,30 @@
     link.click();
   }
 
-  function createPattern(font) {
+  function createBoard(width, height, seed) {
+    Math.seedrandom(seed)
+    let board = []
+    for (let y = 0; y <= height; y++) {
+      for (let x = 0; x <= width; x++) {
+        board.push({
+          value: Math.floor(Math.random() * 100),
+          rotation: Math.floor(Math.random() * 4),
+        })
+      }
+    }
+  }
+
+  //function animationLoop(minSpeed, maxSpeed, minDuration, maxDuration) {
+  //}
+
+  function createPattern(font, seed) {
+    console.log('aaaaa')
+    Math.seedrandom(seed)
     // Now let's display it on a canvas with id "canvas"
 
     //canvas.width = window.width
     //canvas.height = window.height
 
-    const tileSize = 32
-    const width = canvas.width / tileSize
-    const height = canvas.height / tileSize
 
     ctx.fillStyle = bgColor
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -110,42 +178,71 @@
 
     //const path = font.getPath('abcdefghij', 10, 50, 32);
     let g = 0
-    for (let y = 0; y <= height; y++) {
-      for (let x = 0; x <= width; x++) {
+    //console.log(xOffsets, yOffsets)
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
         const n = getRandomGlyph()
         const glyph = font.glyphs.get(n - 1)
 
-        //const rot = x % 4
-        //const rot = 0
-        const rot = Math.floor(Math.random() * 4)
+        const rot = getRotation(x, y)
         const angle = 90 * rot * Math.PI / 180
 
-        //const color = `#${x % 2 == 0 ? 'ff' : '00'}00${Math.floor((x-1) / 2) == 0 ? 'ff' : '00'}`
-        ctx.resetTransform()
-        ctx.translate(x * tileSize, y * tileSize)
-        ctx.rotate(angle)
-        const x1 = -tileSize / 2
-        const y1 = tileSize / 2
-        const x2 = x1 * Math.cos(angle) - y1 * Math.sin(angle)
-        const y2 = x1 * Math.sin(angle) + y1 * Math.cos(angle)
-        ctx.translate(x1, y1)
+        xOffsets[y] = (xOffsets[y] + xSpeeds[y])
+        if(xOffsets[y] > width) {
+          xOffsets[y] -= width
+        }
+        if(xOffsets[y] <= -width) {
+          xOffsets[y] += width
+        }
+        xOffset = xOffsets[y]
 
-        const path = glyph.getPath(0, 0, tileSize / 0.8)
-        path.fill = color
-        path.stroke = color
-        path.draw(ctx)
-        ctx.resetTransform()
+        yOffsets[x] = (yOffsets[x] + ySpeeds[x])
+        yOffset = yOffsets[x]
+        if(yOffsets[x] > height) {
+          yOffsets[x] -= height
+        }
+        if(yOffsets[x] <= -height) {
+          yOffsets[x] += height
+        }
 
-        /*
-        // Debug numbers
-        ctx.font = "8px Arial";
-        ctx.resetTransform()
-        ctx.translate(x * tileSize, y * tileSize)
-        ctx.fillStyle = "#FF00FF";
-        ctx.fillText(`${g}`, 0, 0); 
-        */
+        //console.log(x, y, xOffset, yOffset)
+
+        //const rot = x % 4
+        //const rot = 0
+
+        // draw
+        for(let i =-1; i < 2; i++) {
+          for(let j =-1; j < 2; j++) {
+            //const color = `#${x % 2 == 0 ? 'ff' : '00'}00${Math.floor((x-1) / 2) == 0 ? 'ff' : '00'}`
+            ctx.resetTransform()
+            //ctx.translate(canvas.width/2, canvas.height/2)
+            //ctx.scale(0.2, 0.2)
+            ctx.translate((x+ xOffset + width * i + 0.5) * tileSize, (y + yOffset + height*j + 0.5) * tileSize)
+            ctx.rotate(angle)
+
+            // horizontal and vertical flip
+            //ctx.scale(rnd([-1, 1]), rnd([-1, 1]))
+            ctx.scale(1, rnd([-1, 1]))
+
+            const x1 = -tileSize / 2
+            const y1 = tileSize / 2
+            ctx.translate(x1, y1)
+
+            const path = glyph.getPath(0, 0, tileSize / 0.8)
+            path.fill = color
+            path.stroke = color
+            path.draw(ctx)
+            ctx.resetTransform()
+          }
+        }
       }
     }
+  }
+
+  function animate() {
+    createPattern(loadedFont, seed)
+    window.requestAnimationFrame(animate)
   }
 
   opentype.load('./Tesserae-4x4Extended.otf', function (err, font) {
@@ -153,10 +250,13 @@
       alert('Font could not be loaded: ' + err);
     } else {
       loadedFont = font
-      createPattern(font);
+      //createPattern(font);
       const canvas = document.getElementById('pattern')
       const ctx = canvas.getContext('2d');
-      canvas.onpointerdown = () => createPattern(font)
+      canvas.onpointerdown = () => {
+        seed = Math.random()
+      }
+      animate()
     }
   });
 </script>
