@@ -12,6 +12,12 @@
             font-size: 30px;
         }
 
+        .frog-dialogue {
+            background-color: bisque;
+            color: indigo;
+            font-size: 16px;
+        }
+
         #frames {
             position: absolute;
         }
@@ -85,7 +91,7 @@
 
             <section id="frames" class="Frames">
                 <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-                    <span>Don't be rude, they are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
+                    <span>Don't <a href="#" onclick="Frames.show('more-rude')" data-turbo="false">be rude</a>, they are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
                             computer</a></span>
                 </draggable-frame>
 
@@ -94,11 +100,20 @@
                         width="640" height="480" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true"
                         allowfullscreen></d-iframe>
                 </draggable-frame>
+                <draggable-frame id="more-rude" hidden x=40 y=30 width=50 height=35 bodyClass="frog-dialogue">
+		  <span>
+		    <p>The frog looks you in the eye, frowning.</p>
+		    <p>"Please. We don't get internet back at the Cosmodrome. Between taking care of my kids and my mother, this is the one hour a week that I get to see what my friends are up to."</p>
+		  </span>
+                </draggable-frame>
             </section>
 
             <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
         </main>
     </div>
+<<<<<<< HEAD
     <div id="inventory" data-turbo-permanent>
     </div>
+=======
+>>>>>>> main
 </body>
