@@ -151,12 +151,11 @@ export class DraggableFrame extends HTMLParsedElement {
       bodyContainer.appendChild(childNode)
     }
 
-    // const originalContent = this.innerHTML;
-    // this.innerHTML = templateHtml;
-    // this.bodyElement = this.querySelector(`#${id}-body`)
-    // this.bodyElement.innerHTML = originalContent;
-
     this.classList.add('Frame')
+
+    if(this.hasAttribute('bodyClass')) {
+      this.bodyElement.classList.add(this.getAttribute('bodyClass'))
+    }
 
     this.initStyleFromAttributes()
 
@@ -211,10 +210,23 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       backButton.style.display = 'none'
     }
+    //#endregion
 
+    ////#region focus logic
     this.bringToTop()
+
     if (!this.hasAttribute('focused')) {
       this.classList.toggle(kUnfocusedClass, true)
+    }
+    //#endregion
+
+    if(this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
+      const inventory = document.getElementById('inventory')
+      console.log(this.parentElement)
+      if(this.parentElement.id !== 'inventory') {
+        console.log('moving iframe ' + this.id)
+        document.getElementById('inventory').appendChild(this)
+      }
     }
 
     // register events
@@ -258,8 +270,6 @@ export class DraggableFrame extends HTMLParsedElement {
       //console.log(height)
     }
     this.style.top = y + '%'
-
-    this.bodyElement.classList += ' ' + (this.getAttribute('bodyClass') || '')
   }
 
   initEvents() {
