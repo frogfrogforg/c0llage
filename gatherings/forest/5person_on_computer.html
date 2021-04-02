@@ -78,39 +78,42 @@
 </head>
 
 <body>
-    <div id="game" class="container">
-        <main id="main" class="content">
-            <img id="background" class="background" src="./images/person_on_computer.png"></img>
+    <div id="game">
+        <div class="container">
+            <main id="main" class="content">
+                <img id="background" class="background" src="./images/person_on_computer.png"></img>
 
-            <a class="hotspot inspect" href="./8messy_server_transition.html"
-                style="left: 1.5%; top: 12.450%; width: 19.034%; height: 17.011%"></a>
-            <a class="hotspot move" href="./1.html"
-                style="left: 0.432%; top: 73.345%; width: 22.125%; height: 22.176%"></a>
-            <a class="hotspot centered talk" href="#" onclick="Frames.toggle('rude')"
-                style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%"
-                data-turbo="false"></a>
+                <a class="hotspot inspect" href="./8messy_server_transition.html"
+                    style="left: 1.5%; top: 12.450%; width: 19.034%; height: 17.011%"></a>
+                <a class="hotspot move" href="./1.html"
+                    style="left: 0.432%; top: 73.345%; width: 22.125%; height: 22.176%"></a>
+                <a class="hotspot centered talk" href="#" onclick="Frames.toggle('rude')"
+                    style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%" data-turbo="false"></a>
 
-            <section id="frames" class="Frames">
-                <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-                    <span>Don't <a href="#" onclick="Frames.show('more-rude')" data-turbo="false">be rude</a>, they are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
-                            computer</a></span>
-                </draggable-frame>
+                <section id="frames" class="Frames">
+                    <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
+                        <span>Don't <a href="#" onclick="Frames.show('more-rude')" data-turbo="false">be rude</a>, they
+                            are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
+                                computer</a></span>
+                    </draggable-frame>
 
-                <draggable-frame id="the-computer" hidden permanent x=60 y=28 width=25 height=35>
-                    <d-iframe src="https://archive.org/embed/NicholasFedorovTHECOMPUTEROfficialVideo&autoplay=1"
-                        width="640" height="480" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true"
-                        allowfullscreen></d-iframe>
-                </draggable-frame>
-                <draggable-frame id="more-rude" hidden x=40 y=30 width=50 height=35 bodyClass="frog-dialogue">
-		  <span>
-		    <p>The frog looks you in the eye, frowning.</p>
-		    <p>"Please. We don't get internet back at the Cosmodrome. Between taking care of my kids and my mother, this is the one hour a week that I get to see what my friends are up to."</p>
-		  </span>
-                </draggable-frame>
-            </section>
+                    <draggable-frame id="the-computer" hidden permanent x=60 y=28 width=25 height=35>
+                        <d-iframe src="https://archive.org/embed/NicholasFedorovTHECOMPUTEROfficialVideo&autoplay=1"
+                            width="640" height="480" frameborder="0" webkitallowfullscreen="true"
+                            mozallowfullscreen="true" allowfullscreen></d-iframe>
+                    </draggable-frame>
+                    <draggable-frame id="more-rude" hidden x=40 y=30 width=50 height=35 bodyClass="frog-dialogue">
+                        <span>
+                            <p>The frog looks you in the eye, frowning.</p>
+                            <p>"Please. We don't get internet back at the Cosmodrome. Between taking care of my kids and
+                                my mother, this is the one hour a week that I get to see what my friends are up to."</p>
+                        </span>
+                    </draggable-frame>
+                </section>
 
-            <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
-        </main>
+                <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
+            </main>
+        </div>
     </div>
 
     <div id="inventory" class="Inventory"></div>

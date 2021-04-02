@@ -23,7 +23,7 @@ function main() {
 
     // get the game element to replace
     const nextBody = evt.detail.newBody
-    const nextGame = nextBody.querySelector("#game")
+    const nextGame = nextBody.querySelector("#game") || nextBody;
 
     game.innerHTML = nextGame.innerHTML
   })
