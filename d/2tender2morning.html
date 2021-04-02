@@ -104,6 +104,7 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 	background-color:black;
 	color:black;
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	margin:-30px;
 }
 
 
@@ -112,12 +113,12 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 
 .passage {
 	background-color: #EFEFEF;
-	width: 100vmin;
-	height: 69%;
+	width: 80vmin;
+	height: 69vmin;
 	max-width: 100vmin;
 	min-width: 90vmin;
-	padding: 3vh;
-	font-size: 3vh;
+	padding: 3vmin;
+	font-size: 3vmin;
 	position: absolute;
 	transition-duration: 0s;
 	overflow: hidden;
@@ -157,8 +158,8 @@ button {
 	border-radius: 4px / 4px;
 	box-shadow: inset 2px 2px 3px white, inset -1px -1px 1px #404346;
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-	font-size: 3vh;
-	padding: .5vh 3vh .5vh 3vh;
+	font-size: 3vmin;
+	padding: .5vh 2.8vh .5vh 2.8vh;
 	cursor: pointer;
 	transition-duration: 0s;
 	user-select: none;
@@ -174,15 +175,21 @@ button:active {
 	box-shadow:inset 1px 1px 1px #404346, inset -.25px -.25px 2px #DEDEDE;
 }
 
-.no-click button {
-	width: 100%;
-	height: 90%;
+button:disabled {
 	background-color: #aaaaaa;
 	box-shadow: none;
 	cursor: no-drop;
-	padding: 1.5vh 3vh 1.5vh 3vh;
+}
+
+.no-click button {
+	/* width: 100%;
+	height: 90%; */
+	background-color: #aaaaaa;
+	box-shadow: none;
+	cursor: no-drop;
+	/* padding: 1.5vh 3vh 1.5vh 3vh;
 	margin:1%;
-	margin-left:-1.4%;
+	margin-left:-1.4%; */
 	
 }
 
@@ -226,7 +233,7 @@ button:active {
 .blink{
 	animation: flutter;
 	animation-duration: .1s;
-	animation-iteration-count:4;
+	animation-iteration-count:12;
 	animation-timing-function:linear;
 }
 
@@ -256,30 +263,63 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	now it&#39;s a park and i still live here:)
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;Good job, computer&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;sense&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;&lt;button &quot;Remove computer from forest&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;ridiculous&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
-	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name="sense" tags="" position="600,100" size="100,100">thank-you.</tw-passagedata><tw-passagedata pid="6" name="ridiculous" tags="" position="725,100" size="100,100">&lt;div class=&quot;content&quot;&gt;i don&#39;t like that
+	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name="sense" tags="" position="600,100" size="100,100">&lt;div class=&quot;content&quot;&gt;thank-you.
+
+	there are times when i wonder if i&#39;ve lived my life as well as i could.
+
+	your graciousness means the world to me.&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;Support computer&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;support&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
+	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name="support" tags="" position="725,100" size="100,100">&lt;div class=&quot;content&quot;&gt;can i tell you about the winter now?
+	&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;I would like that&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;smile&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
+	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="7" name="smile" tags="" position="850,100" size="100,100">&lt;div class=&quot;content&quot;&gt;:)
+	&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;:)&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;1&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
+	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="8" name="ridiculous" tags="" position="975,100" size="100,100">&lt;div class=&quot;content&quot;&gt;i don&#39;t like that.
 
 	...
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;
-	&lt;&lt;button &quot;i&#39;m sorry.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;sorry&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;span class=&quot;no-click&quot;&gt;&lt;&lt;button &quot;Do another wrong thing&quot;&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/span&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="7" name="sorry" tags="" position="850,100" size="100,100">&lt;div class=&quot;content&quot;&gt;...
+	&lt;&lt;button &quot;Never mind&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;support&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;&lt;button &quot;Try agai▓▓▒░░&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;thinking&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; 
+	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="thinking" tags="" position="1100,100" size="100,100">&lt;div class=&quot;content&quot;&gt;...&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;░░▒░▒░&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;thinking2&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;button type=&quot;button&quot; disabled&gt;Do another wrong thing&lt;/button&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="thinking2" tags="" position="1225,100" size="100,100">&lt;div class=&quot;content&quot;&gt;...&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;░▓sorry.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;sorry&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;button type=&quot;button&quot; disabled&gt;No I&#39;m not&lt;/button&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="11" name="sorry" tags="" position="100,225" size="100,100">&lt;div class=&quot;content&quot;&gt;...
 
 	i decided that it was okay:)
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;
-	&lt;&lt;button &quot;i think you&#39;re very handsome.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;handsome&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt;  &lt;span class=&quot;no-click&quot;&gt;&lt;&lt;button &quot;No I want to be bad&quot;&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/span&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="8" name="handsome" tags="" position="975,100" size="100,100">&lt;div class=&quot;content&quot;&gt;:o
-	&lt;/div&gt;
-	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;i would love to marry you.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;marry&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;span class=&quot;no-click&quot;&gt;&lt;&lt;button &quot;Let me click the mean button&quot;&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/span&gt;
-	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="marry" tags="" position="1100,100" size="100,100">&lt;div class=&quot;content&quot;&gt;:o &lt;span class=&quot;blink&quot;&gt;!!&lt;/span&gt;
-	&lt;/div&gt;
-	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;i&#39;m ready to listen.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;listen&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;span class=&quot;no-click&quot;&gt;&lt;&lt;button &quot;Stop stop stop stop stop&quot;&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/span&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="listen" tags="" position="1225,100" size="100,100">&lt;div class=&quot;content&quot;&gt;don&#39;t forget you&#39;re a guest here;)
+	&lt;&lt;button &quot;i have decided to be nice.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;nice&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt;  &lt;button type=&quot;button&quot; disabled&gt;No I want to be bad&lt;/button&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="12" name="nice" tags="" position="225,225" size="100,100">&lt;div class=&quot;content&quot;&gt;oh that&#39;s so good to hear!
 
-	can you tell me you won&#39;t forget? let&#39;s say it at the same time&lt;/div&gt;
-	&lt;div class=&quot;nav&quot;&gt;&lt;span class=&quot;no-click&quot;&gt;&lt;&lt;button &quot;yes.&quot;&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/span&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;&lt;button &quot;Yes&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;repeat&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/div&gt;&lt;&lt;set $repeat to [&quot;420&quot;, &quot;forget&quot;, &quot;won&#39;t&quot;,&quot;i&quot;]&gt;&gt;</tw-passagedata><tw-passagedata pid="11" name="repeat" tags="" position="100,225" size="100,100">&lt;&lt;set _button = $repeat.pop()&gt;&gt;&lt;div class=&quot;content&quot;&gt;&lt;/div&gt;
+	i&#39;m happy you came around on your own.
+	&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;
+	&lt;&lt;button &quot;also you are very handsome.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;handsome&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt;  &lt;button type=&quot;button&quot; disabled&gt;What are you doing&lt;/button&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="handsome" tags="" position="350,225" size="100,100">&lt;div class=&quot;content&quot;&gt;:o
+	&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;i would love to marry you.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;marry&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;button type=&quot;button&quot; disabled&gt;Let me click the mean button&lt;/button&gt;
+	&lt;/div&gt;</tw-passagedata><tw-passagedata pid="14" name="marry" tags="" position="475,225" size="100,100">&lt;div class=&quot;content&quot;&gt;:o &lt;span class=&quot;blink&quot;&gt;!!&lt;/span&gt;
+	&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;let&#39;s get married in space.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;space&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;button type=&quot;button&quot; disabled&gt;Stop stop stop stop stop&lt;/button&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="space" tags="" position="600,225" size="100,100">&lt;div class=&quot;content&quot;&gt;...
 
-	&lt;div class=&quot;nav&quot;&gt;&lt;span class=&quot;no-click&quot;&gt;&lt;&lt;button &quot;_button&quot;&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/span&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;&lt;button &quot;_button&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;repeat&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/div&gt;
+	;)
+
+	had enough yet?&lt;/div&gt;
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;i&#39;m ready to listen.&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;listen&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;button type=&quot;button&quot; disabled&gt;Yes fine just let me go&lt;/button&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="16" name="listen" tags="" position="725,225" size="100,100">&lt;div class=&quot;content&quot;&gt;don&#39;t forget you&#39;re a guest here;)
+
+	can you tell me you won&#39;t forget?&lt;/div&gt;
+
+	&lt;div class=&quot;nav&quot;&gt;&lt;button type=&quot;button&quot; disabled&gt;yes.&lt;/button&gt; &lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;&lt;button &quot;Yes&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;repeat&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/div&gt;&lt;&lt;set $repeat to [&quot;420&quot;,&quot;guest&quot;,&quot;a&quot;,&quot;i&#39;m&quot;,&quot;that&quot;,&quot;forget&quot;,&quot;won&#39;t&quot;,&quot;i&quot;]&gt;&gt;</tw-passagedata><tw-passagedata pid="17" name="repeat" tags="" position="850,225" size="100,100">&lt;&lt;set _button = $repeat.pop()&gt;&gt;	&lt;&lt;if _button &gt; 419&gt;&gt;good:)
+
+	can i tell you about the winter now?
+
+	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;button &quot;Accept&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;smile&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/div&gt;
+
+	&lt;&lt;else&gt;&gt;&lt;div class=&quot;content&quot;&gt; let&#39;s say it at the same time&lt;/div&gt;
+
+	&lt;div class=&quot;nav&quot;&gt;&lt;button type=&quot;button&quot; disabled&gt;_button.&lt;/button&gt;&lt;div class=&quot;break&quot;&gt;&lt;/div&gt; &lt;&lt;button &quot;_button&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include &quot;repeat&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;/div&gt;
+	&lt;&lt;/if&gt;&gt;
 	
 
-&lt;!-- the forest --&gt;</tw-passagedata><tw-passagedata pid="12" name="1" tags="" position="225,225" size="100,100">&lt;div class=&quot;content&quot;&gt; &lt;&lt;if $lastlocation is 0&gt;&gt;it starts in a white field&lt;&lt;else&gt;&gt;a white field, undisturbed still&lt;&lt;/if&gt;&gt;
+&lt;!-- the forest --&gt;</tw-passagedata><tw-passagedata pid="18" name="1" tags="" position="975,225" size="100,100">&lt;div class=&quot;content&quot;&gt; &lt;&lt;if $lastlocation is 0&gt;&gt;it starts in a white field&lt;&lt;else&gt;&gt;a white field, undisturbed still&lt;&lt;/if&gt;&gt;
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 7&gt;&gt;
 		&lt;&lt;set _opt = [19, 13, 7]&gt;&gt;
@@ -295,7 +335,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 1&gt;&gt;</tw-passagedata><tw-passagedata pid="13" name="2" tags="" position="350,225" size="100,100">&lt;div class=&quot;content&quot;&gt;groaning swamp
+	&lt;&lt;set $lastlocation to 1&gt;&gt;</tw-passagedata><tw-passagedata pid="19" name="2" tags="" position="1100,225" size="100,100">&lt;div class=&quot;content&quot;&gt;groaning swamp
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 12&gt;&gt;
 		&lt;&lt;set _opt = [18, 20, 12]&gt;&gt;
@@ -312,7 +352,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 2&gt;&gt;</tw-passagedata><tw-passagedata pid="14" name="3" tags="" position="475,225" size="100,100">&lt;div class=&quot;content&quot;&gt;footprints
+	&lt;&lt;set $lastlocation to 2&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="3" tags="" position="1225,225" size="100,100">&lt;div class=&quot;content&quot;&gt;footprints
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 16&gt;&gt;
 		&lt;&lt;set _opt = [19, 17, 16]&gt;&gt;
@@ -329,7 +369,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 3&gt;&gt;</tw-passagedata><tw-passagedata pid="15" name="4" tags="" position="600,225" size="100,100">&lt;div class=&quot;content&quot;&gt;melted snow
+	&lt;&lt;set $lastlocation to 3&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="4" tags="" position="100,350" size="100,100">&lt;div class=&quot;content&quot;&gt;melted snow
 
 	&lt;&lt;linkreplace &quot;scoop up a handful&quot;&gt;&gt;&lt;&lt;include &quot;scoop snow&quot;&gt;&gt;&lt;&lt;/linkreplace&gt;&gt;&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 11&gt;&gt;
@@ -347,7 +387,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 4&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="5" tags="" position="725,225" size="100,100">&lt;div class=&quot;content&quot;&gt;shivering evergreen
+	&lt;&lt;set $lastlocation to 4&gt;&gt;</tw-passagedata><tw-passagedata pid="22" name="5" tags="" position="225,350" size="100,100">&lt;div class=&quot;content&quot;&gt;shivering evergreen
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 13&gt;&gt;
 		&lt;&lt;set _opt = [18, 15, 13]&gt;&gt;
@@ -364,7 +404,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 5&gt;&gt;</tw-passagedata><tw-passagedata pid="17" name="6" tags="" position="850,225" size="100,100">&lt;div class=&quot;content&quot;&gt;open sky
+	&lt;&lt;set $lastlocation to 5&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="6" tags="" position="350,350" size="100,100">&lt;div class=&quot;content&quot;&gt;open sky
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 9&gt;&gt;
 		&lt;&lt;set _opt = [16, 14, 9]&gt;&gt;
@@ -382,7 +422,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 6&gt;&gt;</tw-passagedata><tw-passagedata pid="18" name="7" tags="" position="975,225" size="100,100">&lt;div class=&quot;content&quot;&gt;pointed shrubs
+	&lt;&lt;set $lastlocation to 6&gt;&gt;</tw-passagedata><tw-passagedata pid="24" name="7" tags="" position="475,350" size="100,100">&lt;div class=&quot;content&quot;&gt;pointed shrubs
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 1&gt;&gt;
 		&lt;&lt;set _opt = [15, 17, 1]&gt;&gt;
@@ -399,7 +439,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 7&gt;&gt;</tw-passagedata><tw-passagedata pid="19" name="8" tags="" position="1100,225" size="100,100">&lt;div class=&quot;content&quot;&gt;thin ice
+	&lt;&lt;set $lastlocation to 7&gt;&gt;</tw-passagedata><tw-passagedata pid="25" name="8" tags="" position="600,350" size="100,100">&lt;div class=&quot;content&quot;&gt;thin ice
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 10&gt;&gt;
 		&lt;&lt;set _opt = [20, 16, 10]&gt;&gt;
@@ -416,7 +456,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 8&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="9" tags="" position="1225,225" size="100,100">&lt;div class=&quot;content&quot;&gt;strange lights
+	&lt;&lt;set $lastlocation to 8&gt;&gt;</tw-passagedata><tw-passagedata pid="26" name="9" tags="" position="725,350" size="100,100">&lt;div class=&quot;content&quot;&gt;strange lights
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 6&gt;&gt;
 		&lt;&lt;set _opt = [11, 19, 6]&gt;&gt;
@@ -433,7 +473,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 9&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="10" tags="" position="100,350" size="100,100">&lt;div class=&quot;content&quot;&gt;an outhouse
+	&lt;&lt;set $lastlocation to 9&gt;&gt;</tw-passagedata><tw-passagedata pid="27" name="10" tags="" position="850,350" size="100,100">&lt;div class=&quot;content&quot;&gt;an outhouse
 
 	&lt;&lt;linkreplace &quot;a few yards to the left of the outhouse, you can barely make out...&quot;&gt;&gt;&lt;&lt;include &quot;666&quot;&gt;&gt;&lt;&lt;/linkreplace&gt;&gt;&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 8&gt;&gt;
@@ -451,7 +491,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 10&gt;&gt;</tw-passagedata><tw-passagedata pid="22" name="11" tags="" position="225,350" size="100,100">&lt;div class=&quot;content&quot;&gt;low hill
+	&lt;&lt;set $lastlocation to 10&gt;&gt;</tw-passagedata><tw-passagedata pid="28" name="11" tags="" position="975,350" size="100,100">&lt;div class=&quot;content&quot;&gt;low hill
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 4&gt;&gt;
 		&lt;&lt;set _opt = [13, 9, 4]&gt;&gt;
@@ -468,7 +508,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 11&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="12" tags="" position="350,350" size="100,100">&lt;div class=&quot;content&quot;&gt;muddy ditch
+	&lt;&lt;set $lastlocation to 11&gt;&gt;</tw-passagedata><tw-passagedata pid="29" name="12" tags="" position="1100,350" size="100,100">&lt;div class=&quot;content&quot;&gt;muddy ditch
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 2&gt;&gt;
 		&lt;&lt;set _opt = [10, 15, 2]&gt;&gt;
@@ -485,7 +525,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 12&gt;&gt;</tw-passagedata><tw-passagedata pid="24" name="13" tags="" position="475,350" size="100,100">&lt;div class=&quot;content&quot;&gt;aspen grove
+	&lt;&lt;set $lastlocation to 12&gt;&gt;</tw-passagedata><tw-passagedata pid="30" name="13" tags="" position="1225,350" size="100,100">&lt;div class=&quot;content&quot;&gt;aspen grove
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 1&gt;&gt;
 		&lt;&lt;set _opt = [11, 5, 1]&gt;&gt;
@@ -502,7 +542,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 13&gt;&gt;</tw-passagedata><tw-passagedata pid="25" name="14" tags="" position="600,350" size="100,100">&lt;div class=&quot;content&quot;&gt;collapsing barn
+	&lt;&lt;set $lastlocation to 13&gt;&gt;</tw-passagedata><tw-passagedata pid="31" name="14" tags="" position="100,475" size="100,100">&lt;div class=&quot;content&quot;&gt;collapsing barn
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 4&gt;&gt;
 		&lt;&lt;set _opt = [6, 20, 4]&gt;&gt;
@@ -519,7 +559,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 14&gt;&gt;</tw-passagedata><tw-passagedata pid="26" name="15" tags="" position="725,350" size="100,100">&lt;div class=&quot;content&quot;&gt;birds nest
+	&lt;&lt;set $lastlocation to 14&gt;&gt;</tw-passagedata><tw-passagedata pid="32" name="15" tags="" position="225,475" size="100,100">&lt;div class=&quot;content&quot;&gt;birds nest
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 5&gt;&gt;
 		&lt;&lt;set _opt = [12, 7, 5]&gt;&gt;
@@ -536,7 +576,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 15&gt;&gt;</tw-passagedata><tw-passagedata pid="27" name="16" tags="" position="850,350" size="100,100">&lt;div class=&quot;content&quot;&gt;old tire
+	&lt;&lt;set $lastlocation to 15&gt;&gt;</tw-passagedata><tw-passagedata pid="33" name="16" tags="" position="350,475" size="100,100">&lt;div class=&quot;content&quot;&gt;old tire
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 3&gt;&gt;
 		&lt;&lt;set _opt = [8, 6, 3]&gt;&gt;
@@ -553,7 +593,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 16&gt;&gt;</tw-passagedata><tw-passagedata pid="28" name="17" tags="" position="975,350" size="100,100">&lt;div class=&quot;content&quot;&gt;a shallow pond
+	&lt;&lt;set $lastlocation to 16&gt;&gt;</tw-passagedata><tw-passagedata pid="34" name="17" tags="" position="475,475" size="100,100">&lt;div class=&quot;content&quot;&gt;a shallow pond
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 3&gt;&gt;
 		&lt;&lt;set _opt = [7, 10, 3]&gt;&gt;
@@ -570,7 +610,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 17&gt;&gt;</tw-passagedata><tw-passagedata pid="29" name="18" tags="" position="1100,350" size="100,100">&lt;div class=&quot;content&quot;&gt;someplace forgotten
+	&lt;&lt;set $lastlocation to 17&gt;&gt;</tw-passagedata><tw-passagedata pid="35" name="18" tags="" position="600,475" size="100,100">&lt;div class=&quot;content&quot;&gt;someplace forgotten
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 2&gt;&gt;
 		&lt;&lt;set _opt = [5, 4, 2]&gt;&gt;
@@ -587,7 +627,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-	&lt;&lt;set $lastlocation to 18&gt;&gt;</tw-passagedata><tw-passagedata pid="30" name="19" tags="" position="1225,350" size="100,100">&lt;div class=&quot;content&quot;&gt;a leaning tree
+	&lt;&lt;set $lastlocation to 18&gt;&gt;</tw-passagedata><tw-passagedata pid="36" name="19" tags="" position="725,475" size="100,100">&lt;div class=&quot;content&quot;&gt;a leaning tree
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 1&gt;&gt;
 		&lt;&lt;set _opt = [3, 9, 1]&gt;&gt;
@@ -604,7 +644,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;/if&gt;&gt;&lt;/div&gt;
 
 	&lt;&lt;include [[lastloc]]&gt;&gt;
-&lt;&lt;set $lastlocation to 19&gt;&gt;</tw-passagedata><tw-passagedata pid="31" name="20" tags="" position="100,475" size="100,100">&lt;div class=&quot;content&quot;&gt;sluggish creek
+&lt;&lt;set $lastlocation to 19&gt;&gt;</tw-passagedata><tw-passagedata pid="37" name="20" tags="" position="850,475" size="100,100">&lt;div class=&quot;content&quot;&gt;sluggish creek
 	&lt;/div&gt;
 	&lt;div class=&quot;nav&quot;&gt;&lt;&lt;if $lastlocation is 2&gt;&gt;
 		&lt;&lt;set _opt = [14, 8, 2]&gt;&gt;
@@ -624,9 +664,9 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	&lt;&lt;set $lastlocation to 20&gt;&gt;
 
 
-&lt;!-- ekphrases --&gt;</tw-passagedata><tw-passagedata pid="32" name="666" tags="" position="225,475" size="100,100">&lt;&lt;linkreplace &quot;it&#39;s a man.\n\nhe is standing in the dark&quot;&gt;&gt;&lt;&lt;include &quot;667&quot;&gt;&gt;&lt;&lt;/linkreplace&gt;&gt;</tw-passagedata><tw-passagedata pid="33" name="667" tags="" position="350,475" size="100,100">staring at you</tw-passagedata><tw-passagedata pid="34" name="scoop snow" tags="" position="475,475" size="100,100">the snow quickly starts to melt against the warmth of your hand, forming rivulets that trickle down the length of your arm – the cold stings sharply. 
+&lt;!-- ekphrases --&gt;</tw-passagedata><tw-passagedata pid="38" name="666" tags="" position="975,475" size="100,100">&lt;&lt;linkreplace &quot;it&#39;s a man.\n\nhe is standing in the dark&quot;&gt;&gt;&lt;&lt;include &quot;667&quot;&gt;&gt;&lt;&lt;/linkreplace&gt;&gt;</tw-passagedata><tw-passagedata pid="39" name="667" tags="" position="1100,475" size="100,100">staring at you</tw-passagedata><tw-passagedata pid="40" name="scoop snow" tags="" position="1225,475" size="100,100">the snow quickly starts to melt against the warmth of your hand, forming rivulets that trickle down the length of your arm – the cold stings sharply. 
 
-	&lt;&lt;linkreplace &quot;eat it&quot;&gt;&gt;&lt;&lt;include &quot;eat snow&quot;&gt;&gt;&lt;&lt;/linkreplace&gt;&gt;</tw-passagedata><tw-passagedata pid="35" name="eat snow" tags="" position="600,475" size="100,100">it&#39;s more flavorful than you might have expected.
+	&lt;&lt;linkreplace &quot;eat it&quot;&gt;&gt;&lt;&lt;include &quot;eat snow&quot;&gt;&gt;&lt;&lt;/linkreplace&gt;&gt;</tw-passagedata><tw-passagedata pid="41" name="eat snow" tags="" position="100,600" size="100,100">it&#39;s more flavorful than you might have expected.
 	you feel the cold numb your tongue, then your whole mouth. the numbness makes its way down your oesophagus as you swallow.
 
 	then, an incredible pain engulfs your skull. you lose awareness of anything except this single burning point of pain – for a few seconds – and then it&#39;s gone.
@@ -634,17 +674,17 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 	you feel kinda refreshed, actually.
 
 
-&lt;!-- helpful:) --&gt;</tw-passagedata><tw-passagedata pid="36" name="lastloc" tags="" position="725,475" size="100,100">&lt;&lt;nobr&gt;&gt;
+&lt;!-- helpful:) --&gt;</tw-passagedata><tw-passagedata pid="42" name="lastloc" tags="" position="225,600" size="100,100">&lt;&lt;nobr&gt;&gt;
 		&lt;div style=&quot;width:25%;position:absolute;left:3%;bottom:10%;&quot;&gt;
 		&lt;&lt;if $lastlocation &gt; 0 &gt;&gt; 
 			Last location: &lt;br&gt;
 			$lastlocation
 		&lt;&lt;/if&gt;&gt;
 		&lt;/div&gt;
-	&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="37" name="nav-buttons" tags="" position="850,475" size="100,100">&lt;&lt;button &quot;Left&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include [[_opt[0]]]&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
+	&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="43" name="nav-buttons" tags="" position="350,600" size="100,100">&lt;&lt;button &quot;Left&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include [[_opt[0]]]&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
 	&lt;&lt;button &quot;Right&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include [[_opt[1]]]&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;
 	&lt;div class=&quot;break&quot;&gt;&lt;/div&gt;
-	&lt;&lt;if $lastlocation &gt; 0&gt;&gt;&lt;&lt;button &quot;Behind me&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include [[_opt[2]]]&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="38" name="nav-holder" tags="" position="975,475" size="100,100">&lt;!-- this will take a crazy amount of work to figure out &amp; i am not a math person, i&#39;ll just type a bunch --&gt;
+	&lt;&lt;if $lastlocation &gt; 0&gt;&gt;&lt;&lt;button &quot;Behind me&quot;&gt;&gt;&lt;&lt;replace &quot;.passage-body&quot;&gt;&gt;&lt;&lt;include [[_opt[2]]]&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="44" name="nav-holder" tags="" position="475,600" size="100,100">&lt;!-- this will take a crazy amount of work to figure out &amp; i am not a math person, i&#39;ll just type a bunch --&gt;
 /* &lt;&lt;nobr&gt;&gt;
 	&lt;div class=&quot;nav&quot;&gt;
 
