@@ -1,13 +1,13 @@
 <head>
+    <meta name="turbo-cache-control" content="no-cache">
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="../shared/frames.css">
-    <script src="common.js"></script>
-    <script type="module" src="../../global.js"></script>
+    <script type="module" src="forest.js"></script>
     <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module" src="../shared/d-iframe.js"></script>
     <script type="module">
-        window.openNarrative = function() {
-            if(!d.State.sawMessyServerNarrative) {
+        window.openNarrative = function () {
+            if (!d.State.sawMessyServerNarrative) {
                 d.State.sawMessyServerNarrative = true
             }
 
@@ -28,36 +28,40 @@
 </head>
 
 <body>
-    <div class="container">
-        <main class="content">
-            <img class="background" src="./images/messyserver_screen.jpg">
-            </img>
+    <div id="game">
+        <div class="container">
+            <main class="content">
+                <img class="background" src="./images/messyserver_screen.jpg">
+                </img>
 
-            <a class="hotspot inspect" href="#" onclick="openNarrative()"
-                style="left: 22.27%; top: 21.61%; width: 44.49%; height: 37.32%">
-            </a>
-            <section id="frames" class="Frames">
-                <draggable-frame hidden id="narrative" x=25 y=27.5 width=40 height=29>
-                    <d-iframe autoload src="../../Jen/narrative.html"> </d-iframe>
-                </draggable-frame>
-                <draggable-frame temperament='sanguine' id="button" x=110 y=5 width=30 height=90
-                    bodyClass="CustomFrameBody">
-                    <a class="hotspot move" href="./6messy_server_screen.html">
-                        <div>
-                            B
-                        </div>
-                        <div>
-                            A
-                        </div>
-                        <div>
-                            C
-                        </div>
-                        <div>
-                            K
-                        </div>
-                    </a>
-                </draggable-frame>
-            </section>
-        </main>
+                <a class="hotspot inspect" href="javascript:void(0)" onclick="openNarrative()"
+                    style="left: 22.27%; top: 21.61%; width: 44.49%; height: 37.32%">
+                </a>
+                <section id="frames" class="Frames">
+                    <draggable-frame hidden persistent id="narrative" x=25 y=27.5 width=40 height=29>
+                        <d-iframe autoload src="../../Jen/narrative.html"> </d-iframe>
+                    </draggable-frame>
+                    <draggable-frame temperament='sanguine' id="button" x=110 y=5 width=30 height=90
+                        bodyClass="CustomFrameBody">
+                        <a class="hotspot move" href="./6messy_server_screen.html">
+                            <div>
+                                B
+                            </div>
+                            <div>
+                                A
+                            </div>
+                            <div>
+                                C
+                            </div>
+                            <div>
+                                K
+                            </div>
+                        </a>
+                    </draggable-frame>
+                </section>
+            </main>
+        </div>
     </div>
+
+    <div id="inventory" class="Inventory"></div>
 </body>

@@ -151,12 +151,11 @@ export class DraggableFrame extends HTMLParsedElement {
       bodyContainer.appendChild(childNode)
     }
 
-    // const originalContent = this.innerHTML;
-    // this.innerHTML = templateHtml;
-    // this.bodyElement = this.querySelector(`#${id}-body`)
-    // this.bodyElement.innerHTML = originalContent;
-
     this.classList.add('Frame')
+
+    if(this.hasAttribute('bodyClass')) {
+      this.bodyElement.classList.add(this.getAttribute('bodyClass'))
+    }
 
     this.initStyleFromAttributes()
 
@@ -202,42 +201,36 @@ export class DraggableFrame extends HTMLParsedElement {
       // back button only exists for iframes
       backButton.onclick = () => {
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
-        if(iframe.contentWindow.history.length > 2){
+        if (iframe.contentWindow.history.length > 2) {
           iframe.contentWindow.history.back()
-        } else{
+        } else {
           alert(temperamentData.noBackMessage)
         }
       }
     } else {
       backButton.style.display = 'none'
     }
-
-    // process mousedown on this object, and mousemove / mouseup everywhere
-    this.addEventListener('pointerdown', this.onMouseDown.bind(this))
-    document.body.addEventListener('pointermove', this.onMouseMove.bind(this))
-    document.body.addEventListener('pointerup', this.onMouseUp.bind(this))
-
-    // end drag if mouse exits the window
-    // TODO: this doesn't work perfectly inside iframes
-    const html = document.querySelector("html")
-    html.addEventListener('pointerout', (evt) => {
-      if (evt.target == html) {
-        this.onMouseUp()
-      }
-    })
-
     //#endregion
 
+    ////#region focus logic
     this.bringToTop()
+
     if (!this.hasAttribute('focused')) {
       this.classList.toggle(kUnfocusedClass, true)
     }
+    //#endregion
 
-    window.addEventListener('new-top-frame', () => {
-      if (this.style.zIndex !== window.Frames.topZIndex) {
-        this.classList.toggle(kUnfocusedClass, true)
+    if(this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
+      const inventory = document.getElementById('inventory')
+      console.log(this.parentElement)
+      if(this.parentElement.id !== 'inventory') {
+        console.log('moving iframe ' + this.id)
+        document.getElementById('inventory').appendChild(this)
       }
-    })
+    }
+
+    // register events
+    this.initEvents()
   }
 
   initStyleFromAttributes() {
@@ -277,10 +270,40 @@ export class DraggableFrame extends HTMLParsedElement {
       //console.log(height)
     }
     this.style.top = y + '%'
-
-    this.bodyElement.classList += ' ' + (this.getAttribute('bodyClass') || '')
   }
 
+  initEvents() {
+    // NOTE: calling `addEventListener` twice with the same listener should _not_
+    // add duplicate callbacks as long as the listeners have reference equality.
+    // if you use `method.bind(this)` it _will_ add duplicate events, as it creates
+    // different anonymous fns.
+
+    // listen to mouse down on this element
+    this.addEventListener("pointerdown", this.onMouseDown)
+
+    // listen to move/up on the parent to catch mouse events that are fast
+    // enough to exit the frame
+    const container = document.body
+    container.addEventListener("pointermove", this.onMouseMove)
+    container.addEventListener("pointerup", this.onMouseUp)
+
+    // end drag if mouse exits the window
+    // TODO: this doesn't work perfectly inside iframes
+    const html = document.querySelector("html")
+    html.addEventListener("pointerout", (evt) => {
+      if (evt.target == html) {
+        this.onMouseUp()
+      }
+    })
+
+    window.addEventListener("new-top-frame", () => {
+      if (this.style.zIndex !== window.Frames.topZIndex) {
+        this.classList.toggle(kUnfocusedClass, true)
+      }
+    })
+  }
+
+  // -- commands --
   toggle() {
     if (this.visible) {
       this.hide()
@@ -307,6 +330,7 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 
   bringToTop() {
+    if(!this.visible) return
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
@@ -314,7 +338,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
   listen = addEventListener
 
-  onMouseDown(evt) {
+  onMouseDown = (evt) => {
     const target = evt.target
     evt.preventDefault() // what does this do ?
 
@@ -366,7 +390,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  onMouseMove(evt) {
+  onMouseMove = (evt) => {
     evt.preventDefault()
 
     // apply the operation
@@ -381,7 +405,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  onMouseUp() {
+  onMouseUp = () => {
     // re-enable mouse events on iframes
     const iframes = document.querySelectorAll('iframe')
     for (const iframe of Array.from(iframes)) {
@@ -436,7 +460,7 @@ export class DraggableFrame extends HTMLParsedElement {
     )
 
     // choleric doesn't scale
-    if(this.temperament !== choleric) {
+    if (this.temperament !== choleric) {
       this.style.width = `${newWidth}px`
       this.style.height = `${newHeight}px`
     }
@@ -459,7 +483,7 @@ export class DraggableFrame extends HTMLParsedElement {
         // revert to basic style
         target.style.width = '100%'
         target.style.height = '100%'
-      } else if(this.temperament === choleric) {
+      } else if (this.temperament === choleric) {
         // Do nothing, choleric works as it is
       } else { // melancholic
         target.style.transform = `scale(${scaleFactor})`

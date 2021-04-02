@@ -1,10 +1,9 @@
 <head>
+    <meta name="turbo-cache-control" content="no-cache">
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="../shared/frames.css">
-    <script src="common.js"></script>
-    <script type="module">
-        import "../shared/draggable-frame.js"
-    </script>
+    <script type="module" src="forest.js"></script>
+    <script type="module" src="../shared/draggable-frame.js"></script>
 
     <style>
         .ClearFrame {
@@ -12,8 +11,7 @@
             font-size: 30px;
         }
 
-        .hotspot {
-        }
+        .hotspot {}
 
         .hotspot img {
             position: absolute;
@@ -26,25 +24,31 @@
 </head>
 
 <body>
-    <div class="container">
-        <main class="content">
-            <img class="background" src="./images/forest_edge.jpg">
-            </img>
+    <div id="game">
+        <div class="container">
+            <main class="content">
+                <img class="background" src="./images/forest_edge.jpg">
+                </img>
 
-            <a class="hotspot inspect" href="../monastery.html" style="left: 43%; top: 70%; width: 22%; height: 18%;">
-                <img src="./images/smallchurch.png">
-            </a>
+                <a class="hotspot inspect" href="../monastery.html"
+                    style="left: 43%; top: 70%; width: 22%; height: 18%;">
+                    <img src="./images/smallchurch.png">
+                </a>
 
-            <a class="hotspot inspect" href="16hyperform.html" style="left: 47%; top: 19%; width: 34%; height: 20%;">
-            </a>
+                <a class="hotspot inspect" href="16hyperform.html"
+                    style="left: 47%; top: 19%; width: 34%; height: 20%;">
+                </a>
 
-            <section id="frames" class="Frames">
-                <draggable-frame id="test" x=20 y=20 width=15 height=15>
-                    <a class="move" style="font-size: 2vw; text-decoration: none; opacity: 0.5" href="./2.html">
-                        🔙
-                    </a>
-                </draggable-frame>
-            </section>
-        </main>
+                <section id="frames" class="Frames">
+                    <draggable-frame id="test" x=20 y=20 width=15 height=15>
+                        <a class="move" style="font-size: 2vw; text-decoration: none; opacity: 0.5" href="./2.html">
+                            🔙
+                        </a>
+                    </draggable-frame>
+                </section>
+            </main>
+        </div>
     </div>
+
+    <div id="inventory" class="Inventory"></div>
 </body>

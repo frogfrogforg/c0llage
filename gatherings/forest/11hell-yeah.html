@@ -1,16 +1,17 @@
 <head>
+    <meta name="turbo-cache-control" content="no-cache">
     <link rel="stylesheet" href="common.css">
-    <script src="common.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
+    <script type="module" src="forest.js"></script>
     <script type="module">
         import "../shared/draggable-frame.js"
-        
-        window.DirtTalk  = function(){
-            if(Math.random() < .5){
+
+        window.DirtTalk = function () {
+            if (Math.random() < .5) {
                 Frames.show('rude')
-            }else{
+            } else {
                 Frames.show('bully2')
-            }  
+            }
         }
     </script>
     <style>
@@ -22,26 +23,31 @@
 </head>
 
 <body>
-    <div class="container">
-        <main class="content">
-            <img class="background" src="./images/DirtBully.png"></img>
-            <a class="hotspot centered talk" href="#" onclick="DirtTalk()""
-                style="left: 67.888%; top: 69.666%; width: 25%; height: 43%"></a>
-            <a class="hotspot centered move" href="./6messy_server_screen.html"
-                style="left: 67.549%; top: 42.955%; width: 19.920%; height: 18.383%;"></a>
-            <section id="frames" class="Frames">
-                <draggable-frame id="test">
-                    <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="./5person_on_computer.html">
-                        🔙
-                    </a>
-                </draggable-frame>
-                <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-                    <span> u r nerd </span>
-                </draggable-frame>
-                <draggable-frame hidden id="bully2" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-                    <span> u r nerder </span>
-                </draggable-frame>
-            </section>
-        </main>
+    <div id="game">
+        <div class="container">
+            <main class="content">
+                <img class="background" src="./images/DirtBully.png"></img>
+                <a class="hotspot centered talk" href="#" onclick="DirtTalk()""
+                style=" left: 67.888%; top: 69.666%; width: 25%; height: 43%"></a>
+                <a class="hotspot centered move" href="./6messy_server_screen.html"
+                    style="left: 67.549%; top: 42.955%; width: 19.920%; height: 18.383%;"></a>
+                <section id="frames" class="Frames">
+                    <draggable-frame id="test">
+                        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5"
+                            href="./5person_on_computer.html">
+                            🔙
+                        </a>
+                    </draggable-frame>
+                    <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
+                        <span> u r nerd </span>
+                    </draggable-frame>
+                    <draggable-frame hidden id="bully2" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
+                        <span> u r nerder </span>
+                    </draggable-frame>
+                </section>
+            </main>
+        </div>
     </div>
+
+    <div id="inventory" class="Inventory"></div>
 </body>
