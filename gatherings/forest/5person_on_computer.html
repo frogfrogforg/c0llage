@@ -78,7 +78,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div id="game" class="container">
         <main id="main" class="content">
             <img id="background" class="background" src="./images/person_on_computer.png"></img>
 
@@ -96,7 +96,7 @@
                             computer</a></span>
                 </draggable-frame>
 
-                <draggable-frame id="the-computer" hidden x=60 y=28 width=25 height=35>
+                <draggable-frame id="the-computer" hidden permanent x=60 y=28 width=25 height=35>
                     <d-iframe src="https://archive.org/embed/NicholasFedorovTHECOMPUTEROfficialVideo&autoplay=1"
                         width="640" height="480" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true"
                         allowfullscreen></d-iframe>
@@ -113,5 +113,5 @@
         </main>
     </div>
 
-    <div id="inventory" class="Inventory" data-turbo-permanent></div>
+    <div id="inventory" class="Inventory"></div>
 </body>

@@ -14,20 +14,27 @@ function main() {
   // TODO: maybe these should get shimmed onto another global similar to `d`, but `f` for forest.
   mInventory = initInventory()
 
+  // capture frame to replace
+  const game = document.getElementById("game")
+
   // bind events
-  document.addEventListener("turbo:load", () => {
-    onStateChanged()
-    document.addEventListener('readystatechange', onStateChanged)
+  document.addEventListener("turbo:before-render", (evt) => {
+    evt.preventDefault()
+
+    // get the game element to replace
+    const nextBody = evt.detail.newBody
+    const nextGame = nextBody.querySelector("#game")
+
+    game.innerHTML = nextGame.innerHTML
   })
+
+  onStateChanged()
 }
 
 function onStateChanged() {
   const s = document.readyState
-
   // Run a couple quick hacks at the earliest callback possible (during dom parsing i think?)
-  if (s === "interactive") {
-    randomizeLinks();
-  }
+  randomizeLinks()
 }
 
 // Add random query string to links and iframe src to allow arbitrary recursion
