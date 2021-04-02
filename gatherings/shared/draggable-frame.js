@@ -330,6 +330,7 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 
   bringToTop() {
+    if(!this.visible) return
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
