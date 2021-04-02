@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | guttersour</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+  <style>
+    .loadingBar {
+      position: relative;
+      transform-origin: 50% 50%;
+      /* //translate: ; */
+      top: 50%;
+      left: 50%;
+      width: 200;
+      height: 50px;
+      border: aqua;
+    }
+
+    .error {
+      position: absolute;
+      display: none;
+      color: red;
+      text-align: center;
+      top: 120%;
+      left: 50%;
+      font-family: monospace;
+      font-size: medium;
+      font-weight: bolder;
+      width: 100%;
+      transform: translate(-50%, -50%)
+    }
+
+    @animate {}
+  </style>
+</head>
+
+<body>
+  <div id="unity-container" class="unity-desktop">
+    <canvas id="unity-canvas">
+    </canvas>
+    <!-- <img width=960 height=600 src="./title.png"> -->
+    <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
+      </div>
+      <div class='error' id='error'>
+        error!
+        <br>
+        did you read
+        <br>
+        the description???
+        <br>
+      </div>
+    </div>
+    <div id="unity-footer">
+      <div id="unity-webgl-logo"></div>
+      <div id="unity-fullscreen-button"></div>
+      <div id="unity-build-title">cosmodrome v0.2.4</div>
+    </div>
+  </div>
+  <script>
+
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      container.className = "unity-mobile";
+      config.devicePixelRatio = 1;
+    } else {
+      canvas.style.width = "960px";
+      canvas.style.height = "600px";
+    }
+    loadingBar.style.display = "block";
+
+    var script = document.createElement("script");
+    //script.src = loaderUrl;
+    //script.onload = () => {
+    //createUnityInstance(canvas, config, (progress) => {
+    //}).then((unityInstance) => {
+    //loadingBar.style.display = "none";
+    //fullscreenButton.onclick = () => {
+    //unityInstance.SetFullscreen(1);
+    //};
+    //}).catch((message) => {
+    //alert(message);
+    //});
+    //};
+    //document.body.appendChild(script);
+
+
+    progress = 0;
+    totalTime = 1000;
+    time = 0
+    function tween(t, pow) {
+      if ((t *= 2) < 1) return 0.5 * Math.pow(t, pow);
+      return 1 - 0.5 * Math.abs(Math.pow(2 - t, pow));
+    }
+
+
+    gotError = false
+    function Animate() {
+      time++
+      progress = Math.min(.8, tween(time / totalTime, 4));
+      if (progress >= .8 && !gotError) {
+        gotError = true
+        document.getElementById('error').style.display = 'block'
+      } else {
+        progressBarFull.style.width = 100 * progress + "%";
+        window.requestAnimationFrame(Animate);
+      }
+    }
+    Animate()
+  </script>
+</body>
+
+</html>
