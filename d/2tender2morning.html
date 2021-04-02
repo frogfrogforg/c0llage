@@ -101,10 +101,10 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
 	<!-- UUID://520538D4-4981-462D-A9BF-6870ABDAF178// --><tw-storydata name="tender morning" startnode="2" creator="Tweego" creator-version="2.1.1+81d1d71" ifid="520538D4-4981-462D-A9BF-6870ABDAF178" zoom="1" format="SugarCube" format-version="2.30.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">body{
-	background-color:black;
+	background-color:#EFEFEF;
 	color:black;
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-	margin:-30px;
+	margin:-40px;
 }
 
 
@@ -113,12 +113,10 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 
 .passage {
 	background-color: #EFEFEF;
-	width: 80vmin;
-	height: 69vmin;
-	max-width: 100vmin;
-	min-width: 90vmin;
+	height: 90vmin;
+	min-width:90vw;
 	padding: 3vmin;
-	font-size: 3vmin;
+	font-size: 6vmin;
 	position: absolute;
 	transition-duration: 0s;
 	overflow: hidden;
@@ -152,13 +150,13 @@ button {
 	color: black;
 	background-color: gainsboro;
 	min-width: 10%;
-	height: 40%;
+	height: 10vmin;
 	margin: 1%;
 	border: 1px solid black;
 	border-radius: 4px / 4px;
 	box-shadow: inset 2px 2px 3px white, inset -1px -1px 1px #404346;
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-	font-size: 3vmin;
+	font-size: 4vmin;
 	padding: .5vh 2.8vh .5vh 2.8vh;
 	cursor: pointer;
 	transition-duration: 0s;
@@ -181,21 +179,9 @@ button:disabled {
 	cursor: no-drop;
 }
 
-.no-click button {
-	/* width: 100%;
-	height: 90%; */
-	background-color: #aaaaaa;
-	box-shadow: none;
-	cursor: no-drop;
-	/* padding: 1.5vh 3vh 1.5vh 3vh;
-	margin:1%;
-	margin-left:-1.4%; */
-	
-}
-
 .nav {
 	background-color: transparent;
-	width: 55%;
+	width: 71%;
 	bottom: 4%;
 	display: flex;
 	justify-content: right;
@@ -204,7 +190,7 @@ button:disabled {
 	position: absolute;
 	text-align: justify;
 	height: 23%;
-	margin-left: 40%;
+	margin-left: 23vw;
 }
 
 .break {
@@ -675,7 +661,7 @@ config.history.controls = true;</script><tw-passagedata pid="1" name="Start" tag
 
 
 &lt;!-- helpful:) --&gt;</tw-passagedata><tw-passagedata pid="42" name="lastloc" tags="" position="225,600" size="100,100">&lt;&lt;nobr&gt;&gt;
-		&lt;div style=&quot;width:25%;position:absolute;left:3%;bottom:10%;&quot;&gt;
+		&lt;div style=&quot;width:25%;position:absolute;left:3%;bottom:1vmin;&quot;&gt;
 		&lt;&lt;if $lastlocation &gt; 0 &gt;&gt; 
 			Last location: &lt;br&gt;
 			$lastlocation

@@ -1,0 +1,177 @@
+<head>
+    <script src="common.js"></script>
+    <link rel="stylesheet" href="../shared/frames.css">
+    <style>
+        body {
+            position: relative;
+            background-color: blue;
+            overflow: hidden;
+        }
+
+        .icons {
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 2%;
+            left: 3%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .icon {
+            cursor: pointer;
+            width: 10%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 5% 5% 0;
+            padding: 0.5% 1% 0.3% 1%;
+            font-family: monospace;
+            font-size: 3vw;
+            border: 0.05em rgba(0, 0, 0, 0) solid;
+        }
+
+        .icon:hover {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-hidden {
+            display: none;
+        }
+
+        .icon-opened {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-opened img {
+            filter: invert(1);
+        }
+
+        .icon img {
+            image-rendering: pixelated;
+            width: 90%;
+            /* width: 2%; */
+            /* height: 2%; */
+        }
+
+        .icon-text {
+            color: white;
+            margin-top: 8%;
+        }
+
+        iframe {
+            border: 0;
+            --scaleFactor: 0.6;
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor)) !important;
+            height: calc(100%/var(--scaleFactor)) !important;
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left
+        }
+
+    </style>
+</head>
+
+<body style="width:100%; height:100%">
+    <section id="frames" class="Frames">
+        <draggable-frame temperament='phlegmatic' id="tender-frame" hidden>
+            <d-iframe style="--scaleFactor: 1.0;" id="tender" src="../../d/2tender2morning.html"></d-iframe>
+        </draggable-frame>
+
+    </section>
+
+    <div id=" icons" class="icons">
+        <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
+
+        <pc-icon target="tender-frame" name='hello' src="./images/icons/alidator.png"></pc-icon>
+
+
+    </div>
+
+    <!-- claribelle is unhidden when she escapes from alidator -->
+    <img id="claribelle" src="./images/Claribelle.png" hidden></img>
+
+    <script type="module" src="../shared/d-iframe.js"></script>
+    <script type="module" src="../shared/draggable-frame.js"></script>
+    <script type="module">
+        import "../../global.js"
+
+        const tagName = 'pc-icon'
+        const iconTemplate = `
+        <div id="$id" class="icon">
+            <img src="$src"></img>
+            <div class='icon-text'>$name</div>
+        </div>
+        `
+
+        function openFrame(targetFrame, icon) {
+            targetFrame.show()
+        }
+
+        function closeFrame(targetFrame, icon) {
+            targetFrame.hide()
+        }
+
+        function initializeIcons() {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
+                const id = `${target}-icon`
+                element.outerHTML = iconTemplate
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+                    .replaceAll('$name', name)
+
+                const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i)
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+                    console.log('adding listener to', condition, d.State[condition])
+
+                    d.ListenState(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        console.log("AAAAAA", passesAllConditions)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
+
+                ['hide-frame', 'show-frame'].forEach((eventName) => {
+                    targetFrame.addEventListener(eventName, (e) => {
+                        console.log(eventName)
+                        icon.classList.toggle('icon-opened', targetFrame.visible)
+                    })
+                })
+
+                icon.onclick = () => {
+                    targetFrame.toggle();
+                }
+            }
+        }
+
+
+        function main() {
+            initializeIcons()
+        }
+
+        main()
+
+
+    </script>
+</body>
