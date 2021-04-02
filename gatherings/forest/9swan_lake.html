@@ -1,7 +1,8 @@
 <head>
+    <meta name="turbo-cache-control" content="no-cache">
     <link rel="stylesheet" href="common.css">
-    <script src="common.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
+    <script type="module" src="forest.js"></script>>
     <script type="module" src="../shared/draggable-frame.js"></script>
     <script type="module">
         let swanOpen = false
@@ -71,15 +72,17 @@
 
 <body>
     <div class="container">
-        <main class="content" >
+        <main class="content">
             <div style="overflow: hidden; width: 100%; height: 100%; position: absolute; top:0; left: 0;">
 
-            <iframe id="swanvideo" src="about:blank" style="position: absolute; width: 100%; height: 100%; top:25%; left:0; z-index: -1; overflow: hidden;"></iframe>
+                <iframe id="swanvideo" src="about:blank"
+                    style="position: absolute; width: 100%; height: 100%; top:25%; left:0; z-index: -1; overflow: hidden;"></iframe>
 
             </div>
             <img class="background" src="./images/swan_lake.png"></img>
 
-            <draggable-frame hidden temperament="sanguine" id="pwnd" x=15 y=25 width=30 height=25 bodyClass="transparentframe">
+            <draggable-frame hidden temperament="sanguine" id="pwnd" x=15 y=25 width=30 height=25
+                bodyClass="transparentframe">
                 <div class="speechbubble">
                     <span>
                         u just got <a target="_blank" href='https://duckduckgo.com/?q="pwn`ed"'>
@@ -96,4 +99,6 @@
 
         </main>
     </div>
+
+    <div id="inventory" class="Inventory"></div>
 </body>

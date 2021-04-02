@@ -2,43 +2,46 @@
     <style>
         /* Hide scrollbar for Chrome, Safari and Opera */
         body::-webkit-scrollbar {
-          display: none;
+            display: none;
         }
 
         /* Hide scrollbar for IE, Edge and Firefox */
         body {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        iframe{
-            overflow:hidden;
-        }
-
-        body {
-          background-color: blue;
-          margin: 0px;
-          zoom: 2; /*might not work in FF ?*/
-        }
-
-        #monastery {
-            position:absolute;
-            width:1024px; /* original size */
-            z-index: 100;
-            pointer-events:none;
-        }
-
-        .frame {
-            position:absolute;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         iframe {
-            border:0;
-            --scaleFactor: 0.6; /*scale iframe content by this factor (probably breaks on older browsers)*/
-            width:calc(100%/var(--scaleFactor));
-            height:calc(100%/var(--scaleFactor));
-            transform:scale(var(--scaleFactor));
-            transform-origin:top left
+            overflow: hidden;
+        }
+
+        body {
+            background-color: blue;
+            margin: 0px;
+            transform: scale(2);
+            transform-origin: top left
+        }
+
+        #monastery {
+            position: absolute;
+            width: 1024px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .monastery-window {
+            position: absolute;
+            z-index: -1;
+        }
+
+        .monastery-window iframe {
+            border: 0;
+            --scaleFactor: 0.6;
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor));
+            height: calc(100%/var(--scaleFactor));
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left;
         }
     </style>
 </head>
@@ -47,37 +50,23 @@
     <img id=monastery src="./gureli.png">
     </img>
 
-    <div
-        class=frame
-        style="left:413px; top:532px; width:85px; height:69px;">
-        <iframe
-            src="../d/tender morning.html"
-            title="tender morning">
+    <div class=monastery-window style="left:413px; top:532px; width:85px; height:69px;">
+        <iframe style="--scaleFactor: 0.5;" src="../d/tender morning.html" title="tender morning">
         </iframe>
     </div>
 
-    <div class=frame
-         style="left:660px; top:492px; width:56px; height:60px; transform:skew(-4deg, 15deg)">
-        <iframe
-            src="../mut/salada-gratuita.html"
-            title="Salada Gratuita">    
+    <div class=monastery-window style="left:660px; top:492px; width:56px; height:60px; transform:skew(-4deg, 15deg)">
+        <iframe src="../mut/salada-gratuita.html" title="Salada Gratuita">
         </iframe>
     </div>
 
-    <div class=frame
-         style="left:357px; top:363px; width:92px; height:70px;">
-        <iframe
-            style="--scaleFactor: 0.3;"
-            src="../games/guttersour/WEB/index.html"
-            title="guttersour">  
+    <div class=monastery-window style="left:357px; top:363px; width:92px; height:70px;">
+        <iframe style="--scaleFactor: 0.3;" src="../games/guttersour/WEB/index.html" title="guttersour">
         </iframe>
     </div>
 
-    <div class=frame
-         style="left:195px; top:407px; width:46px; height:59px;">
-        <iframe
-            src="../Jen/jenGame2.html"
-            title="jen game 2">  
+    <div class=monastery-window style="left:195px; top:407px; width:46px; height:59px;">
+        <iframe src="../Jen/jenGame2.html" title="jen game 2">
         </iframe>
     </div>
 </body>
