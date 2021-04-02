@@ -1,0 +1,40 @@
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      left: 50%;
+      text-align: center;
+      background: red;
+      color: black;
+    }
+
+    #title {
+        width:100%;
+        /*transform: translate(-50%, -50%);*/
+        transform-origin: center;
+        animation: charisma 1s infinite;
+        animation-timing-function: linear;
+        font-size: 30;
+    }
+
+    @keyframes charisma{
+        50%         {transform: translate(0%, 30%);}
+        100%        {}
+    }
+  </style>
+</head>
+
+<body>
+  <br><br>
+  <div id="title">
+    404 Not Found
+  </div>
+  <br><br><br>
+  <div>
+    Please contact the <a href="/gatherings/forest/16hyperform.html">webhost</a> for more information.
+  </div>
+</body>
+
