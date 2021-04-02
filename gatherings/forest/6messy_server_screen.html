@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div id="game" class="container">
         <main class="content">
             <img class="background" src="./images/messyserver.jpg" usemap="#image-map">
 
@@ -29,7 +29,8 @@
 
 
             <a class="hotspot centered inspect" href="#" onclick="Frames.toggle('keyboard')"
-                style="left: 45.5%; top: 68.5%; width: 15%; height: 6%;">
+                style="left: 45.5%; top: 68.5%; width: 15%; height: 6%;"
+                data-turbo="false">
             </a>
 
             <a class="hotspot centered move" href="./7messy_server_zoom.html"
@@ -50,5 +51,5 @@
         </main>
     </div>
 
-    <div id="inventory" class="Inventory" data-turbo-permanent></div>
+    <div id="inventory" class="Inventory"></div>
 </body>
