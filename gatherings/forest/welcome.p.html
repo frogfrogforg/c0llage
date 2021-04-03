@@ -1,0 +1,59 @@
+<style>
+    .welcome {
+        width: 100%;
+        color: #B9C2BB;
+        position: absolute;
+        top: 52%;
+        left: -16%;
+        font-size: 4.20vmin;
+        font-family: "ＭＳ Ｐゴシック", sans-serif;
+        text-rendering: optimizeSpeed;
+        transform-origin: center;
+        transform: perspective(750px) rotate(3deg) rotateY(-20deg) skew(3deg);
+        text-align: right;
+    }
+
+    a {
+        color: #2e26c7;
+    }
+</style>
+
+<img class="background" src="./images/landing.gif"></img>
+
+<div class="welcome"><a href="./1.html">this</a> is supposed to be fun<br>— the parks staff</div>
+
+<a id="stop" class="hotspot centered" href="#"
+    style="left: 29.188%; top: 24.996%; width: 11%; height: 12%"
+    data-turbo="false"></a>
+
+<a class="hotspot centered"
+    href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &"
+    style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
+
+<draggable-frame temperament='phlegmatic' id='version' focused x=70 y=5 width=35 height=35>
+    <iframe src='../../misc/version.html'></iframe>
+</draggable-frame>
+
+<script>
+    window.onload = () => {
+        if (window.localStorage.getItem('lastVisitCommit')) {
+            console.log('aaa')
+            Frames.show('version')
+        } else {
+            console.log('bbbb')
+        }
+    }
+
+    document.getElementById("stop").addEventListener("click", (evt) => {
+        document.body.remove()
+        document.querySelector("title").innerHTML = "goodbye"
+
+        setTimeout(() => {
+            let f = 0
+            while(true) {
+                console.log(".".repeat(f + 1))
+                f = (f + 1) % 3
+            }
+        }, 100)
+    })
+</script>

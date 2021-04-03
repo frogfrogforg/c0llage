@@ -1,7 +1,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta charset="UTF-8">
-  <title>a de/collage?</title>
+
+  <!-- caching -->
+  <meta name="turbo-cache-control" content="no-cache">
+
+  <!-- title -->
+  <title>welcome</title>
+
+  <!-- scrapers -->
   <meta property="og:title" content="c0llage">
   <meta property="og:type" content="FROGCUBE">
   <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
@@ -11,7 +19,24 @@ in Washington to change Forg time.
 First words said was that only 1 day
 could be used on Forg to not change
 the 1 day marshmallow">
+
+  <!-- styling -->
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="../shared/frames.css">
+
+  <!-- scripts -->
+  <script type="module" src="forest.js"></script>
+  <script type="module" src="draggable-frame.js"></script>
 </head>
 
-{{content}}
+<body>
+  <div id="game">
+    <div class="container">
+      <main class="content">
+        {{content}}
+      </main>
+    </div>
+  </div>
+</body>
+
 </html>
