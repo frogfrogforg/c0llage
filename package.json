@@ -1,0 +1,12 @@
+{
+  "name": "little-forest-website",
+  "version": "0.69.420",
+  "description": "no",
+  "main": "index.html",
+  "repository": "git@github.com:frogfrogforg/c0llage.git",
+  "author": "ghost <ghost>",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^11.3.2"
+  }
+}

@@ -1,3 +1,4 @@
 #!/bin/sh
 
-node ./build/build.mjs
+DEV=1 node ./build/build.mjs
+

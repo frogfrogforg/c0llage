@@ -13,6 +13,7 @@ const log = console
 const Paths = {
   Proj: "./",
   Dist: "./dist",
+  Curr: process.cwd(),
   Build: {
     Ignore: "./build/build.ignore",
     Layout: "./build/layout.t.html",
@@ -24,14 +25,14 @@ const Paths = {
 
 // -- props --
 let mIgnored = []
+let mTemplate = null
 
 // -- main --
 async function main() {
   const commands = [
     { name: "init", action: init },
     { name: "clean", action: clean },
-    { name: "copy", action: copy },
-    // { name: "compile", action: compile },
+    { name: "build", action: build },
   ]
 
   for (const cmd of commands) {
@@ -42,81 +43,69 @@ async function main() {
 
 // -- commands --
 async function init() {
-  const raw = []
-
-  // add paths ignored by git
-  const git = await exec("git status --ignored --porcelain=1")
-
-  // only add ignored status items ("!! ...")
-  for (const path of git.stdout.split("\n")) {
-    if (path.startsWith("!!")) {
-      raw.push(path.slice(3))
-    }
-  }
-
-  // add paths from the build ignore file
-  const build = await read(Paths.Build.Ignore)
-
-  for (const path of build.split("\n")) {
-    raw.push(path)
-  }
-
-  // clean and filter paths
-  const cleaned = []
-
-  for (let path of raw) {
-    if (path.endsWith("/")) {
-      path = path.slice(0, -1)
-    }
-
-    if (path.length === 0) {
-      continue
-    }
-
-    cleaned.push(path)
-  }
-
-  // assign prop
-  mIgnored = cleaned
+  // store props
+  mIgnored = await decodeIgnored()
+  mTemplate = await decodeTemplate()
 }
 
 async function clean() {
+  // destroy dist directory
   await fs.rm(Paths.Dist, {
     force: true,
     recursive: true
   })
 }
 
-async function copy() {
+async function build() {
+  // remake dist dir
   await fs.mkdir(Paths.Dist)
 
-  // filter excluded paths
+  // filter ignored paths during traversal
   function filter(_child, entry) {
     return !mIgnored.includes(entry)
   }
 
-  // traverse directory
+  // traverse proj dir
   for await (const [child, entry] of traverse(Paths.Proj, filter)) {
-    const dst = path.join(Paths.Dist, entry)
-
-    if (child.isDirectory()) {
-      await fs.mkdir(dst)
-    } else {
-      await fs.symlink(path.join(Paths.Proj, entry), dst)
-    }
+    await buildOne(child, entry)
   }
 }
 
-async function compile() {
-  const template = await initTemplate(Paths.Template)
+async function buildOne(child, entry) {
+  // 🎵 make ev'ry nested dir 🎵
+  if (child.isDirectory()) {
+    await fs.mkdir(path.join(Paths.Dist, entry))
+  }
+  // 🎵 compile ev'ry template 🎵
+  else if (entry.endsWith(Paths.Ext.Partial)) {
+    await compile(entry)
+  }
+  // 🎵 copy ev'ry other file 🎵
+  else {
+    await copy(entry)
+  }
+  // 🎵 'til you find your dream 🎵
+}
 
-  for await (const entry of find(Paths.Proj, Paths.Ext.Partial)) {
-    log.debug(`- ${entry}`)
+async function compile(entry) {
+  const src = path.join(Paths.Proj, entry)
+  const dst = path.join(Paths.Dist, entry.replace(Paths.Ext.Partial, ".html"))
 
-    const partial = await read(entry)
-    const compiled = template.interpolate(partial)
+  const partial = await read(src)
+  const compiled = mTemplate.interpolate(partial)
 
-    log.debug(`${compiled}\n`)
+  await fs.writeFile(dst, compiled)
+}
+
+async function copy(entry) {
+  // use absolute path for symlinks
+  const src = path.join(Paths.Curr, entry)
+  const dst = path.join(Paths.Dist, entry)
+
+  if (process.env.DEV) {
+    await fs.symlink(src, dst)
+  } else {
+    await fs.copyFile(src, dst)
   }
 }
 
@@ -128,11 +117,52 @@ function instrument(name, fn) {
   }
 }
 
-// -- template --
-const tag = /<\/?html[^\>]*>\n?/g
+// -- queries --
+async function decodeIgnored() {
+  const raw = []
 
-async function initTemplate(path) {
-  const text = await read(path)
+  // decode git paths
+  const git = await exec("git status --ignored --porcelain=1")
+
+  // status returns a bunch of paths; ignored ones have the prefix "!! "
+  for (const path of git.stdout.split("\n")) {
+    if (path.startsWith("!!")) {
+      raw.push(path.slice(3))
+    }
+  }
+
+  // decode build tool paths
+  const build = await read(Paths.Build.Ignore)
+
+  for (const path of build.split("\n")) {
+    raw.push(path)
+  }
+
+  // sanitize paths
+  const paths = []
+
+  for (let path of raw) {
+    if (path.endsWith("/")) {
+      path = path.slice(0, -1)
+    }
+
+    if (path.length === 0) {
+      continue
+    }
+
+    paths.push(path)
+  }
+
+  return paths
+}
+
+function getSrc(p) {
+  return path.join()
+}
+
+// -- template --
+async function decodeTemplate() {
+  const text = await read(Paths.Build.Layout)
 
   const [
     prefix,
@@ -141,8 +171,7 @@ async function initTemplate(path) {
 
   return {
     interpolate(html) {
-      const sanitized = html.replace(tag, "")
-      const parts = [prefix, sanitized, suffix]
+      const parts = [prefix, html, suffix]
       return parts.join("")
     },
   }
@@ -175,7 +204,7 @@ async function* traverse(dir, filter) {
 
     // recurse into nested directories
     if (child.isDirectory()) {
-      yield* traverse(entry)
+      yield* traverse(entry, filter)
     }
   }
 }
