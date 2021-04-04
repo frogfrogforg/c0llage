@@ -36,6 +36,7 @@ Attributes
 - `focused `: if you want the frame to show up focused on page load (focused frames should always come last in the html document, so they don't get overwritten by another one (TODO: fix this))
 - `hidden`: makes the frame start up hidden
 - `noClose`: makes it so that the frame doesn't have a close button
+- `persistent` or `permanent`: makes the frame persist within the current window
 
 Methods
 -------

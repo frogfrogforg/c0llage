@@ -1,3 +1,8 @@
+:root {
+  --frame-header-height-param: 0.69vmin;
+  --frame-padding: 0.8vmin;
+}
+
 draggable-frame {
   display: none;
 }
@@ -57,7 +62,7 @@ d-iframe iframe {
   background-color: rbga(0, 0, 0, 0.4);
   position: absolute;
   left: 50%;
-  top: 69px;
+  top: 6.9vmin;
   height: 420px;
   width: 420px;
   pointer-events: all;
@@ -77,22 +82,47 @@ d-iframe iframe {
 }
 
 .Frame-header {
+  margin: calc(var(--frame-header-height-param) * 0.2);
+  margin-bottom: calc(var(--frame-header-height-param) * 0.5);
   background-color: #dadada;
-  min-height: 15px;
+  min-height: calc(var(--frame-header-height-param) * 1.0);
   user-select: none;
   display: flex;
+  align-items: center;
   position: relative;
-  border: 2px solid #dadada;
+  border: calc(var(--frame-header-height-param) * 0.1) solid #dadada;
   overflow: hidden;
   z-index: 1;
+}
+
+.Frame-Dragging .Frame-header-blank{
+  cursor: grabbing;
 }
 
 .Frame-header-blank {
   flex-grow: 1;
   background-image: url("../shared/img/window-head.gif");
   background-repeat: repeat-x;
-  margin-left: 2px;
+  /* background-size: cover; */
+  margin-left: calc(var(--frame-header-height-param) * 0.2);
   cursor: grab;
+  height: 100%;
+}
+
+.Frame-header-back {
+  font-weight: bolder;
+}
+
+.Frame-header-maximize {
+  box-sizing: border-box;
+  width:calc(var(--frame-header-height-param) * 2.1);
+  height:calc(var(--frame-header-height-param) * 2.1);
+  border: calc(var(--frame-header-height-param) * 0.20) solid black;
+}
+
+.Frame-header-temperament {
+  font-size: calc(var(--frame-header-height-param) * 1.8);
+  
 }
 
 .frame-header-image {
@@ -102,33 +132,35 @@ d-iframe iframe {
 }
 
 .Frame-header-button {
-  height: 15px;
-  width: 15px;
-  font-size: 12px;
-  padding-right: 2px;
+  /* height: 1.2vmin; */
+  /* width: 1.2vmin; */
+  font-size: calc(var(--frame-header-height-param) * 1.9);
+  margin-left: calc(var(--frame-header-height-param) * 0.45);
   text-align: center;
 }
 
 .Frame-close-button {
   position: relative;
-  width: 14px;
-  height: 14px;
-  margin-top:1px;
-  margin-left:1px;
+  width: calc(var(--frame-header-height-param) * 2.1);
+  height: calc(var(--frame-header-height-param) * 2.1);
+  /* margin-top: 0.1vmin; */
+  /* margin-left: var(--frame-padding); */
   background-image: url("./img/window-close.gif");
   background-repeat: no-repeat;
   background-size: contain;
 }
 
 .Frame-header-button:hover {
-  background-color: darkgray;
+  background-color: magenta;
+  cursor:pointer;
 }
 
 .Frame-body {
   box-sizing: border-box;
   transform-origin: top left;
   flex: 1;
-  padding: 4px;
+  padding: var(--frame-padding);
+  padding-top: 0;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -150,15 +182,20 @@ d-iframe iframe {
 
 .Frame-handle {
   position: absolute;
-  width: 15px;
-  height: 15px;
-  right: 0;
-  bottom: 0;
-  padding-right: 4px;
-  padding-bottom: 4px;
+  width: 2.0vmin;
+  height: 2.0vmin;
+  right: 0.64vmin;
+  bottom: 0.64vmin;
+  /* padding-right: 0.65vmin; */
+  /* padding-bottom: 0.6vmin; */
   background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
+  background-size: cover;
   cursor: grab;
+}
+
+.Frame-Scaling .Frame-handle{
+  cursor: grabbing;
 }
 
 .choleric .Frame-handle{
