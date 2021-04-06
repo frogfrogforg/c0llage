@@ -12,9 +12,6 @@ const chokidar = await importDev("chokidar")
 // make exec return a promise
 const exec = promisify(cexec)
 
-// -- aliases --
-const log = console
-
 // -- constants --
 const Paths = {
   Proj: "./",
@@ -29,6 +26,12 @@ const Paths = {
   },
 }
 
+const LogLevel = {
+  Info: 1,
+  Debug: 2,
+}
+
+const kLogLevel = LogLevel.Info
 const kPort = 9999
 const kBodyTagPattern = /<\/?body>/g
 
@@ -278,10 +281,18 @@ async function decodeTemplate() {
 }
 
 // -- helpers --
-function wait(timeout) {
-  return new Promise((res, _) => {
-    setTimeout(res, timeout)
-  })
+const log = {
+  info(...messages) {
+    this.write(LogLevel.Info, messages)
+  },
+  debug(...messages) {
+    this.write(LogLevel.Debug, messages)
+  },
+  write(level, messages) {
+    if (level <= kLogLevel) {
+      console.log(...messages)
+    }
+  },
 }
 
 async function read(path) {
