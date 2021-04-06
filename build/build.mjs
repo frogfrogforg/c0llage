@@ -170,7 +170,7 @@ async function compile(entry) {
 
   const partial = await read(src)
   const cleaned = partial.replaceAll(kBodyTagPattern, "")
-  const compiled = mTemplate.interpolate(partial)
+  const compiled = mTemplate.interpolate(cleaned)
 
   await fs.writeFile(dst, compiled)
 }
