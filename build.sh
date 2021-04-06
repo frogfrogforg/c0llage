@@ -1,3 +1,3 @@
 #!/bin/sh
 
-DEV=1 node ./build/build.mjs "$*"
+node ./build/build.mjs "$*"
