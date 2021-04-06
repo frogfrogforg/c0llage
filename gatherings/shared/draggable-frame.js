@@ -28,12 +28,10 @@ function staticize(...names) {
 const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
-      <div class="Frame-header-button Frame-close-button" id="$id-close">
-
-      </div>
-      <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
-      <div class="Frame-header-button Frame-back-button"> ☚ </div>
-      <div class="Frame-header-button" id="$id-feelings"> ? </div>
+      <div class="Frame-close-button Frame-header-button" id="$id-close"></div>
+      <div class="Frame-header-maximize Frame-header-button" id="$id-max"></div>
+      <div class="Frame-header-back Frame-header-button"> ☚ </div>
+      <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
       </div>
     </div>
@@ -195,7 +193,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // back button
-    const backButton = this.querySelector(`.Frame-back-button`)
+    const backButton = this.querySelector(`.Frame-header-back`)
 
     if (iframe != null) {
       // back button only exists for iframes
