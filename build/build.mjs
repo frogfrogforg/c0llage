@@ -32,14 +32,13 @@ const LogLevel = {
   Debug: 2,
 }
 
-const kLogLevel = LogLevel.Debug
+const kLogLevel = LogLevel.Info
 const kPort = 9999
 const kBodyTagPattern = /<\/?body>/g
 
 // -- props --
 let mIgnored = []
 let mTemplate = null
-let mIsServer = false
 
 // -- main --
 async function main() {
@@ -47,8 +46,8 @@ async function main() {
     { name: "init", action: init },
     { name: "clean", action: clean },
     { name: "build", action: build },
-    { name: "watch", action: watch, when: () => mIsServer },
-    { name: "serve", action: serve, when: () => mIsServer },
+    { name: "watch", action: watch, when: isServer },
+    { name: "serve", action: serve, when: isServer },
   ]
 
   for (const cmd of commands) {
@@ -59,10 +58,6 @@ async function main() {
 
 // -- commands --
 async function init() {
-  // parse args
-  const args = process.argv.slice(2)
-  mIsServer = args.includes("--serve")
-
   // decode config
   mIgnored = await decodeIgnored()
   mTemplate = await decodeTemplate()
@@ -107,7 +102,7 @@ async function watch() {
   })
 
   watcher.on("addDir", (entry) => {
-    transfer(entry)
+    transfer(entry, true)
   })
 
   watcher.on("change", (entry) => {
@@ -188,7 +183,9 @@ async function copy(entry) {
   const src = path.join(Paths.Curr, entry)
   const dst = path.join(Paths.Dist, entry)
 
-  if (isDev()) {
+  if (isProd()) {
+    await fs.copyFile(src, dst)
+  } else {
     // check if symlink exists
     try {
       await fs.stat(dst)
@@ -197,8 +194,6 @@ async function copy(entry) {
     catch {
       await fs.symlink(src, dst)
     }
-  } else {
-    await fs.copyFile(src, dst)
   }
 }
 
@@ -214,8 +209,12 @@ function run(cmd) {
 }
 
 // -- queries --
-function isDev() {
-  return !!process.env.DEV
+function isProd() {
+  return process.env.PROD
+}
+
+function isServer() {
+  return process.argv.includes("--serve")
 }
 
 function isIgnored(path) {
@@ -223,11 +222,11 @@ function isIgnored(path) {
 }
 
 async function importDev(path) {
-  if (isDev()) {
-    return await import(path)
+  if (isProd()) {
+    return null
   }
 
-  return null
+  return await import(path)
 }
 
 // -- config --
