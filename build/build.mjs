@@ -2,7 +2,12 @@ import * as path from "path"
 import { promisify } from "util"
 import { promises as fs } from "fs"
 import { exec as cexec } from "child_process"
-import chokidar from "chokidar"
+
+// TODO: maybe the server should be in a separate file and import
+// the build commands
+const http = await importDev("http")
+const handler = (await importDev("serve-handler")).default
+const chokidar = await importDev("chokidar")
 
 // make exec return a promise
 const exec = promisify(cexec)
@@ -24,6 +29,8 @@ const Paths = {
   },
 }
 
+const kPort = 9999
+
 // -- props --
 let mIgnored = []
 let mTemplate = null
@@ -35,6 +42,7 @@ async function main() {
     { name: "init", action: init },
     { name: "clean", action: clean },
     { name: "build", action: build },
+    { name: "watch", action: watch, when: () => mIsServer },
     { name: "serve", action: serve, when: () => mIsServer },
   ]
 
@@ -78,7 +86,7 @@ async function build() {
   }
 }
 
-async function serve() {
+async function watch() {
   const watcher = chokidar.watch(Paths.Proj, {
     ignored: mIgnored,
     ignoreInitial: true,
@@ -111,6 +119,23 @@ async function serve() {
   watcher.on("error", (entry) => {
     log.info(`✘ error ${entry}`)
     remove(entry)
+  })
+}
+
+function serve() {
+  return new Promise((res, _) => {
+    console.log(handler)
+    const server = http.createServer((request, response) => {
+      return handler(request, response, {
+        public: Paths.Dist,
+        symlinks: true,
+      })
+    })
+
+    server.listen(kPort, () => {
+      log.info(`- running on http://localhost:${kPort}`)
+      res()
+    })
   })
 }
 
@@ -154,7 +179,7 @@ async function copy(entry) {
   const src = path.join(Paths.Curr, entry)
   const dst = path.join(Paths.Dist, entry)
 
-  if (process.env.DEV) {
+  if (isDev()) {
     // check if symlink exists
     try {
       await fs.stat(dst)
@@ -180,8 +205,20 @@ function run(cmd) {
 }
 
 // -- queries --
+function isDev() {
+  return !!process.env.DEV
+}
+
 function isIgnored(path) {
   return mIgnored.includes(path)
+}
+
+async function importDev(path) {
+  if (isDev()) {
+    return await import(path)
+  }
+
+  return null
 }
 
 // -- config --
