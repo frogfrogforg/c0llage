@@ -2,6 +2,7 @@ import * as path from "path"
 import { promisify } from "util"
 import { promises as fs } from "fs"
 import { exec as cexec } from "child_process"
+import chokidar from "chokidar"
 
 // make exec return a promise
 const exec = promisify(cexec)
@@ -26,6 +27,7 @@ const Paths = {
 // -- props --
 let mIgnored = []
 let mTemplate = null
+let mIsServer = false
 
 // -- main --
 async function main() {
@@ -33,17 +35,22 @@ async function main() {
     { name: "init", action: init },
     { name: "clean", action: clean },
     { name: "build", action: build },
+    { name: "serve", action: serve, when: () => mIsServer },
   ]
 
   for (const cmd of commands) {
-    const instrumented = instrument(cmd.name, cmd.action)
-    await instrumented()
+    const runnable = run(cmd)
+    await runnable()
   }
 }
 
 // -- commands --
 async function init() {
-  // store props
+  // parse args
+  const args = process.argv.slice(2)
+  mIsServer = args.includes("--serve")
+
+  // decode config
   mIgnored = await decodeIgnored()
   mTemplate = await decodeTemplate()
 }
@@ -62,19 +69,58 @@ async function build() {
 
   // filter ignored paths during traversal
   function filter(_child, entry) {
-    return !mIgnored.includes(entry)
+    return !isIgnored(entry)
   }
 
   // traverse proj dir
   for await (const [child, entry] of traverse(Paths.Proj, filter)) {
-    await buildOne(child, entry)
+    await transfer(entry, child.isDirectory())
   }
 }
 
-async function buildOne(child, entry) {
+async function serve() {
+  const watcher = chokidar.watch(Paths.Proj, {
+    ignored: mIgnored,
+    ignoreInitial: true,
+  })
+
+  watcher.on("add", (entry) => {
+    log.info(`- build ${entry}`)
+    transfer(entry)
+  })
+
+  watcher.on("addDir", (entry) => {
+    transfer(entry)
+  })
+
+  watcher.on("change", (entry) => {
+    log.info(`- build ${entry}`)
+    transfer(entry)
+  })
+
+  watcher.on("unlink", (entry) => {
+    log.info(`- remove ${entry}`)
+    remove(entry)
+  })
+
+  watcher.on("unlinkDir", (entry) => {
+    log.info(`- remove ${entry}`)
+    remove(entry)
+  })
+
+  watcher.on("error", (entry) => {
+    log.info(`✘ error ${entry}`)
+    remove(entry)
+  })
+}
+
+// -- c/helpers
+async function transfer(entry, isDirectory = false) {
   // 🎵 make ev'ry nested dir 🎵
-  if (child.isDirectory()) {
-    await fs.mkdir(path.join(Paths.Dist, entry))
+  if (isDirectory) {
+    await fs.mkdir(path.join(Paths.Dist, entry), {
+      recursive: true,
+    })
   }
   // 🎵 compile ev'ry template 🎵
   else if (entry.endsWith(Paths.Ext.Partial)) {
@@ -85,6 +131,12 @@ async function buildOne(child, entry) {
     await copy(entry)
   }
   // 🎵 'til you find your dream 🎵
+}
+
+async function remove(entry) {
+  await fs.rm(path.join(Paths.Dist, entry), {
+    recursive: true,
+  })
 }
 
 async function compile(entry) {
@@ -103,21 +155,36 @@ async function copy(entry) {
   const dst = path.join(Paths.Dist, entry)
 
   if (process.env.DEV) {
-    await fs.symlink(src, dst)
+    // check if symlink exists
+    try {
+      await fs.stat(dst)
+    }
+    // if not, create the symlink
+    catch {
+      await fs.symlink(src, dst)
+    }
   } else {
     await fs.copyFile(src, dst)
   }
 }
 
-function instrument(name, fn) {
+// -- c/commands
+function run(cmd) {
   return async function () {
-    log.debug(`• ${name}`)
-    await fn()
-    log.debug(`✔ ${name}`)
+    if (cmd.when == null || cmd.when()) {
+      log.debug(`• ${cmd.name}`)
+      await cmd.action()
+      log.debug(`✔ ${cmd.name}`)
+    }
   }
 }
 
 // -- queries --
+function isIgnored(path) {
+  return mIgnored.includes(path)
+}
+
+// -- config --
 async function decodeIgnored() {
   const raw = []
 
@@ -156,11 +223,6 @@ async function decodeIgnored() {
   return paths
 }
 
-function getSrc(p) {
-  return path.join()
-}
-
-// -- template --
 async function decodeTemplate() {
   const text = await read(Paths.Build.Layout)
 
@@ -178,16 +240,14 @@ async function decodeTemplate() {
 }
 
 // -- helpers --
-async function read(path) {
-  return await fs.readFile(path, { encoding: "utf-8" })
+function wait(timeout) {
+  return new Promise((res, _) => {
+    setTimeout(res, timeout)
+  })
 }
 
-async function* find(dir, ext) {
-  for await (const [child, entry] of traverse(dir)) {
-    if (child.isFile() && entry.endsWith(ext)) {
-      yield entry
-    }
-  }
+async function read(path) {
+  return await fs.readFile(path, { encoding: "utf-8" })
 }
 
 async function* traverse(dir, filter) {
