@@ -1,3 +1,4 @@
+import { EOL } from "os"
 import * as path from "path"
 import { promisify } from "util"
 import { promises as fs } from "fs"
@@ -31,7 +32,7 @@ const LogLevel = {
   Debug: 2,
 }
 
-const kLogLevel = LogLevel.Info
+const kLogLevel = LogLevel.Debug
 const kPort = 9999
 const kBodyTagPattern = /<\/?body>/g
 
@@ -86,6 +87,7 @@ async function build() {
 
   // traverse proj dir
   for await (const [child, entry] of traverse(Paths.Proj, filter)) {
+    log.debug(`- ${entry}`)
     await transfer(entry, child.isDirectory())
   }
 }
@@ -266,11 +268,12 @@ async function decodeIgnored() {
 
 async function decodeTemplate() {
   const text = await read(Paths.Build.Layout)
-
+	
   const [
     prefix,
     suffix,
-  ] = text.split("{{content}}\n")
+  ] = text.split(`{{content}}${EOL}`)
+  console.log(prefix)
 
   return {
     interpolate(html) {
@@ -296,7 +299,9 @@ const log = {
 }
 
 async function read(path) {
-  return await fs.readFile(path, { encoding: "utf-8" })
+  return await fs.readFile(path, {
+    encoding: "utf-8",
+  })
 }
 
 async function* traverse(dir, filter) {
