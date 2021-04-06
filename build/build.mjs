@@ -30,6 +30,7 @@ const Paths = {
 }
 
 const kPort = 9999
+const kBodyTagPattern = /<\/?body>/g
 
 // -- props --
 let mIgnored = []
@@ -124,7 +125,6 @@ async function watch() {
 
 function serve() {
   return new Promise((res, _) => {
-    console.log(handler)
     const server = http.createServer((request, response) => {
       return handler(request, response, {
         public: Paths.Dist,
@@ -169,6 +169,7 @@ async function compile(entry) {
   const dst = path.join(Paths.Dist, entry.replace(Paths.Ext.Partial, ".html"))
 
   const partial = await read(src)
+  const cleaned = partial.replaceAll(kBodyTagPattern, "")
   const compiled = mTemplate.interpolate(partial)
 
   await fs.writeFile(dst, compiled)
