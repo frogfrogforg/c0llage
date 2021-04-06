@@ -66,6 +66,9 @@ async function init() {
   // decode config
   mIgnored = await decodeIgnored()
   mTemplate = await decodeTemplate()
+
+  // debug info
+  log.debug(`- ignored${EOL}${Array.from(mIgnored).join(EOL)}`)
 }
 
 async function clean() {
@@ -216,7 +219,7 @@ function isDev() {
 }
 
 function isIgnored(path) {
-  return mIgnored.includes(path)
+  return mIgnored.has(path)
 }
 
 async function importDev(path) {
@@ -231,11 +234,17 @@ async function importDev(path) {
 async function decodeIgnored() {
   const raw = []
 
-  // decode git paths
+  // decode root .gitignore paths
+  const gitignore = await read(".gitignore")
+  for (const path of gitignore.split(EOL)) {
+    raw.push(path)
+  }
+
+  // decode extra git paths (from present files ignored by nested gitignores)
   const git = await exec("git status --ignored --porcelain=1")
 
   // status returns a bunch of paths; ignored ones have the prefix "!! "
-  for (const path of git.stdout.split("\n")) {
+  for (const path of git.stdout.split(EOL)) {
     if (path.startsWith("!!")) {
       raw.push(path.slice(3))
     }
@@ -243,13 +252,12 @@ async function decodeIgnored() {
 
   // decode build tool paths
   const build = await read(Paths.Build.Ignore)
-
-  for (const path of build.split("\n")) {
+  for (const path of build.split(EOL)) {
     raw.push(path)
   }
 
   // sanitize paths
-  const paths = []
+  const paths = new Set()
 
   for (let path of raw) {
     if (path.endsWith("/")) {
@@ -260,7 +268,7 @@ async function decodeIgnored() {
       continue
     }
 
-    paths.push(path)
+    paths.add(path)
   }
 
   return paths
@@ -273,7 +281,6 @@ async function decodeTemplate() {
     prefix,
     suffix,
   ] = text.split(`{{content}}${EOL}`)
-  console.log(prefix)
 
   return {
     interpolate(html) {
