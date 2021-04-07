@@ -8,6 +8,7 @@ body {
 }
 
 .container {
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,6 +45,7 @@ body {
 
 /* Inventory */
 .Inventory {
+    overflow: hidden;
     position: absolute;
     top: 0px;
     left: 0px;
