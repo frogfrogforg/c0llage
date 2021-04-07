@@ -5,9 +5,13 @@
   "main": "index.html",
   "repository": "git@github.com:frogfrogforg/c0llage.git",
   "author": "ghost <ghost>",
-  "license": "MIT",
+  "license": "ghosts-only",
   "devDependencies": {
     "chokidar": "^3.5.1",
     "serve": "^11.3.2"
+  },
+  "scripts": {
+    "start": "node ./build/build.mjs --serve",
+    "build": "node ./build/build.mjs"
   }
 }
