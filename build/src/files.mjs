@@ -61,7 +61,7 @@ export async function remove(entry) {
   try {
     await fs.rm(dst, { recursive: true })
   } catch {
-    log.info(`- failed to remove ${dst}`)
+    log.error(`✘ failed to remove ${dst}`)
   }
 }
 
