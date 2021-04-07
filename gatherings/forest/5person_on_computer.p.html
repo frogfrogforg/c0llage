@@ -55,57 +55,44 @@
         </draggable-frame>
     </section>
 
-    <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
+    <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/honeybee.html"></iframe>
 </body>
 
 <script>
-    // Clone mouse input events for the unity iframe
-    // (so that it always receives mouse input, but only blocks other elements when the cursor is over a honeybee)
-    // (this is similar to what's happening in bucket.html, TODO: add a light framework for making this simpler?)
-    let savedUrl
-    function setupUnityClick(e) {
-        if (savedUrl == null) {
-            savedUrl = e.detail.url
-        }
-        if (savedUrl !== e.detail.url) return
-        console.log("FROG PAGE LOADED")
-        let main = document.getElementById("main");
-        let honeybee = document.getElementById("honeybee");
-        honeybee.contentWindow.addEventListener('unity-loaded', () => {
-            let canvas = honeybee.contentDocument.getElementById("unity-canvas");
+    let main = document.getElementById("main");
+    let honeybee = document.getElementById("honeybee");
+    honeybee.contentWindow.addEventListener('unity-loaded', () => {
+        let canvas = honeybee.contentDocument.getElementById("unity-canvas");
 
-            ['click', 'mouseenter', 'mouseleave',
-                'mouseout', 'mouseover', 'mousemove',
-                'mousedown', 'mouseup'].forEach((eventName) => {
-                    document.addEventListener(eventName, function (e) {
-                        const rect = honeybee.getBoundingClientRect();
-                        // let e2 = new e.constructor(e.type, e);
-                        let e2 = new MouseEvent(e.type, {
-                            // Adjust client coordinates to be relative to the iframe document:
-                            clientX: e.clientX - rect.x,
-                            clientY: e.clientY - rect.y,
-                            // Everything else stays the same:
-                            screenX: e.screenX,
-                            screenY: e.screenY,
-                            region: e.region,
-                            relatedTarget: e.relatedTarget,
-                            composed: e.composed,
-                            view: e.view,
-                            bubbles: e.bubbles,
-                            cancelable: e.cancelable
-                        });
-
-                        canvas.dispatchEvent(e2);
+        ['click', 'mouseenter', 'mouseleave',
+            'mouseout', 'mouseover', 'mousemove',
+            'mousedown', 'mouseup'].forEach((eventName) => {
+                document.addEventListener(eventName, function (e) {
+                    const rect = honeybee.getBoundingClientRect();
+                    // let e2 = new e.constructor(e.type, e);
+                    let e2 = new MouseEvent(e.type, {
+                        // Adjust client coordinates to be relative to the iframe document:
+                        clientX: e.clientX - rect.x,
+                        clientY: e.clientY - rect.y,
+                        // Everything else stays the same:
+                        screenX: e.screenX,
+                        screenY: e.screenY,
+                        region: e.region,
+                        relatedTarget: e.relatedTarget,
+                        composed: e.composed,
+                        view: e.view,
+                        bubbles: e.bubbles,
+                        cancelable: e.cancelable
                     });
-                })
 
-            // Override the setpointer callback from unity to set both the pointer style and pointerEvents
-            honeybee.contentWindow.setUnityPointer = (pointer) => {
-                canvas.style.cursor = pointer ? "pointer" : "default"
-                honeybee.style.pointerEvents = pointer ? "all" : "none"
-            }
-        })
-    }
+                    canvas.dispatchEvent(e2);
+                });
+            })
 
-    document.addEventListener('turbo:load', setupUnityClick)
+        // Override the setpointer callback from unity to set both the pointer style and pointerEvents
+        honeybee.contentWindow.setUnityPointer = (pointer) => {
+            canvas.style.cursor = pointer ? "pointer" : "default"
+            honeybee.style.pointerEvents = pointer ? "all" : "none"
+        }
+    })
 </script>
