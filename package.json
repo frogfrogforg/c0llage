@@ -3,6 +3,7 @@
   "version": "0.69.420",
   "description": "no",
   "main": "index.html",
+  "type": "module",
   "repository": "git@github.com:frogfrogforg/c0llage.git",
   "author": "ghost <ghost>",
   "license": "ghosts-only",
@@ -11,7 +12,7 @@
     "serve": "^11.3.2"
   },
   "scripts": {
-    "start": "node ./build/build.mjs --serve",
+    "start": "node ./build/serve.mjs",
     "build": "node ./build/build.mjs"
   }
 }
