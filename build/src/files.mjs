@@ -37,7 +37,7 @@ export async function build() {
 }
 
 export async function transfer(entry, isDirectory = false) {
-  // 🎵 make ev'ry nested dir 🎵
+  // 🎵 make ev'ry direct'ry 🎵
   if (isDirectory) {
     await fs.mkdir(path.join(paths.dist, entry), {
       recursive: true,
@@ -100,6 +100,11 @@ function isProd() {
 
 // -- q/tree
 async function* traverse(dir, filter) {
+  // TODO: this method is pretty serial. one way we could parallelize it may be
+  // awaiting all children of a directory concurrently (Promise.all) instead of
+  // yielding and awaiting each one in sequentially. it'd be nice if we could do
+  // in this fn, but i can't think of a good way. might have to yield all the
+  // children as list and rely on the caller to do it.
   for await (const child of await fs.opendir(dir)) {
     const entry = path.join(dir, child.name)
 
