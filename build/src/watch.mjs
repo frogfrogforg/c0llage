@@ -1,12 +1,12 @@
 import chokidar from "chokidar"
-import { kPaths } from "./paths.mjs"
+import { paths } from "./paths.mjs"
 import { log } from "./log.mjs"
 import { transfer, remove } from "./files.mjs"
 import { ignores } from "./ignores.mjs"
 
 // -- commands --
 export async function watch() {
-  const watcher = chokidar.watch(kPaths.proj, {
+  const watcher = chokidar.watch(paths.proj, {
     ignored: Array.from(await ignores()),
     ignoreInitial: true,
   })

@@ -1,6 +1,6 @@
 import handler from "serve-handler"
 import http from "http"
-import { kPaths } from "./paths.mjs"
+import { paths } from "./paths.mjs"
 import { log } from "./log.mjs"
 
 // -- constants --
@@ -11,7 +11,7 @@ export function serve() {
   return new Promise((res, _) => {
     const server = http.createServer((request, response) => {
       return handler(request, response, {
-        public: kPaths.dist,
+        public: paths.dist,
         symlinks: true,
       })
     })

@@ -1,5 +1,5 @@
 import { EOL } from "os"
-import { kPaths } from "./paths.mjs"
+import { paths } from "./paths.mjs"
 import { read } from "./utils.mjs"
 
 // -- props --
@@ -16,7 +16,7 @@ export async function template() {
 
 // -- queries --
 async function decode() {
-  const text = await read(kPaths.build.layout)
+  const text = await read(paths.build.layout)
 
   const [
     prefix,

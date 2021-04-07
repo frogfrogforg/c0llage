@@ -1,7 +1,7 @@
 import { EOL } from "os"
 import { promisify } from "util"
 import { exec as cexec } from "child_process"
-import { kPaths } from "./paths.mjs"
+import { paths } from "./paths.mjs"
 import { read } from "./utils.mjs"
 import { log } from "./log.mjs"
 
@@ -23,6 +23,27 @@ export async function ignores() {
 
 // -- queries --
 async function decode() {
+  const raw = await decodeRaw()
+
+  // sanitize paths
+  const uniq = new Set()
+
+  for (let path of raw) {
+    if (path.endsWith("/")) {
+      path = path.slice(0, -1)
+    }
+
+    if (path.length === 0) {
+      continue
+    }
+
+    uniq.add(path)
+  }
+
+  return uniq
+}
+
+async function decodeRaw() {
   const raw = []
 
   // decode root .gitignore paths
@@ -42,25 +63,10 @@ async function decode() {
   }
 
   // decode build tool paths
-  const build = await read(kPaths.build.ignore)
+  const build = await read(paths.build.ignore)
   for (const path of build.split(EOL)) {
     raw.push(path)
   }
 
-  // sanitize paths
-  const paths = new Set()
-
-  for (let path of raw) {
-    if (path.endsWith("/")) {
-      path = path.slice(0, -1)
-    }
-
-    if (path.length === 0) {
-      continue
-    }
-
-    paths.add(path)
-  }
-
-  return paths
+  return raw
 }

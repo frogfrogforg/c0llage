@@ -1,5 +1,5 @@
 // -- constants --
-export const kPaths = {
+export const paths = {
   proj: "./",
   dist: "./dist",
   curr: process.cwd(),

@@ -1,6 +1,6 @@
 import * as path from "path"
 import { promises as fs } from "fs"
-import { kPaths } from "./paths.mjs"
+import { paths } from "./paths.mjs"
 import { log } from "./log.mjs"
 import { ignores } from "./ignores.mjs"
 import { template } from "./template.mjs"
@@ -12,7 +12,7 @@ const kBodyTagPattern = /<\/?body>/g
 // -- commands --
 export async function clean() {
   // destroy dist directory
-  await fs.rm(kPaths.dist, {
+  await fs.rm(paths.dist, {
     force: true,
     recursive: true
   })
@@ -22,7 +22,7 @@ export async function build() {
   const ignored = await ignores()
 
   // remake dist dir
-  await fs.mkdir(kPaths.dist)
+  await fs.mkdir(paths.dist)
 
   // filter ignored paths during traversal
   function filter(_child, entry) {
@@ -30,7 +30,7 @@ export async function build() {
   }
 
   // traverse proj dir
-  for await (const [child, entry] of traverse(kPaths.proj, filter)) {
+  for await (const [child, entry] of traverse(paths.proj, filter)) {
     log.debug(`- ${entry}`)
     await transfer(entry, child.isDirectory())
   }
@@ -39,12 +39,12 @@ export async function build() {
 export async function transfer(entry, isDirectory = false) {
   // 🎵 make ev'ry nested dir 🎵
   if (isDirectory) {
-    await fs.mkdir(path.join(kPaths.dist, entry), {
+    await fs.mkdir(path.join(paths.dist, entry), {
       recursive: true,
     })
   }
   // 🎵 compile ev'ry template 🎵
-  else if (entry.endsWith(kPaths.ext.partial)) {
+  else if (entry.endsWith(paths.ext.partial)) {
     await compile(entry)
   }
   // 🎵 copy ev'ry other file 🎵
@@ -55,15 +55,15 @@ export async function transfer(entry, isDirectory = false) {
 }
 
 export async function remove(entry) {
-  await fs.rm(path.join(kPaths.dist, entry), {
+  await fs.rm(path.join(paths.dist, entry), {
     recursive: true,
   })
 }
 
 // -- c/helpers
 async function compile(entry) {
-  const src = path.join(kPaths.proj, entry)
-  const dst = path.join(kPaths.dist, entry.replace(kPaths.ext.partial, ".html"))
+  const src = path.join(paths.proj, entry)
+  const dst = path.join(paths.dist, entry.replace(paths.ext.partial, ".html"))
 
   const partial = await read(src)
   const cleaned = partial.replaceAll(kBodyTagPattern, "")
@@ -76,8 +76,8 @@ async function compile(entry) {
 
 async function copy(entry) {
   // use absolute path for symlinks
-  const src = path.join(kPaths.curr, entry)
-  const dst = path.join(kPaths.dist, entry)
+  const src = path.join(paths.curr, entry)
+  const dst = path.join(paths.dist, entry)
 
   if (isProd()) {
     await fs.copyFile(src, dst)

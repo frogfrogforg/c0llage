@@ -8,17 +8,23 @@ const LogLevel = {
 const kLogLevel = LogLevel.Info
 
 // -- impls --
+function info(...messages) {
+  add(LogLevel.Info, messages)
+}
+
+function debug(...messages) {
+  add(LogLevel.Debug, messages)
+}
+
+function add(level, messages) {
+  if (level <= kLogLevel) {
+    console.log(...messages)
+  }
+}
+
+// -- exports --
 export const log = {
-  info(...messages) {
-    this.add(LogLevel.Info, messages)
-  },
-  debug(...messages) {
-    this.add(LogLevel.Debug, messages)
-  },
-  // -- i/helpers
-  add(level, messages) {
-    if (level <= kLogLevel) {
-      console.log(...messages)
-    }
-  },
+  info,
+  debug,
+  add,
 }
