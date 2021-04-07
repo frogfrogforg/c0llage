@@ -31,6 +31,9 @@ $ npm start
 
 you should then be able to view the site [here](http://localhost:8888).
 
+### gotchas
+there server has at least one bug. if you rename or delete a file, it will probably crash. if you start it again it should be fine.
+
 ## macos [↑](#table-of-contents)
 
 on mac, installation is easier if you have [homebrew](https://brew.sh). if you don't, you can install it like so:
