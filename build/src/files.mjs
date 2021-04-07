@@ -66,7 +66,7 @@ async function compile(entry) {
   const dst = path.join(paths.dist, entry.replace(paths.ext.partial, ".html"))
 
   const partial = await read(src)
-  const cleaned = partial.replaceAll(kBodyTagPattern, "")
+  const cleaned = partial.replace(kBodyTagPattern, "")
 
   const tmpl = await template()
   const compiled = tmpl(cleaned)
