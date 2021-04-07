@@ -9,24 +9,25 @@ this page contains instructions that should help you get up and running with the
 - [macos](#macos)
 - [windows](#windows)
 
-## note
-we need `nodejs` ~v15 to run our dev server. you can follow the [macos](#macos) or [windows](#windows) instructions for your platform to get that installed.
-
 ## setup [↑](#table-of-contents)
 
-installing `node` also installs `npm` (the "node package manager"). move the the project directory and install the "node packages"
+we need `nodejs` ~v15 to run our dev server. you can follow the [macos](#macos) or [windows](#windows) instructions for your platform to get that installed.
+
+installing `node` also installs `npm` (the "node package manager"). if you `cd` to the project directory, you can install the "node packages" our dev server needs:
 
 ```sh
-$ npm install 
+$ npm install
 ```
 
 ## server [↑](#table-of-contents)
 
-start the dev server, and then view [the site](http://localhost:8888):
+in the project directory, start the dev server.
 
 ```sh
 $ npm start
 ```
+
+then you should be able to view [the site](http://localhost:8888).
 
 ## macos [↑](#table-of-contents)
 
@@ -46,7 +47,7 @@ now you can hop back to the shared [setup](#setup)
 
 ## windows [↑](#table-of-contents)
 
-on windows, it's easiest if you have [chocolatey](https://chocolatey.org/install#individual) in powershell. right-click powershell and select "run as administrator". the instructions are a little too complex to copy here. but the "individual" section have what you need.
+on windows, it's easiest if you install [chocolatey](https://chocolatey.org/install#individual). search for "powershell", right-click and select "run as administrator". the linked instructions are a little too complex to copy here. but the "individual" section have what you need.
 
 then, still in an administrator powershell, install git:
 
@@ -54,9 +55,7 @@ then, still in an administrator powershell, install git:
 $ choco install git
 ```
 
-this will install a new shell, "git bash", that is the good one. open "git bash" and close powershell forever.
-
-now, install node:
+this will install a new shell, "git bash", that is the good one. open "git bash" and close powershell forever. now, install node:
 
 ```sh
 $ choco install nodejs
