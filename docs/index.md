@@ -1,7 +1,11 @@
 Documentation
 ====
 
-Start here, [Setup](./setup.md)!
+This is the index for our various documention pages. If you add one, be sure to add it here, too.
+
+Getting Started
+---
+- [Setup](./setup.md)!
 
 Modules
 ---

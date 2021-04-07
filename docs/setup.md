@@ -1,17 +1,17 @@
 # setup
 
-this page contains instructions that should help you get up and running with the local development server.
+this page contains instructions to help you get up and running with the local development server.
 
 ## table of contents
 
-- [setup](#server)
+- [install](#server)
 - [server](#running)
 - [macos](#macos)
 - [windows](#windows)
 
-## setup [↑](#table-of-contents)
+## install [↑](#table-of-contents)
 
-we need `nodejs` ~v15 to run our dev server. you can follow the [macos](#macos) or [windows](#windows) instructions for your platform to get that installed.
+we need `nodejs` (13.x or better, i think) to run our dev server. the instructions for your platform, either [macos](#macos) or [windows](#windows) should help you get it installed.
 
 installing `node` also installs `npm` (the "node package manager"). if you `cd` to the project directory, you can install the "node packages" our dev server needs:
 
@@ -19,48 +19,50 @@ installing `node` also installs `npm` (the "node package manager"). if you `cd` 
 $ npm install
 ```
 
+you *should* only need to do this once.
+
 ## server [↑](#table-of-contents)
 
-in the project directory, start the dev server.
+once installed, in the project directory you can start the dev server like so:
 
 ```sh
 $ npm start
 ```
 
-then you should be able to view [the site](http://localhost:8888).
+you should then be able to view the site [here](http://localhost:8888).
 
 ## macos [↑](#table-of-contents)
 
-on mac, it's easiest if you have [homebrew](https://brew.sh). if you don't, you can install it like so:
+on mac, installation is easier if you have [homebrew](https://brew.sh). if you don't, you can install it like so:
 
 ```sh
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-then, install node:
+then, use homebrew to install node:
 
 ```sh
 $ brew install node
 ```
 
-now you can hop back to the shared [setup](#setup)
+now hop back to the shared [install instructions](#install)
 
 ## windows [↑](#table-of-contents)
 
-on windows, it's easiest if you install [chocolatey](https://chocolatey.org/install#individual). search for "powershell", right-click and select "run as administrator". the linked instructions are a little too complex to copy here. but the "individual" section have what you need.
+on windows, installation is easier if you have [chocolatey](https://chocolatey.org/install#individual). the instructions are a little too complex to copy here. but the "individual" section has what you need. you'll need to run them in an administrator powershell. search for "powershell", right-click the icon, and select "run as administrator".
 
-then, still in an administrator powershell, install git:
+then, still in an administrator powershell, use choco to install git:
 
 ```sh
 $ choco install git
 ```
 
-this will install a new shell, "git bash", that is the good one. open "git bash" and close powershell forever. now, install node:
+this command installs a *new* shell, "git bash", more powerful than powershell. open "git bash" and close powershell forever. now in git bash, use choco to install node:
 
 ```sh
 $ choco install nodejs
 ```
 
-lastly, you also need to enable `developer mode`. search for "developer settings", and it should be the first toggle. congrats, now you are a developer.
+**lastly**, you also need to enable `developer mode`. search for "developer settings"; it should be the first toggle on that settings screen. congratulations, developer!
 
-now you can hop back to the shared [setup](#setup).
+now hop back to the shared [install instructions](#install).
