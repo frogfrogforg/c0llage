@@ -1,0 +1,111 @@
+<style>
+    .InvertedFrame {
+        background-color: midnightblue;
+        color: blanchedalmond;
+        font-size: 30px;
+    }
+
+    .frog-dialogue {
+        background-color: bisque;
+        color: indigo;
+        font-size: 16px;
+        overflow-y: scroll;
+    }
+
+    #frames {
+        position: absolute;
+    }
+
+    #honeybee {
+        border: none;
+        filter: blur(0.5px);
+        /* thanks mut */
+        pointer-events: none;
+    }
+</style>
+
+<body>
+    <img id="background" class="background" src="./images/person_on_computer.png"></img>
+
+    <a class="hotspot inspect" href="./8messy_server_transition.html"
+        style="left: 1.5%; top: 12.450%; width: 19.034%; height: 17.011%"></a>
+    <a class="hotspot move" href="./1.html"
+        style="left: 0.432%; top: 73.345%; width: 22.125%; height: 22.176%"></a>
+    <a class="hotspot centered talk" href="#" onclick="Frames.toggle('rude')"
+        style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%" data-turbo="false"></a>
+
+    <section id="frames" class="Frames">
+        <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
+            <span>Don't <a href="#" onclick="Frames.show('more-rude')" data-turbo="false">be rude</a>, they
+                are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
+                    computer</a></span>
+        </draggable-frame>
+
+        <draggable-frame id="the-computer" hidden permanent x=60 y=28 width=25 height=35>
+            <d-iframe src="https://archive.org/embed/NicholasFedorovTHECOMPUTEROfficialVideo&autoplay=1"
+                width="640" height="480" frameborder="0" webkitallowfullscreen="true"
+                mozallowfullscreen="true" allowfullscreen></d-iframe>
+        </draggable-frame>
+        <draggable-frame id="more-rude" hidden x=40 y=30 width=50 height=35 bodyClass="frog-dialogue">
+            <span>
+                <p>The frog looks you in the eye, frowning.</p>
+                <p>"Please. We don't get internet back at the Cosmodrome. Between taking care of my kids and
+                    my mother, this is the one hour a week that I get to see what my friends are up to."</p>
+            </span>
+        </draggable-frame>
+    </section>
+
+    <iframe id="honeybee" class="background" src="../../games/honeybee/web-build/index.html"></iframe>
+</body>
+
+<script>
+    // Clone mouse input events for the unity iframe
+    // (so that it always receives mouse input, but only blocks other elements when the cursor is over a honeybee)
+    // (this is similar to what's happening in bucket.html, TODO: add a light framework for making this simpler?)
+    let savedUrl
+    function setupUnityClick(e) {
+        if (savedUrl == null) {
+            savedUrl = e.detail.url
+        }
+        if (savedUrl !== e.detail.url) return
+        console.log("FROG PAGE LOADED")
+        let main = document.getElementById("main");
+        let honeybee = document.getElementById("honeybee");
+        honeybee.contentWindow.addEventListener('unity-loaded', () => {
+            let canvas = honeybee.contentDocument.getElementById("unity-canvas");
+
+            ['click', 'mouseenter', 'mouseleave',
+                'mouseout', 'mouseover', 'mousemove',
+                'mousedown', 'mouseup'].forEach((eventName) => {
+                    document.addEventListener(eventName, function (e) {
+                        const rect = honeybee.getBoundingClientRect();
+                        // let e2 = new e.constructor(e.type, e);
+                        let e2 = new MouseEvent(e.type, {
+                            // Adjust client coordinates to be relative to the iframe document:
+                            clientX: e.clientX - rect.x,
+                            clientY: e.clientY - rect.y,
+                            // Everything else stays the same:
+                            screenX: e.screenX,
+                            screenY: e.screenY,
+                            region: e.region,
+                            relatedTarget: e.relatedTarget,
+                            composed: e.composed,
+                            view: e.view,
+                            bubbles: e.bubbles,
+                            cancelable: e.cancelable
+                        });
+
+                        canvas.dispatchEvent(e2);
+                    });
+                })
+
+            // Override the setpointer callback from unity to set both the pointer style and pointerEvents
+            honeybee.contentWindow.setUnityPointer = (pointer) => {
+                canvas.style.cursor = pointer ? "pointer" : "default"
+                honeybee.style.pointerEvents = pointer ? "all" : "none"
+            }
+        })
+    }
+
+    document.addEventListener('turbo:load', setupUnityClick)
+</script>

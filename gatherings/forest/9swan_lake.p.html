@@ -1,0 +1,87 @@
+<style>
+    .swan {
+        position: absolute;
+        left: 20%;
+        top: 50%;
+        width: 30%;
+        height: 30%;
+    }
+
+    .speechbubble {
+        width: 69.69%;
+        height: 42.069%;
+        position: absolute;
+        border: 2px solid black;
+        border-radius: 50%;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .bubbletail {
+        width: 1%;
+        height: 1%;
+        position: absolute;
+        top: 90%;
+        left: 70%;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 20px solid black;
+        transform: skew(40deg) rotate(214deg);
+    }
+
+
+    .Frame-content {
+        /* background-color: rgba(0, 0, 0, 0); */
+    }
+</style>
+
+<body>
+    <div style="overflow: hidden; width: 100%; height: 100%; position: absolute; top:0; left: 0;">
+
+        <iframe id="swanvideo" src="about:blank"
+            style="position: absolute; width: 100%; height: 100%; top:25%; left:0; z-index: 0; overflow: hidden;"></iframe>
+
+    </div>
+    <img class="background" src="./images/swan_lake.png"></img>
+
+    <draggable-frame hidden temperament="sanguine" id="pwnd" x=15 y=25 width=30 height=25
+        bodyClass="transparentframe">
+        <div class="speechbubble">
+            <span>
+                u just got <a target="_blank" href='https://duckduckgo.com/?q="pwn`ed"'>
+                    PWN`ed
+                </a> n00b!
+            </span>
+            <div class="bubbletail"></div>
+        </div>
+    </draggable-frame>
+
+    <a class="hotspot cursor-salad" href="../../games/guttersour/WEB/index.html"
+        style="left: 52%; top: 65.666%; width: 20%; height: 18%"></a>
+    <img id="swan" class="swan talk" onclick="window.onclickswan()" src="./images/swanglasses_shady.png"></img>
+</body>
+
+<script type="module">
+    let swanOpen = false
+    let swanY = 0
+    let clickedSwan = false
+    const swanFlySpeed = 0.25
+    window.onclickswan = function () {
+        if (!clickedSwan) {
+            document.getElementById('swanvideo').src = "https://archive.org/embed/SwanLakeDanceOfTheCygnets&autoplay=1"
+            clickedSwan = true
+        }
+        Frames.show('pwnd')
+
+        document.getElementById('swan').src =
+            !swanOpen
+                ? "./images/swanglasses_happy.png"
+                : "./images/swanglasses_shady.png"
+        swanOpen = !swanOpen
+
+        swanY -= swanFlySpeed
+        document.getElementById('swan').style.marginTop = swanY + '%'
+    }
+</script>

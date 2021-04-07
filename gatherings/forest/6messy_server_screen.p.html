@@ -1,0 +1,41 @@
+<style>
+    .ClearFrame {
+        opacity: 0;
+        font-size: 30px;
+    }
+</style>
+
+<body>
+    <img class="background" src="./images/messyserver.jpg" usemap="#image-map">
+
+    <!-- <map name="image-map">
+    <area target="" alt="keyboard" title="keyboard" href="../../games/keyboard"
+        coords="180,336,285,331,293,369,185,372" shape="poly">
+</map> -->
+
+
+    <a class="hotspot centered inspect" href="#" onclick="Frames.toggle('keyboard')"
+        style="left: 45.5%; top: 68.5%; width: 15%; height: 6%;" data-turbo="false">
+    </a>
+
+    <a class="hotspot centered move" href="./7messy_server_zoom.html"
+        style="left: 56.5%; top: 27.5%; width: 14%; height: 12%;">
+    </a>
+
+    <a class="hotspot centered move" href="./19wizards_domain.html"
+    style="left: 31.5%; top: 17.5%; width: 18%; height: 34%;">
+    </a>
+
+    <section id="frames" class="Frames">
+        <draggable-frame id="test">
+            <a class="move" style="font-size: 2vw; text-decoration: none; opacity: 0.5"
+                href="./8messy_server_transition.html">
+                🔙
+            </a>
+        </draggable-frame>
+        <draggable-frame persistent temperament='choleric' width=160 height=50 x=-30 y=68 id="keyboard"
+            hidden>
+            <d-iframe src="../../games/keyboard/"></d-iframe>
+        </draggable-frame>
+    </section>
+</body>
