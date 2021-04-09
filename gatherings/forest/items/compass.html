@@ -1,10 +1,153 @@
 <head>
+  <script type='module'>
+    import '../../../global.js'
 
+    function AngleDistance(targetA, sourceA) {
+      let a = targetA - sourceA
+      a += (a > 180) ? -360 : (a < -180) ? 360 : 0
+      return a;
+    }
+
+    const cardinalDirections = ['NN', 'NE', 'EE', 'SE', 'SS', 'SW', 'WW', 'NW']
+    function cardinalDirectionFromAngle(angle) {
+      while (angle > 360) {
+        angle -= 360
+      }
+
+      while (angle <= 0) {
+        angle += 360
+      }
+
+      const index = Math.floor(angle / 45)
+      console.log(index)
+      return cardinalDirections[index]
+    }
+
+    window.pushNewCardinalDirection = function () {
+      const maxStorage = 10
+      const charactersPerDirection = 2
+      const newDirection = cardinalDirectionFromAngle(window.compassTargetNorth)
+      let directions = d.State.directions || ""
+      directions += newDirection;
+      if (directions.length >= maxStorage * charactersPerDirection) {
+        directions = directions.slice(-maxStorage * charactersPerDirection)
+      }
+      console.log(directions)
+      d.State.directions = directions;
+    }
+
+    const randomNorthDirections = {}
+    function getNorth() {
+      // see if for some reason the window set compassTargetNorth directly
+      if (window.parent.compassTargetNorth != null) {
+        return window.parent.compassTargetNorth
+      } else {
+        // if not check if the window has a defined north in the meta-forest tag
+        const metaForest = window.parent.document.getElementById('meta-forest')
+        if (metaForest && metaForest.hasAttribute('north')) {
+          return metaForest.getAttribute('north')
+        } else {
+          // if not assing a random value to that location
+          if (randomNorthDirections[window.parent.location] == null) {
+            randomNorthDirections[window.parent.location] = Math.random() * 360 - 180
+          }
+
+          console.log(randomNorthDirections)
+          return randomNorthDirections[window.parent.location]
+        }
+      }
+    }
+
+    const animateCompass = () => {
+      const compassEmojiOffset = -45
+      let currentAngle = -45; // Top is 0 degrees, clockwise, between -180 and 180
+      let startTime = 0;
+
+      // Warning, weird maths below
+      // https://www.wikiwand.com/en/PID_controller
+
+      const kP = 0.05, kD = 0.001, kNoise = 5
+      let P, lastP, D = 0
+      const compassNode = document.getElementById('compass')
+      const animateStep = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const deltaTime = startTime - timestamp;
+
+        const n = getNorth()
+
+        console.log(n)
+        P = AngleDistance(n + kNoise * 2 * (0.5 - Math.random()), currentAngle)
+        if (deltaTime > 0) {
+          D = (P - lastP) / (deltaTime)
+        }
+        lastP = P
+
+        const movement = P * kP + D * kD
+        currentAngle += movement;
+        // progress goes from 0 to 1 over 1s
+        // move right 100 px
+        compassNode.setAttributeNS(null, 'transform', `rotate(${currentAngle - compassEmojiOffset} 0 0)`);
+
+        window.requestAnimationFrame(animateStep);
+      }
+
+      window.requestAnimationFrame(animateStep);
+    }
+
+    window.onload = animateCompass
+
+    function mouse_position() {
+      var e = window.event;
+
+      var posX = e.clientX;
+      var posY = e.clientY;
+
+      document.Form1.posx.value = posX;
+      document.Form1.posy.value = posY;
+
+      var t = setTimeout(mouse_position, 100);
+    }
+  </script>
+  <style>
+    .compassBody {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .compassContainer {
+      /* width: 100%; */
+      /* height: 100%; */
+    }
+  </style>
 </head>
 
-<body>
-  canvas {
+<body class="compassBody">
+  <svg class=compassContainer width="100%" height="100%" viewBox="0 0 100 100">
+    <!-- https://github.com/twitter/twemoji/blob/master/assets/svg/1f9ed.svg -->
+    <g transform='translate(50 50) scale(2)'>
+      <g id='compass'>
+        <circle fill="#F4900C" cx="0" cy="0" r="18" />
+        <circle fill="#FFD983" cx="0" cy="0" r="14.5" />
+        <circle fill="#F5F8FA" cx="0" cy="0" r="13" />
+        <g transform='translate(-18 -18)'>
+          <path fill="#CCD6DD"
+            d="M18 8l1.531 6.304 5.54-3.375-3.375 5.54L28 18l-6.304 1.531 3.375 5.54-5.54-3.375L18 28l-1.531-6.304-5.54 3.375 3.375-5.54L8 18l6.304-1.531-3.375-5.54 5.54 3.375z" />
+          <g>
+            <path fill="#292F33" d="M17.343 20.748l8.777 5.381-5.379-8.778z" />
+            <path fill="#DD2E44" d="M18.657 15.267L9.879 9.886l5.38 8.779z" />
 
-  }
-
+          </g>
+        </g>
+        <circle fill="#8899A6" cx="0" cy="0.008" r="3.055" />
+        <circle fill="#F5F8FA" cx="0" cy="0.008" r="1.648" />
+        <!-- <circle r=8 cx=0 cy=0></circle> -->
+        <!-- <rect fill=red y=-5 x=-5 width=3 height=3></rect> -->
+      </g>
+    </g>
+  </svg>
 </body>

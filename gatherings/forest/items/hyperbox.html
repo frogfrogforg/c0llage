@@ -1,0 +1,47 @@
+<head>
+  <link rel="stylesheet" href="../forest.css">
+  <script type="module" src="../../shared/draggable-frame.js"></script>
+  <script type="module" src="../../shared/d-iframe.js"></script>
+  <link rel="stylesheet" href="../../shared/frames.css">
+  <style>
+    .hyperbox {
+      font-family: fantasy;
+      color: red;
+      font-size: 15vmax;
+      background-color: darkblue;
+      width: 100%;
+      height: 100%;
+      overflow: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+    }
+
+    .hyperbox a:visited {
+      color: cyan
+    }
+
+    .hyperbox a {
+      color: magenta
+    }
+  </style>
+</head>
+
+<body>
+  <div class='hyperbox'>
+    <!-- PLS HAUNT ME -->
+    <a href='../5person_on_computer'>there's</a>
+    <a href='../16hyperform.html'>a</a>
+    <a href='../16hyperform.html'>hyperlink</a>
+    <a href='../16hyperform.html'>straight</a>
+    <a href='../16hyperform.html'>to</a>
+    <a href='../16hyperform.html'>the</a>
+    <span class='cosmodrome'>cosmodrome</span>
+    <a href='../16hyperform.html'>somewhere</a>
+    <a href='../16hyperform.html'>inside</a>
+    <a href='../16hyperform.html'>the</a>
+    <a href='javascript:void(0)' onclick="Frames.show('hyperbox')">box</a>
+  </div>
+  <draggable-frame hidden id='hyperbox'>
+    <d-iframe src='./hyperbox.html'></d-iframe>
+  </draggable-frame>
+</body>
