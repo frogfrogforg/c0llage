@@ -3,12 +3,21 @@
   <meta charset="UTF-8">
   <link href="../tools.css" rel="stylesheet">
 
-  <!-- the list of people in the group -->
-  <script id="people" type="text/plain">
-    d, darwin, fran, jen, mut, ty,
-  </script>
-
   <style>
+    .GroupPicker {
+      border-bottom: 1px dotted black;
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+    }
+
+    .GroupPicker.is-hidden {
+      display: none;
+    }
+
+    .GroupPicker-input {
+      margin-top: 20px;
+    }
+
     *:not(:empty) + .Action {
       margin-top: 20px;
     }
@@ -18,10 +27,38 @@
 <body>
   <main class="Main">
     <a href="../tools.html" class="Back">tools</a>
-    <h1 id="names" class="Names"></h1>
-    <h2 id="limit" class="Limit"></h2>
-    <button id="action" class="Action">start</button>
+
+    <!-- config -->
+    <section id="config" class="GroupPicker Column">
+      <p class="Heading">group</p>
+
+      <label for="group">
+        enter a group name or a list of names separated by commas
+      </label>
+
+      <input
+        id="group"
+        name="group"
+        class="GroupPicker-input"
+        list="group-options"
+        type="text"
+        value="studio ii"
+      >
+
+      <datalist id="group-options">
+        <option value="studio ii">
+        <option value="seminar">
+      </datalist>
+    </section>
+
+    <!-- tool -->
+    <section class="Column">
+      <h1 id="names" class="Names"></h1>
+      <h2 id="limit" class="Limit"></h2>
+      <button id="action" class="Action">start</button>
+    </section>
   </main>
+
   <script type="module" src="./hi.js"></script>
 </body>
 </html>

@@ -7,8 +7,14 @@ const Actions = {
 
 // -- elements --
 const $el = {
-  names: null,
-  limit: null,
+  config: {
+    frame: null,
+    input: null,
+  },
+  timer: {
+    names: null,
+    limit: null,
+  },
   action: null,
 }
 
@@ -18,20 +24,47 @@ let mLimit = null
 
 // -- lifetime --
 function init() {
-  // build a bag from the list of names
-  const names = document.getElementById("people").innerText
-  mNames = Bag.decode(names)
-
   // capture elements
-  $el.names = document.getElementById("names")
-  $el.limit = document.getElementById("limit")
+  $el.config.frame = document.getElementById("config")
+  $el.config.group = document.getElementById("group")
+
+  $el.timer.names = document.getElementById("names")
+  $el.timer.limit = document.getElementById("limit")
+
   $el.action = document.getElementById("action")
 
   // bind events
   $el.action.addEventListener("click", didClickAction)
+
+  // set initial state
+  reset()
 }
 
 // -- commands --
+function reset() {
+  // reset state
+  if (mLimit != null) {
+    mLimit.stop()
+    mLimit = null
+  }
+
+  // reset view
+  // TODO: this is getting gross
+  drawNames()
+  drawLimit()
+  drawAction()
+  drawConfig()
+}
+
+function start() {
+  // advance to the first step
+  mNames = decodeBag($el.config.group.value)
+  advance()
+
+  // hide the config
+  drawConfig()
+}
+
 function advance() {
   // stop previous limit
   if (mLimit != null) {
@@ -49,28 +82,17 @@ function advance() {
   drawAction()
 }
 
-function reset() {
-  // reset state
-  mNames.reset()
-
-  if (mLimit != null) {
-    mLimit.stop()
-    mLimit = null
-  }
-
-  // reset view
-  drawNames()
-  drawLimit()
-  drawAction()
+// -- c/drawing
+function drawConfig() {
+  $el.config.frame.classList.toggle("is-hidden", getAction() !== Actions.Start)
 }
 
-// -- c/drawing
 function drawNames(names = null) {
-  $el.names.innerText = names != null ? `${names.join(", ")}` : ""
+  $el.timer.names.innerText = names != null ? `${names.join(", ")}` : ""
 }
 
 function drawLimit(content = null) {
-  $el.limit.innerText = content
+  $el.timer.limit.innerText = content
 }
 
 function drawAction() {
@@ -119,12 +141,40 @@ function getActionName() {
   }
 }
 
+
+// -- q/bag
+function decodeBag(str) {
+  switch (str) {
+    case "studio ii":
+      return new Bag(["d", "darwin", "fran", "jen", "mut", "ty"])
+    case "seminar":
+      return new Bag(["frank"])
+    default:
+      return decodeBagFromList(str)
+  }
+}
+
+function decodeBagFromList(str) {
+  const re = /(\w+),?/g
+  const items = []
+
+  let match = null
+  while (match = re.exec(str)) {
+    items.push(match[1])
+  }
+
+  return new Bag(items)
+}
+
 // -- events --
 function didClickAction() {
-  if (getAction() === Actions.Reset) {
-    reset()
-  } else {
-    advance()
+  switch (getAction()) {
+    case Actions.Start:
+      start(); break
+    case Actions.Next:
+      advance(); break
+    case Actions.Reset:
+      reset(); break
   }
 }
 
@@ -222,19 +272,6 @@ class Bag {
   // -- queries --
   get isEmpty() {
     return this.contents.length == 0
-  }
-
-  // -- factories --
-  static decode(str) {
-    const re = /(\w+),?/g
-    const items = []
-
-    let match = null
-    while (match = re.exec(str)) {
-      items.push(match[1])
-    }
-
-    return new Bag(items)
   }
 }
 
