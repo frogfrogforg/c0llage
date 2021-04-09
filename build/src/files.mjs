@@ -55,18 +55,23 @@ export async function transfer(entry, isDirectory = false) {
 }
 
 export async function remove(entry) {
-  await fs.rm(path.join(paths.dist, entry), {
-    recursive: true,
-  })
+  const dst = path.join(paths.dist, rename(entry))
+
+  // check if file exists
+  try {
+    await fs.rm(dst, { recursive: true })
+  } catch {
+    log.error(`✘ failed to remove ${dst}`)
+  }
 }
 
 // -- c/helpers
 async function compile(entry) {
   const src = path.join(paths.proj, entry)
-  const dst = path.join(paths.dist, entry.replace(paths.ext.partial, ".html"))
+  const dst = path.join(paths.dist, rename(entry))
 
   const partial = await read(src)
-  const cleaned = partial.replaceAll(kBodyTagPattern, "")
+  const cleaned = partial.replace(kBodyTagPattern, "")
 
   const tmpl = await template()
   const compiled = tmpl(cleaned)
@@ -91,6 +96,10 @@ async function copy(entry) {
       await fs.symlink(src, dst)
     }
   }
+}
+
+function rename(entry) {
+  return entry.replace(paths.ext.partial, ".html")
 }
 
 // -- queries --

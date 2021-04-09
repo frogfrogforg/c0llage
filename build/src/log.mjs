@@ -1,5 +1,6 @@
 // -- types --
 const LogLevel = {
+  Error: 0,
   Info: 1,
   Debug: 2,
 }
@@ -8,6 +9,10 @@ const LogLevel = {
 const kLogLevel = LogLevel.Info
 
 // -- impls --
+function error(...messages) {
+  add(LogLevel.Error, messages)
+}
+
 function info(...messages) {
   add(LogLevel.Info, messages)
 }
@@ -24,6 +29,7 @@ function add(level, messages) {
 
 // -- exports --
 export const log = {
+  error,
   info,
   debug,
   add,
