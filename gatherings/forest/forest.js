@@ -43,18 +43,26 @@ function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
-    el.href += '?r=' + Math.random();
+    el.href = randomizeUrl(el.href)
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
   iframes.forEach((el) => {
-    el.src += '?r=' + Math.random()
+    el.src = randomizeUrl(el.src)
   })
 
   var dframes = Array.from(document.getElementsByTagName('d-iframe'))
   dframes.forEach((el) => {
-    el.setAttribute("src", el.getAttribute("src") + '?r=' + Math.random().toString().slice(2))
+    el.setAttribute("src", randomizeUrl(el.getAttribute("src")))
   })
+}
+
+// append r=<rand> param, preserving existing query
+function randomizeUrl(str) {
+  const [path, search] = str.split("?")
+  const params = new URLSearchParams(search)
+  params.append("r", Math.random().toString().slice(2))
+  return `${path}?${params.toString()}`
 }
 
 main()
