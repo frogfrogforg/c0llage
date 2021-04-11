@@ -20,8 +20,9 @@ const kClearColor = new Float32Array([0.00, 0.00, 0.00, 0.00])
 let mCanvas = null
 let mGl = null
 let mAssets = null
-let mSize = null
 let mSimSize = null
+let mDrawSize = null
+let mViewSize = null
 let mPlate = null
 let mFg = null
 
@@ -57,33 +58,31 @@ export function init(id, assets) {
   // hang on to assets
   mAssets = assets
 
-  // track viewport/sim sizes
-  mSize =
-    initViewSize()
-
-  mSimSize = initSize(
-    mSize.w / kScale,
-    mSize.h / kScale
-  )
+  // init view dom size
+  mViewSize = initViewSize()
 
   // abort for now if size is 0 (TODO: maybe listen for window resize events)
-  if (mSize.w == 0) {
-    console.debug("mossy canvas size is 0, not sure what to do")
+  if (mViewSize.w === 0) {
+    console.debug("relish canvas size is 0, not sure what to do")
     return false
   }
 
-  // sync canvas el's attribute, webgl needs this
-  mCanvas.width = mSize.w
-  mCanvas.height = mSize.h
-  mCanvas.style.width = `${mSize.w}px`;
-  mCanvas.style.height = `${mSize.h}px`;
+  mCanvas.style.width = `${mViewSize.w}px`
+  mCanvas.style.height = `${mViewSize.h}px`
+
+  // init draw, canvas size
+  mDrawSize = initDrawSize(mViewSize)
+  mCanvas.width = mDrawSize.w
+  mCanvas.height = mDrawSize.h
+
+  // init simulation size
+  mSimSize = initSimSize(mDrawSize)
 
   // init gl props
   mTextures = initTextures()
   mFramebuffers = initFramebuffers()
   mBuffers = initBuffers()
 
-  // try and compile shaders
   return true
 }
 
@@ -184,8 +183,8 @@ export function draw() {
   gl.viewport(
     0,
     0,
-    mSize.w,
-    mSize.h,
+    mDrawSize.w,
+    mDrawSize.h,
   )
 
   // sample from the current texture (state)
@@ -228,7 +227,7 @@ export function draw() {
 
   gl.uniform2fv(
     sd.uniforms.scale,
-    mSize.v,
+    mDrawSize.v,
   )
 
   // conf color uniforms
@@ -261,10 +260,12 @@ export function setPlate(plate) {
   syncShaderDescs()
 }
 
+// poke the texture in view space
 export function poke(x, y) {
+  const scale = mSimSize.w / mViewSize.w
   pokeTexture(
-    x / kScale,
-    y / kScale
+    x * scale,
+    y * scale
   )
 }
 
@@ -408,7 +409,7 @@ function initTexture() {
 function initSubImage(cells) {
   const image = []
   const sampl = Math.random() * 255
-  const color = getRandomSimColor()
+  const color = mPlate.rand ? getRandomSimColor() : 255
 
   for (const cell of cells) {
     if (cell === 1) {
@@ -596,10 +597,22 @@ function initFramebuffers() {
 }
 
 // -- c/helpers
-// finds the nearest power-of-2 size to the dom width and height
+// finds the dom size
 function initViewSize() {
   const rect = mCanvas.getBoundingClientRect()
-  const side = Math.pow(2, Math.floor(Math.log(Math.min(rect.width, rect.height)) / Math.log(2)));
+  const side = Math.min(rect.width, rect.height)
+  return initSize(side, side)
+}
+
+// finds the nearest power-of-2 size to the dom size
+function initDrawSize(viewSize) {
+  const side = Math.pow(2, Math.floor(Math.log(viewSize.w) / Math.log(2)))
+  return initSize(side, side)
+}
+
+// finds the scaled simulation size
+function initSimSize(drawSize) {
+  const side = drawSize.w / kScale
   return initSize(side, side)
 }
 
@@ -621,7 +634,7 @@ export function getCanvas() {
 }
 
 function getRandomSimColor() {
-  return (0.62 + Math.random() * 0.38) * 255
+  return (0.63 + Math.random() * 0.37) * 255
 }
 
 function getFgColor(i) {

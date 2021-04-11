@@ -16,8 +16,6 @@ let $mMain = null
 
 // -- lifetime --
 function main(assets) {
-  console.debug("start")
-
   // capture els
   $mMain = document.getElementById("main")
 
@@ -79,13 +77,6 @@ function initEvents() {
   const $canvas = getCanvas()
   $canvas.addEventListener("click", didClickMouse)
   $canvas.addEventListener("mousemove", didMoveMouse)
-
-  // add keyboard events
-  document.addEventListener("keydown", didPressKey)
-
-  // add misc events
-  // const $pause = document.getElementById("pause")
-  // $pause.addEventListener("click", didClickPause)
 }
 
 // -- e/mouse
@@ -138,11 +129,9 @@ function didPressKey(evt) {
         // plates
         plates: {
           gol: p("plates/gol.frag"),
-          bar: p("plates/bar.frag"),
+          chw: p("plates/chw.frag"),
           sky: p("plates/sky.frag"),
           dot: p("plates/dot.frag"),
-          swp: p("plates/swp.frag"),
-          stp: p("plates/swp.frag"),
         },
       },
     })

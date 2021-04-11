@@ -27,11 +27,11 @@ cell_t get(int x, int y) {
   if (i > kMaxC) {
     cell.on = 0;
     cell.clr = kNilC;
-  } else {
-    cell.on = 1;
-    cell.clr = i;
+    return cell;
   }
 
+  cell.on = 1;
+  cell.clr = i;
   return cell;
 }
 

@@ -10,7 +10,18 @@ const kPlates = {
       "#6E907A",
       "#77BA35",
       "#457672",
-    ]
+    ],
+  }),
+  ...initPlate({
+    name: "chw",
+    poke: "circle",
+    rand: false,
+    colors: [
+      "#64783D",
+      "#6E907A",
+      "#949455",
+      "#937A70",
+    ],
   }),
   ...initPlate({
     name: "bar",
@@ -28,16 +39,6 @@ const kPlates = {
       float2: 0.98,
     },
   }),
-  ...initPlate({
-    name: "dot",
-    poke: "circle",
-  }),
-  ...initPlate({
-    name: "swp",
-  }),
-  ...initPlate({
-    name: "stp",
-  }),
 }
 
 // -- lifetime --
@@ -48,6 +49,7 @@ function initPlate({
   ...props
 }) {
   const plate = {
+    rand: true,
     ...props,
     poke: getPoke(poke
       || "point"),

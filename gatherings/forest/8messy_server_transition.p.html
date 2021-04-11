@@ -6,6 +6,11 @@
         width: 50%;
         height: 45%;
     }
+
+    .Mossy-plate {
+        width: 100%;
+        height: 100%;
+    }
 </style>
 
 <body>
@@ -14,11 +19,19 @@
     <a class="hotspot move" href="./6messy_server_screen.html"
         style="left: 64%; top: 50%; width: 13%; height: 40%"></a>
 
-    <d-iframe
-        class="Mossy"
-        src="../../games/relish/game.html#gol"
-        autoload>
-    </d-iframe>
+    <div class="Mossy">
+        <d-iframe
+            class="Mossy-plate"
+            src="../../games/relish/game.html#gol"
+            autoload>
+        </d-iframe>
+
+        <a fun-link
+           class="hotspot move"
+           href="./40chewables.html"
+           style="top: 0; right: 0; width: 20%; height: 20%;">
+        </a>
+    </div>
 
     <section id="frames" class="Frames">
         <draggable-frame id="test">
