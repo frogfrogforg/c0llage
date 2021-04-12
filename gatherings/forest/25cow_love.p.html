@@ -1,13 +1,140 @@
+<style>
+
+        ul{
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        }
+        ul li{
+        padding: 0;
+        display: block;
+        }
+
+        .slideshow-wrapper{
+        position: relative;
+        width: 100%;
+        text-align: center;
+        }
+        .slideshow-outside-container h1{
+        margin-bottom: 30px;
+        }
+        .slideshow-outside-container{
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        padding: 10px;
+        width: 80%;
+        height: 40%;
+        overflow: hidden;
+        }
+        .slideshow-inner-container{
+        position: absolute;
+        top: 12px;
+        left: 0;
+        width: 100%;
+        height: 85%;
+        }
+        .slide{
+        float: left;
+        width: 150px;
+        height: 140px;
+        margin-right: 20px;
+        }
+
+        .cow {
+        position: absolute;
+        left: 5%;
+        top: 63%;
+        width: 30%;
+        height: 30%;
+        z-index: 1;
+    }
+    .cowLeft{
+        background-image:url("./images/Cows.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    .cowRight{
+        background-image:url("./images/Cow1.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+</style>
+
 <body>
+    <!--cows-->
+    <!--
+        <img 
+        id = "cow1"
+        class = "cow" 
+        onclick= "cowLeft()" 
+        src="./images/Cows.png"></img>
+
+
+    <img 
+        id = "cow2"
+        class = "cow" 
+        onclick= "cowRight()"
+        style = "top: 63%; left:54%; width: 43%" 
+        src="./images/Cow1.png"></img>
+    -->
+
+
+    <!--background???-->
     <img class="background" src="./images/25.png"></img>
     <a class="hotspot centered move" href="./20the_source.html"
         style="left: 53.888%; top: 54.666%; width: 26%; height: 38%"></a>
     <section id="frames" class="Frames">
         <draggable-frame id="test">
             <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5"
-                href="./20the_source.p.html">
+                href="./20the_source.html">
                 🔙
             </a>
         </draggable-frame>
     </section>
+
+
+    <!--slideshow shit-->
+    <div class="slideshow-wrapper" style= "z-index: 12; top: 57%; left: -9%;">
+   
+       <div class="slideshow-outside-container" style= "left: 2%;">
+           <div class="slideshow-inner-container" style = "left: 59%; top: 11%;" id="cowRight">
+               <ul>
+                   <li class="slide cowRight" style = "width: 1000%;" onclick = "cowRight()"></li>
+               </ul>
+           </div>
+        </div>
+
+        <div class="slideshow-outside-container" style = "top: -50%; left: -10%; width: 70%;">
+            <div class="slideshow-inner-container" style= "top: 25%;" id= "cowLeft">
+                <ul>
+                    <li class="slide cowLeft" onclick = "cowLeft()"></li>
+                </ul>
+            </div>
+        </div>
+
+
+
+    <script>
+        // onclickcow = function () {
+        //     const cowKissSpeed = 6
+        //     cow1x -= cowKissSpeed  
+        //     cow2x += cowKissSpeed
+        //     document.getElementById('cow1').style.marginTop = cow1x + '%'
+        //     document.getElementById('cow2').style.marginTop = cow2x + '%'
+        // }
+        
+        //cow move stuff
+        function cowRight() {
+                var val = (parseInt(document.getElementById('cowRight').style.left, 10) || 0) - 3;
+                document.getElementById('cowRight').style.left = val + '%';
+            }
+
+        function cowLeft() {
+                var val = (parseInt(document.getElementById('cowLeft').style.left, 10) || 0) + 3;
+                document.getElementById('cowLeft').style.left = val + '%';
+            }
+    </script>
 </body>
