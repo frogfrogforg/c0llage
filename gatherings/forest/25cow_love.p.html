@@ -36,9 +36,10 @@
         }
         .slide{
         float: left;
-        width: 150px;
-        height: 140px;
-        margin-right: 20px;
+        float: left;
+        width: 100%;
+        height: 100%;
+        margin-right: 10%;
         }
 
         .cow {
@@ -84,12 +85,10 @@
 
     <!--background???-->
     <img class="background" src="./images/25.png"></img>
-    <a class="hotspot centered move" href="./20the_source.html"
-        style="left: 53.888%; top: 54.666%; width: 26%; height: 38%"></a>
     <section id="frames" class="Frames">
         <draggable-frame id="test">
             <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5"
-                href="./20the_source.html">
+                href="./19wizards_domain.html">
                 🔙
             </a>
         </draggable-frame>
@@ -99,24 +98,31 @@
     <!--slideshow shit-->
     <div class="slideshow-wrapper" style= "z-index: 12; top: 57%; left: -9%;">
    
-       <div class="slideshow-outside-container" style= "left: 2%;">
+       <div class="slideshow-outside-container" style= "left: 15%; width: 50%; top: -14%; z-index: 12;">
            <div class="slideshow-inner-container" style = "left: 59%; top: 11%;" id="cowRight">
                <ul>
-                   <li class="slide cowRight" style = "width: 1000%;" onclick = "cowRight()"></li>
+                   <li class="slide cowRight cursor-cow" style = "width: 1000%;" onclick = "cowRight()" id = "CowRS"></li>
                </ul>
            </div>
         </div>
 
-        <div class="slideshow-outside-container" style = "top: -50%; left: -10%; width: 70%;">
+        <div class="slideshow-outside-container" style = "top: -60%; left: -5%; width: 70%;">
             <div class="slideshow-inner-container" style= "top: 25%;" id= "cowLeft">
                 <ul>
-                    <li class="slide cowLeft" onclick = "cowLeft()"></li>
+                    <li class="slide cowLeft cursor-cow" style = "width: 69%; height: 85%;" onclick = "cowLeft()" id = "CowLS"></li>
                 </ul>
             </div>
         </div>
+    </div>
+    
+    <!--secret cow-->
+    <div style = "visibility:hidden; top: 17%; left: 20%; position:absolute" id = "skyCow">
+        cow in the sky
+
+    </div>
 
 
-
+    </body>
     <script>
         // onclickcow = function () {
         //     const cowKissSpeed = 6
@@ -126,15 +132,41 @@
         //     document.getElementById('cow2').style.marginTop = cow2x + '%'
         // }
         
+        let haveKissed = false; 
+
         //cow move stuff
         function cowRight() {
-                var val = (parseInt(document.getElementById('cowRight').style.left, 10) || 0) - 3;
-                document.getElementById('cowRight').style.left = val + '%';
+                if(!CheckOverlap()){
+                    var val = (parseInt(document.getElementById('cowRight').style.left, 10) || 0) - 3;
+                    document.getElementById('cowRight').style.left = val + '%';
+                }else //if(!haveKissed)
+                {
+                    haveKissed = true;
+                    document.getElementById('skyCow').style.visibility = 'visible';
+                }
             }
 
         function cowLeft() {
-                var val = (parseInt(document.getElementById('cowLeft').style.left, 10) || 0) + 3;
-                document.getElementById('cowLeft').style.left = val + '%';
+                if(!CheckOverlap()){
+                    var val = (parseInt(document.getElementById('cowLeft').style.left, 10) || 0) + 3;
+                    document.getElementById('cowLeft').style.left = val + '%';
+                }else //if(!haveKissed)
+                {
+                    haveKissed = true;
+                    document.getElementById('skyCow').style.visibility = 'visible';
+                }
             }
+
+        function CheckOverlap() {
+            const el1 = document.getElementById("CowLS")
+            const el2 = document.getElementById("CowRS")
+            const rect1 = el1.getBoundingClientRect();
+            const rect2 = el2.getBoundingClientRect();
+            
+            return ((rect1.right - rect2.left)/rect1.width > 0.6)
+            }
+
+        window.cowRight = cowRight;
+        window.cowLeft = cowLeft;
     </script>
-</body>
+

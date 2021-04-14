@@ -7,7 +7,7 @@ window.Frames = {
   ...staticize('toggle'),
   ...staticize('bringToTop'),
   ...staticize('addEventListener', "listen"),
-  topZIndex: 1
+  topZIndex: 69
 }
 
 function staticize(...names) {
