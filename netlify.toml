@@ -1,0 +1,9 @@
+[build]
+  publish = "./dist"
+  command = "node ./build/build.mjs"
+
+[context.main.environment]
+  PROD = "1"
+
+[context.live.environment]
+  PROD = "1"
