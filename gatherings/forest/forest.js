@@ -38,7 +38,7 @@ function main() {
     const scripts = game.querySelectorAll("script")
     for (const script of scripts) {
       if (!script.src) {
-        eval(script.textContent)
+        eval.call(window, script.textContent)
       }
     }
   })
