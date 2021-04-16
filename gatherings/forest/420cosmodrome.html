@@ -1,0 +1,168 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!-- caching -->
+  <meta name="turbo-cache-control" content="no-cache">
+
+  <!-- title -->
+  <title>welcome</title>
+
+  <!-- scrapers -->
+  <meta property="og:title" content="c0llage">
+  <meta property="og:type" content="FROGCUBE">
+  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
+  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
+  <meta property="og:description" content="In 1884, meridian time personnel met
+in Washington to change Forg time.
+First words said was that only 1 day
+could be used on Forg to not change
+the 1 day marshmallow">
+
+  <!-- styling -->
+  <link rel="stylesheet" href="forest.css">
+  <link rel="stylesheet" href="../shared/frames.css">
+
+  <!-- scripts -->
+  <script type="module" src="../../global.js"> </script>
+  <script type="module" src="../shared/draggable-frame.js"></script>
+  <script type="module" src="../shared/d-iframe.js"></script>
+  <script type="module" src="forest.js"></script>
+
+  <!-- style -->
+  <style>
+    .body {
+      overflow: hidden;
+    }
+
+    .Cosmodrome {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .CosmodromeCol {
+    }
+
+    .CosmodromeCol--sticky {
+      position: sticky;
+      top: 0;
+    }
+
+    .CosmodromeBg {
+      width: 100vmin;
+      height: 100vmin;
+      user-select: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="game">
+    <div id="cosmodrome" class="Cosmodrome">
+      <div class="CosmodromeCol CosmodromeCol--sticky">
+        <img class="CosmodromeBg" src="./images/cosmodrome/00noentry.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/10monolith.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/11natatorium.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/12slide.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/20niceengine.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/50launching.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/51launched.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/80victory.gif">
+      </div>
+    </div>
+  </div>
+
+  <div id="inventory" class="Inventory"></div>
+</body>
+
+<script>
+  const cosmodrome = document.getElementById("cosmodrome")
+
+  // TODO: undo this later
+  let isSet = false
+
+  function hideScroll() {
+    if (isSet && document.body.style.overflow != "hidden") {
+      alert("nice try hacker")
+    }
+
+    isSet = true
+    document.body.style.overflow = "hidden"
+    requestAnimationFrame(hideScroll)
+  }
+
+  hideScroll()
+
+  // -- init --
+  function main() {
+    initTouch()
+  }
+
+  // -- touch --
+  let isTouching = false
+  let xi = null
+  let yi = null
+
+  function initTouch() {
+    cosmodrome.addEventListener("pointerdown", didStartTouch)
+    cosmodrome.addEventListener("pointermove", didMoveTouch)
+    cosmodrome.addEventListener("pointerup", didEndTouch)
+
+    const html = document.querySelector("html")
+    html.addEventListener("pointerout", (evt) => {
+      if (evt.target == html) {
+        this.didEndTouch()
+      }
+    })
+  }
+
+  function didStartTouch(evt) {
+    isTouching = true
+    xi = evt.clientX
+    yi = evt.clientY
+  }
+
+  function didMoveTouch(evt) {
+    if (!isTouching) {
+      return
+    }
+
+    const a = Math.PI / 3
+    const x = evt.clientX
+    const y = evt.clientY
+
+    const dx = x - xi
+    const dy = y - yi
+
+    document.body.scrollBy({
+      top: Math.cos(a) * dx - Math.sin(a) * dy,
+      left: Math.sin(a) * dx + Math.cos(a) * dy,
+    })
+
+    xi = x
+    yi = y
+  }
+
+  function didEndTouch() {
+    isTouching = false
+  }
+
+  // -- boostrap --
+  main()
+</script>
+
+</html>
