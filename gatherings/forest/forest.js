@@ -25,7 +25,22 @@ function main() {
     const nextBody = evt.detail.newBody
     const nextGame = nextBody.querySelector("#game") || nextBody;
 
-    game.innerHTML = nextGame.innerHTML
+    // this is probably faster than reparsing the dom again
+    while (game.firstChild) {
+      game.removeChild(game.lastChild)
+    }
+
+    for (const child of nextGame.children) {
+      game.appendChild(child)
+    }
+
+    // eval any new scripts (this is probably fine right)
+    const scripts = game.querySelectorAll("script")
+    for (const script of scripts) {
+      if (!script.src) {
+        eval(script.textContent)
+      }
+    }
   })
 
   onStateChanged()
