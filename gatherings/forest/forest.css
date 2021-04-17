@@ -44,7 +44,7 @@ body {
     display: block;
 }
 
-.hotspot .debug {
+.debug {
     border: violet 10px solid;
 }
 
@@ -91,4 +91,12 @@ body {
 
 .cursor-cow {
     cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🐄</text></svg>'), auto;
+}
+
+.cursor-kiss {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">💋</text></svg>'), auto;
+}
+
+.cursor-heart {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">♥️</text></svg>'), auto;
 }

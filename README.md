@@ -17,7 +17,7 @@ live @ https://nostalgic-engelbart.netlify.app/
 
 To start haunting:
 ```
-git config --local user.name "cire"; git config --local user.email "cire";
+git config --local user.name "-chi"; git config --local user.email "-chi";
 ```
 
 To unhaunt (stop haunting):

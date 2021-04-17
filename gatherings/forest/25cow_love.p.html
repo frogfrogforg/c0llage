@@ -50,6 +50,7 @@
         height: 30%;
         z-index: 1;
     }
+
     .cowLeft{
         background-image:url("./images/Cows.png");
         background-size: contain;
@@ -131,18 +132,31 @@
         //     document.getElementById('cow1').style.marginTop = cow1x + '%'
         //     document.getElementById('cow2').style.marginTop = cow2x + '%'
         // }
+        function* KissRoutineGenerator() {
+            const cowRight = document.getElementById('CowRS')
+            cowRight.classList.remove('cursor-cow')
+            cowRight.classList.add('cursor-kiss')
+
+            const cowLeft = document.getElementById('CowLS')
+            cowLeft.classList.remove('cursor-cow')
+            cowLeft.classList.add('cursor-kiss')
+            yield
+
+            document.getElementById('skyCow').style.visibility = 'visible';
+            yield
+        }
         
         let haveKissed = false; 
+        let kissRoutine = KissRoutineGenerator()
 
         //cow move stuff
         function cowRight() {
                 if(!CheckOverlap()){
                     var val = (parseInt(document.getElementById('cowRight').style.left, 10) || 0) - 3;
                     document.getElementById('cowRight').style.left = val + '%';
-                }else //if(!haveKissed)
+                }else if(!haveKissed)
                 {
-                    haveKissed = true;
-                    document.getElementById('skyCow').style.visibility = 'visible';
+                    kissRoutine.next()
                 }
             }
 
@@ -150,12 +164,13 @@
                 if(!CheckOverlap()){
                     var val = (parseInt(document.getElementById('cowLeft').style.left, 10) || 0) + 3;
                     document.getElementById('cowLeft').style.left = val + '%';
-                }else //if(!haveKissed)
+                }else if(!haveKissed)
                 {
-                    haveKissed = true;
-                    document.getElementById('skyCow').style.visibility = 'visible';
+                    kissRoutine.next()
                 }
             }
+
+        
 
         function CheckOverlap() {
             const el1 = document.getElementById("CowLS")
