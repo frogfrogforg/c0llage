@@ -84,6 +84,10 @@
       width: 512px;
       height: 512px;
     }
+    details {
+      margin-left: 1em;
+
+    }
   </style>
   <script>
     let showBitsyThing = false;
@@ -96,6 +100,28 @@
       }
       showBitsyThing = !showBitsyThing;
     }
+
+    function checkHashAndExpandDetails(e) {
+      e.preventDefault()
+      const id = window.location.hash.slice(1)
+      console.log("expanding at", id)
+      let currentElement = document.getElementById(id)
+      const initialElement = currentElement
+      let recLimit = 100
+      while(currentElement.parentElement != null && recLimit > 0)  {
+        console.log(recLimit, currentElement.parentElement, currentElement.parentElement.nodeName)
+        currentElement = currentElement.parentElement
+        if(currentElement.nodeName === 'DETAILS') {
+          currentElement.open = true
+        }
+        recLimit--;
+      }
+
+      initialElement.scrollIntoView({behavior: 'smooth'})
+    }
+
+    window.addEventListener('load', checkHashAndExpandDetails, false)
+    window.addEventListener('hashchange', checkHashAndExpandDetails, false);
   </script>
 </head>
 
@@ -104,13 +130,129 @@
     mutpensamentos
   </h1>
 
-
   <p>
     I might write some thoughts in portuguese sometimes, I might also try to think something about translation and about
     the
     web being in english. And I'll see if I can find any automated solution to easily translate some stuff.
   </p>
-  <div id="2021.02.22.2">
+  <div id="2021.04.20.2">
+    <h2>
+      2021.02.22.2 - Some html experimentation
+    </h2>
+    <p>
+      I found out the other than from an Everest Pipkin tweet I can't find anymore that there is a builtin folding feature in html, it's called <a href="https://www.w3schools.com/TAGS/tag_details.asp">&ltdetails&gt</a>. I think it will work nice with conjuntion with importing from dynalist.
+      <details>
+        <summary>This is the summary, inside a details tag</summary>
+        <details>
+          <summary>You can nest summaries, which is pretty cool</summary>
+          <details>
+            <summary> Sadly the summary has the little arrow on the side regardless of having content or not, but I think its fine</summary>
+          </details>
+          <details>
+            <summary>
+              I can even have multiple things, making it highly nested.</details>
+            </summary>
+            <details>
+              <summary>It is a bit confusing</summary>
+              <details>
+                <summary>But I'll practice here...</summary>
+                <details>
+                  <summary>And children</summary>
+                  <details>
+                    <summary>And goind very deep</summary>
+                    <details>
+                      <summary>deeper</summary>
+                      <p id="deeper">What happens if I link to one of these</p>
+                    </details>
+                    <details>
+                      <summary>and deeper</summary>
+                    </details>
+                  </details>
+                </details>
+              </details>
+              <details>
+                <summary>creating siblings</summary>
+              </details>
+            </details>
+        </details> 
+        <p>
+          can I <a href="#deeper">link </a> to something very deep? What happens?
+        </p>
+        <details>
+          <summary> Do you think this worked on my first try?</summary>
+          <p>lets see...</p>
+          <p>All the nested things worked really nice. If feels way less deep on the page than it feels doing it here on the html tags</p>
+          <details>
+          <summary>Sadly the linking thing doesn't work as I intended it (opening all the nested stuff), but I guess that was asking too much, and it might not be a very hard js to write.</summary>
+          <p> Update: it works and is kind of interesting. Not completely ideal yet, but nice.</p>
+          </details>
+          <p>Thats what I'm doing now</p>
+        </details>
+        <details>
+          <summary>Some extra tests</summary>
+          <details>
+            <summary>What happens whete there's a list &ltul&gt</summary>
+            <ul>
+              <li>
+                <details>
+                  <summary>first element of a list</summary>
+                  <p> 111111 </p>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary>second element of a list</summary>
+                  <p> 2222222 </p>
+                </details>
+              </li>
+            </ul>
+          </details>
+          <p>What happens if you create <details><summary>details</summary><p>hello!</p></details>in the middle of a paragraph?</p>
+          <details>Next text, styling this</details>
+        </details>
+      </details> 
+    </p>
+  </div>
+
+  <div id="2021.04.20.1">
+    <h2>
+      2021.02.22.1 - More thoughts on thoughts
+    </h2>
+
+    <p> After using
+      <a href="./mutthoughts.html">
+        domino
+      </a> for a while, I realised (I hate this word, is it with z or with s??? discord keeps correcting me to use s)
+      that it is still not ideal for a couple of reasons:
+    <ul>
+      <li id="other-part">
+        the size of each block is not very big to contain big thoughts, so I have to force myself to do chunks, which
+        makes me think too much while writing
+      </li>
+      <li>
+        Even if a 2d grid is way more free than like this 1d html document, there is a slight offset and rigidity that
+        makes it hard to actually go to places I want to.
+        <ul>
+          <li>
+            there's definitely the possibility to mod it, breaking the grid and creating bezier arrows between things
+            that might make it really nice for my personal use
+          </li>
+          <li>
+            probably for someone more organized it might work better as well.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    </p>
+    <p>
+      in the end of the day, dynalist is my tool of choice, which unfortunately is not open source. I think someday I
+      might find someone that uses org mode to show me how they do it and if it gives the same functionality. A wyiwyg
+      thing that has an infinitely nested tree-like structure really goes really well with how I think, especially with
+      the possibility of creating <a href="#other-part"> links </a> to other parts of the structure. That and the
+      ability to fold and focus on specific regions is so good. I have to see the export possibilities of dynalist.
+    </p>
+  </div>
+  <div id="2021.02.22.1">
     <h2>
       2021.02.22.1
     </h2>
