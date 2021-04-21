@@ -72,9 +72,19 @@
     let swanY = 0
     let clickedSwan = false
     const swanFlySpeed = 0.25
+    const swanVideo = document.getElementById('swanvideo')
+    swanVideo.onload = () => {
+        console.log('swanvideo is completely loaded', swanVideo);
+        const innerDoc = swanVideo.contentDocument || swanVideo.contentWindow.document; 
+        if(innerDoc == null) return
+        const video = innerDoc.getElementsByTagName('video')
+        console.log(video)
+        d.Audio.addSource(video)
+    }
+
     window.onclickswan = function () {
         if (!clickedSwan) {
-            document.getElementById('swanvideo').src = "https://archive.org/embed/SwanLakeDanceOfTheCygnets&autoplay=1"
+            swanVideo.src = "https://archive.org/embed/SwanLakeDanceOfTheCygnets&autoplay=1"
             clickedSwan = true
         }
         Frames.show('pwnd')

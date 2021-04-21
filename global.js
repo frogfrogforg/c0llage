@@ -1,5 +1,6 @@
 import { Events } from "./core/events.js"
 import { State } from "./core/state.js"
+import { Audio } from "./core/audio.js"
 
 // -- props --
 const root = window.top
@@ -10,6 +11,7 @@ if (root.d == null) {
   // global obj for other shared modules
   const global = {
     Events,
+    Audio,
     State,
   }
 
