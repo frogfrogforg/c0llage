@@ -58,8 +58,12 @@
         </div>
     </draggable-frame>
 
-    <a class="hotspot cursor-salad" href="../../games/guttersour/WEB/index.html"
-        style="left: 52%; top: 65.666%; width: 20%; height: 18%"></a>
+    <draggable-frame hidden id="gutter" x=55 y=62 width=30 height=25>
+        <d-iframe src='../../games/guttersour/WEB/index.html'></d-iframe>
+    </draggable-frame>
+
+    <button class="hotspot cursor-salad" onclick="Frames.show('gutter')"
+        style="left: 52%; top: 65.666%; width: 20%; height: 18%"></button>
     <img id="swan" class="swan talk" onclick="window.onclickswan()" src="./images/swanglasses_shady.png"></img>
 </body>
 

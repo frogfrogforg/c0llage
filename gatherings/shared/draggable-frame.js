@@ -332,6 +332,10 @@ export class DraggableFrame extends HTMLParsedElement {
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
+    const iframe = this.findIframe()
+    if(iframe != null) {
+      iframe.focus()
+    }
   }
 
   listen = addEventListener

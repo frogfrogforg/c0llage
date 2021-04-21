@@ -42,6 +42,7 @@ body {
 .hotspot {
     position: absolute;
     display: block;
+    opacity: 0;
 }
 
 .debug {
