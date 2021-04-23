@@ -14,17 +14,13 @@ export function init() {
 
 // -- commands --
 function traverse() {
-  if (!isHighwayPage()) {
+  const id = getHighwayId()
+  if (id == null) {
     reset()
     return
   }
 
   const step = State.highwayStep
-
-  // show alert on first step
-  if (step === 0) {
-    alert("dang where are my keys")
-  }
 
   // update the link url to either a random page, or the exit if you
   // walked far enough
@@ -32,7 +28,12 @@ function traverse() {
   if (step >= 600) {
     link.href = "./418exit_to_the_cosmodrome.html"
   } else {
-    link.href = getHighwayUrl(55 + Math.ceil(Math.random() * 6))
+    let next = 55 + Math.ceil(Math.random() * 5)
+    if (next >= id) {
+      next += 1
+    }
+
+    link.href = getHighwayUrl(next)
   }
 
   State.highwayStep = step + 1
@@ -43,10 +44,21 @@ function reset() {
 }
 
 // -- queries --
-function getHighwayUrl(i) {
-  return `./${i}highway_to_the_cosmodrome.html`
+function getHighwayId() {
+  // match the url
+  const path = document.location.pathname
+  const matches = path.match(/(\d+)highway_to_the_cosmodrome/)
+
+  // if we can't find a page number, not a highway page
+  const id = matches && matches[1]
+  if (id == null) {
+    return null
+  }
+
+  // otherwise, get the numeric id
+  return Number.parseInt(id)
 }
 
-function isHighwayPage() {
-  return document.location.pathname.includes("highway_to_the_cosmodrome")
+function getHighwayUrl(i) {
+  return `./${i}highway_to_the_cosmodrome.html`
 }
