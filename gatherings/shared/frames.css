@@ -151,8 +151,8 @@ d-iframe iframe {
 }
 
 .Frame-header-button:hover {
-  background-color: magenta;
   cursor:pointer;
+  filter: sepia(100%) hue-rotate(242deg) saturate(400%);
 }
 
 .Frame-body {
