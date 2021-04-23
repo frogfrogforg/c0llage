@@ -24,8 +24,18 @@
     <div class="welcome"><a style="color: #2e26c7" href="./1.html">this</a> is supposed to be fun<br>— the parks staff
     </div>
 
+<<<<<<< HEAD
     <a id="stop" class="hotspot centered" href="#" style="left: 29.188%; top: 24.996%; width: 11%; height: 12%"
+=======
+    <a id="stop" class="hotspot centered"
+        href="#"
+        style="left: 29.188%; top: 24.996%; width: 11%; height: 12%"
+>>>>>>> 40a66fee98bb57ef25f672cc130dc9925eb09159
         data-turbo="false"></a>
+
+    <a class="hotspot"
+        href="./55highway_to_the_cosmodrome.html"
+        style="left: 7.188%; top: 17.996%; width: 17%; height: 9%"></a>
 
     <a class="hotspot centered"
         href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &"
@@ -37,24 +47,31 @@
 </body>
 
 <script>
-    if (window.localStorage.getItem('lastVisitCommit')) {
-        console.log('aaa')
-        Frames.show('version')
-    } else {
-        console.log('bbbb')
-    }
-
     document.getElementById("stop").addEventListener("click", (evt) => {
+        // clear the body
         document.body.remove()
         document.querySelector("title").innerHTML = "goodbye"
 
-        // setTimeout(() => {
-        // console.log("starting btc miner...")
-        // let f = 0
-        // while(true) {
-        // console.log(".".repeat(f + 1))
-        // f = (f + 1) % 3
-        // }
-        // }, 100)
+        // start an infinite loop the hang the browser for a few seconds
+        setTimeout(() => {
+            const start = new Date()
+            const duration = 5 * 1000
+            const sample = 1 << 20 // sample time every million iterations
+
+            for (let i = 0; true; i++) {
+                if (i < sample) {
+                    continue
+                }
+
+                // reset the counter
+                i = 0
+
+                // if we've waited long enough, kill the loop
+                const elapsed = new Date() - start
+                if (elapsed >= duration) {
+                    break
+                }
+            }
+        }, 100)
     })
 </script>
