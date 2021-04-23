@@ -175,7 +175,7 @@
 
                     console.log('adding listener to', condition, d.State[condition])
 
-                    d.ListenState(condition, () => {
+                    d.State.listen(condition, () => {
                         const passesAllConditions = s
                             .reduce((aggregate, condition) => aggregate && d.State[condition], true)
                         console.log("AAAAAA", passesAllConditions)
