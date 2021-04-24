@@ -13,7 +13,11 @@ def urlbase(url):
 def normjoin(path1, path2):
     return os.path.normpath(os.path.join(path1, path2))
 
-def crawl(startfile, url_root, include_external=False, include_iframe=False):
+def template_file(file):
+    # x.html -> x.p.html
+    return file[:-5]+".p.html"
+
+def crawl(startfile, url_root, include_external=False, include_iframe=False, draw_images = False, relative_pathnames = False):
     graph = pydot.Dot('my_graph', graph_type='digraph')
 
     seen_paths = set()
@@ -27,15 +31,51 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False):
     while len(to_process) > 0:
         (this, referer, raw_href) = to_process.pop();
         seen_paths.add(this)
-        try:
+        if os.path.exists(this):
             html = BeautifulSoup(open(this).read(), features='html.parser')
-        except FileNotFoundError as e:
+        elif os.path.exists(template_file(this)):
+            html = BeautifulSoup(open(template_file(this)).read(), features='html.parser')
+        else:
             print(f"!! Broken link in {referer}: {raw_href}")
             continue
 
         tags = ['a']
         iframe_tags = ['iframe', 'd-iframe']
         if include_iframe: tags += iframe_tags
+
+        n = pydot.Node('"'+this+'"', shape='rect')
+
+        if draw_images:
+            # Find the background element:
+            background = html.find("img", {"class": "background"})
+            if background:
+                src = background.get('src');
+                rel_src = normjoin(os.path.dirname(this), src)
+                # for some reason relative pathnames don't seem to work with graphviz
+                abs_src = normjoin(os.getcwd(), rel_src);
+                # print(abs_src)
+                if not os.path.exists(abs_src):
+                    print("missing image:", abs_src)
+
+                # this syntax is so fucked lol
+                # https://graphviz.org/doc/info/shapes.html
+                n.set_label(f"""<<TABLE BORDER="0" CELLBORDER="0" >
+                    <TR><TD  WIDTH="200.0" HEIGHT="200.0" FIXEDSIZE="TRUE"><IMG SRC="{rel_src if relative_pathnames else abs_src}"/></TD></TR>
+                    <TR><TD>{this}</TD></TR>
+                 </TABLE>>""");
+
+                # n.set_image(abs_src)
+                # n.set_imagescale("both")
+                # n.set_imagepos("tc")
+                # n.set_labelloc("b")
+                # n.set_fixedsize("true")
+                # #n.set_label(this)
+                # n.set_height("1.0")
+                # n.set_width("1.0")
+
+                # n.set_height(1)
+        graph.add_node(n)
+
 
         for el in html.find_all(tags):
             is_iframe = el.name in iframe_tags
@@ -64,7 +104,8 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False):
                 # external link, just show domain for simplicity
                 neighbor = urlbase(href)
                 # draw as box instead of circle
-                graph.add_node(pydot.Node('"'+neighbor+'"', shape='rect'))
+                n = pydot.Node('"'+neighbor+'"', shape='ellipse')
+                graph.add_node(n)
             else:
                 continue
 
@@ -75,10 +116,12 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False):
 
     return graph
 
-g = crawl("../gatherings/forest/welcome.html", "..")
+g = crawl("../gatherings/forest/welcome.html", "..", draw_images=False)
+g_images = crawl("../gatherings/forest/welcome.html", "..", draw_images=True, relative_pathnames=False)
 g_extended = crawl("../gatherings/forest/welcome.html", "..", include_external=True, include_iframe=True) # kinda redundant but simplest way
 
 g.set_overlap(False)
+g_images.set_overlap(False)
 g_extended.set_overlap(False)
 
 # options: "dot", "neato", "fdp", "sfdp", "twopi", "circo"
@@ -88,6 +131,7 @@ extended_prog = "dot" # cleaner
 
 g.write_svg("sitemap.svg", prog=prog)
 g.write_png("sitemap.png", prog=prog)
+g_images.write_png("sitemap-illustrated.png", prog=prog) # can't render images in svg (graphviz can't seem to deal with relative pathnames)
 
 g_extended.write_svg("sitemap-extended.svg", prog=extended_prog)
 g_extended.write_png("sitemap-extended.png", prog=extended_prog)

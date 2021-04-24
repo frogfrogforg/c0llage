@@ -1,9 +1,11 @@
 import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
 import { init as initInventory } from "./inventory.js"
+import { init as initHighway } from "./highway.js"
 
 // -- props --
 let mInventory = null
+let mHighway = null
 
 // -- lifetime --
 function main() {
@@ -13,6 +15,7 @@ function main() {
   // load shared interfaces
   // TODO: maybe these should get shimmed onto another global similar to `d`, but `f` for forest.
   mInventory = initInventory()
+  mHighway = initHighway()
 
   // capture frame to replace
   const game = document.getElementById("game")
@@ -25,7 +28,7 @@ function main() {
     const nextBody = evt.detail.newBody
     const nextGame = nextBody.querySelector("#game") || nextBody;
 
-    // this is probably faster than reparsing the dom again
+    // append children of next game
     while (game.firstChild) {
       game.removeChild(game.lastChild)
     }
@@ -36,9 +39,9 @@ function main() {
 
     // eval any new scripts (this is probably fine right)
     const scripts = game.querySelectorAll("script")
-    for (const script of scripts) {
-      if (!script.src) {
-        eval.call(window, script.textContent)
+    for (const source of scripts) {
+      if (!source.src) {
+        eval.call(window, source.textContent)
       }
     }
   })

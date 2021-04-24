@@ -1,5 +1,5 @@
 <head>
-    <script src="common.js"></script>
+    <script type="module"  src="forest.js"></script>
     <link rel="stylesheet" href="../shared/frames.css">
     <style>
         body {
@@ -29,6 +29,7 @@
             padding: 0.5% 1% 0.3% 1%;
             font-family: monospace;
             font-size: 3vw;
+            text-align: center;
             border: 0.05em rgba(0, 0, 0, 0) solid;
         }
 
@@ -85,6 +86,12 @@
             <d-iframe style="--scaleFactor: 1.0;" id="florest" src="../../games/florest?a=1"></d-iframe>
         </draggable-frame>
 
+
+        <draggable-frame temperament='phlegmatic' id="dumplings-frame" hidden>
+            <d-iframe style="--scaleFactor: 1.0;" id="dumplings" src="/blogs/dumplings/dumplings.html"></d-iframe>
+        </draggable-frame>
+
+
     </section>
 
     <div id=" icons" class="icons">
@@ -92,6 +99,7 @@
 
         <pc-icon target="tender-frame" name='hello' src="./images/icons/thecomputer.png"></pc-icon>
         <pc-icon target="florest-frame" name='florest' src="./images/icons/florest.png"></pc-icon>
+        <pc-icon target="dumplings-frame" name="big brain" src="./images/icons/dumpling.png"></pc-icon>
 
 
     </div>
@@ -144,7 +152,7 @@
 
                     console.log('adding listener to', condition, d.State[condition])
 
-                    d.ListenState(condition, () => {
+                    d.State.listen(condition, () => {
                         const passesAllConditions = s
                             .reduce((aggregate, condition) => aggregate && d.State[condition], true)
                         console.log("AAAAAA", passesAllConditions)

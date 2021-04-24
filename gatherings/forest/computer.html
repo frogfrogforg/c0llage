@@ -31,6 +31,7 @@
 
             font-family: monospace;
             font-size: 3vw;
+            text-align: center;
             border: 0.05em rgba(0, 0, 0, 0) solid;
         }
 
@@ -98,7 +99,7 @@
         </draggable-frame>
 
         <draggable-frame temperament='choleric' id="narrative" width=35 height=80 hidden>
-            <iframe style="--scaleFactor: 1.0;" id="main" src="../../dfrogn/narrative.html"></iframe>
+            <iframe style="--scaleFactor: 1.0;" id="main" src="../../jub/narrative.html"></iframe>
         </draggable-frame>
 
         <draggable-frame temperament='melancholic' id="promedator" hidden>
@@ -116,7 +117,7 @@
 
         <pc-icon target="main-frame" name='home' src="./images/icons/home.png"></pc-icon>
 
-        <pc-icon target="narrative" name='narrative' condition="sawMessyServerNarrative"
+        <pc-icon target="narrative" name='cyberpunk 2077' condition="sawMessyServerNarrative"
             src="./images/icons/narrative.png"></pc-icon>
 
         <pc-icon target="promedator" name='promedator' condition="visitedAlidator visitedPrometeus"
@@ -175,7 +176,7 @@
 
                     console.log('adding listener to', condition, d.State[condition])
 
-                    d.ListenState(condition, () => {
+                    d.State.listen(condition, () => {
                         const passesAllConditions = s
                             .reduce((aggregate, condition) => aggregate && d.State[condition], true)
                         console.log("AAAAAA", passesAllConditions)

@@ -37,14 +37,14 @@ You can also listen to specific state changes if you want to, the way to do it i
 For example:
 
 ```js
-d.ListenState('sawMessyServerNarrative', (value) => {
+d.State.listen('sawMessyServerNarrative', (value) => {
   console.log('sawMessyServerNarrative changed to ' + value)
 })
 ```
 
 Clearing the State
 ------------------
-For debugging purposes, you can clear the saved state completely by typing `window.top.d.ClearState()` into the console.
+For debugging purposes, you can clear the saved state completely by typing `window.top.d.State.clear()` into the console.
 
 Current State Information
 -------------------------
