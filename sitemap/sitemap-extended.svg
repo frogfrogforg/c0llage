@@ -749,13 +749,13 @@
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M5260.48,-721.628C5255.6,-721.046 5250.76,-720.5 5246.03,-720 4971.15,-690.998 4640.57,-674.808 4512.45,-669.235"/>
 <polygon fill="black" stroke="black" points="4512.27,-665.724 4502.13,-668.79 4511.97,-672.718 4512.27,-665.724"/>
 </g>
-<!-- ../dfrogn/narrative.html -->
-<g id="node54" class="node"><title>../dfrogn/narrative.html</title>
+<!-- ../jub/narrative.html -->
+<g id="node54" class="node"><title>../jub/narrative.html</title>
 <polygon fill="none" stroke="black" points="5336.03,-684 5188.03,-684 5188.03,-648 5336.03,-648 5336.03,-684"/>
-<text text-anchor="middle" x="5262.03" y="-662.3" font-family="Times,serif" font-size="14.00">../dfrogn/narrative.html</text>
+<text text-anchor="middle" x="5262.03" y="-662.3" font-family="Times,serif" font-size="14.00">../jub/narrative.html</text>
 </g>
-<!-- ../gatherings/forest/computer.html&#45;&gt;../dfrogn/narrative.html -->
-<g id="edge96" class="edge"><title>../gatherings/forest/computer.html&#45;&gt;../dfrogn/narrative.html</title>
+<!-- ../gatherings/forest/computer.html&#45;&gt;../jub/narrative.html -->
+<g id="edge96" class="edge"><title>../gatherings/forest/computer.html&#45;&gt;../jub/narrative.html</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M5339.07,-719.876C5325.98,-710.893 5309.77,-699.763 5295.59,-690.034"/>
 <polygon fill="black" stroke="black" points="5297.3,-686.962 5287.07,-684.19 5293.34,-692.734 5297.3,-686.962"/>
 </g>
@@ -889,13 +889,13 @@
 <path fill="none" stroke="black" d="M4414.02,-663.104C4314.44,-658.303 4074.76,-643.72 4001.03,-612 3978.13,-602.151 3978.76,-589.828 3958.03,-576 3940.64,-564.403 3920.4,-553.424 3902.56,-544.498"/>
 <polygon fill="black" stroke="black" points="3903.99,-541.303 3893.48,-540.025 3900.9,-547.583 3903.99,-541.303"/>
 </g>
-<!-- ../dfrogn/dfrogn.html -->
-<g id="node65" class="node"><title>../dfrogn/dfrogn.html</title>
+<!-- ../jub/jub.html -->
+<g id="node65" class="node"><title>../jub/jub.html</title>
 <polygon fill="none" stroke="black" points="6531.53,-612 6396.53,-612 6396.53,-576 6531.53,-576 6531.53,-612"/>
-<text text-anchor="middle" x="6464.03" y="-590.3" font-family="Times,serif" font-size="14.00">../dfrogn/dfrogn.html</text>
+<text text-anchor="middle" x="6464.03" y="-590.3" font-family="Times,serif" font-size="14.00">../jub/jub.html</text>
 </g>
-<!-- ../home.html&#45;&gt;../dfrogn/dfrogn.html -->
-<g id="edge113" class="edge"><title>../home.html&#45;&gt;../dfrogn/dfrogn.html</title>
+<!-- ../home.html&#45;&gt;../jub/jub.html -->
+<g id="edge113" class="edge"><title>../home.html&#45;&gt;../jub/jub.html</title>
 <path fill="none" stroke="black" d="M4502.26,-663.456C4758.67,-654.509 6054.18,-609.302 6386.34,-597.711"/>
 <polygon fill="black" stroke="black" points="6386.48,-601.208 6396.35,-597.362 6386.23,-594.213 6386.48,-601.208"/>
 </g>
@@ -1219,8 +1219,8 @@
 <polygon fill="none" stroke="black" points="6422.03,-468 6344.03,-468 6344.03,-432 6422.03,-432 6422.03,-468"/>
 <text text-anchor="middle" x="6383.03" y="-446.3" font-family="Times,serif" font-size="14.00">../404.html</text>
 </g>
-<!-- ../dfrogn/dfrogn.html&#45;&gt;../404.html -->
-<g id="edge170" class="edge"><title>../dfrogn/dfrogn.html&#45;&gt;../404.html</title>
+<!-- ../jub/jub.html&#45;&gt;../404.html -->
+<g id="edge170" class="edge"><title>../jub/jub.html&#45;&gt;../404.html</title>
 <path fill="none" stroke="black" d="M6454.26,-575.871C6440.21,-551.244 6414.19,-505.638 6397.79,-476.885"/>
 <polygon fill="black" stroke="black" points="6400.83,-475.141 6392.83,-468.189 6394.75,-478.61 6400.83,-475.141"/>
 </g>
