@@ -1,0 +1,48 @@
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      left: 50%;
+      text-align: center;
+      color: black;
+      background-image: url("background.png");
+      background-size: 100px;
+    }
+    #title {
+      font-size: 4vw;
+      color: blue;
+    }
+    #title2 {
+      font-size: 8vw;
+      color: yellow;
+      margin-bottom: 20px;
+    }
+    .image {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .post {
+      margin: auto;
+      margin-bottom: 40px;
+      text-align: left;
+      width: 60vw;
+    }
+  </style>
+</head>
+
+<body>
+  <br><br>
+  <div id="title">
+    🧠 Big Brain's 🧠
+  </div>
+  <div id="title2">🥟 DUMPLING BLOG 🥟</div>
+  <div id="body">
+    <!-- %BODY% -->
+    <!-- generate.py replaces the above line with generated dumpling content -->
+    <!-- sorry this is a bit messy and doesn't use the existing build system 😬 -->
+  </div>
+</body>
+
