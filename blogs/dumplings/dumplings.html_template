@@ -4,13 +4,32 @@
     body {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      left: 50%;
       text-align: center;
-      color: black;
+      color: red;
+      -webkit-text-stroke: 1px black;
       background-image: url("background.png");
       background-size: 100px;
+      font-weight: bold;
+      margin: 20px;
     }
+
+    #main {
+      display: flex;
+      flex-direction: row;
+    }
+    #sidebar {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      flex: 1;
+      margin-right: 40px;
+    }
+    #posts {
+      display: flex;
+      flex-direction: column;
+      flex: 2;
+    }
+
     #title {
       font-size: 4vw;
       color: blue;
@@ -21,14 +40,11 @@
       margin-bottom: 20px;
     }
     .image {
-      width: 100%;
+      width: 60%;
       margin-bottom: 10px;
     }
     .post {
-      margin: auto;
       margin-bottom: 40px;
-      text-align: left;
-      width: 60vw;
     }
   </style>
 </head>
@@ -36,13 +52,27 @@
 <body>
   <br><br>
   <div id="title">
-    🧠 Big Brain's 🧠
+    🧠 BIG BRAIN's 🧠
   </div>
   <div id="title2">🥟 DUMPLING BLOG 🥟</div>
-  <div id="body">
-    <!-- %BODY% -->
-    <!-- generate.py replaces the above line with generated dumpling content -->
-    <!-- sorry this is a bit messy and doesn't use the existing build system 😬 -->
+  <div id="main">
+    <div id="sidebar">
+      <h1> About me </h1>
+      Welcome to my site... Hope it's not too "Big Brained" for you, ha ha ha... After all, BIG BRAIN is my name... On this site I collect images of some of the best dumplings I have eaten in my lifetime. I hope you will enjoy...
+
+      <h1> Friends of the blog </h1>
+      Some of my favorite sites on the Web:
+      <ul>
+        <li> <a href="/d/d.html">welcome to my twisted mind</a>
+        <li> <a href="/jub/jub.html">jub's zone</a>
+        <li> <a href="/fran/fran.html">fran's campfire</a>
+        <li> <a href="/jen.html">yay</a>
+        <li> <a href="/ty.html">hello</a>
+        <li> <a href="/mut/index.html">mutpensamentos</a>
+      </ul>
+    </div>
+    <div id="posts">
+      <!-- %DUMPLINGS_GO_HERE% -->
+    </div>
   </div>
 </body>
-

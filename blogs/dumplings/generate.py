@@ -5,7 +5,7 @@ from random import choice, randint, shuffle
 IMAGE_DIR = "./images"
 TEMPLATE_FILE = "./dumplings.html_template"
 OUTPUT_FILE = "./dumplings.html"
-BODY_TEMPLATE_STR = r"<!-- %BODY% -->"
+BODY_TEMPLATE_STR = r"<!-- %DUMPLINGS_GO_HERE% -->"
 
 images = glob.glob(IMAGE_DIR+"/*");
 #images.sort(key=os.path.getmtime)
