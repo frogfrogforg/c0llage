@@ -1,11 +1,12 @@
 import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
 import { init as initInventory } from "./inventory.js"
-import { init as initHighway } from "./highway.js"
 
 // -- props --
 let mInventory = null
-let mHighway = null
+
+// -- p/elements
+let $mGame = null
 
 // -- lifetime --
 function main() {
@@ -15,48 +16,51 @@ function main() {
   // load shared interfaces
   // TODO: maybe these should get shimmed onto another global similar to `d`, but `f` for forest.
   mInventory = initInventory()
-  mHighway = initHighway()
 
-  // capture frame to replace
-  const game = document.getElementById("game")
+  // capture elements
+  $mGame = document.getElementById("game")
 
   // bind events
-  document.addEventListener("turbo:before-render", (evt) => {
-    evt.preventDefault()
-
-    // get the game element to replace
-    const nextBody = evt.detail.newBody
-    const nextGame = nextBody.querySelector("#game") || nextBody;
-
-    // append children of next game
-    while (game.firstChild) {
-      game.removeChild(game.lastChild)
-    }
-
-    for (const child of nextGame.children) {
-      game.appendChild(child)
-    }
-
-    // eval any new scripts (this is probably fine right)
-    const scripts = game.querySelectorAll("script")
-    for (const source of scripts) {
-      if (!source.src) {
-        eval.call(window, source.textContent)
-      }
-    }
-    console.log("TURBO LOADED");
-  })
-
-  onStateChanged()
+  document.addEventListener("turbo:before-render", didCatchRender)
+  didChangeState()
 }
 
-function onStateChanged() {
-  const s = document.readyState
-  // Run a couple quick hacks at the earliest callback possible (during dom parsing i think?)
-  randomizeLinks()
+// -- commands --
+async function renderGame(nextBody) {
+  // get the game element to replace
+  const nextGame = nextBody.querySelector("#game") || nextBody
+
+  // append children of next game
+  while ($mGame.firstChild) {
+    $mGame.removeChild($mGame.lastChild)
+  }
+
+  for (const child of nextGame.children) {
+    $mGame.appendChild(child)
+  }
+
+  // wait a frame to activate scripts
+  // await frames(1)
+
+  // ivate any inert script tags in the new game
+  const scripts = $mGame.querySelectorAll("script")
+  for (const inert of scripts) {
+    // clone the inert script tag
+    const script = document.createElement("script")
+    script.textContent = inert.textContent
+    for (const { name, value } of inert.attributes) {
+      script.setAttribute(name, value)
+    }
+
+    // and replace it with the active one
+    const parent = inert.parentElement
+    parent.replaceChild(script, inert)
+  }
+
+  console.debug("TURBO LOADED")
 }
 
-// Add random query string to links and iframe src to allow arbitrary recursion
+// add random query string to links and iframe src to allow arbitrary recursion
 function randomizeLinks() {
   console.log(window.location.href, "randomize links");
   var links = Array.from(document.getElementsByClassName('hotspot'))
@@ -84,4 +88,34 @@ function randomizeUrl(str) {
   return `${path}?${params.toString()}`
 }
 
+// -- events --
+function didChangeState() {
+  randomizeLinks()
+}
+
+function didCatchRender(evt) {
+  evt.preventDefault()
+  renderGame(evt.detail.newBody)
+}
+
+// -- utils --
+function frames(count) {
+  return new Promise((res, _) => {
+    let i = -1
+
+    function loop() {
+      i++
+
+      if (i === count) {
+        res()
+      } else {
+        requestAnimationFrame(loop)
+      }
+    }
+
+    loop()
+  })
+}
+
+// -- bootstrap --
 main()

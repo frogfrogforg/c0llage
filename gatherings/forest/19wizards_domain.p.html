@@ -58,8 +58,9 @@
 </body>
 
 <script>
-    let initiatedConversation = false
-    const wizardTimerSeconds = 10
+    var initiatedConversation = false
+    var wizardTimerSeconds = 10
+
     function startWizardConversation () {
         Frames.toggle('dialog')
         if (!initiatedConversation) {
@@ -70,8 +71,5 @@
 
     function wizardTimeout () {
         Frames.show('waited')
-        setTimeout(() => {
-            Frames.show('mapask')
-        }, 500)
     }
 </script>

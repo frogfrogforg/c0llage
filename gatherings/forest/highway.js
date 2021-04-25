@@ -4,22 +4,23 @@ import { State } from "../../core/state.js"
 const kLinkId = "highway-link"
 
 // -- lifetime --
-export function init() {
-  document.addEventListener("turbo:render", () => {
-    traverse()
-  })
+// drives each highway page
+function main() {
+  reset()
 
-  return {}
+  document.addEventListener("turbo:render", () => {
+    let id = getHighwayId()
+
+    if (id != null) {
+      traverse(id)
+    } else {
+      reset()
+    }
+  })
 }
 
 // -- commands --
-function traverse() {
-  const id = getHighwayId()
-  if (id == null) {
-    reset()
-    return
-  }
-
+function traverse(id) {
   const step = State.highwayStep
 
   // update the link url to either a random page, or the exit if you
@@ -40,7 +41,9 @@ function traverse() {
 }
 
 function reset() {
-  State.highwayStep = 0
+  if (getHighwayId() == null && State.highwayStep) {
+    State.highwayStep = 0
+  }
 }
 
 // -- queries --
@@ -62,3 +65,6 @@ function getHighwayId() {
 function getHighwayUrl(i) {
   return `./${i}highway_to_the_cosmodrome.html`
 }
+
+// -- bootstrap --
+main()

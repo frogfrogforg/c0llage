@@ -131,7 +131,7 @@ function didPressKey(evt) {
           gol: p("plates/gol.frag"),
           chw: p("plates/chw.frag"),
           sky: p("plates/sky.frag"),
-          dot: p("plates/dot.frag"),
+          bar: p("plates/bar.frag"),
         },
       },
     })

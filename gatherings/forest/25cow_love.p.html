@@ -68,18 +68,18 @@
 <body>
     <!--cows-->
     <!--
-        <img 
+        <img
         id = "cow1"
-        class = "cow" 
-        onclick= "cowLeft()" 
+        class = "cow"
+        onclick= "cowLeft()"
         src="./images/Cows.png"></img>
 
 
-    <img 
+    <img
         id = "cow2"
-        class = "cow" 
+        class = "cow"
         onclick= "cowRight()"
-        style = "top: 63%; left:54%; width: 43%" 
+        style = "top: 63%; left:54%; width: 43%"
         src="./images/Cow1.png"></img>
     -->
 
@@ -98,7 +98,7 @@
 
     <!--slideshow shit-->
     <div class="slideshow-wrapper" style= "z-index: 12; top: 57%; left: -9%;">
-   
+
        <div class="slideshow-outside-container" style= "left: 15%; width: 50%; top: -14%; z-index: 12;">
            <div class="slideshow-inner-container" style = "left: 59%; top: 11%;" id="cowRight">
                <ul>
@@ -115,7 +115,7 @@
             </div>
         </div>
     </div>
-    
+
     <!--secret cow-->
     <div style = "visibility:hidden; top: 17%; left: 20%; position:absolute" id = "skyCow">
         cow in the sky
@@ -127,7 +127,7 @@
     <script>
         // onclickcow = function () {
         //     const cowKissSpeed = 6
-        //     cow1x -= cowKissSpeed  
+        //     cow1x -= cowKissSpeed
         //     cow2x += cowKissSpeed
         //     document.getElementById('cow1').style.marginTop = cow1x + '%'
         //     document.getElementById('cow2').style.marginTop = cow2x + '%'
@@ -145,9 +145,9 @@
             document.getElementById('skyCow').style.visibility = 'visible';
             yield
         }
-        
-        let haveKissed = false; 
-        let kissRoutine = KissRoutineGenerator()
+
+        var haveKissed = false;
+        var kissRoutine = KissRoutineGenerator()
 
         //cow move stuff
         function cowRight() {
@@ -170,18 +170,17 @@
                 }
             }
 
-        
+
 
         function CheckOverlap() {
             const el1 = document.getElementById("CowLS")
             const el2 = document.getElementById("CowRS")
             const rect1 = el1.getBoundingClientRect();
             const rect2 = el2.getBoundingClientRect();
-            
+
             return ((rect1.right - rect2.left)/rect1.width > 0.6)
             }
 
         window.cowRight = cowRight;
         window.cowLeft = cowLeft;
     </script>
-

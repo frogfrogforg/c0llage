@@ -1,16 +1,38 @@
 import { Events } from "./events.js"
 
 // See ./Docs/State.md
+
+// decode state
 const initialState = {
   sawMessyServerNarrative: false,
   visitedAlidator: false,
   visitedPrometeus: false,
 }
 
-// -- api --
-const stateCache = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
+const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
 
-export const State = new Proxy(stateCache, {
+// -- api --
+// add methods to the state object's prototype; this way they won't get deleted
+// by `clear`.
+Object.setPrototypeOf(state, {
+  save() {
+    console.log('saving state', state)
+    window.localStorage.setItem("state", JSON.stringify(state))
+  },
+  listen(property, callback) {
+    Events.listen(
+      Events.getStateChangeEvent(property),
+      callback
+    )
+  },
+  clear() {
+    Object.keys(state).forEach(k => delete state[k])
+    this.save()
+  }
+})
+
+// proxy get/set for unknown keys to the state object
+export const State = new Proxy(state, {
   get(target, prop) {
     return Reflect.get(target, prop)
   },
@@ -21,23 +43,7 @@ export const State = new Proxy(stateCache, {
   },
 })
 
-Object.assign(State, {
-  save() {
-    console.log('saving state', stateCache)
-    window.localStorage.setItem("state", JSON.stringify(stateCache))
-  },
-  listen(property, callback) {
-    Events.listen(
-      Events.getStateChangeEvent(property),
-      callback
-    )
-  },
-  clear() {
-    Object.keys(stateCache).forEach(k => delete stateCache[k])
-    this.save()
-  }
-})
-
+// -- events --
 window.top.addEventListener("beforeunload", () => {
   State.save()
 })
