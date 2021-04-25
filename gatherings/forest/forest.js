@@ -44,6 +44,7 @@ function main() {
         eval.call(window, source.textContent)
       }
     }
+    console.log("TURBO LOADED");
   })
 
   onStateChanged()

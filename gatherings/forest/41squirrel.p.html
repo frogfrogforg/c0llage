@@ -1,0 +1,78 @@
+<head>
+    <style>
+        .dialog {
+            overflow:hidden;
+        }
+    </style>
+</head>
+<body id="body" style="display:none">
+    <img id="background" class="background" src="./images/41-squirrel.png"></img>
+    
+    <a class="hotspot centered move" href="./17two_skinny_trees.html" style="left: 15%; top: 80%; width: 30%; height: 40%"></a>
+    <a class="hotspot centered move" href="./40chewables.html" style="left: 85%; top: 30%; width: 30%; height: 40%"></a>
+    <a id="squirrel" class="hotspot centered talk" href="#" onclick="squirrelClick()" 
+       style="left: 75%; top: 64%; width: 20%; height: 20%" data-turbo="false"></a>
+
+    <section id="frames" class="Frames">
+        <draggable-frame temperament="phlegmatic" hidden id="dialog1" class="dialog">
+            <span>these days i stay the heck away from Cyberspace...</span>
+        </draggable-frame>
+        <draggable-frame temperament="phlegmatic" hidden id="dialog2" class="dialog">
+            <span>it's not the same since the Cosmodrome... too many g*d damn wizards around</span>
+        </draggable-frame>
+        <draggable-frame temperament="phlegmatic" hidden id="dialog3" class="dialog">
+            <span>and wizard apologists...</span>
+        </draggable-frame>
+        <draggable-frame temperament="phlegmatic" hidden id="dialog4" class="dialog">
+            <span>but g*sh it's lonely out here... it's so different out here to how it used to be. it used to be a real frolic... now all my friends are jacked in 12 hours a day in some netcafe or else they're working for the wizards at the Cosmodrome</span>
+        </draggable-frame>
+        <draggable-frame temperament="phlegmatic" hidden id="dialog5" class="dialog">
+            <span>
+                please don't leave me here alone... won't you please take me with you?
+            </span>
+        </draggable-frame>
+        <draggable-frame persistent hidden id="pet_squirrel">
+            <d-iframe src='./items/squirrel.html'></d-iframe>
+        </draggable-frame>
+    </section>
+
+    <script>
+        let click_i = 0;
+        squirrelClick = () => {
+            if (click_i < 5) {
+                Frames.show('dialog'+(click_i+1));
+                if (click_i == 4) {
+                    // replace talk icon with pickup icon
+                    let sq = document.getElementById("squirrel");
+                    sq.classList.toggle("move");
+                    sq.classList.toggle("cursor-pick-up");
+                }
+            } else {
+                // 6th click, pick up squirrel
+                d.State.pickedUpSquirrel = true;
+                Frames.show('pet_squirrel');
+                setNoSquirrel();
+            }
+            click_i++;
+        }
+
+        setNoSquirrel = () => {
+            document.getElementById("background").src="./images/41-no-squirrel.png";
+            // remove squirrel hotspot
+            document.getElementById("squirrel").remove();
+
+        }
+    </script>
+    <script type="module">
+        function main () {
+            console.log("LOAD BODY");
+            let body = document.getElementById("body");
+            if (d.State.pickedUpSquirrel) {
+                setNoSquirrel();
+            }
+            // Hide the whole page until we check the pickedUpSquirrel state:
+            body.style.display = "block";
+        }
+        main();
+    </script>
+</body>
