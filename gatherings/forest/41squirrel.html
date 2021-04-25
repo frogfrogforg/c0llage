@@ -50,6 +50,20 @@ the 1 day marshmallow">
     <a id="squirrel" class="hotspot centered talk" href="#" onclick="squirrelClick()" 
        style="left: 75%; top: 64%; width: 20%; height: 20%" data-turbo="false"></a>
 
+    <audio id="sq0">
+        <source src="./sound/squirrel/sq_001.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq1">
+        <source src="./sound/squirrel/sq_002.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq2">
+        <source src="./sound/squirrel/sq_004.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq3">
+        <source src="./sound/squirrel/sq_006.mp3" type="audio/mpeg">
+    </audio>
+
+
     <section id="frames" class="Frames">
         <draggable-frame temperament="phlegmatic" hidden id="dialog1" class="dialog">
             <span>these days i stay the heck away from Cyberspace...</span>
@@ -76,6 +90,11 @@ the 1 day marshmallow">
     <script>
         let click_i = 0;
         squirrelClick = () => {
+
+            // play random squirrel noise
+            let s_i = Math.floor(Math.random() * 4);
+            document.getElementById("sq"+s_i).play(); 
+
             if (click_i < 5) {
                 Frames.show('dialog'+(click_i+1));
                 if (click_i == 4) {

@@ -5,10 +5,30 @@
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
+      cursor: pointer;
     }
   </style>
 </head>
 
-<body>
+<body onclick="playsound()">
+    <audio id="sq0">
+        <source src="../sound/squirrel/sq_001.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq1">
+        <source src="../sound/squirrel/sq_002.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq2">
+        <source src="../sound/squirrel/sq_004.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq3">
+        <source src="../sound/squirrel/sq_006.mp3" type="audio/mpeg">
+    </audio>
 
+    <script>
+      playsound = () => {
+        // play random squirrel noise
+        let s_i = Math.floor(Math.random() * 4);
+        document.getElementById("sq"+s_i).play(); 
+      }
+    </script>
 </body>
