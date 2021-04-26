@@ -1,0 +1,60 @@
+<head>
+  <link rel="stylesheet" href="../forest.css">
+  <script type="module" src="../../shared/draggable-frame.js"></script>
+  <script type="module" src="../../shared/d-iframe.js"></script>
+  <link rel="stylesheet" href="../../shared/frames.css">
+  <style>
+    .backbutton {
+      /* color: red; */
+      font-size: 15vmin;
+      /* background-color: darkblue; */
+      background-color: darkkhaki;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .backbutton button {
+      /* color: red; */
+      font-size: 50vmin;
+      width: 100%;
+      height: 100%;
+      overflow: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+      background: transparent;
+    }
+
+    .backbuttonbody {
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .backbutton-content {}
+  </style>
+</head>
+
+<script>
+  window.goBack = function () {
+    if (Math.random() < 0.9) {
+      window.parent.history.back();
+    }
+    else
+      alert("I don't feel like it right now")
+  }
+</script>
+
+<body class='backbuttonbody'>
+  <div class='backbutton'>
+    <button onclick='goBack()'>
+      <div class='backbutton-content'>👈</div>
+    </button>
+  </div>
+</body>

@@ -12,10 +12,10 @@ const kPermittedAttrs = new Set([
 // -- impls --
 class DeferredIframeElement extends HTMLParsedElement {
   // -- props --
-  iframe = document.createElement("iframe")
+  
+  createIframe(url) {
+    this.iframe = document.createElement('iframe');
 
-  // -- lifetime --
-  parsedCallback() {
     // add a nested iframe w/ no src
     this.appendChild(this.iframe)
 
@@ -23,10 +23,22 @@ class DeferredIframeElement extends HTMLParsedElement {
     for (const a of this.attributes) {
       if (!kPermittedAttrs.has(a.name)) {
         this.iframe.setAttribute(a.name, a.value)
-        this.removeAttribute(a.name)
       }
     }
 
+    this.iframe.src = url
+  }
+
+  destroyIframe() {
+    console.log('iframe destroying', this)
+    if(this.iframe != null) {
+      this.iframe.remove()
+      this.iframe = null
+    }
+  }
+
+  // -- lifetime --
+  parsedCallback() {
     // autoload if necessary
     if (this.hasAttribute("autoload")) {
       this.load()
@@ -53,8 +65,13 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   loadUrl(url) {
-    if (this.iframe.src != url) {
-      this.iframe.src = url
+    if(url) {
+      if (this.iframe == null || this.iframe.src != url) {
+        this.destroyIframe()
+        this.createIframe(url)
+      }
+    } else {
+      this.destroyIframe()
     }
   }
 

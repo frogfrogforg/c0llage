@@ -19,7 +19,6 @@
       }
 
       const index = Math.floor(angle / 45)
-      console.log(index)
       return cardinalDirections[index]
     }
 
@@ -32,8 +31,7 @@
       if (directions.length >= maxStorage * charactersPerDirection) {
         directions = directions.slice(-maxStorage * charactersPerDirection)
       }
-      console.log(directions)
-      d.State.directions = directions;
+      // tate.directions = directions;
     }
 
     const randomNorthDirections = {}
@@ -52,7 +50,6 @@
             randomNorthDirections[window.parent.location] = Math.random() * 360 - 180
           }
 
-          console.log(randomNorthDirections)
           return randomNorthDirections[window.parent.location]
         }
       }
@@ -75,7 +72,6 @@
 
         const n = getNorth()
 
-        console.log(n)
         P = AngleDistance(n + kNoise * 2 * (0.5 - Math.random()), currentAngle)
         if (deltaTime > 0) {
           D = (P - lastP) / (deltaTime)
