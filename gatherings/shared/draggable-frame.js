@@ -115,8 +115,6 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.setVisible(!this.hasAttribute('hidden'))
 
-    // the nested iframe (if there is one)
-    this.iframe = null
     // the current manipulation
     this.op = null
     // the initial el x-pos
@@ -511,7 +509,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // search for a wrapped iframe (youtube embed is one level deep)
-    const iframe = child.querySelector("iframe")
+    const iframe = this.findIframe()
     if (iframe != null) {
       return iframe.contentDocument.body
     }
