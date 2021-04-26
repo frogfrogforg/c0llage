@@ -37,6 +37,7 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
+    user-select: none;
 }
 
 .hotspot {
@@ -53,7 +54,7 @@ body {
     transition: all 0.1s ease-in;
 }
 .debug {
-    border: violet 10px solid;
+    border: violet 10px solid !important;
 }
 
 .cosmodrome {
