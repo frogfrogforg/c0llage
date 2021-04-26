@@ -45,12 +45,12 @@ body {
     display: block;
     background: transparent;
     border: none !important;
-    filter: blur(30px);
-    transition: all 3s ease-out;
+    transition: all .8s ease-out;
 }
 
 .hotspot:hover {
-    background-color:#ffffdd44;
+    background-color:#04000422;
+    filter: blur(30px);
     transition: all 0.1s ease-in;
 }
 .debug {
