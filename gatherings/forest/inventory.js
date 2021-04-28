@@ -1,38 +1,44 @@
-export function init() {
-  // -- props --
-  let mLoaded = false
+// -- props --
+let $mEl = document.getElementById("inventory")
 
-  // -- p/elements
-  let $mEl = document.getElementById("inventory")
+// -- commands --
+function add(props) {
+  // don't add duplicate items
+  const id = getId(props)
+  if (get(id) == null) {
+    $mEl.appendChild(getEl(props))
+  }
+}
 
-  // -- lifetime --
-  document.addEventListener("turbo:load", didLoadPage)
+// -- queries --
+function get(id) {
+  return $mEl.querySelector(`#${id}`)
+}
 
-  // -- commands --
-  function add($child) {
-    $mEl.appendChild($child)
+function getId({ id, el: $item }) {
+  return id || ($item && $item.id)
+}
+
+function getEl({ id, el: $item, html }) {
+  if ($item != null) {
+    return $item
   }
 
-  // -- events --
-  function didLoadPage() {
-    // don't run this on first load
-    if (!mLoaded) {
-      mLoaded = true
-      return
-    }
-
-    // grab any nested frames
-    const $frames = $mEl.querySelectorAll("draggable-frame")
-
-    // force them to re-bind events on every page load, since the body/html/etc
-    // (and their event listeners) may have been discarded
-    for (const $frame of Array.from($frames)) {
-      $frame.initEvents()
-    }
+  if (html == null) {
+    console.error("tried to add an item w/ no el or html")
+    return null
   }
 
-  // -- interface --
-  return {
-    add
-  }
+  $item = document.createElement("div")
+  $item.innerHTML = html
+  $item = $item.firstElementChild
+  $item.id = id
+
+  return $item
+}
+
+// -- instance --
+export const kInventory = {
+  add,
+  get,
 }

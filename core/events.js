@@ -13,7 +13,7 @@ export const Events = {
   raise(name, value) {
     raised.add(name)
     console.log(`Raising event: ${name}`)
-    root.dispatchEvent(new CustomEvent(name, {detail: value || false}))
+    root.dispatchEvent(new CustomEvent(name, { detail: value || false }))
   },
   // -- constants --
   getStateChangeEvent(propertyName) {
@@ -39,4 +39,8 @@ export const Events = {
   },
   Computer: {
     ClaribelleEscape: "computer.claribelleescape",
-  } }
+  },
+  Transit: {
+    Interact: "transit.interact",
+  }
+}

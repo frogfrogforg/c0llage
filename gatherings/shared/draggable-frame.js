@@ -35,8 +35,7 @@ const frameTemplate = `
       <div class="Frame-header-blank">
       </div>
     </div>
-      <div id="$id-body" class="Frame-body">
-      </div>
+    <div id="$id-body" class="Frame-body"></div>
     <div class="Frame-handle"></div>
   </div>
 `
@@ -138,8 +137,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
       bodyContainer = document.createElement('div')
-      bodyContainer.style.width = '100%'
-      bodyContainer.style.height = '100%'
+      bodyContainer.classList.toggle("Frame-shim")
       this.bodyElement.appendChild(bodyContainer)
     }
 
@@ -149,7 +147,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.classList.add('Frame')
 
-    if(this.hasAttribute('bodyClass')) {
+    if (this.hasAttribute('bodyClass')) {
       this.bodyElement.classList.add(this.getAttribute('bodyClass'))
     }
 
@@ -216,10 +214,9 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    if(this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
-      const inventory = document.getElementById('inventory')
+    if (this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
       console.log(this.parentElement)
-      if(this.parentElement.id !== 'inventory') {
+      if (this.parentElement.id !== 'inventory') {
         console.log('moving iframe ' + this.id)
         document.getElementById('inventory').appendChild(this)
       }
@@ -326,12 +323,12 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 
   bringToTop() {
-    if(!this.visible) return
+    if (!this.visible) return
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
     const iframe = this.findIframe()
-    if(iframe != null) {
+    if (iframe != null) {
       iframe.focus()
     }
   }

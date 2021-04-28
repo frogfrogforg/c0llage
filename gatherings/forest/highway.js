@@ -1,12 +1,26 @@
 import { State } from "../../core/state.js"
+import { kInventory } from "./inventory.js"
 
 // -- constants --
 const kLinkId = "highway-link"
+const kTransitId = "public-transit"
+
+// -- templates --
+const kTransitHtml = `
+  <draggable-frame temperament="phlegmatic" y=40 width=20 height=20>
+    <d-iframe src="./items/transit.html" autoload>
+  </draggable-frame>
+`
 
 // -- lifetime --
 // drives each highway page
 function main() {
-  reset()
+  reset(State.referrer)
+
+  kInventory.add({
+    id: kTransitId,
+    html: kTransitHtml
+  })
 
   document.addEventListener("turbo:render", () => {
     let id = getHighwayId()
@@ -23,33 +37,59 @@ function main() {
 function traverse(id) {
   const step = State.highwayStep
 
-  // update the link url to either a random page, or the exit if you
-  // walked far enough
-  const link = document.getElementById(kLinkId)
-  if (step >= 600) {
-    link.href = "./418exit_to_the_cosmodrome.html"
+  // if we haven't reached the goal, move. otherwise, redirect to the exit
+  if (step < 600) {
+    move(id, step)
   } else {
-    let next = 55 + Math.ceil(Math.random() * 5)
-    if (next >= id) {
-      next += 1
-    }
+    exit()
+  }
+}
 
-    link.href = getHighwayUrl(next)
+function move(id, step) {
+  // if we reached step 3, add the transit vehicle
+  if (step == 2) {
+    const transit = kInventory.get(kTransitId)
+
+    if (transit != null) {
+      transit.querySelector("iframe").contentWindow.interact()
+      transit.bringToTop()
+    }
   }
 
+  // randomize the next link
+  let next = 55 + Math.ceil(Math.random() * 5)
+  if (next >= id) {
+    next += 1
+  }
+
+  setUrl(getHighwayUrl(next))
+
+  // update the highway step
   State.highwayStep = step + 1
 }
 
-function reset() {
-  if (getHighwayId() == null && State.highwayStep) {
+function exit() {
+  setUrl("./418exit_to_the_cosmodrome.html")
+}
+
+function reset(path = document.location.pathname) {
+  if (getHighwayId(path) == null && State.highwayStep) {
     State.highwayStep = 0
   }
 }
 
+// -- c/helpers
+function setUrl(url) {
+  document.getElementById(kLinkId).href = url
+}
+
 // -- queries --
-function getHighwayId() {
+function getHighwayId(path = document.location.pathname) {
+  if (path == null) {
+    return null
+  }
+
   // match the url
-  const path = document.location.pathname
   const matches = path.match(/(\d+)highway_to_the_cosmodrome/)
 
   // if we can't find a page number, not a highway page
