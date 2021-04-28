@@ -93,7 +93,7 @@ function didChangeState() {
 
 function didRefresh(evt) {
   evt.preventDefault()
-  return evt.returnValue = "Are you sure you want to exit?"
+  return evt.returnValue = "don't leave gamer"
 }
 
 function didStartVisit() {
