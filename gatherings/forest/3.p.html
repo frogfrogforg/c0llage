@@ -1,10 +1,13 @@
 <script type="module">
+  import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
   window.diskDriveDrop = (evt) => {
       evt.preventDefault();
-      console.log(evt.dataTransfer.getData("text"));
-      Frames.hide("floppy")
-      document.getElementById("main").classList.toggle("screenshake-loop");
-      window.location.href="2003-transition1.html"
+      if (evt.dataTransfer.getData("text") == "floppy") {
+        Frames.hide("floppy")
+        document.getElementById("main").classList.toggle("screenshake-loop");
+        // window.location.href="2003-transition1.html"
+        Turbo.visit("2003-transition1.html")
+      }
   }
 </script>
 <body>
@@ -16,11 +19,4 @@
 
     <div id="floppyDrive" class="hotspot centered" ondrop="diskDriveDrop(event)" ondragover="event.preventDefault()"
       style="left: 54%; top: 64%; width: 12%; height: 5%"></div>
-
-    <section id="frames" class="Frames">
-      <draggable-frame temperament="phlegmatic" hidden persistent id="floppy" y=40 width=20 height=15>
-          <d-iframe src='./items/floppy.html'></d-iframe>
-      </draggable-frame>
-    </section>
-    <a style="position:absolute" href='javascript:void(0)' onclick='Frames.show("floppy")'>Rectangular Box</a></li>
 </body>
