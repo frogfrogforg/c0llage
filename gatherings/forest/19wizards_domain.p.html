@@ -8,14 +8,13 @@
 
 <body>
     <img class="background" src="./images/19.png"></img>
-    <a class="hotspot centered move" onclick="Frames.toggle('halt')"
+    <a class="hotspot centered inspect" onclick="Frames.toggle('halt')"
         style="left: 95.888%; top: 54.666%; width: 8%; height: 90%"></a>
 
-    <a class="talk" onclick="startWizardConversation()">
-        <div class="wizard"
-            style="background-color:white;color:navy;padding:2%;position:absolute;top:53%;left:33%;transform:rotate(-9deg);">
-            (∩ ͡° ͜ʖ ͡°)⊃━☆ﾟ. *</div>
-    </a>
+    
+        <div style="position:absolute;width:auto;top:42%;left:27%;transform:rotate(1deg);"><a class="talk" onclick="startWizardConversation()">
+            <img src="./images/Wizard.png" width="40%"></a></div>
+
 
     <section id="frames" class="Frames">
         <draggable-frame id="test">
@@ -31,15 +30,25 @@
         </draggable-frame>
 
         <draggable-frame hidden id="dialog" x=10 y=69 width=70 height=30 bodyClass="InvertedFrame">
-            <span id='tired' style="font-family: cursive;">this is where my dialog is gonna go but i'm too
-                tired to
-                talk right now. wait a sec...</span>
-            <span id='tired' style="font-family: cursive;"> What are you doing in my house???</span>
+            <span id='tired' style="font-family: cursive;">Why are you in my house!?</span><br>
+            <button class="continueButton"
+            onclick="Frames.show('continue')">cuz</button>
         </draggable-frame>
 
-        <draggable-frame hidden id="waited" x=50 y=60 width=40 height=30 bodyClass="InvertedFrame">
-            <span style="font-family: cursive;">Okay, okay, what will it take? Magic beans? I ran out of
-                those last week...</span>
+        <draggable-frame hidden id="continue" x=10 y=75 width=70 height=30 bodyClass="InvertedFrame">
+            <span id='next' style="font-family: cursive;">Well...! Get out! I'm late for a <i>very important</i> date!!</span><br>
+            <button class="continueButton"
+            onclick="Frames.show('continue2')">sounds hot</button>
+        </draggable-frame>
+
+        <draggable-frame hidden id="continue2" x=10 y=80 width=70 height=30 bodyClass="InvertedFrame">
+            <span id='next' style="font-family: cursive;">I! Well— I mean... Well! I, uh... Well!! I!! Should hope so!!</span><br>
+            <button class="continueButton"
+            onclick="Frames.show('continue')">wait what's going on</button>
+        </draggable-frame>
+
+        <draggable-frame hidden id="waited" x=50 y=60 width=40 height=40 bodyClass="InvertedFrame">
+            <span style="font-family: cursive;">Whatever! What'll it take to get you out of my hair? And don't ask for magic beans, I ran out last week.</span>
             <br>
             <button class="mapRequestButton"
                 onclick="Frames.show('wizardMap'); d.State.gotMapFromWizard = true">A
