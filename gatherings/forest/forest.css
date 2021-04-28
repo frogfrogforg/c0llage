@@ -72,6 +72,25 @@ body {
     pointer-events: none;
 }
 
+/* effects */
+
+.screenshake-oneshot {
+    animation: screenshake 0.1s;
+    transition-timing-function: linear;
+    animation-iteration-count: 10;
+}
+
+.screenshake-loop {
+    animation: screenshake 0.1s;
+    transition-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes screenshake {
+   0% { transform: translateY(0%); } 
+   50% { transform: translateX(1%); } 
+   100% { transform: translateX(0%); } 
+} 
 
 /* cursors */
 .inspect {
