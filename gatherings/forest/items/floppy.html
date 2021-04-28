@@ -11,12 +11,17 @@
       align-items: center;
       background-color: #990099;
     }
+
     img {
       height: 70vmin;
+    }
+
+    .floppy-itself {
+      cursor: grab;
     }
   </style>
 </head>
 
 <body class="floppyBody">
-  <img draggable="true" ondragstart="dragFloppy(event)" src="floppy.png">
+  <img class='floppy-itself' draggable="true" ondragstart="dragFloppy(event)" src="floppy.png">
 </body>
