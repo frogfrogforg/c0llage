@@ -1,0 +1,23 @@
+<head>
+  <script type='module'>
+    window.dragFloppy = (evt) => {
+      console.log("dragFloppy")
+      evt.dataTransfer.setData("text", "floppy");
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #990099;
+    }
+    img {
+      height: 70vmin;
+    }
+  </style>
+</head>
+
+<body class="floppyBody">
+  <img draggable="true" ondragstart="dragFloppy(event)" src="floppy.png">
+</body>
