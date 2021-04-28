@@ -65,7 +65,11 @@ function move(id, step) {
   setUrl(getHighwayUrl(next))
 
   // update the highway step
-  State.highwayStep = step + 1
+  State.highwayStep = step + getSpeed()
+}
+
+function getSpeed() {
+  return d.State.foundKeys ? 100 : 1;
 }
 
 function exit() {

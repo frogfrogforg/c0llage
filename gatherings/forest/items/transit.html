@@ -1,4 +1,5 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta charset="UTF-8">
 
@@ -22,11 +23,14 @@
   <img class="Transit" src="../images/highway/transit.png">
 
   <script type="module">
+    import '../../../global.js'
     const kDialogHtml = `
       <draggable-frame id="transit-dialog" x=40 y=15 width=40 height=15>
-        <p>you can't remember where you put your keys</p>
+        <p>{message}</p>
       </draggable-frame>
     `
+    const kDialogueNoKeys = `you can't remember where you put your keys`
+    const kDialogueWithKeys = `this is what those keys were for! Gotta go fast!`
 
     let didInteract = false
 
@@ -43,12 +47,17 @@
       let $dialog
       $dialog = document.createElement("div")
       $dialog.innerHTML = kDialogHtml
+        .replace('{message}',
+          d.State.foundKeys ?
+            kDialogueWithKeys :
+            kDialogueNoKeys)
       $dialog = $dialog.firstElementChild
 
       $frames.appendChild($dialog)
 
       // flag this out next time
       didInteract = true
+      d.State.foundVehicle = true
     }
 
     Object.assign(window, {
@@ -58,4 +67,5 @@
     document.addEventListener("click", interact)
   </script>
 </body>
+
 </html>
