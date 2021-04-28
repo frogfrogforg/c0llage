@@ -33,7 +33,7 @@ d-iframe iframe {
 
 .Frame-Dragging {
   animation: shake 1s alternate infinite;
-  box-shadow: black 20px 20px;
+  box-shadow: black 1vmin 1vmin;
 }
 
 .Frame-Scaling {
@@ -192,8 +192,10 @@ d-iframe iframe {
   height: 2.0vmin;
   max-width: 15px;
   max-height: 15px;
-  right: min(0.64vmin, 4px);
-  bottom: min(0.64vmin, 4px);
+  right: min(0.64vmin, var(--frame-padding));
+  bottom: min(0.64vmin, var(--frame-padding));
+  margin-right: 1px;
+  margin-bottom: 1px;
   background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
   background-size: cover;
