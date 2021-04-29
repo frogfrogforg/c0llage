@@ -102,6 +102,7 @@ width: 28%;" onclick="meditationSequence()">
       // Frames.show('anapanaFrame')
       anapana.play()
       anapana.addEventListener('ended', () => {
+        fader.classList.toggle('blackground')
         setTimeout(() => {
           Frames.show('meditationFinal')
         }, 5000)
