@@ -1,0 +1,23 @@
+<style>
+</style>
+
+<img>
+    <img class="background" src="./images/70.png"></img>
+
+    <div class="crop" style="width: 13vmin;position: absolute;top: 54%;left: 2.4%;height: 31vmin;overflow: hidden;transform: rotate(6deg);">
+        <button class="hotspot centered talk" onclick="Frames.toggle('staring')" style="position: absolute;margin: 10vmin;margin-top: 18vmin;" title="do i... do i know you?"> 
+            <img src="./images/staring.png" style="height: 28vmin;"></img> 
+        </button>
+    </div>
+
+    <section id="frames" class="Frames">
+        <draggable-frame temperament="phlegmatic" hidden id="staring" class="staring">
+            <span>he's just staring at an empty space in the forest</span>
+        </draggable-frame>
+        
+
+        <draggable-frame temperament='phlegmatic' persistent id="test">
+            <iframe src='./items/backbutton.html'></iframe>
+        </draggable-frame>
+    </section>
+</body>
