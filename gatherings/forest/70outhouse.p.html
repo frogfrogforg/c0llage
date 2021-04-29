@@ -1,11 +1,28 @@
 <style>
+
+
+    .vanish{
+        animation: vanish 4s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-fill-mode: forwards;
+    }
+    
+    @keyframes vanish{
+        0%         {}
+        100%       {opacity: 0;transform:skew(10deg);pointer-events: none;margin:0;}
+    }
+    .hotspot :hover{
+        filter: blur(0);
+    }
+
 </style>
 
 <img>
     <img class="background" src="./images/70.png"></img>
 
-    <div class="crop" style="width: 13vmin;position: absolute;top: 54%;left: 2.4%;height: 31vmin;overflow: hidden;transform: rotate(6deg);">
-        <button class="hotspot centered talk" onclick="Frames.toggle('staring')" style="position: absolute;margin: 10vmin;margin-top: 18vmin;" title="do i... do i know you?"> 
+    <div class="crop" style="width: 13vmin;position: absolute;top: 52%;left: 1.9%;height: 42.0vmin;overflow: hidden;transform: rotate(6deg);">
+        <button class="hotspot centered talk" id="stare" onclick="Frames.toggle('staring')" style="position: absolute;margin: 10vmin;margin-top: 18vmin;" title="do i... do i know you?"> 
             <img src="./images/staring.png" style="height: 28vmin;"></img> 
         </button>
     </div>
@@ -20,4 +37,11 @@
             <iframe src='./items/backbutton.html'></iframe>
         </draggable-frame>
     </section>
+
+
+    <script>
+document.getElementById('stare').addEventListener('click', function () {
+  document.querySelector('.talk').classList.add('vanish');
+});</script>
+
 </body>
