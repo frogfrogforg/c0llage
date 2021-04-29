@@ -1,0 +1,631 @@
+:: StoryData
+{
+	"ifid": "520538D4-4981-462D-A9BF-6870ABDAF178",
+	"start": "home",
+    "format": "Sugarcube",
+    "format-version": "2.31.1",
+    "zoom": 1
+}
+
+:: StoryTitle
+	tender morning
+
+:: home
+	<div class="passage-body"><div class="content">hi:)
+
+	i'm <span class="comp"><i>the computer</i></span>.
+	</div> 
+
+	<div class="nav"><<button "Greet computer">><<replace ".passage-body">><<include "hi">><</replace>><</button>></div></div>
+	<<set $lastlocation = 0>>
+
+:: hi
+	<div class="content">i live in this place year round, you know.
+
+	can you imagine what it's like in the winter?
+	</div>
+	<div class="nav"><<button "Imagine">><<replace ".passage-body">><<include "1">><</replace>><</button>> <div class="break"></div> <<button "You live in a park?">><<replace ".passage-body">><<include "park">><</replace>><</button>></div>
+
+
+:: park
+	<div class="content">i lived here before it was a park.
+
+	it was where i lived before it was a park.
+
+	now it's a park and i still live here:)
+	</div>
+	<div class="nav"><<button "Good job, computer">><<replace ".passage-body">><<include "sense">><</replace>><</button>> <div class="break"></div> <<button "Remove computer from forest">><<replace ".passage-body">><<include "ridiculous">><</replace>><</button>>
+	</div>
+
+
+:: sense
+	<div class="content">thank-you.
+
+	there are times when i wonder if i've lived my life as well as i could.
+
+	your graciousness means the world to me.</div>
+	<div class="nav"><<button "Support computer">><<replace ".passage-body">><<include "support">><</replace>><</button>>
+	</div>
+
+
+:: support
+	<div class="content">can i tell you about the winter now?
+	</div>
+	<div class="nav"><<button "I would like that">><<replace ".passage-body">><<include "smile">><</replace>><</button>>
+	</div>
+
+:: smile
+	<div class="content">:)
+	</div>
+	<div class="nav"><<button ":)">><<replace ".passage-body">><<include "1">><</replace>><</button>>
+	</div>
+
+
+:: ridiculous
+	<div class="content">i don't like that.
+
+	...
+	</div>
+	<div class="nav">
+	<<button "Never mind">><<replace ".passage-body">><<include "support">><</replace>><</button>><div class="break"></div> <<button "Try agai▓▓▒░░">><<replace ".passage-body">><<include "thinking">><</replace>><</button>> 
+	</div>
+
+
+:: thinking
+	<div class="content">...</div>
+	<div class="nav"><<button "░░▒░▒░">><<replace ".passage-body">><<include "thinking2">><</replace>><</button>> <div class="break"></div> <button type="button" disabled>Do another wrong thing</button></div>
+
+
+:: thinking2
+<div class="content">...</div>
+	<div class="nav"><<button "░▓sorry.">><<replace ".passage-body">><<include "sorry">><</replace>><</button>> <div class="break"></div> <button type="button" disabled>No I'm not</button></div>
+
+
+:: sorry
+	<div class="content">...
+
+	i decided that it was okay:)
+	</div>
+	<div class="nav">
+	<<button "i have decided to be nice.">><<replace ".passage-body">><<include "nice">><</replace>><</button>> <div class="break"></div>  <button type="button" disabled>No I want to be bad</button></div>
+
+:: nice
+	<div class="content">oh that's so good to hear!
+
+	i'm happy you came around on your own.
+	</div>
+	<div class="nav">
+	<<button "also you are very handsome.">><<replace ".passage-body">><<include "handsome">><</replace>><</button>> <div class="break"></div>  <button type="button" disabled>What are you doing</button></div>
+
+:: handsome
+	<div class="content">:o
+	</div>
+	<div class="nav"><<button "i would love to marry you.">><<replace ".passage-body">><<include "marry">><</replace>><</button>> <div class="break"></div> <button type="button" disabled>Let me click the mean button</button>
+	</div>
+
+
+:: marry
+	<div class="content">:o <span class="blink">!!</span>
+	</div>
+	<div class="nav"><<button "let's get married in space.">><<replace ".passage-body">><<include "space">><</replace>><</button>> <div class="break"></div> <button type="button" disabled>Stop stop stop stop stop</button></div>
+
+
+:: space
+	<div class="content">...
+
+	;)
+
+	had enough yet?</div>
+	<div class="nav"><<button "i'm ready to listen.">><<replace ".passage-body">><<include "listen">><</replace>><</button>> <div class="break"></div> <button type="button" disabled>Yes fine just let me go</button></div>
+
+:: listen
+	<div class="content">don't forget you're a guest here;)
+
+	can you tell me you won't forget?</div>
+
+	<div class="nav"><button type="button" disabled>yes.</button> <div class="break"></div> <<button "Yes">><<replace ".passage-body">><<include "repeat">><</replace>><</button>></div><<set $repeat to ["420","guest","a","i'm","that","forget","won't","i"]>>
+
+:: repeat
+	<<set _button = $repeat.pop()>>	<<if _button > 419>>good:)
+
+	can i tell you about the winter now?
+
+	<div class="nav"><<button "Accept">><<replace ".passage-body">><<include "smile">><</replace>><</button>></div>
+
+	<<else>><div class="content"> let's say it at the same time</div>
+
+	<div class="nav"><button type="button" disabled>_button.</button><div class="break"></div> <<button "_button">><<replace ".passage-body">><<include "repeat">><</replace>><</button>></div>
+	<</if>>
+	
+
+<!-- the forest -->
+:: 1
+	<div class="content"> <<if $lastlocation is 0>>it starts in a white field<<else>>a white field, undisturbed still<</if>>
+	</div>
+	<div class="nav"><<if $lastlocation is 7>>
+		<<set _opt = [19, 13, 7]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 13>>
+		<<set _opt = [7, 19, 13]>>
+		<<include [[nav-buttons]]>>
+
+	<<else>>
+		<<set _opt = [13, 7, 19]>>
+		<<include [[nav-buttons]]>>
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 1>>
+
+
+:: 2 
+	<div class="content">groaning swamp
+	</div>
+	<div class="nav"><<if $lastlocation is 12>>
+		<<set _opt = [18, 20, 12]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 18>>
+		<<set _opt = [20, 12, 18]>>
+		<<include [[nav-buttons]]>>
+
+	<<else>>
+		<<set _opt = [12, 18, 20]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 2>>
+
+
+:: 3
+	<div class="content">footprints
+	</div>
+	<div class="nav"><<if $lastlocation is 16>>
+		<<set _opt = [19, 17, 16]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 17>>
+		<<set _opt = [16, 19, 17]>>
+		<<include [[nav-buttons]]>>
+
+	<<else>>
+		<<set _opt = [17, 16, 19]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 3>>
+
+
+:: 4
+	<div class="content">melted snow
+
+	<<linkreplace "scoop up a handful">><<include "scoop snow">><</linkreplace>></div>
+	<div class="nav"><<if $lastlocation is 11>>
+		<<set _opt = [14, 18, 11]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 14>>
+		<<set _opt = [18, 11, 14]>>
+		<<include [[nav-buttons]]>>
+
+	<<else>>
+		<<set _opt = [11, 14, 18]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 4>>
+
+
+:: 5
+	<div class="content">shivering evergreen
+	</div>
+	<div class="nav"><<if $lastlocation is 13>>
+		<<set _opt = [18, 15, 13]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 15>>
+		<<set _opt = [13, 18, 15]>>
+		<<include [[nav-buttons]]>>
+
+	<<else>>
+		<<set _opt = [15, 13, 18]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 5>>
+
+
+:: 6
+	<div class="content">open sky<br><br> <<link "on the horizon...">><<replace ".passage-body">><<include "horizon">><</replace>><</link>>
+	</div>
+	<div class="nav"><<if $lastlocation is 9>>
+		<<set _opt = [16, 14, 9]>>
+		<<include [[nav-buttons]]>>
+
+
+	<<elseif $lastlocation is 14>>
+		<<set _opt = [9, 16, 14]>>
+		<<include [[nav-buttons]]>>
+
+	<<else>>
+		<<set _opt = [14, 9, 16]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 6>>
+
+
+:: 7
+	<div class="content">pointed shrubs
+	</div>
+	<div class="nav"><<if $lastlocation is 1>>
+		<<set _opt = [15, 17, 1]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 15>>
+		<<set _opt = [17, 1, 15]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 17>>
+		<<set _opt = [1, 15, 17]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 7>>
+
+
+:: 8
+	<div class="content">thin ice
+	</div>
+	<div class="nav"><<if $lastlocation is 10>>
+		<<set _opt = [20, 16, 10]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 16>>
+		<<set _opt = [10, 20, 16]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 20>>
+		<<set _opt = [16, 10, 20]>>
+		<<include [[nav-buttons]]>>
+		
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 8>>
+
+
+:: 9
+	<div class="content">strange lights
+	</div>
+	<div class="nav"><<if $lastlocation is 6>>
+		<<set _opt = [11, 19, 6]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 11>>
+		<<set _opt = [19, 6, 11]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 19>>
+		<<set _opt = [6, 11, 19]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 9>>
+
+
+:: 10
+	<div class="content">an outhouse
+
+	<<linkreplace "a few yards to the left of the outhouse, you can barely make out...">><<include "666">><</linkreplace>></div>
+	<div class="nav"><<if $lastlocation is 8>>
+		<<set _opt = [17, 12, 8]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 12>>
+		<<set _opt = [8, 17, 12]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 17>>
+		<<set _opt = [12, 8, 17]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 10>>
+
+
+:: 11
+	<div class="content">low hill
+	</div>
+	<div class="nav"><<if $lastlocation is 4>>
+		<<set _opt = [13, 9, 4]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 9>>
+		<<set _opt = [4, 13, 9]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 13>>
+		<<set _opt = [9, 4, 13]>>
+		<<include [[nav-buttons]]>>
+		
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 11>>
+
+
+:: 12
+	<div class="content">muddy ditch
+	</div>
+	<div class="nav"><<if $lastlocation is 2>>
+		<<set _opt = [10, 15, 2]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 10>>
+		<<set _opt = [15, 2, 10]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 15>>
+		<<set _opt = [2, 10, 15]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 12>>
+
+
+:: 13
+	<div class="content">aspen grove
+	</div>
+	<div class="nav"><<if $lastlocation is 1>>
+		<<set _opt = [11, 5, 1]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 5>>
+		<<set _opt = [1, 11, 5]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 11>>
+		<<set _opt = [5, 1, 11]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 13>>
+
+
+:: 14
+	<div class="content">collapsing barn
+	</div>
+	<div class="nav"><<if $lastlocation is 4>>
+		<<set _opt = [6, 20, 4]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 6>>
+		<<set _opt = [20, 4, 6]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 20>>
+		<<set _opt = [4, 6, 20]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 14>>
+
+
+:: 15
+	<div class="content">birds nest
+	</div>
+	<div class="nav"><<if $lastlocation is 5>>
+		<<set _opt = [12, 7, 5]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 7>>
+		<<set _opt = [5, 12, 7]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 12>>
+		<<set _opt = [7, 5, 12]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 15>>
+
+
+:: 16
+	<div class="content">old tire
+	</div>
+	<div class="nav"><<if $lastlocation is 3>>
+		<<set _opt = [8, 6, 3]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 6>>
+		<<set _opt = [3, 8, 6]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 8>>
+		<<set _opt = [6, 3, 8]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 16>>
+
+
+:: 17
+	<div class="content">a shallow pond
+	</div>
+	<div class="nav"><<if $lastlocation is 3>>
+		<<set _opt = [7, 10, 3]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 7>>
+		<<set _opt = [10, 3, 7]>>
+		<<include [[nav-buttons]]>>
+		
+	<<elseif $lastlocation is 10>>
+		<<set _opt = [3, 7, 10]>>
+		<<include [[nav-buttons]]>>
+		
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 17>>
+
+
+:: 18
+	<div class="content">someplace forgotten
+	</div>
+	<div class="nav"><<if $lastlocation is 2>>
+		<<set _opt = [5, 4, 2]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 4>>
+		<<set _opt = [2, 5, 4]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 5>>
+		<<set _opt = [4, 2, 5]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 18>>
+
+
+:: 19
+	<div class="content">a leaning tree
+	</div>
+	<div class="nav"><<if $lastlocation is 1>>
+		<<set _opt = [3, 9, 1]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 3>>
+		<<set _opt = [9, 1, 3]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 9>>
+		<<set _opt = [1, 3, 9]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+<<set $lastlocation to 19>>
+
+
+:: 20
+	<div class="content">sluggish creek
+	</div>
+	<div class="nav"><<if $lastlocation is 2>>
+		<<set _opt = [14, 8, 2]>>
+		<<include [[nav-buttons]]>> 
+
+	<<elseif $lastlocation is 8>>
+		<<set _opt = [2, 14, 8]>>
+		<<include [[nav-buttons]]>>
+
+	<<elseif $lastlocation is 14>>
+		<<set _opt = [8, 2, 14]>>
+		<<include [[nav-buttons]]>>
+
+	<</if>></div>
+
+	<<include [[lastloc]]>>
+	<<set $lastlocation to 20>>
+
+
+<!-- ekphrases -->
+:: 666
+	<<linkreplace "it's a man.\n\nhe is standing in the dark">><<include "667">><</linkreplace>>
+
+
+:: 667
+	staring at you
+
+
+:: scoop snow
+	the snow quickly starts to melt against the warmth of your hand, forming rivulets that trickle down the length of your arm – the cold stings sharply. 
+
+	<<linkreplace "eat it">><<include "eat snow">><</linkreplace>>
+
+
+:: eat snow
+	it's more flavorful than you might have expected.
+	you feel the cold numb your tongue, then your whole mouth. the numbness makes its way down your oesophagus as you swallow.
+
+	then, an incredible pain engulfs your skull. you lose awareness of anything except this single burning point of pain – for a few seconds – and then it's gone.
+
+	you feel kinda refreshed, actually.
+
+:: horizon
+	<<link "It's warm...">><<replace ".passage-body">><<include "warm">><</replace>><</link>>
+
+:: warm
+	<a href="../../gatherings/forest/21other_shores.html">There's smoke...</a>
+
+<!-- helpful:) -->
+:: lastloc
+	<<nobr>>
+		<div style="width:25%;position:absolute;left:3%;bottom:10%;">
+		<<if $lastlocation > 0 >> 
+			Last location: <br>
+			$lastlocation
+		<</if>>
+		</div>
+	<</nobr>>
+
+
+:: nav-buttons
+	<<button "Left">><<replace ".passage-body">><<include [[_opt[0]]]>><</replace>><</button>>
+	<<button "Right">><<replace ".passage-body">><<include [[_opt[1]]]>><</replace>><</button>>
+	<div class="break"></div>
+	<<if $lastlocation > 0>><<button "Behind me">><<replace ".passage-body">><<include [[_opt[2]]]>><</replace>><</button>><</if>>
+
+:: nav-holder
+<!-- this will take a crazy amount of work to figure out & i am not a math person, i'll just type a bunch -->
+/* <<nobr>>
+	<div class="nav">
+
+		<<if $lastlocation is 10>>
+			<<set _opt = [20, 16]>>
+			<<include [[nav-buttons]]>>
+
+		<<elseif $lastlocation is 16>>
+			<<set _opt = [10, 20]>>
+			<<include [[nav-buttons]]>>
+
+		<<elseif $lastlocation is 20>>
+			<<set _opt = [16, 10]>>
+			<<include [[nav-buttons]]>>
+			
+		<</if>>
+
+	</div>
+<</nobr>> */
