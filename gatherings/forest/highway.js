@@ -35,7 +35,7 @@ function main() {
 
 // -- commands --
 function traverse(id) {
-  const step = State.highwayStep
+  const step = State.highwayStep || 0
 
   // if we haven't reached the goal, move. otherwise, redirect to the exit
   if (step < 600) {
