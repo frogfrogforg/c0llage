@@ -521,6 +521,8 @@ export class DraggableFrame extends HTMLParsedElement {
       case "IFRAME":
         return child
       case "D-IFRAME":
+        // This doesn't work since child.iframe is null at this point
+        // TODO fix
         return child.iframe
       default:
         return null

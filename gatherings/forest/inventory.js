@@ -1,3 +1,15 @@
+import { State } from "/core/state.js"
+
+// inventory template
+function makeInventoryFrame({id, src}) {
+  // TODO also take x,y,width,height,temperament
+  return `
+    <draggable-frame id="${id}" temperament="phlegmatic" y=40 width=20 height=20>
+      <d-iframe src="${src}" autoload>
+    </draggable-frame>
+  `;
+}
+
 // -- props --
 let $mEl = document.getElementById("inventory")
 
@@ -8,6 +20,35 @@ function add(props) {
   if (get(id) == null) {
     $mEl.appendChild(getEl(props))
   }
+}
+
+// Load inventory from the State (localStorage-backed)
+function loadFromState() {
+  if (State.inventory) {
+    State.inventory.forEach(({id, src}) => {
+      // TODO also load x,y,width,height, temperament
+      add({
+        id: id,
+        html: makeInventoryFrame({id, src})
+      });
+    });
+  }
+}
+
+// Save inventory to the State (localStorage-backed)
+function saveToState() {
+  let inventory = [];
+  Array.from($mEl.children).forEach((child) => {
+    if (child.tagName == "DRAGGABLE-FRAME" && child.visible) {
+      let iframe = child.querySelector("iframe");
+      // TODO: ^ use draggable-frame.iframe property once that is being set correctly
+
+      let item = {id: child.id, src: iframe.src};
+      inventory.push(item);
+      // console.log(item);
+    }
+  })
+  State.inventory = inventory;
 }
 
 // -- queries --
@@ -41,4 +82,6 @@ function getEl({ id, el: $item, html }) {
 export const kInventory = {
   add,
   get,
-}
+  loadFromState,
+  saveToState
+};
