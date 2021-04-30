@@ -32,8 +32,7 @@ const frameTemplate = `
       <div class="Frame-header-maximize Frame-header-button" id="$id-max"></div>
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
-      <div class="Frame-header-blank">
-      </div>
+      <div class="Frame-header-blank"></div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
     <div class="Frame-handle"></div>
@@ -214,11 +213,14 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    // move to the inventory if necessary
+    // move to the correct container if necessary
+    let pid = "frames"
     if (this.hasAttribute("permanent") || this.hasAttribute("persistent")) {
-      if (this.parentElement.id !== "inventory") {
-        document.getElementById("inventory").appendChild(this)
-      }
+      pid = "inventory"
+    }
+
+    if (this.parentElement.id !== pid) {
+      document.getElementById(pid).appendChild(this)
     }
 
     // register events

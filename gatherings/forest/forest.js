@@ -35,7 +35,7 @@ async function renderGame(nextBody) {
     $mGame.removeChild($mGame.lastChild)
   }
 
-  for (const child of nextGame.children) {
+  for (const child of Array.from(nextGame.children)) {
     $mGame.appendChild(child)
   }
 
@@ -44,7 +44,7 @@ async function renderGame(nextBody) {
 
   // ivate any inert script tags in the new game
   const scripts = $mGame.querySelectorAll("script")
-  for (const inert of scripts) {
+  for (const inert of Array.from(scripts)) {
     // clone the inert script tag
     const script = document.createElement("script")
     script.textContent = inert.textContent

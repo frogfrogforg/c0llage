@@ -111,7 +111,7 @@ function exportHtml() {
 <body>
     <div class="container">
         <main class="content">
-            <img class="background" src="./images/${backgroundImageFilename}"></img>
+            <img class="background" src="./images/${backgroundImageFilename}">
             ${hotspotsHtml}
         </main>
     </div>
