@@ -169,31 +169,34 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // Close button
+    const closeButton = this.querySelector(`#${id}-close`)
     if (!this.hasAttribute('no-close')) {
-      const closeButton = this.querySelector(`#${id}-close`)
       closeButton.onclick = () => {
-        this.hide()
+        this.onClose()
       }
+    } else {
+      closeButton.style.display = 'none'
     }
 
     // Maximize button
+    const hasIframe = this.hasIframe() // can't really find the iframe because it might be deferred, but d-iframe should also work here
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    const iframe = this.findIframe()
-    if (iframe != null) {
-      maximizeButton.onclick = () => {
-        window.open(iframe.contentDocument.location, '_self')
+    if(this.hasAttribute('maximize') && hasIframe) {
+        maximizeButton.onclick = () => {
+          const iframe = this.findIframe()
+          window.open(iframe.contentDocument.location, '_self')
+        }
+      } else {
+        maximizeButton.style.display = 'none'
       }
-    } else {
-      maximizeButton.style.display = 'none'
-    }
 
     // back button
     const backButton = this.querySelector(`.Frame-header-back`)
-
-    if (iframe != null) {
+    if (!this.hasAttribute('no-back') && hasIframe) {
       // back button only exists for iframes
       backButton.onclick = () => {
+        const iframe = this.findIframe()
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
         if (iframe.contentWindow.history.length > 2) {
           iframe.contentWindow.history.back()
@@ -224,6 +227,18 @@ export class DraggableFrame extends HTMLParsedElement {
 
     // register events
     this.initEvents()
+  }
+
+  onClose() {
+    const diframe = this.querySelector('d-iframe')
+    if(diframe != null) {
+      diframe.destroyIframe()
+    }
+
+    // const iframe = this.findIframe()
+    // iframe.contentWindow.location.reload(false);
+
+    this.hide()
   }
 
   initStyleFromAttributes() {
@@ -491,6 +506,18 @@ export class DraggableFrame extends HTMLParsedElement {
   // -- nested [d-]iframe hacks --
   findIframe() {
     return this.findIframeInChildren(this.bodyElement.children)
+  }
+
+  hasIframe() { 
+    const child = this.bodyElement.children[0]
+    switch (child && child.nodeName) {
+      case "IFRAME":
+        return true
+      case "D-IFRAME":
+        return true
+      default:
+        return null
+    }
   }
 
   findScaleTarget() {
