@@ -25,25 +25,25 @@ the 1 day marshmallow">
   <link rel="stylesheet" href="../shared/frames.css">
 
   <!-- scripts -->
-  <script type="module" src="../../global.js"> </script>
+  <script type="module" src="../../global.js"></script>
   <script type="module" src="../shared/draggable-frame.js"></script>
   <script type="module" src="../shared/d-iframe.js"></script>
   <script type="module" src="forest.js"></script>
 </head>
 
-<body>
+<body class="Forest">
   <div id="game">
-    <div class="container">
-      <main id="main" class="content">
+    <div class="Forest-layer Forest-root">
+      <main id="main" class="Forest-content">
         <!-- page -->
         {{content}}
-        <!-- frames -->
-        <section id="frame$" class="Frames"></section>
       </main>
     </div>
   </div>
 
-  <div id="inventory" class="Inventory"></div>
+  <div class="Forest-layer">
+    <section id="inventory" class="Forest-content"></section>
+  </div>
 </body>
 
 </html>

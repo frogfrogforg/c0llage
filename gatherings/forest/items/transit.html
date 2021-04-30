@@ -39,10 +39,10 @@
         return
       }
 
-      // TODO: generalize this -- all frames go in frame$ automatically unless
+      // TODO: generalize this -- all frames go in frame automatically unless
       // made permanent? and can but but directly into the body then
       const doc = window.parent.document
-      const $frames = doc.getElementById("frame$")
+      const $frames = doc.getElementById("frames")
 
       let $dialog
       $dialog = document.createElement("div")

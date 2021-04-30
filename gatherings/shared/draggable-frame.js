@@ -214,11 +214,10 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    if (this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
-      console.log(this.parentElement)
-      if (this.parentElement.id !== 'inventory') {
-        console.log('moving iframe ' + this.id)
-        document.getElementById('inventory').appendChild(this)
+    // move to the inventory if necessary
+    if (this.hasAttribute("permanent") || this.hasAttribute("persistent")) {
+      if (this.parentElement.id !== "inventory") {
+        document.getElementById("inventory").appendChild(this)
       }
     }
 
