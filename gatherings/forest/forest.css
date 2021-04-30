@@ -47,6 +47,7 @@ body {
     background: transparent;
     border: none !important;
     transition: all .8s ease-out;
+    outline: none;
 }
 
 .hotspot:hover {
