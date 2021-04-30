@@ -59,13 +59,12 @@
         }
     }, 1000)
 
-    const sign = document.getElementById("stop")
-    sign.addEventListener("click", (evt) => {
-        // go/stop?
+    document.getElementById("stop").addEventListener("click", (evt) => {
+        // harsh era
         const title = document.querySelector("title")
         title.innerHTML = "don't go!"
 
-        // ...go
+        // mellow era
         Frames.toggle("stop-dialog")
     })
 </script>
