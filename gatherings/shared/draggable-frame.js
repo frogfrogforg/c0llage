@@ -220,8 +220,17 @@ export class DraggableFrame extends HTMLParsedElement {
     if (this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
       console.log(this.parentElement)
       if (this.parentElement.id !== 'inventory') {
-        console.log('moving iframe ' + this.id)
-        document.getElementById('inventory').appendChild(this)
+        const inventory = document.getElementById('inventory')
+        if(inventory.querySelector(`#${this.id}`)) {
+          // there is a copy already, remove
+          // maybe we might want non unique permanent frames?
+          console.log(`${this.id} is not unique, deleting`)
+          this.remove()
+          return;
+        } else {
+          console.log(`${this.id} moved to inventory`)
+          inventory.appendChild(this)
+        }
       }
     }
 
