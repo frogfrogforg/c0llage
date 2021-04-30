@@ -1,10 +1,12 @@
 <body>
   <img class="background" src="./images/70meditation.png"></img>
+
   <button id='meditationGuide' class='hotspot talk' style="top: 38%;
 left: 8%;
 height: 30%;
 width: 28%;" onclick="meditationSequence()">
   </button>
+
   <button class='hotspot talk' style="top: 36%;
     left: 66%;
     height: 38%;
@@ -23,17 +25,18 @@ width: 28%;" onclick="meditationSequence()">
       Hello! Are you here for the meditation session? We are starting soon
     </div>
   </draggable-frame>
+
   <draggable-frame height=15 width=30 x=10 hidden id='meditation2'>
     <div>
       This will take you exactly 10 minutes and I guarantee you'll feel energized afterwards
     </div>
   </draggable-frame>
+
   <draggable-frame height=15 width=30 x=10 hidden id='meditation3'>
     <div>
       Sit comfortably on your chair. Start noticing your breath.
     </div>
   </draggable-frame>
-
 
   <draggable-frame hidden id='meditationFinal'>
     <div>
@@ -42,11 +45,10 @@ width: 28%;" onclick="meditationSequence()">
     </div>
   </draggable-frame>
 
-
   <div id='fader' class=""></div>
+
   <div style="visibility: hidden;">
-    <audio class='anapana' id='anapanaAudio' src='./sound/anapana.mp3' controls>
-    </audio>
+    <audio class='anapana' id='anapanaAudio' src='./sound/anapana.mp3' controls></audio>
   </div>
 </body>
 
