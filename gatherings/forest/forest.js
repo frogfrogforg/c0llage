@@ -1,9 +1,10 @@
 import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
-import { init as initInventory } from "./inventory.js"
+import { kInventory } from "./inventory.js"
+import { addOnBeforeSaveStateListener } from "/core/state.js"
 
 // -- props --
-let mInventory = null
+let mPath = null
 
 // -- p/elements
 let $mGame = null
@@ -13,14 +14,20 @@ function main() {
   // boostrap turbo
   Turbo.start()
 
-  // load shared interfaces
-  // TODO: maybe these should get shimmed onto another global similar to `d`, but `f` for forest.
-  mInventory = initInventory()
+  // set location
+  mPath = document.location.pathname
 
   // capture elements
   $mGame = document.getElementById("game")
 
+  // inventory (persistent windows) loading and saving:
+  kInventory.loadFromState();
+  addOnBeforeSaveStateListener(kInventory.saveToState)
+
+
   // bind events
+  addEventListener("beforeunload", didRefresh)
+  document.addEventListener("turbo:before-visit", didStartVisit)
   document.addEventListener("turbo:before-render", didCatchRender)
   didChangeState()
 }
@@ -56,8 +63,6 @@ async function renderGame(nextBody) {
     const parent = inert.parentElement
     parent.replaceChild(script, inert)
   }
-
-  console.debug("TURBO LOADED")
 }
 
 // add random query string to links and iframe src to allow arbitrary recursion
@@ -93,8 +98,18 @@ function didChangeState() {
   randomizeLinks()
 }
 
+function didRefresh(evt) {
+  evt.preventDefault()
+  return evt.returnValue = "don't leave gamer"
+}
+
+function didStartVisit() {
+  d.State.referrer = document.location.pathname
+}
+
 function didCatchRender(evt) {
   evt.preventDefault()
+  // render new game
   renderGame(evt.detail.newBody)
 }
 

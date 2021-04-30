@@ -2,9 +2,9 @@
 
 live @ https://nostalgic-engelbart.netlify.app/
 
-| channel | status |
-| ------- | ------ |
-| dev     | [![Netlify Status](https://api.netlify.com/api/v1/badges/2d805f27-ae43-4430-a3a1-be770b1f47e0/deploy-status)](https://app.netlify.com/sites/hungry-engelbart/deploys) |
+| channel | status   |
+| ------- | -------- |
+| dev     | [![Netlify Status](https://api.netlify.com/api/v1/badges/2d805f27-ae43-4430-a3a1-be770b1f47e0/deploy-status)](https://app.netlify.com/sites/hungry-engelbart/deploys)    |
 | live    | [![Netlify Status](https://api.netlify.com/api/v1/badges/6860a8e5-060b-4ff4-8fbc-7643404c0d84/deploy-status)](https://app.netlify.com/sites/nostalgic-engelbart/deploys) |
 
 ## [Documentation](./docs/index.md)
@@ -17,12 +17,12 @@ live @ https://nostalgic-engelbart.netlify.app/
 
 To start haunting:
 ```
-git config --local user.name "-chi"; git config --local user.email "-chi";
+git config --local user.name "ghost" && git config --local user.email "ghost"
 ```
 
 To unhaunt (stop haunting):
 ```
-git config --local user.name "<your name>"; git config --local user.email "<your email>";
+git config --local user.name "<your name>" && git config --local user.email "<your email>"
 ```
 
 You can make some aliases so that you can write only `git haunt` and `git unhaunt` and not have to remember the rest, which make it really nice:

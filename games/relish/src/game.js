@@ -1,5 +1,5 @@
 import { loadEl, loadAssets } from "./load.js"
-import { init as initView, initData, sim, draw, poke, getCanvas, setPlate, randomize, reset } from "./view.js"
+import { init as initView, initData, initViewport, sim, draw, poke, getCanvas, setPlate, randomize, reset } from "./view.js"
 import { getPlate } from "./plates.js"
 
 // -- constants --
@@ -73,10 +73,19 @@ function isSimFrame() {
 
 // -- events --
 function initEvents() {
+  // add resize events
+  const root = window
+  root.addEventListener("resize", debounce(didResize, 500))
+
   // add mouse events
   const $canvas = getCanvas()
   $canvas.addEventListener("click", didClickMouse)
   $canvas.addEventListener("mousemove", didMoveMouse)
+}
+
+// -- e/resize
+function didResize() {
+  initViewport()
 }
 
 // -- e/mouse
@@ -85,17 +94,31 @@ function didClickMouse(evt) {
 }
 
 function didMoveMouse(evt) {
-  // if button is pressed
+  // if button is not pressed
   if ((evt.buttons & (1 << 0)) != (1 << 0)) {
     return
   }
 
-  // and this is an update frame
+  // if this is not an update frame
   if (!isSimFrame()) {
     return
   }
 
   spawn(evt)
+}
+
+// -- e/helpers
+function debounce(action, delay) {
+  let id = null
+
+  return function debounced(...args) {
+    clearTimeout(id)
+
+    id = setTimeout(() => {
+      id = null
+      action(...args)
+    }, delay)
+  }
 }
 
 // -- e/keyboard

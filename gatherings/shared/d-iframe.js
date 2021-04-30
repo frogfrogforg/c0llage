@@ -7,25 +7,25 @@ const kPermittedAttrs = new Set([
   "id",
   "src",
   "style",
+  "class",
 ])
 
 // -- impls --
 class DeferredIframeElement extends HTMLParsedElement {
   // -- props --
-  iframe = document.createElement("iframe")
+  iframeAttrs = null
+  _iframe = null
+  get iframe() {
+    if(this._iframe == null) {
+      return this // kind of a hack
+    }
+    return this._iframe
+  }
 
   // -- lifetime --
   parsedCallback() {
-    // add a nested iframe w/ no src
-    this.appendChild(this.iframe)
-
-    // copy non-permitted attibutes to the iframe
-    for (const a of this.attributes) {
-      if (!kPermittedAttrs.has(a.name)) {
-        this.iframe.setAttribute(a.name, a.value)
-        this.removeAttribute(a.name)
-      }
-    }
+    // capture iframe attrs
+    this.parseIframeAttrs()
 
     // autoload if necessary
     if (this.hasAttribute("autoload")) {
@@ -43,8 +43,25 @@ class DeferredIframeElement extends HTMLParsedElement {
     }
   }
 
+  // -- l/helpers
+  parseIframeAttrs() {
+    const attrs = {}
+
+    for (const a of this.attributes) {
+      if (kPermittedAttrs.has(a.name)) {
+        continue
+      }
+
+      attrs[a.name] = a.value
+      this.removeAttribute(a.name)
+    }
+
+    this.iframeAttrs = attrs
+  }
+
   // -- commands --
   load() {
+    console.log(`loaded iframe ${this.src}`)
     this.loadUrl(this.src)
   }
 
@@ -53,9 +70,40 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   loadUrl(url) {
-    if (this.iframe.src != url) {
-      this.iframe.src = url
+    console.log(url)
+    if (!url) {
+      console.log(`destroying iframe`)
+      this.destroyIframe()
+    } else if (this._iframe == null || this.src != url) {
+      console.log(`creating iframe`)
+      // TODO: set d-iframe url?
+      this.destroyIframe()
+      this.createIframe(url)
     }
+  }
+
+  // -- c/helpers
+  createIframe(url) {
+    this._iframe = document.createElement('iframe');
+
+    // add a nested iframe w/ no src
+    this.appendChild(this._iframe)
+
+    // copy attibutes to the iframe
+    for (const name in this.iframeAttrs) {
+      this._iframe.setAttribute(name, this.iframeAttrs[name])
+    }
+
+    this._iframe.src = url
+  }
+
+  destroyIframe() {
+    if (this._iframe == null) {
+      return
+    }
+
+    this._iframe.remove()
+    this._iframe = null
   }
 
   // -- properties --
@@ -64,7 +112,14 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   set src(val) {
-    return this.iframe.setAttribute("src", val)
+    return this._iframe.setAttribute("src", val)
+  }
+
+  focus() {
+    if(this._iframe != null) {
+      this._iframe.focus
+    }
+
   }
 }
 

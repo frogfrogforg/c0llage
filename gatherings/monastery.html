@@ -41,6 +41,16 @@
             transform-origin: top left;
         }
     </style>
+
+    <!-- styling -->
+    <link rel="stylesheet" href="./forest/forest.css">
+    <link rel="stylesheet" href="../shared/frames.css">
+
+    <!-- scripts -->
+    <script type="module" src="../global.js"> </script>
+    <script type="module" src="./shared/draggable-frame.js"></script>
+    <script type="module" src="./shared/d-iframe.js"></script>
+    <script type="module" src="./forest/forest.js"></script>
 </head>
 
 <body>
@@ -68,5 +78,9 @@
             <iframe src="../Jen/jenGame2.html" title="jen game 2">
             </iframe>
         </div>
+
+        <draggable-frame no-close temperament='phlegmatic' persistent id="backbutton">
+            <iframe src='./forest/items/backbutton.html'></iframe>
+        </draggable-frame>
     </div>
 </body>

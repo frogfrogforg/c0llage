@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 0;
     background: blue;
+    /* font-size: 3vmin; */
 }
 
 .container {
@@ -37,6 +38,7 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
+    user-select: none;
 }
 
 .hotspot {
@@ -44,16 +46,17 @@ body {
     display: block;
     background: transparent;
     border: none !important;
-    filter: blur(30px);
-    transition: all 3s ease-out;
+    transition: all .8s ease-out;
+    outline: none;
 }
 
 .hotspot:hover {
-    background-color:#ffffdd44;
+    background-color:#04000422;
+    filter: blur(30px);
     transition: all 0.1s ease-in;
 }
 .debug {
-    border: violet 10px solid;
+    border: violet 10px solid !important;
 }
 
 .cosmodrome {
@@ -71,6 +74,25 @@ body {
     pointer-events: none;
 }
 
+/* effects */
+
+.screenshake-oneshot {
+    animation: screenshake 0.1s;
+    transition-timing-function: linear;
+    animation-iteration-count: 10;
+}
+
+.screenshake-loop {
+    animation: screenshake 0.1s;
+    transition-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes screenshake {
+   0% { transform: translateY(0%); } 
+   50% { transform: translateX(1%); } 
+   100% { transform: translateX(0%); } 
+} 
 
 /* cursors */
 .inspect {
@@ -114,5 +136,36 @@ body {
 }
 
 .cursor-keyboard {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">⌨️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40"-size="40">⌨️</text>⌨️</svg>'), auto;
 }
+
+.cursor-lotus {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🧘</text></svg>'), auto;
+}
+
+.cursor-tree {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🌲</text></svg>'), auto;
+}
+
+.cursor-park {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🏞️</text></svg>'), auto;
+}
+
+.cursor-stop {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🛑</text></svg>'), auto;
+}
+
+.cursor-bus {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🚌</text></svg>'), auto;
+}
+
+.cursor-bird {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🐦</text></svg>'), auto;
+}
+
+.cursor-shoes {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🥾</text></svg>'), auto;
+}
+
+
+

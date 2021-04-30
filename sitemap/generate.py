@@ -83,8 +83,9 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False, dra
             href = el.get('src' if is_iframe else 'href')
             # href is relative to `this`
 
-            if ((not href) or href.startswith('#')):
+            if (not href) or href.startswith('#') or 'javascript:void(0)' in href:
                 continue
+
 
             if (not href.startswith("http")):
                 # internal link, normalize path & continue traversing
@@ -122,12 +123,14 @@ g_extended = crawl("../gatherings/forest/welcome.html", "..", include_external=T
 
 g.set_overlap(False)
 g_images.set_overlap(False)
+g_images.set_mindist(50)
+g_images.set_nodesep(1)
 g_extended.set_overlap(False)
 
 # options: "dot", "neato", "fdp", "sfdp", "twopi", "circo"
 # https://graphviz.org/
 prog = "neato" # seems to work best without much tweaking 
-extended_prog = "dot" # cleaner
+extended_prog = "dot" # simple tree, looks cleaner for complex graph
 
 g.write_svg("sitemap.svg", prog=prog)
 g.write_png("sitemap.png", prog=prog)

@@ -77,31 +77,24 @@
 </head>
 
 <body style="width:100%; height:100%">
-    <section id="frames" class="Frames">
-        <draggable-frame temperament='phlegmatic' id="tender-frame" hidden>
-            <d-iframe style="--scaleFactor: 1.0;" id="tender" src="../../d/2tender2morning.html"></d-iframe>
-        </draggable-frame>
+    <draggable-frame temperament='phlegmatic' id="tender-frame" hidden>
+        <d-iframe style="--scaleFactor: 1.0;" id="tender" src="../../d/tender-morning/index.html"></d-iframe>
+    </draggable-frame>
 
-        <draggable-frame temperament='phlegmatic' id="florest-frame" hidden>
-            <d-iframe style="--scaleFactor: 1.0;" id="florest" src="../../games/florest?a=1"></d-iframe>
-        </draggable-frame>
-
-
-        <draggable-frame temperament='phlegmatic' id="dumplings-frame" hidden>
-            <d-iframe style="--scaleFactor: 1.0;" id="dumplings" src="/blogs/dumplings/dumplings.html"></d-iframe>
-        </draggable-frame>
+    <draggable-frame temperament='phlegmatic' id="florest-frame" hidden>
+        <d-iframe style="--scaleFactor: 1.0;" id="florest" src="../../games/florest?a=1"></d-iframe>
+    </draggable-frame>
 
 
-    </section>
+    <draggable-frame temperament='phlegmatic' id="dumplings-frame" hidden>
+        <d-iframe style="--scaleFactor: 1.0;" id="dumplings" src="/blogs/dumplings/dumplings.html"></d-iframe>
+    </draggable-frame>
 
     <div id=" icons" class="icons">
         <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
-
         <pc-icon target="tender-frame" name='hello' src="./images/icons/thecomputer.png"></pc-icon>
         <pc-icon target="florest-frame" name='florest' src="./images/icons/florest.png"></pc-icon>
         <pc-icon target="dumplings-frame" name="big brain" src="./images/icons/dumpling.png"></pc-icon>
-
-
     </div>
 
     <script type="module" src="../shared/d-iframe.js"></script>

@@ -7,6 +7,7 @@ const initialState = {
   sawMessyServerNarrative: false,
   visitedAlidator: false,
   visitedPrometeus: false,
+  teeth: 0,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
@@ -43,7 +44,19 @@ export const State = new Proxy(state, {
   },
 })
 
+const onBeforeSaveStateListeners = [];
+
+export const addOnBeforeSaveStateListener = (listener) => {
+  if (typeof listener === "function") {
+    listener();
+  } else {
+    console.error("invalid listener: ", listener);
+  }
+  onBeforeSaveStateListeners.push(listener);
+}
+
 // -- events --
 window.top.addEventListener("beforeunload", () => {
+  onBeforeSaveStateListeners.forEach(listener => listener());
   State.save()
 })

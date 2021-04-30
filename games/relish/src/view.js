@@ -25,6 +25,7 @@ let mDrawSize = null
 let mViewSize = null
 let mPlate = null
 let mFg = null
+let mIsSizeInvalid = false
 
 // -- p/data
 let dColors = null
@@ -58,22 +59,8 @@ export function init(id, assets) {
   // hang on to assets
   mAssets = assets
 
-  // init view dom size
-  mViewSize = initViewSize()
-
-  // abort for now if size is 0 (TODO: maybe listen for window resize events)
-  if (mViewSize.w === 0) {
-    console.debug("relish canvas size is 0, not sure what to do")
-    return false
-  }
-
-  mCanvas.style.width = `${mViewSize.w}px`
-  mCanvas.style.height = `${mViewSize.h}px`
-
-  // init draw, canvas size
-  mDrawSize = initDrawSize(mViewSize)
-  mCanvas.width = mDrawSize.w
-  mCanvas.height = mDrawSize.h
+  // initialize viewport sizes
+  initViewport()
 
   // init simulation size
   mSimSize = initSimSize(mDrawSize)
@@ -84,6 +71,19 @@ export function init(id, assets) {
   mBuffers = initBuffers()
 
   return true
+}
+
+export function initViewport() {
+  // init view dom size
+  mViewSize = initViewSize()
+  if (mViewSize.w === 0) {
+    console.error("relish canvas size is 0, not sure what to do")
+  }
+
+  // init draw, canvas size
+  mDrawSize = initDrawSize(mViewSize)
+  mCanvas.width = mDrawSize.w
+  mCanvas.height = mDrawSize.h
 }
 
 // -- commands --
@@ -262,10 +262,12 @@ export function setPlate(plate) {
 
 // poke the texture in view space
 export function poke(x, y) {
-  const scale = mSimSize.w / mViewSize.w
+  const s = mSimSize
+  const v = mViewSize
+
   pokeTexture(
-    x * scale,
-    y * scale
+    x * (s.w / v.w),
+    y * (s.h / v.h),
   )
 }
 

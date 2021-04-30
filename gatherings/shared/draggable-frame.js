@@ -35,8 +35,7 @@ const frameTemplate = `
       <div class="Frame-header-blank">
       </div>
     </div>
-      <div id="$id-body" class="Frame-body">
-      </div>
+    <div id="$id-body" class="Frame-body"></div>
     <div class="Frame-handle"></div>
   </div>
 `
@@ -115,8 +114,6 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.setVisible(!this.hasAttribute('hidden'))
 
-    // the nested iframe (if there is one)
-    this.iframe = null
     // the current manipulation
     this.op = null
     // the initial el x-pos
@@ -140,8 +137,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
       bodyContainer = document.createElement('div')
-      bodyContainer.style.width = '100%'
-      bodyContainer.style.height = '100%'
+      bodyContainer.classList.toggle("Frame-shim")
       this.bodyElement.appendChild(bodyContainer)
     }
 
@@ -151,7 +147,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     this.classList.add('Frame')
 
-    if(this.hasAttribute('bodyClass')) {
+    if (this.hasAttribute('bodyClass')) {
       this.bodyElement.classList.add(this.getAttribute('bodyClass'))
     }
 
@@ -173,31 +169,34 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // Close button
+    const closeButton = this.querySelector(`#${id}-close`)
     if (!this.hasAttribute('no-close')) {
-      const closeButton = this.querySelector(`#${id}-close`)
       closeButton.onclick = () => {
-        this.hide()
+        this.onClose()
       }
+    } else {
+      closeButton.style.display = 'none'
     }
 
     // Maximize button
+    const hasIframe = this.hasIframe() // can't really find the iframe because it might be deferred, but d-iframe should also work here
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    const iframe = this.findIframe()
-    if (iframe != null) {
-      maximizeButton.onclick = () => {
-        window.open(iframe.contentDocument.location, '_self')
+    if(this.hasAttribute('maximize') && hasIframe) {
+        maximizeButton.onclick = () => {
+          const iframe = this.findIframe()
+          window.open(iframe.contentDocument.location, '_self')
+        }
+      } else {
+        maximizeButton.style.display = 'none'
       }
-    } else {
-      maximizeButton.style.display = 'none'
-    }
 
     // back button
     const backButton = this.querySelector(`.Frame-header-back`)
-
-    if (iframe != null) {
+    if (!this.hasAttribute('no-back') && hasIframe) {
       // back button only exists for iframes
       backButton.onclick = () => {
+        const iframe = this.findIframe()
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
         if (iframe.contentWindow.history.length > 2) {
           iframe.contentWindow.history.back()
@@ -218,17 +217,37 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    if(this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
-      const inventory = document.getElementById('inventory')
+    if (this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
       console.log(this.parentElement)
-      if(this.parentElement.id !== 'inventory') {
-        console.log('moving iframe ' + this.id)
-        document.getElementById('inventory').appendChild(this)
+      if (this.parentElement.id !== 'inventory') {
+        const inventory = document.getElementById('inventory')
+        if(inventory.querySelector(`#${this.id}`)) {
+          // there is a copy already, remove
+          // maybe we might want non unique permanent frames?
+          console.log(`${this.id} is not unique, deleting`)
+          this.remove()
+          return;
+        } else {
+          console.log(`${this.id} moved to inventory`)
+          inventory.appendChild(this)
+        }
       }
     }
 
     // register events
     this.initEvents()
+  }
+
+  onClose() {
+    const diframe = this.querySelector('d-iframe')
+    if(diframe != null) {
+      diframe.destroyIframe()
+    }
+
+    // const iframe = this.findIframe()
+    // iframe.contentWindow.location.reload(false);
+
+    this.hide()
   }
 
   initStyleFromAttributes() {
@@ -328,12 +347,12 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 
   bringToTop() {
-    if(!this.visible) return
+    if (!this.visible) return
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
     this.classList.toggle(kUnfocusedClass, false)
     const iframe = this.findIframe()
-    if(iframe != null) {
+    if (iframe != null) {
       iframe.focus()
     }
   }
@@ -498,6 +517,18 @@ export class DraggableFrame extends HTMLParsedElement {
     return this.findIframeInChildren(this.bodyElement.children)
   }
 
+  hasIframe() { 
+    const child = this.bodyElement.children[0]
+    switch (child && child.nodeName) {
+      case "IFRAME":
+        return true
+      case "D-IFRAME":
+        return true
+      default:
+        return null
+    }
+  }
+
   findScaleTarget() {
     const body = this.querySelector(`#${this.id}-body`)
     const child = body.firstElementChild
@@ -511,7 +542,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // search for a wrapped iframe (youtube embed is one level deep)
-    const iframe = child.querySelector("iframe")
+    const iframe = this.findIframe()
     if (iframe != null) {
       return iframe.contentDocument.body
     }
@@ -526,6 +557,8 @@ export class DraggableFrame extends HTMLParsedElement {
       case "IFRAME":
         return child
       case "D-IFRAME":
+        // This doesn't work since child.iframe is null at this point
+        // TODO fix
         return child.iframe
       default:
         return null
