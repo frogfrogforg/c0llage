@@ -7,6 +7,7 @@ const initialState = {
   sawMessyServerNarrative: false,
   visitedAlidator: false,
   visitedPrometeus: false,
+  teeth: 0,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

@@ -171,7 +171,7 @@
 
 
       // set position
-      let xPos = 100 + 25 * window.localStorage.teeth;
+      let xPos = 100 + 25 * (d.State.teeth || 0)
       console.log('leakxPos', xPos)
       let yPos = 100;
       clone.style.left = `${xPos}px`;
@@ -201,7 +201,7 @@
 
 
           if (this.falling) {
-            this.y += 10 + (20 - window.localStorage.teeth);
+            this.y += 10 + (20 - (d.State.teeth | 0));
             this.elm.style.top = `${this.y}px`;
           }
 
