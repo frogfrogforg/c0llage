@@ -1,5 +1,7 @@
 import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
+import { kInventory } from "./inventory.js"
+import { addOnBeforeSaveStateListener } from "/core/state.js"
 
 // -- props --
 let mPath = null
@@ -17,6 +19,11 @@ function main() {
 
   // capture elements
   $mGame = document.getElementById("game")
+
+  // inventory (persistent windows) loading and saving:
+  kInventory.loadFromState();
+  addOnBeforeSaveStateListener(kInventory.saveToState)
+
 
   // bind events
   addEventListener("beforeunload", didRefresh)
