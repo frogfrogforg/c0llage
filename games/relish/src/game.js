@@ -79,8 +79,12 @@ function initEvents() {
 
   // add mouse events
   const $canvas = getCanvas()
-  $canvas.addEventListener("click", didClickMouse)
-  $canvas.addEventListener("mousemove", didMoveMouse)
+  $canvas.addEventListener("click", didClick)
+  $canvas.addEventListener("pointermove", didMove)
+  $canvas.addEventListener("pointerdown", didChangeButtons)
+  $canvas.addEventListener("pointerenter", didChangeButtons)
+  $canvas.addEventListener("pointerup", didChangeButtons)
+  $canvas.addEventListener("pointerout", didChangeButtons)
 }
 
 // -- e/resize
@@ -89,11 +93,11 @@ function didResize() {
 }
 
 // -- e/mouse
-function didClickMouse(evt) {
+function didClick(evt) {
   spawn(evt)
 }
 
-function didMoveMouse(evt) {
+function didMove(evt) {
   // if button is not pressed
   if ((evt.buttons & (1 << 0)) != (1 << 0)) {
     return
@@ -105,6 +109,12 @@ function didMoveMouse(evt) {
   }
 
   spawn(evt)
+}
+
+function didChangeButtons(evt) {
+  const $canvas = getCanvas()
+  const pressed = evt.buttons !== 0
+  $canvas.style.cursor = pressed ? "grabbing" : null
 }
 
 // -- e/helpers
