@@ -44,7 +44,21 @@
   </style>
   <script>
     const lastVisitCommits = window.localStorage.getItem('lastVisitCommit') || 0
+    const lastVisitDate = window.localStorage.getItem('lastVisitDate') && new Date(window.localStorage.getItem('lastVisitDate'))
+    const ONE_DAY = 1000 * 60 * 60 * 24
+
+    function nothingNewCallback() {
+      document.getElementById('nothingNew').style.display = 'block'
+    }
+
     async function getAllCommits() {
+      const date = new Date()
+      window.localStorage.setItem('lastVisitTime', date.toString())
+
+      if (lastVisitDate != null && date - lastVisitDate < ONE_DAY) {
+        nothingNewCallback()
+      };
+
       const firstCommitHash = '3e1d4cdffd68e2bb3c2beaad89ce65a488c3a708'
       const url = "https://api.github.com/repos/frogfrogforg/c0llage"
       const lastCommitRequest = await fetch(`${url}/commits/main`)
@@ -59,8 +73,13 @@
       const totalCommits = comparisonJSON.total_commits
 
       document.getElementById('loading').style.display = 'none'
-      document.getElementById('wholeText').style.display = 'block'
-      document.getElementById('commits').innerHTML = totalCommits - lastVisitCommits
+      const newCommits = totalCommits - lastVisitCommits
+      if (newCommits > 0) {
+        document.getElementById('wholeText').style.display = 'block'
+        document.getElementById('commits').innerHTML = newCommits
+      } else {
+        nothingNewCallback()
+      }
 
       window.localStorage.setItem('lastVisitCommit', totalCommits)
     }
@@ -83,6 +102,9 @@
       <div>
         new things!
       </div>
+    </div>
+    <div style='display: none;' class='number' id='nothingNew'>
+      welcome back!
     </div>
   </div>
 </body>
