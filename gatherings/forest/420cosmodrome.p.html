@@ -1,66 +1,31 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- template: neutral -->
 
-<head>
-  <meta charset="UTF-8">
+<style>
+  body {
+    overflow: hidden;
+  }
 
-  <!-- caching -->
-  <meta name="turbo-cache-control" content="no-cache">
+  .Cosmodrome {
+    display: flex;
+    flex-direction: row;
+  }
 
-  <!-- title -->
-  <title>welcome</title>
+  .CosmodromeCol--sticky {
+    position: sticky;
+    top: 0;
+  }
 
-  <!-- scrapers -->
-  <meta property="og:title" content="c0llage">
-  <meta property="og:type" content="FROGCUBE">
-  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
-  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
-  <meta property="og:description" content="In 1884, meridian time personnel met
-in Washington to change Forg time.
-First words said was that only 1 day
-could be used on Forg to not change
-the 1 day marshmallow">
-
-  <!-- styling -->
-  <link rel="stylesheet" href="forest.css">
-  <link rel="stylesheet" href="../shared/frames.css">
-
-  <!-- scripts -->
-  <script type="module" src="../../global.js"> </script>
-  <script type="module" src="../shared/draggable-frame.js"></script>
-  <script type="module" src="../shared/d-iframe.js"></script>
-  <script type="module" src="forest.js"></script>
-
-  <!-- style -->
-  <style>
-    .body {
-      overflow: hidden;
-    }
-
-    .Cosmodrome {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .CosmodromeCol {
-    }
-
-    .CosmodromeCol--sticky {
-      position: sticky;
-      top: 0;
-    }
-
-    .CosmodromeBg {
-      width: 100vmin;
-      height: 100vmin;
-      user-select: none;
-      pointer-events: none;
-    }
-  </style>
-</head>
+  .CosmodromeBg {
+    width: 100vmin;
+    height: 100vmin;
+    user-select: none;
+    pointer-events: none;
+  }
+</style>
 
 <body>
-  <div id="game">
-    <div id="cosmodrome" class="Cosmodrome">
+  <div class="ForestLayer">
+    <main id="cosmodrome" class="Cosmodrome">
       <div class="CosmodromeCol CosmodromeCol--sticky">
         <img class="CosmodromeBg" src="./images/cosmodrome/00noentry.gif">
       </div>
@@ -83,10 +48,8 @@ the 1 day marshmallow">
       <div class="CosmodromeCol">
         <img class="CosmodromeBg" src="./images/cosmodrome/80victory.gif">
       </div>
-    </div>
+    </main>
   </div>
-
-  <div id="inventory" class="Inventory"></div>
 </body>
 
 <script>
@@ -148,6 +111,8 @@ the 1 day marshmallow">
     const dx = x - xi
     const dy = y - yi
 
+    console.log("scroll document", dx, dy)
+
     document.body.scrollBy({
       top: Math.cos(a) * dx - Math.sin(a) * dy,
       left: Math.sin(a) * dx + Math.cos(a) * dy,
@@ -164,5 +129,3 @@ the 1 day marshmallow">
   // -- boostrap --
   main()
 </script>
-
-</html>
