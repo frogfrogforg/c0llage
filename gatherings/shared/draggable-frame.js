@@ -225,16 +225,20 @@ export class DraggableFrame extends HTMLParsedElement {
     if (this.parentElement.id !== pid) {
       const parent = document.getElementById(pid)
 
-      // there is a copy already, remove
-      // maybe we might want non unique permanent frames?
-      // TODO: does this miss a case where the el was already added to the correct
-      // parent? (e.g. this.parentElement.id === pid)
-      if (pid === "inventory" && parent.querySelector(`#${this.id}`) != null) {
-        this.remove()
-        return
-      }
+      // parent can be null on computer right now; anywhere that doesn't use
+      // the template
+      if (parent != null) {
+        // there is a copy already, remove
+        // maybe we might want non unique permanent frames?
+        // TODO: does this miss a case where the el was already added to the correct
+        // parent? (e.g. this.parentElement.id === pid)
+        if (pid === "inventory" && parent.querySelector(`#${this.id}`) != null) {
+          this.remove()
+          return
+        }
 
-      parent.appendChild(this)
+        parent.appendChild(this)
+      }
     }
 
     // register events
