@@ -33,6 +33,8 @@ const frameTemplate = `
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
+        <div class="Frame-header-title" id="$id-title">
+        </div>
       </div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
@@ -154,6 +156,9 @@ export class DraggableFrame extends HTMLParsedElement {
     this.initStyleFromAttributes()
 
     //#region Header Button Functionality
+
+    // title
+    this.title = this.getAttribute('title')
 
     // Temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
@@ -562,6 +567,20 @@ export class DraggableFrame extends HTMLParsedElement {
         return child.iframe
       default:
         return null
+    }
+  }
+
+  _title = null
+
+  set title(value) {
+    const titleEl = this.querySelector(`#${this.id}-title`)
+    this._title = value;
+    console.log('setting title to', value)
+    if(value == null) {
+      titleEl.style.display = 'none'
+    } else {
+      titleEl.style.display = 'block'
+      titleEl.innerHTML = value;
     }
   }
 }

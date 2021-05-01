@@ -107,6 +107,9 @@ d-iframe iframe {
   margin-left: calc(var(--frame-header-height-param) * 0.2);
   cursor: grab;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .Frame-header-back {
@@ -122,7 +125,6 @@ d-iframe iframe {
 
 .Frame-header-temperament {
   font-size: calc(var(--frame-header-height-param) * 1.8);
-
 }
 
 .frame-header-image {
@@ -199,11 +201,19 @@ d-iframe iframe {
   background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
   background-size: cover;
-  cursor: grab;
+  cursor: nw-resize;
 }
 
 .Frame-Scaling .Frame-handle{
   cursor: grabbing;
+}
+
+.Frame-header-title {
+  font-family: monospace;
+  padding-left: 1vmin;
+  padding-right: 1vmin;
+  background-color: #dadada;
+  pointer-events: none;
 }
 
 .choleric .Frame-handle{
