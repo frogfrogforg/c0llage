@@ -175,11 +175,14 @@ export class DraggableFrame extends HTMLParsedElement {
 
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
+      console.log('has attribute', this.attributes, this.hasAttribute('no-close'))
     if (!this.hasAttribute('no-close')) {
+      console.log('adding close button')
       closeButton.onclick = () => {
         this.onClose()
       }
     } else {
+      console.log('removing close button')
       closeButton.style.display = 'none'
     }
 
