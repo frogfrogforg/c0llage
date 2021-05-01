@@ -41,9 +41,6 @@ the 1 day marshmallow">
       flex-direction: row;
     }
 
-    .CosmodromeCol {
-    }
-
     .CosmodromeCol--sticky {
       position: sticky;
       top: 0;
@@ -58,35 +55,39 @@ the 1 day marshmallow">
   </style>
 </head>
 
-<body>
+<body class="Forest">
   <div id="game">
-    <div id="cosmodrome" class="Cosmodrome">
-      <div class="CosmodromeCol CosmodromeCol--sticky">
-        <img class="CosmodromeBg" src="./images/cosmodrome/00noentry.gif">
-      </div>
+    <div class="ForestLayer">
+      <main id="cosmodrome" class="Cosmodrome">
+        <div class="CosmodromeCol CosmodromeCol--sticky">
+          <img class="CosmodromeBg" src="./images/cosmodrome/00noentry.gif">
+        </div>
 
-      <div class="CosmodromeCol">
-        <img class="CosmodromeBg" src="./images/cosmodrome/10monolith.gif">
-        <img class="CosmodromeBg" src="./images/cosmodrome/11natatorium.gif">
-        <img class="CosmodromeBg" src="./images/cosmodrome/12slide.gif">
-      </div>
+        <div class="CosmodromeCol">
+          <img class="CosmodromeBg" src="./images/cosmodrome/10monolith.gif">
+          <img class="CosmodromeBg" src="./images/cosmodrome/11natatorium.gif">
+          <img class="CosmodromeBg" src="./images/cosmodrome/12slide.gif">
+        </div>
 
-      <div class="CosmodromeCol">
-        <img class="CosmodromeBg" src="./images/cosmodrome/20niceengine.gif">
-      </div>
+        <div class="CosmodromeCol">
+          <img class="CosmodromeBg" src="./images/cosmodrome/20niceengine.gif">
+        </div>
 
-      <div class="CosmodromeCol">
-        <img class="CosmodromeBg" src="./images/cosmodrome/50launching.gif">
-        <img class="CosmodromeBg" src="./images/cosmodrome/51launched.gif">
-      </div>
+        <div class="CosmodromeCol">
+          <img class="CosmodromeBg" src="./images/cosmodrome/50launching.gif">
+          <img class="CosmodromeBg" src="./images/cosmodrome/51launched.gif">
+        </div>
 
-      <div class="CosmodromeCol">
-        <img class="CosmodromeBg" src="./images/cosmodrome/80victory.gif">
-      </div>
+        <div class="CosmodromeCol">
+          <img class="CosmodromeBg" src="./images/cosmodrome/80victory.gif">
+        </div>
+      </main>
     </div>
   </div>
 
-  <div id="inventory" class="Inventory"></div>
+  <div class="ForestLayer--overlay">
+    <section id="inventory" class="ForestLayer-content"></section>
+  </div>
 </body>
 
 <script>

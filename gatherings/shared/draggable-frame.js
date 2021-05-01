@@ -32,8 +32,7 @@ const frameTemplate = `
       <div class="Frame-header-maximize Frame-header-button" id="$id-max"></div>
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
-      <div class="Frame-header-blank">
-      </div>
+      <div class="Frame-header-blank"></div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
     <div class="Frame-handle"></div>
@@ -182,14 +181,14 @@ export class DraggableFrame extends HTMLParsedElement {
     const hasIframe = this.hasIframe() // can't really find the iframe because it might be deferred, but d-iframe should also work here
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    if(this.hasAttribute('maximize') && hasIframe) {
-        maximizeButton.onclick = () => {
-          const iframe = this.findIframe()
-          window.open(iframe.contentDocument.location, '_self')
-        }
-      } else {
-        maximizeButton.style.display = 'none'
+    if (this.hasAttribute('maximize') && hasIframe) {
+      maximizeButton.onclick = () => {
+        const iframe = this.findIframe()
+        window.open(iframe.contentDocument.location, '_self')
       }
+    } else {
+      maximizeButton.style.display = 'none'
+    }
 
     // back button
     const backButton = this.querySelector(`.Frame-header-back`)
@@ -217,21 +216,25 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    if (this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
-      console.log(this.parentElement)
-      if (this.parentElement.id !== 'inventory') {
-        const inventory = document.getElementById('inventory')
-        if(inventory.querySelector(`#${this.id}`)) {
-          // there is a copy already, remove
-          // maybe we might want non unique permanent frames?
-          console.log(`${this.id} is not unique, deleting`)
-          this.remove()
-          return;
-        } else {
-          console.log(`${this.id} moved to inventory`)
-          inventory.appendChild(this)
-        }
+    // move to the correct container if necessary
+    let pid = "frames"
+    if (this.hasAttribute("permanent") || this.hasAttribute("persistent")) {
+      pid = "inventory"
+    }
+
+    if (this.parentElement.id !== pid) {
+      const parent = document.getElementById(pid)
+
+      // there is a copy already, remove
+      // maybe we might want non unique permanent frames?
+      // TODO: does this miss a case where the el was already added to the correct
+      // parent? (e.g. this.parentElement.id === pid)
+      if (pid === "inventory" && parent.querySelector(`#${this.id}`) != null) {
+        this.remove()
+        return
       }
+
+      parent.appendChild(this)
     }
 
     // register events
@@ -240,7 +243,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
   onClose() {
     const diframe = this.querySelector('d-iframe')
-    if(diframe != null) {
+    if (diframe != null) {
       diframe.destroyIframe()
     }
 
@@ -517,7 +520,7 @@ export class DraggableFrame extends HTMLParsedElement {
     return this.findIframeInChildren(this.bodyElement.children)
   }
 
-  hasIframe() { 
+  hasIframe() {
     const child = this.bodyElement.children[0]
     switch (child && child.nodeName) {
       case "IFRAME":

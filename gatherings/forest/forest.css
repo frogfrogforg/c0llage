@@ -1,36 +1,60 @@
-body {
+/* body */
+.Forest {
     overflow:visible;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
     background: blue;
-    /* font-size: 3vmin; */
 }
 
-.container {
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* layer */
+.ForestLayer, .ForestLayer--framed, .ForestLayer--overlay, .ForestLayer--scroll {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
-    background: rgb(226,247,247);
-    background: linear-gradient(180deg, rgba(226,247,247,1) 0%, rgba(207,191,181,1) 100%);
 }
 
-.centered {
-    transform-origin: 20% 40%; /* WHAAA? */
-    transform: translate(-50%, -50%);
-}
-
-.content {
+.ForestLayer-content {
     position: relative;
     height: 80vmin;
     width: 80vmin;
+}
+
+/* layer/shared */
+.ForestLayer--framed, .ForestLayer--overlay {
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+}
+
+/* layer/framed */
+.ForestLayer--framed {
+    background: rgb(227,247,247);
+    background: linear-gradient(180deg, rgba(226,247,247,1) 0%, rgba(207,191,181,1) 100%);
+}
+
+.ForestLayer--framed .ForestLayer-content {
     border: 1.15vmin sienna double;
+}
+
+/* layer/overlay */
+.ForestLayer--overlay {
+    pointer-events: none;
+}
+
+/* layer/scroll */
+.ForestLayer--scroll {
+    overflow: scroll;
+}
+
+/* others */
+.centered {
+    transform-origin: 20% 40%; /* WHAAA? */
+    transform: translate(-50%, -50%);
 }
 
 .background {
@@ -63,19 +87,7 @@ body {
     color:coral;
 }
 
-/* Inventory */
-.Inventory {
-    overflow: hidden;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
 /* effects */
-
 .screenshake-oneshot {
     animation: screenshake 0.1s;
     transition-timing-function: linear;
@@ -89,10 +101,10 @@ body {
 }
 
 @keyframes screenshake {
-   0% { transform: translateY(0%); } 
-   50% { transform: translateX(1%); } 
-   100% { transform: translateX(0%); } 
-} 
+   0% { transform: translateY(0%); }
+   50% { transform: translateX(1%); }
+   100% { transform: translateX(0%); }
+}
 
 /* cursors */
 .inspect {
@@ -166,6 +178,3 @@ body {
 .cursor-shoes {
     cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🥾</text></svg>'), auto;
 }
-
-
-
