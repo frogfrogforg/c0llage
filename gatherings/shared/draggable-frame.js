@@ -51,22 +51,22 @@ const MinContentWidth = 100
 const TemperamentData = {
   sanguine: {
     emoji: '🏄‍♂️',
-    alert: 'hello gamer',
+    alert: 'hold left shift to sneak',
     noBackMessage: "OH YEAH, I TRY THAT EVERY TIME AS WELL!"
   },
   phlegmatic: {
     emoji: '🆓',
-    alert: 'go on gamer',
+    alert: 'if you ever don`t know what to do with a window, try typing `gamer.` something special might happen.',
     noBackMessage: "great attitude! keep messing around and you might find some fun stuff around here =)"
   },
   choleric: {
     emoji: '🥗',
-    alert: 'get at me gamer',
+    alert: 'want to see your ad here? email me at frank.lantz@nyu.edu',
     noBackMessage: "you can't do that!"
   },
   melancholic: {
     emoji: '🐛',
-    alert: 'im no gamer',
+    alert: 'there`s never any shame in going back (using the buttons in the corner of your internet browser).',
     noBackMessage: "there's no going back from here..."
   }
 }

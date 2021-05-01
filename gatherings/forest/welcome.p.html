@@ -19,29 +19,22 @@
 <body>
     <img class="background" src="./images/landing.gif"></img>
 
-    <!--cursor-shoes isn't working & i have no idea why-->
     <div class="welcome"><a class="cursor-shoes" style="color: #2e26c7" href="./1.html">please leave your shoes<br> at the door</a>
         <br>— the parks staff
     </div>
 
-    <a id="stop" class="hotspot" href="#"
-        style="left: 25%; top: 23%; width: 8%; height: 5%;"
-        data-turbo="false"></a>
+    <a id="stop" class="hotspot centered cursor-stop" href="#"
+        style="left: 29.188%; top: 24.996%; width: 11%; height: 12%" data-turbo="false"></a>
 
-    <a class="hotspot" href="./55highway_to_the_cosmodrome.html"
+    <a class="hotspot cursor-bus" href="./55highway_to_the_cosmodrome.html"
         style="left: 7.188%; top: 17.996%; width: 17%; height: 9%"></a>
 
     <a class="hotspot centered cursor-bird"
         href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &"
-        target="_blank" rel="noreferrer"
         style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
 
     <draggable-frame temperament='phlegmatic' id='version' focused x=69 y=5 width=16 height=21>
         <iframe src='../../misc/version.html'></iframe>
-    </draggable-frame>
-
-    <draggable-frame id="stop-dialog" temperament="phlegmatic" hidden x=37 y=18 width=16 height=15>
-        <p>please look both ways before entering the park</p>
     </draggable-frame>
 
     <draggable-frame temperament='choleric' id='speedrun' persistent hidden x=69 y=20 width=18 height=70>
@@ -49,7 +42,7 @@
     </draggable-frame>
 </body>
 
-<script type="module">
+<script>
     // TODO: I absolutely hate this, but I am tired and I cant figure out another way to make this thing show when coming from another window
     setTimeout(() => {
         console.log('coisando')
@@ -61,11 +54,30 @@
     }, 1000)
 
     document.getElementById("stop").addEventListener("click", (evt) => {
-        // harsh era
-        const title = document.querySelector("title")
-        title.innerHTML = "don't go!"
+        // clear the body
+        document.body.remove()
+        document.querySelector("title").innerHTML = "goodbye"
 
-        // mellow era
-        Frames.toggle("stop-dialog")
+        // start an infinite loop the hang the browser for a few seconds
+        setTimeout(() => {
+            const start = new Date()
+            const duration = 5 * 1000
+            const sample = 1 << 20 // sample time every million iterations
+
+            for (let i = 0; true; i++) {
+                if (i < sample) {
+                    continue
+                }
+
+                // reset the counter
+                i = 0
+
+                // if we've waited long enough, kill the loop
+                const elapsed = new Date() - start
+                if (elapsed >= duration) {
+                    break
+                }
+            }
+        }, 100)
     })
 </script>
