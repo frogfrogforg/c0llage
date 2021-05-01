@@ -24,21 +24,27 @@
 
   <script type="module">
     import '../../../global.js'
+
     const kDialogHtml = `
       <draggable-frame id="transit-dialog" x=40 y=15 width=40 height=15>
         <p>{message}</p>
       </draggable-frame>
     `
+
     const kDialogueNoKeys = `you can't remember where you put your keys`
-    const kDialogueWithKeys = `this is what those keys were for! Gotta go fast!`
+    const kDialogueWithKeys = `this is what those keys were for! gotta go fast!`
 
-    let didInteract = false
-
-    function interact() {
-      if (didInteract) {
+    let didInterrupt = false
+    function interrupt() {
+      if (didInterrupt) {
         return
       }
 
+      interact()
+      didInterrupt = true
+    }
+
+    function interact() {
       // TODO: generalize this -- all frames go in frame automatically unless
       // made permanent? and can but but directly into the body then
       const doc = window.parent.document
@@ -51,17 +57,15 @@
           d.State.foundKeys ?
             kDialogueWithKeys :
             kDialogueNoKeys)
-      $dialog = $dialog.firstElementChild
 
+      $dialog = $dialog.firstElementChild
       $frames.appendChild($dialog)
 
-      // flag this out next time
-      didInteract = true
       d.State.foundVehicle = true
     }
 
     Object.assign(window, {
-      interact
+      interrupt
     })
 
     document.addEventListener("click", interact)

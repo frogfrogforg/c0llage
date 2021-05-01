@@ -51,7 +51,7 @@ function move(id, step) {
     const transit = kInventory.get(kTransitId)
 
     if (transit != null) {
-      transit.querySelector("iframe").contentWindow.interact()
+      transit.querySelector("iframe").contentWindow.interrupt()
       transit.bringToTop()
     }
   }
