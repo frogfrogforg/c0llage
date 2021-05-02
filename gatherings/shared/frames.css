@@ -208,12 +208,20 @@ d-iframe iframe {
   cursor: grabbing;
 }
 
+/* https://www.westerndevs.com/css/Using-Overflow-Ellipsis-in-Inline-Flex/ */
+.Frame-header-title-container {
+  white-space: nowrap;
+  max-width: 60%;
+  pointer-events: none;
+}
+
 .Frame-header-title {
   font-family: monospace;
   padding-left: 1vmin;
   padding-right: 1vmin;
   background-color: #dadada;
-  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .choleric .Frame-handle{

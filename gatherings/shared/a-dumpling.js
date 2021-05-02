@@ -33,7 +33,9 @@ const frameTemplate = `
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
-        <div class="Frame-header-title" id="$id-title"></div>
+        <div class="Frame-header-title-container">
+          <div class="Frame-header-title" id="$id-title"></div>
+        </div>
       </div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
