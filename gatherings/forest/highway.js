@@ -7,9 +7,9 @@ const kTransitId = "public-transit"
 
 // -- templates --
 const kTransitHtml = `
-  <draggable-frame persistent temperament="phlegmatic" y=40 width=20 height=20>
+  <a-dumpling persistent temperament="phlegmatic" y=40 width=20 height=20>
     <d-iframe src="./items/transit.html" autoload>
-  </draggable-frame>
+  </a-dumpling>
 `
 
 // -- lifetime --

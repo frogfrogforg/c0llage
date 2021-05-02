@@ -103,7 +103,7 @@ function makeId(length) {
   return result
 }
 
-export class DraggableFrame extends HTMLParsedElement {
+export class Dumpling extends HTMLParsedElement {
   // -- constants --
   static ShowEvent = "show-frame"
   static HideEvent = "hide-frame"
@@ -130,7 +130,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
-    // move original children of <draggable-frame> to be children of the body element
+    // move original children of <a-dumpling> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)
     const originalChildren = [...this.children]
     this.innerHTML = templateHtml
@@ -175,7 +175,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
-      console.log('has attribute', this.attributes, this.hasAttribute('no-close'))
+    console.log('has attribute', this.attributes, this.hasAttribute('no-close'))
     if (!this.hasAttribute('no-close')) {
       console.log('adding close button')
       closeButton.onclick = () => {
@@ -347,12 +347,12 @@ export class DraggableFrame extends HTMLParsedElement {
 
   hide() {
     this.setVisible(false)
-    this.dispatchEvent(new Event(DraggableFrame.HideEvent))
+    this.dispatchEvent(new Event(Dumpling.HideEvent))
   }
 
   show() {
     this.setVisible(true)
-    this.dispatchEvent(new Event(DraggableFrame.ShowEvent))
+    this.dispatchEvent(new Event(Dumpling.ShowEvent))
 
     this.bringToTop()
   }
@@ -587,7 +587,7 @@ export class DraggableFrame extends HTMLParsedElement {
     const titleEl = this.querySelector(`#${this.id}-title`)
     this._title = value;
     console.log('setting title to', value)
-    if(value == null) {
+    if (value == null) {
       titleEl.style.display = 'none'
     } else {
       titleEl.style.display = 'block'
@@ -596,4 +596,4 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 }
 
-customElements.define('draggable-frame', DraggableFrame)
+customElements.define('a-dumpling', Dumpling)

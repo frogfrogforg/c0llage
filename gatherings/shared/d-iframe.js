@@ -1,5 +1,5 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
-import { DraggableFrame } from "./draggable-frame.js"
+import { Dumpling } from "./a-dumpling.js"
 
 // -- constants --
 const kPermittedAttrs = new Set([
@@ -16,7 +16,7 @@ class DeferredIframeElement extends HTMLParsedElement {
   iframeAttrs = null
   _iframe = null
   get iframe() {
-    if(this._iframe == null) {
+    if (this._iframe == null) {
       return this // kind of a hack
     }
     return this._iframe
@@ -34,12 +34,12 @@ class DeferredIframeElement extends HTMLParsedElement {
 
     // autoplay when nested in a window frame and it opens
     let parent = this.parentNode
-    while (parent != null && !(parent instanceof DraggableFrame)) {
+    while (parent != null && !(parent instanceof Dumpling)) {
       parent = parent.parentNode
     }
 
     if (parent != null) {
-      parent.addEventListener(DraggableFrame.ShowEvent, this.load.bind(this))
+      parent.addEventListener(Dumpling.ShowEvent, this.load.bind(this))
     }
   }
 
@@ -116,7 +116,7 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   focus() {
-    if(this._iframe != null) {
+    if (this._iframe != null) {
       this._iframe.focus
     }
 

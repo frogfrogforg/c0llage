@@ -1,12 +1,12 @@
 import { State } from "/core/state.js"
 
 // inventory template
-function makeInventoryFrame({id, src}) {
+function makeInventoryFrame({ id, src }) {
   // TODO also take x,y,width,height,temperament
   return `
-    <draggable-frame id="${id}" temperament="phlegmatic" y=40 width=20 height=20>
+    <a-dumpling id="${id}" temperament="phlegmatic" y=40 width=20 height=20>
       <d-iframe src="${src}" autoload>
-    </draggable-frame>
+    </a-dumpling>
   `;
 }
 
@@ -25,11 +25,11 @@ function add(props) {
 // Load inventory from the State (localStorage-backed)
 function loadFromState() {
   if (State.inventory) {
-    State.inventory.forEach(({id, src}) => {
+    State.inventory.forEach(({ id, src }) => {
       // TODO also load x,y,width,height, temperament
       add({
         id: id,
-        html: makeInventoryFrame({id, src})
+        html: makeInventoryFrame({ id, src })
       });
     });
   }
@@ -41,9 +41,9 @@ function saveToState() {
   Array.from($mEl.children).forEach((child) => {
     if (child.tagName == "DRAGGABLE-FRAME" && child.visible) {
       let iframe = child.querySelector("iframe");
-      // TODO: ^ use draggable-frame.iframe property once that is being set correctly
+      // TODO: ^ use a-dumpling.iframe property once that is being set correctly
 
-      let item = {id: child.id, src: iframe.src};
+      let item = { id: child.id, src: iframe.src };
       inventory.push(item);
       // console.log(item);
     }
