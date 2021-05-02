@@ -70,12 +70,9 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   loadUrl(url) {
-    console.log(url)
     if (!url) {
-      console.log(`destroying iframe`)
       this.destroyIframe()
     } else if (this._iframe == null || this.src != url) {
-      console.log(`creating iframe`)
       // TODO: set d-iframe url?
       this.destroyIframe()
       this.createIframe(url)
@@ -106,20 +103,24 @@ class DeferredIframeElement extends HTMLParsedElement {
     this._iframe = null
   }
 
-  // -- properties --
+  // -- iframe api --
+  focus() {
+    if (this._iframe != null) {
+      this._iframe.focus()
+    }
+  }
+
+  // -- i/queries
   get src() {
     return this.getAttribute("src")
   }
 
-  set src(val) {
-    return this._iframe.setAttribute("src", val)
+  get contentWindow() {
+    return this._iframe && this._iframe.contentWindow
   }
 
-  focus() {
-    if (this._iframe != null) {
-      this._iframe.focus
-    }
-
+  get contentDocument() {
+    return this._iframe && this._iframe.contentDocument
   }
 }
 

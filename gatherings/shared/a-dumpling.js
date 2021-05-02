@@ -33,8 +33,7 @@ const frameTemplate = `
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
-        <div class="Frame-header-title" id="$id-title">
-        </div>
+        <div class="Frame-header-title" id="$id-title"></div>
       </div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
@@ -110,9 +109,7 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
-    console.log(this.attributes)
     const id = this.getAttribute('id') || makeId(5)
-    console.log('creating frame element ' + id)
 
     this.setVisible(!this.hasAttribute('hidden'))
 
@@ -187,12 +184,11 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // Maximize button
-    const hasIframe = this.hasIframe() // can't really find the iframe because it might be deferred, but d-iframe should also work here
+    const iframe = this.findIframe()
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    if (this.hasAttribute('maximize') && hasIframe) {
+    if (this.hasAttribute('maximize') && iframe != null) {
       maximizeButton.onclick = () => {
-        const iframe = this.findIframe()
         window.open(iframe.contentDocument.location, '_self')
       }
     } else {
@@ -201,10 +197,9 @@ export class Dumpling extends HTMLParsedElement {
 
     // back button
     const backButton = this.querySelector(`.Frame-header-back`)
-    if (!this.hasAttribute('no-back') && hasIframe) {
+    if (!this.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
-        const iframe = this.findIframe()
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
         if (iframe.contentWindow.history.length > 2) {
           iframe.contentWindow.history.back()
@@ -260,9 +255,6 @@ export class Dumpling extends HTMLParsedElement {
       diframe.destroyIframe()
     }
 
-    // const iframe = this.findIframe()
-    // iframe.contentWindow.location.reload(false);
-
     this.hide()
   }
 
@@ -290,7 +282,6 @@ export class Dumpling extends HTMLParsedElement {
     } else {
       x =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-      //console.log(width)
     }
     this.style.left = x + '%'
 
@@ -300,7 +291,6 @@ export class Dumpling extends HTMLParsedElement {
     } else {
       y =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-      //console.log(height)
     }
     this.style.top = y + '%'
   }
@@ -528,23 +518,6 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
-  // -- nested [d-]iframe hacks --
-  findIframe() {
-    return this.findIframeInChildren(this.bodyElement.children)
-  }
-
-  hasIframe() {
-    const child = this.bodyElement.children[0]
-    switch (child && child.nodeName) {
-      case "IFRAME":
-        return true
-      case "D-IFRAME":
-        return true
-      default:
-        return null
-    }
-  }
-
   findScaleTarget() {
     const body = this.querySelector(`#${this.id}-body`)
     const child = body.firstElementChild
@@ -567,15 +540,17 @@ export class Dumpling extends HTMLParsedElement {
     return child
   }
 
+  // -- q/iframe --
+  findIframe() {
+    return this.findIframeInChildren(this.bodyElement.children)
+  }
+
   findIframeInChildren(children) {
     const child = children[0]
     switch (child && child.nodeName) {
       case "IFRAME":
-        return child
       case "D-IFRAME":
-        // This doesn't work since child.iframe is null at this point
-        // TODO fix
-        return child.iframe
+        return child
       default:
         return null
     }
