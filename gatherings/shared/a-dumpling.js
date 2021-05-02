@@ -525,11 +525,6 @@ export class Dumpling extends HTMLParsedElement {
       return null
     }
 
-    // d-iframes can be scaled directly?
-    if (child.nodeName === "D-IFRAME") {
-      return child
-    }
-
     // search for a wrapped iframe (youtube embed is one level deep)
     const iframe = this.findIframe()
     if (iframe != null) {
