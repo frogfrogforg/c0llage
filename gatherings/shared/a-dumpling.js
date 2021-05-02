@@ -115,18 +115,6 @@ export class Dumpling extends HTMLParsedElement {
 
     this.setVisible(!this.hasAttribute('hidden'))
 
-    // the current manipulation
-    this.op = null
-    // the initial el x-pos
-    this.x0 = 0.0
-    // the initial el y-pos
-    this.y0 = 0.0
-    // the initial mouse x-pos
-    this.mx = 0.0
-    // the initial mouse y-pos
-    this.my = 0.0
-    // the zIndex to make the current element be always on top
-
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
     // move original children of <a-dumpling> to be children of the body element
@@ -259,9 +247,9 @@ export class Dumpling extends HTMLParsedElement {
 
   initStyleFromAttributes() {
     const fallbackAttributes = (...params) => {
-      for(const attrName of params) {
+      for (const attrName of params) {
         const attr = this.getAttribute(attrName)
-        if(attr != null) return attr;
+        if (attr != null) return attr;
       }
       return null
     }
@@ -271,11 +259,11 @@ export class Dumpling extends HTMLParsedElement {
       width = this.attributes.width.value
     } else {
       const minSize = parseFloat(fallbackAttributes(
-                      'min-width', 'width-min','min-size', 'size-min'))
-                      || FrameRng.MinSize
+        'min-width', 'width-min', 'min-size', 'size-min'))
+        || FrameRng.MinSize
       const maxSize = parseFloat(fallbackAttributes(
-                      'max-width', 'max-size','size-max'))
-                      || FrameRng.MaxSize
+        'max-width', 'max-size', 'size-max'))
+        || FrameRng.MaxSize
       width = (minSize + Math.random() * (maxSize - minSize))
     }
 
@@ -286,11 +274,11 @@ export class Dumpling extends HTMLParsedElement {
       height = this.attributes.height.value
     } else {
       const minSize = parseFloat(fallbackAttributes(
-                     'min-height', 'height-min', 'min-size', 'size-min'))
-                      || FrameRng.MinSize
+        'min-height', 'height-min', 'min-size', 'size-min'))
+        || FrameRng.MinSize
       const maxSize = parseFloat(fallbackAttributes(
-                      'max-height', 'height-max', 'max-size', 'size-max'))
-                      || FrameRng.MaxSize
+        'max-height', 'height-max', 'max-size', 'size-max'))
+        || FrameRng.MaxSize
       height = (minSize + Math.random() * (maxSize - minSize))
     }
     this.style.height = height + '%'
@@ -302,13 +290,13 @@ export class Dumpling extends HTMLParsedElement {
       x = this.attributes.x.value
     } else {
       const xMin = parseFloat(fallbackAttributes(
-                  'x-min', 'min-x', 'pos-min', 'min-pos'))
-                  || FrameRng.margin
+        'x-min', 'min-x', 'pos-min', 'min-pos'))
+        || FrameRng.margin
       const xMax = parseFloat(fallbackAttributes(
-                  'x-max', 'max-x', 'pos-max', 'max-pos'))
-                  || (100 - FrameRng.margin - width)
+        'x-max', 'max-x', 'pos-max', 'max-pos'))
+        || (100 - FrameRng.margin - width)
       x =
-        xMin + Math.random() * (xMax-xMin)
+        xMin + Math.random() * (xMax - xMin)
     }
     this.style.left = x + '%'
 
@@ -317,11 +305,11 @@ export class Dumpling extends HTMLParsedElement {
       y = this.attributes.y.value
     } else {
       const yMin = parseFloat(fallbackAttributes(
-                  'y-min', 'min-y', 'pos-min', 'min-pos'))
-                  || FrameRng.margin
+        'y-min', 'min-y', 'pos-min', 'min-pos'))
+        || FrameRng.margin
       const yMax = parseFloat(fallbackAttributes(
-                  'y-max', 'max-y', 'pos-max', 'max-pos'))
-                  || (100 - FrameRng.margin - height)
+        'y-max', 'max-y', 'pos-max', 'max-pos'))
+        || (100 - FrameRng.margin - height)
       y =
         yMin + Math.random() * (yMax - yMin)
     }
@@ -401,26 +389,31 @@ export class Dumpling extends HTMLParsedElement {
   clisten = addEventListener
 
   onMouseDown = (evt) => {
-    const target = evt.target
-    evt.preventDefault() // what does this do ?
+    // TODO: probably don't need to prevent default, there should no default
+    // mousedown behavior on the header/handle
+    evt.preventDefault()
 
-    // Bring this frame to top of stack
+    // bring this frame to top of stack
     this.bringToTop()
 
-    // determine operation
-    const classes = target.classList
+    // determine gesture, if any
+    const classes = evt.target.classList
     if (classes.contains('Frame-header-blank')) {
-      this.op = Ops.Move
-      this.classList.toggle(kDraggingClass, true)
+      this.gesture = { type: Ops.Move }
     } else if (classes.contains('Frame-handle')) {
-      this.op = Ops.Scale
-      this.classList.toggle(kScalingClass, true)
-    } else {
-      this.op = null
+      this.gesture = { type: Ops.Scale }
     }
 
-    if (this.op == null) {
+    if (this.gesture == null) {
       return
+    }
+
+    // apply op style
+    switch (this.gesture.type) {
+      case Ops.Move:
+        this.classList.toggle(kDraggingClass, true); break
+      case Ops.Scale:
+        this.classList.toggle(kScalingClass, true); break
     }
 
     // disable collisions with iframes
@@ -429,35 +422,45 @@ export class Dumpling extends HTMLParsedElement {
       iframe.style.pointerEvents = 'none'
     }
 
-    // record initial x/y position
-    const f = this.getBoundingClientRect()
-    const p = this.parentElement.getBoundingClientRect()
+    // record initial position
+    const dr = this.getBoundingClientRect()
+    const pr = this.parentElement.getBoundingClientRect()
 
-    this.x0 = f.x - p.x
-    this.y0 = f.y - p.y
+    this.gesture.initialPosition = {
+      x: dr.x - pr.x,
+      y: dr.y - pr.y,
+    }
 
     // record initial mouse position (we need to calc dx/dy manually on move
     // b/c evt.offset, the pos within the element, doesn't seem to include
     // borders, etc.)
-    this.mx0 = evt.clientX
-    this.my0 = evt.clientY
+    this.gesture.initialMousePosition = {
+      x: evt.clientX,
+      y: evt.clientY,
+    }
 
     // start the operation
-    switch (this.op) {
+    switch (this.gesture.type) {
       case Ops.Scale:
-        this.onScaleStart()
+        this.onScaleStart(dr)
         break
     }
   }
 
   onMouseMove = (evt) => {
+    if (this.gesture == null) {
+      return
+    }
+
+    // TODO: probably don't need to prevent default, there should no default
+    // mousemove behavior on the header/handle
     evt.preventDefault()
 
     // apply the operation
     const mx = evt.clientX
     const my = evt.clientY
 
-    switch (this.op) {
+    switch (this.gesture.type) {
       case Ops.Move:
         this.onDrag(mx, my); break
       case Ops.Scale:
@@ -472,59 +475,56 @@ export class Dumpling extends HTMLParsedElement {
       iframe.style.pointerEvents = null
     }
 
+    // reset gesture style
     this.classList.toggle(kDraggingClass, false)
     this.classList.toggle(kScalingClass, false)
-    this.op = null
-  }
 
-  getInitialWidth() {
-    if (!this.initialWidth) {
-      this.initialWidth = this.getBoundingClientRect().width
-    }
-    return this.initialWidth
-  }
-
-  getInitialHeight() {
-    if (!this.initialHeight) {
-      this.initialHeight = this.getBoundingClientRect().height
-    }
-    return this.initialHeight
+    // clear gesture
+    this.gesture = null
   }
 
   // -- e/drag
   onDrag(mx, my) {
-    this.style.left = `${this.x0 + mx - this.mx0}px`
-    this.style.top = `${this.y0 + my - this.my0}px`
+    const p0 = this.gesture.initialPosition
+    const m0 = this.gesture.initialMousePosition
+
+    // get the mouse delta
+    const dx = mx - m0.x
+    const dy = my - m0.y
+
+    // apply it to the initial position
+    this.style.left = `${p0.x + dx}px`
+    this.style.top = `${p0.y + dy}px`
   }
 
-  onScaleStart() {
-    const dmplng = this.getBoundingClientRect()
-
-    // capture the frame's w/h at the beginning of the op
-    this.dw = dmplng.width
-    this.dh = dmplng.height
+  onScaleStart(dr) {
+    // capture the frame's w/h at the beginning of the gesture
+    this.gesture.initialSize = {
+      w: dr.width,
+      h: dr.height
+    }
 
     // get the scale target, we calculate some scaling against the target
     // element's size
     const target = this.findScaleTarget()
-
     if (target != null) {
       const tr = target.getBoundingClientRect()
 
       // capture the target's w/h at the beginning of the op
-      this.tw = tr.width
-      this.th = tr.height
+      this.gesture.initialTargetSize = {
+        w: tr.width,
+        h: tr.height,
+      }
 
       // and if this is the first ever time scaling frame, also set the
       // target's initial w/h as its style. we'll use `transform` to scale
       // the target in most cases, so it can't use percentage sizing.
       if (!this.isScaleSetup) {
-        this.tw0 = this.tw
-        this.th0 = this.th
+        this.baseTargetSize = this.gesture.initialTargetSize
 
         target.style.transformOrigin = "top left"
-        target.style.width = this.tw0
-        target.style.height = this.th0
+        target.style.width = this.baseTargetSize.w
+        target.style.height = this.baseTargetSize.h
 
         this.isScaleSetup = true
       }
@@ -532,23 +532,29 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   onScale(mx, my) {
+    const s0 = this.gesture.initialSize
+    const m0 = this.gesture.initialMousePosition
+
     // get the mouse delta; we'll use this to update the sizes captured
     // at the start of each scale op
-    const dx = mx - this.mx0
-    const dy = my - this.my0
+    const dx = mx - m0.x
+    const dy = my - m0.y
 
     // unless choleric, update the frame's size. this resizes the outer frame
     if (this.temperament !== choleric) {
-      this.style.width = `${this.dw + dx}px`
-      this.style.height = `${this.dh + dy}px`
+      this.style.width = `${s0.w + dx}px`
+      this.style.height = `${s0.h + dy}px`
     }
 
     // get the target, the frame's content, to apply temperamental scaling
     const target = this.findScaleTarget()
     if (target != null) {
+      const tsb = this.baseTargetSize
+      const ts0 = this.gesture.initialTargetSize
+
       // calculate the scale factor based on the target's w/h ratios
-      const scaleX = (this.tw + dx) / this.tw0
-      const scaleY = (this.th + dy) / this.th0
+      const scaleX = (ts0.w + dx) / tsb.w
+      const scaleY = (ts0.h + dy) / tsb.h
 
       switch (this.temperament) {
         case sanguine:
