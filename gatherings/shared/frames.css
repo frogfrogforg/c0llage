@@ -1,5 +1,5 @@
 :root {
-  --frame-header-height-param: 0.69vmin;
+  --frame-header-height-param: .8vmin;
   --frame-padding: 0.4vmin;
 }
 
@@ -93,6 +93,7 @@ d-iframe iframe {
   border: calc(var(--frame-header-height-param) * 0.1) solid #dadada;
   overflow: hidden;
   z-index: 1;
+  height: calc(var(--frame-header-height-param) * 2.5);
 }
 
 .Frame-Dragging .Frame-header-blank{
@@ -217,6 +218,7 @@ d-iframe iframe {
 
 .Frame-header-title {
   font-family: monospace;
+  font-size: calc(var(--frame-header-height-param) * 2.2);
   padding-left: 1vmin;
   padding-right: 1vmin;
   background-color: #dadada;

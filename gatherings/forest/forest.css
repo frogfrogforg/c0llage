@@ -37,8 +37,18 @@
     background: linear-gradient(180deg, rgba(226,247,247,1) 0%, rgba(207,191,181,1) 100%);
 }
 
-.ForestLayer--framed .ForestLayer-content {
-    border: 1.15vmin sienna double;
+.broider-4 {
+    /* from https://maxbittker.github.io/broider/ */
+    /* pls change/add more =) */
+    border-image:  url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 /  3vmin / 0 round;
+    border-width:  3vmin;
+    border-style:  solid;
+    /* If custom png, the second parameter is 1/3 of the full png size */
+    /* (make the png a multiple of 3 size) */
+    /* the third parameter has to be the same as border-width */
+    /* border-image:  url("./images/border.png") 50 /  4.5vmin / 0 round; */
+    /* border-width:  4.5vmin; */
+    /* border-style:  solid; */
 }
 
 /* layer/overlay */
@@ -107,14 +117,17 @@
 }
 
 /* cursors */
+.cursor-inspect,
 .inspect {
     cursor:url("../shared/img/inspect.png") 16 0, auto;
 }
 
+.cursor-talk,
 .talk {
     cursor: url("../shared/img/talk.png") 16 0, auto;
 }
 
+.cursor-move,
 .move {
     cursor: url("../shared/img/move.png") 16 0, auto;
 }
@@ -173,19 +186,6 @@
 
 .cursor-bird {
     cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🐦</text></svg>'), auto;
-}
-
-.broider-4 {
-    /* from https://maxbittker.github.io/broider/ */
-    border-image:  url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 /  28px / 0 round;
-    border-width:  28px;
-    border-style:  solid;
-    /* If custom png, the second parameter is 1/3 of the full png size */
-    /* (make the png a multiple of 3 size) */
-    /* the third parameter has to be the same as border-width */
-    /* border-image:  url("./images/border.png") 50 /  4.5vmin / 0 round; */
-    /* border-width:  4.5vmin; */
-    /* border-style:  solid; */
 }
 
 .cursor-shoes {

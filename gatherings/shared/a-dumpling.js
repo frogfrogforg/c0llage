@@ -1,9 +1,8 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
-
 window.Frames = {
-  ...staticize('show'),
-  ...staticize('hide'),
+  ...staticize('show', 'open'),
+  ...staticize('hide', 'close'),
   ...staticize('toggle'),
   ...staticize('bringToTop'),
   ...staticize('addEventListener', "listen"),
@@ -82,7 +81,7 @@ const phlegmatic = 'phlegmatic'
 const DefaultTemperament = 'melancholic'
 
 // Frame random spawn tuning parameters, in %
-const FrameRandomness = {
+const FrameRng = {
   margin: 2,
   MinSize: 20,
   MaxSize: 40
@@ -112,6 +111,7 @@ export class Dumpling extends HTMLParsedElement {
   // -- lifetime --
   parsedCallback() {
     const id = this.getAttribute('id') || makeId(5)
+    this.id = id
 
     this.setVisible(!this.hasAttribute('hidden'))
 
@@ -174,14 +174,11 @@ export class Dumpling extends HTMLParsedElement {
 
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
-    console.log('has attribute', this.attributes, this.hasAttribute('no-close'))
     if (!this.hasAttribute('no-close')) {
-      console.log('adding close button')
       closeButton.onclick = () => {
         this.onClose()
       }
     } else {
-      console.log('removing close button')
       closeButton.style.display = 'none'
     }
 
@@ -261,11 +258,25 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   initStyleFromAttributes() {
+    const fallbackAttributes = (...params) => {
+      for(const attrName of params) {
+        const attr = this.getAttribute(attrName)
+        if(attr != null) return attr;
+      }
+      return null
+    }
+
     let width = 0
     if (this.getAttribute('width')) {
       width = this.attributes.width.value
     } else {
-      width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+      const minSize = parseFloat(fallbackAttributes(
+                      'min-width', 'width-min','min-size', 'size-min'))
+                      || FrameRng.MinSize
+      const maxSize = parseFloat(fallbackAttributes(
+                      'max-width', 'max-size','size-max'))
+                      || FrameRng.MaxSize
+      width = (minSize + Math.random() * (maxSize - minSize))
     }
 
     this.style.width = width + '%'
@@ -274,16 +285,30 @@ export class Dumpling extends HTMLParsedElement {
     if (this.attributes.height) {
       height = this.attributes.height.value
     } else {
-      height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+      const minSize = parseFloat(fallbackAttributes(
+                     'min-height', 'height-min', 'min-size', 'size-min'))
+                      || FrameRng.MinSize
+      const maxSize = parseFloat(fallbackAttributes(
+                      'max-height', 'height-max', 'max-size', 'size-max'))
+                      || FrameRng.MaxSize
+      height = (minSize + Math.random() * (maxSize - minSize))
     }
     this.style.height = height + '%'
+
+    // TODO: maybe have some aspect ratio attribute so that can be specified instead of both width and height
 
     let x = 0
     if (this.attributes.x) {
       x = this.attributes.x.value
     } else {
+      const xMin = parseFloat(fallbackAttributes(
+                  'x-min', 'min-x', 'pos-min', 'min-pos'))
+                  || FrameRng.margin
+      const xMax = parseFloat(fallbackAttributes(
+                  'x-max', 'max-x', 'pos-max', 'max-pos'))
+                  || (100 - FrameRng.margin - width)
       x =
-        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
+        xMin + Math.random() * (xMax-xMin)
     }
     this.style.left = x + '%'
 
@@ -291,8 +316,14 @@ export class Dumpling extends HTMLParsedElement {
     if (this.attributes.y) {
       y = this.attributes.y.value
     } else {
+      const yMin = parseFloat(fallbackAttributes(
+                  'y-min', 'min-y', 'pos-min', 'min-pos'))
+                  || FrameRng.margin
+      const yMax = parseFloat(fallbackAttributes(
+                  'y-max', 'max-y', 'pos-max', 'max-pos'))
+                  || (100 - FrameRng.margin - height)
       y =
-        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
+        yMin + Math.random() * (yMax - yMin)
     }
     this.style.top = y + '%'
   }
@@ -365,7 +396,9 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
-  listen = addEventListener
+  open = this.show
+  close = this.hide
+  clisten = addEventListener
 
   onMouseDown = (evt) => {
     const target = evt.target
@@ -389,9 +422,6 @@ export class Dumpling extends HTMLParsedElement {
     if (this.op == null) {
       return
     }
-
-    console.log('mouse down on ' + this.id)
-    console.log('parent is ' + this.parentElement.id)
 
     // disable collisions with iframes
     const iframes = document.querySelectorAll('iframe')
@@ -578,7 +608,6 @@ export class Dumpling extends HTMLParsedElement {
   set title(value) {
     const titleEl = this.querySelector(`#${this.id}-title`)
     this._title = value;
-    console.log('setting title to', value)
     if (value == null) {
       titleEl.style.display = 'none'
     } else {

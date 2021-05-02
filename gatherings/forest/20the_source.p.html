@@ -1,19 +1,13 @@
 <body>
     <img class="background" src="./images/20-plus-painting.png">
 
-    <a class="hotspot centered move cursor-gift" href='javascript:void(0)'
-        onclick="Frames.show('gift')"
+    <a class="hotspot centered move cursor-gift" href='javascript:void(0)' onclick="Frames.show('gift')"
         style="left: 21.888%; top: 81.666%; width: 27%; height: 15%;"></a>
 
     <a class="hotspot centered move" href="./19wizards_domain.html"
         style="left: 3.888%; top: 57.666%; width: 8%; height: 83%"></a>
 
-    <a-dumpling id="test">
-        <!--TODO: make this dynamic based on the player's previous position. e.g. only take them back to 19 if they just came from 19-->
-        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="./19wizards_domain.html">
-            🔙
-        </a>
-    </a-dumpling>
+    <a class="hotspot move" href="./24fire_walk_with_me.html" style="left: 0%; top: 95%; width: 100%; height: 10%"></a>
 
     <a-dumpling hidden x=6 y=46 width=35 height=25 id="gift">
         <div>
@@ -27,7 +21,7 @@
         </div>
     </a-dumpling>
 
-    <a-dumpling persistent hidden id="compass" y=40 width=20 height=20>
+    <a-dumpling persistent hidden id="compass" y=40 width=20 no-back height=20>
         <d-iframe autoload src='./items/compass.html'></d-iframe>
     </a-dumpling>
 
@@ -35,7 +29,7 @@
         <d-iframe src='./items/hyperbox.html'></d-iframe>
     </a-dumpling>
 
-    <a-dumpling temperament="phlegmatic" persistent hidden id="floppy" y=40 width=20 height=15>
+    <a-dumpling temperament="phlegmatic" persistent no-close no-back hidden id="floppy" y=40 width=20 height=15>
         <d-iframe src='./items/floppy.html'></d-iframe>
     </a-dumpling>
 </body>

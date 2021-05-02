@@ -12,19 +12,16 @@
     <a class="hotspot centered inspect" onclick="Frames.toggle('halt')"
         style="left: 95.888%; top: 54.666%; width: 8%; height: 90%"></a>
 
-    <div style="position:absolute;width:auto;top:42%;left:27%;transform:rotate(1deg);"><a class="talk" onclick="startWizardConversation()">
-        <img src="./images/Wizard.png" width="40%">
+    <div style="position:absolute;width:auto;top:42%;left:27%;transform:rotate(1deg);"><a class="talk"
+            onclick="startWizardConversation()">
+            <img src="./images/Wizard.png" width="40%">
     </div>
 
     <a class="hotspot cursor-cow" href="./25cow_love.html"
         style="left: 46.888%; top: 27.666%; width: 9.555%; height: 9.222%;"></a>
 
-    <a-dumpling id="test">
-        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5"
-            href="./6messy_server_screen.html">
-            🔙
-        </a>
-    </a-dumpling>
+    <a class="hotspot cursor-move" href="./6messy_server_screen.html"
+        style="left: 0%; top: 95%; width: 100%; height: 9.222%;"></a>
 
     <a-dumpling hidden id="halt" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
         <span style="font-family: cursive;">don't worry about it. <br>i have it under control.<br>(∩ ͡~
@@ -33,27 +30,26 @@
 
     <a-dumpling hidden id="dialog" x=10 y=69 width=70 height=30 bodyClass="InvertedFrame">
         <span id='tired' style="font-family: cursive;">Why are you in my house!?</span><br>
-        <button class="continueButton"
-        onclick="Frames.show('continue')">cuz</button>
+        <button class="continueButton" onclick="Frames.show('continue')">cuz</button>
     </a-dumpling>
 
     <a-dumpling hidden id="continue" x=10 y=75 width=70 height=30 bodyClass="InvertedFrame">
-        <span id='next' style="font-family: cursive;">Well...! Get out! I'm late for a <i>very important</i> date!!</span><br>
-        <button class="continueButton"
-        onclick="Frames.show('continue2')">sounds hot</button>
+        <span id='next' style="font-family: cursive;">Well...! Get out! I'm late for a <i>very important</i>
+            date!!</span><br>
+        <button class="continueButton" onclick="Frames.show('continue2')">sounds hot</button>
     </a-dumpling>
 
     <a-dumpling hidden id="continue2" x=10 y=80 width=70 height=30 bodyClass="InvertedFrame">
-        <span id='next' style="font-family: cursive;">I! Well— I mean... Well! I, uh... Well!! I!! Should hope so!!</span><br>
-        <button class="continueButton"
-        onclick="Frames.show('continue')">wait what's going on</button>
+        <span id='next' style="font-family: cursive;">I! Well— I mean... Well! I, uh... Well!! I!! Should hope
+            so!!</span><br>
+        <button class="continueButton" onclick="Frames.show('continue')">wait what's going on</button>
     </a-dumpling>
 
     <a-dumpling hidden id="waited" x=50 y=60 width=40 height=40 bodyClass="InvertedFrame">
-        <span style="font-family: cursive;">Whatever! What'll it take to get you out of my hair? And don't ask for magic beans, I ran out last week.</span>
+        <span style="font-family: cursive;">Whatever! What'll it take to get you out of my hair? And don't ask for magic
+            beans, I ran out last week.</span>
         <br>
-        <button class="mapRequestButton"
-            onclick="Frames.show('wizardMap'); d.State.gotMapFromWizard = true">A
+        <button class="mapRequestButton" onclick="Frames.show('wizardMap'); d.State.gotMapFromWizard = true">A
             MAP!</button>
     </a-dumpling>
 
@@ -67,7 +63,7 @@
     var initiatedConversation = false
     var wizardTimerSeconds = 10
 
-    function startWizardConversation () {
+    function startWizardConversation() {
         Frames.toggle('dialog')
         if (!initiatedConversation) {
             setTimeout(wizardTimeout, wizardTimerSeconds * 1000)
@@ -75,7 +71,7 @@
         }
     }
 
-    function wizardTimeout () {
+    function wizardTimeout() {
         Frames.show('waited')
     }
 </script>
