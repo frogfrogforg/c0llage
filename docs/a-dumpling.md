@@ -1,4 +1,4 @@
-Dragabble Frame 
+Dumpling
 ===============
 
 - [Overview](#overview)
@@ -9,16 +9,16 @@ Dragabble Frame
 Overview
 --------
 
-You can create draggable frames just like a normal html component
-The way to do so is by creating an element named `<draggable-frame>`
+You can create dumplings just like a normal html component
+The way to do so is by creating an element named `<a-dumpling>`
 
-A complete draggable frame looks something like this
+A complete dumpling looks something like this
 
 ```html
-<draggable-frame id='example' x=10 y=20 width=30 height=40 temperament='sanguine' bodyClass='coolclass' focused hidden noClose>
+<a-dumpling id='example' x=10 y=20 width=30 height=40 temperament='sanguine' bodyClass='coolclass' focused hidden noClose>
   <!-- some content here-->
   <!-- if content is iframe or d-iframe, the frame will have maximize and back buttons-->
-</draggable-frame>
+</a-dumpling>
 ```
 
 Attributes
@@ -65,7 +65,7 @@ Draggable frames also have events when certain things happen to them. You can ad
 element.listen(eventName, callback)
 // or
 Frames.listen(elementId, eventName, callback)
-``` 
+```
 
 The current implemented events are:
 - `show-frame`: happens when the frame shows up

@@ -18,4 +18,4 @@ Modules
 
 Custom Elements
 ---
-- [\<draggable-Frame>](./draggable-frame.md)
+- [\<a-dumpling>](./a-dumpling.md)

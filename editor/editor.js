@@ -70,10 +70,10 @@ function loadFromHtml(htmlDoc) {
 function addHotspot(attributes, href) {
     const framesElement = document.getElementById("frames");
     const textboxHtml = `<input type='text' size='10' value="${href || "./XXX.html"}"/>`;
-    const hotspotFrameElement = document.createElement("draggable-frame");
+    const hotspotFrameElement = document.createElement("a-dumpling");
     framesElement.appendChild(hotspotFrameElement);
     // not sure what is a better way to do this:
-    // hotspotFrameElement.outerHTML = "<draggable-frame temperament='phlegmatic' width=30 height=30></draggable-frame>"
+    // hotspotFrameElement.outerHTML = "<a-dumpling temperament='phlegmatic' width=30 height=30></a-dumpling>"
 }
 
 // takes the current state and export an html file

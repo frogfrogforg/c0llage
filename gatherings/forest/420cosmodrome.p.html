@@ -1,11 +1,7 @@
 <!-- template: neutral -->
 
 <style>
-  body {
-    overflow: hidden;
-  }
-
-  .Cosmodrome {
+  .Cosmodrome-content {
     display: flex;
     flex-direction: row;
   }
@@ -16,6 +12,7 @@
   }
 
   .CosmodromeBg {
+    display: block;
     width: 100vmin;
     height: 100vmin;
     user-select: none;
@@ -24,8 +21,8 @@
 </style>
 
 <body>
-  <div class="ForestLayer">
-    <main id="cosmodrome" class="Cosmodrome">
+  <main id="cosmodrome" class="ForestLayer Cosmodrome">
+    <div class="Cosmodrome-content">
       <div class="CosmodromeCol CosmodromeCol--sticky">
         <img class="CosmodromeBg" src="./images/cosmodrome/00noentry.gif">
       </div>
@@ -53,26 +50,26 @@
 </body>
 
 <script>
-  const cosmodrome = document.getElementById("cosmodrome")
-
-  // TODO: undo this later
-  let isSet = false
-
-  function hideScroll() {
-    if (isSet && document.body.style.overflow != "hidden") {
-      alert("nice try gamer")
-    }
-
-    isSet = true
-    document.body.style.overflow = "hidden"
-    requestAnimationFrame(hideScroll)
-  }
-
-  hideScroll()
+  // -- props --
+  let $el = null
 
   // -- init --
   function main() {
+    $el = document.getElementById("cosmodrome")
+    $el.style.overflow = "hidden"
+
     initTouch()
+    loopGuard()
+  }
+
+  //  -- guard --
+  function loopGuard() {
+    if ($el.style.overflow != "hidden") {
+      alert("nice try gamer")
+    }
+
+    $el.style.overflow = "hidden"
+    requestAnimationFrame(loopGuard)
   }
 
   // -- touch --
@@ -81,9 +78,9 @@
   let yi = null
 
   function initTouch() {
-    cosmodrome.addEventListener("pointerdown", didStartTouch)
-    cosmodrome.addEventListener("pointermove", didMoveTouch)
-    cosmodrome.addEventListener("pointerup", didEndTouch)
+    $el.addEventListener("pointerdown", didStartTouch)
+    $el.addEventListener("pointermove", didMoveTouch)
+    $el.addEventListener("pointerup", didEndTouch)
 
     const html = document.querySelector("html")
     html.addEventListener("pointerout", (evt) => {
@@ -111,9 +108,7 @@
     const dx = x - xi
     const dy = y - yi
 
-    console.log("scroll document", dx, dy)
-
-    document.body.scrollBy({
+    $el.scrollBy({
       top: Math.cos(a) * dx - Math.sin(a) * dy,
       left: Math.sin(a) * dx + Math.cos(a) * dy,
     })

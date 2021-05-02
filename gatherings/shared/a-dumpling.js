@@ -33,8 +33,7 @@ const frameTemplate = `
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
-        <div class="Frame-header-title" id="$id-title">
-        </div>
+        <div class="Frame-header-title" id="$id-title"></div>
       </div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
@@ -103,16 +102,14 @@ function makeId(length) {
   return result
 }
 
-export class DraggableFrame extends HTMLParsedElement {
+export class Dumpling extends HTMLParsedElement {
   // -- constants --
   static ShowEvent = "show-frame"
   static HideEvent = "hide-frame"
 
   // -- lifetime --
   parsedCallback() {
-    console.log(this.attributes)
     const id = this.getAttribute('id') || makeId(5)
-    console.log('creating frame element ' + id)
 
     this.setVisible(!this.hasAttribute('hidden'))
 
@@ -130,7 +127,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
-    // move original children of <draggable-frame> to be children of the body element
+    // move original children of <a-dumpling> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)
     const originalChildren = [...this.children]
     this.innerHTML = templateHtml
@@ -175,7 +172,7 @@ export class DraggableFrame extends HTMLParsedElement {
 
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
-      console.log('has attribute', this.attributes, this.hasAttribute('no-close'))
+    console.log('has attribute', this.attributes, this.hasAttribute('no-close'))
     if (!this.hasAttribute('no-close')) {
       console.log('adding close button')
       closeButton.onclick = () => {
@@ -187,12 +184,11 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // Maximize button
-    const hasIframe = this.hasIframe() // can't really find the iframe because it might be deferred, but d-iframe should also work here
+    const iframe = this.findIframe()
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    if (this.hasAttribute('maximize') && hasIframe) {
+    if (this.hasAttribute('maximize') && iframe != null) {
       maximizeButton.onclick = () => {
-        const iframe = this.findIframe()
         window.open(iframe.contentDocument.location, '_self')
       }
     } else {
@@ -201,10 +197,9 @@ export class DraggableFrame extends HTMLParsedElement {
 
     // back button
     const backButton = this.querySelector(`.Frame-header-back`)
-    if (!this.hasAttribute('no-back') && hasIframe) {
+    if (!this.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
-        const iframe = this.findIframe()
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
         if (iframe.contentWindow.history.length > 2) {
           iframe.contentWindow.history.back()
@@ -260,9 +255,6 @@ export class DraggableFrame extends HTMLParsedElement {
       diframe.destroyIframe()
     }
 
-    // const iframe = this.findIframe()
-    // iframe.contentWindow.location.reload(false);
-
     this.hide()
   }
 
@@ -290,7 +282,6 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       x =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-      //console.log(width)
     }
     this.style.left = x + '%'
 
@@ -300,7 +291,6 @@ export class DraggableFrame extends HTMLParsedElement {
     } else {
       y =
         Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-      //console.log(height)
     }
     this.style.top = y + '%'
   }
@@ -347,12 +337,12 @@ export class DraggableFrame extends HTMLParsedElement {
 
   hide() {
     this.setVisible(false)
-    this.dispatchEvent(new Event(DraggableFrame.HideEvent))
+    this.dispatchEvent(new Event(Dumpling.HideEvent))
   }
 
   show() {
     this.setVisible(true)
-    this.dispatchEvent(new Event(DraggableFrame.ShowEvent))
+    this.dispatchEvent(new Event(Dumpling.ShowEvent))
 
     this.bringToTop()
   }
@@ -528,33 +518,11 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  // -- nested [d-]iframe hacks --
-  findIframe() {
-    return this.findIframeInChildren(this.bodyElement.children)
-  }
-
-  hasIframe() {
-    const child = this.bodyElement.children[0]
-    switch (child && child.nodeName) {
-      case "IFRAME":
-        return true
-      case "D-IFRAME":
-        return true
-      default:
-        return null
-    }
-  }
-
   findScaleTarget() {
     const body = this.querySelector(`#${this.id}-body`)
     const child = body.firstElementChild
     if (child == null) {
       return null
-    }
-
-    // d-iframes can be scaled directly?
-    if (child.nodeName === "D-IFRAME") {
-      return child
     }
 
     // search for a wrapped iframe (youtube embed is one level deep)
@@ -567,15 +535,17 @@ export class DraggableFrame extends HTMLParsedElement {
     return child
   }
 
+  // -- q/iframe --
+  findIframe() {
+    return this.findIframeInChildren(this.bodyElement.children)
+  }
+
   findIframeInChildren(children) {
     const child = children[0]
     switch (child && child.nodeName) {
       case "IFRAME":
-        return child
       case "D-IFRAME":
-        // This doesn't work since child.iframe is null at this point
-        // TODO fix
-        return child.iframe
+        return child
       default:
         return null
     }
@@ -587,7 +557,7 @@ export class DraggableFrame extends HTMLParsedElement {
     const titleEl = this.querySelector(`#${this.id}-title`)
     this._title = value;
     console.log('setting title to', value)
-    if(value == null) {
+    if (value == null) {
       titleEl.style.display = 'none'
     } else {
       titleEl.style.display = 'block'
@@ -596,4 +566,4 @@ export class DraggableFrame extends HTMLParsedElement {
   }
 }
 
-customElements.define('draggable-frame', DraggableFrame)
+customElements.define('a-dumpling', Dumpling)

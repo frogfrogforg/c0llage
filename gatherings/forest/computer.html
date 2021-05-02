@@ -85,28 +85,28 @@
 </head>
 
 <body style="width:100%; height:100%">
-    <draggable-frame title='alidator.bitsy' temperament='phlegmatic' id="alidator-frame" hidden>
+    <a-dumpling title='alidator.bitsy' temperament='phlegmatic' id="alidator-frame" hidden>
         <d-iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></d-iframe>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame title='forest.html' temperament='phlegmatic' id="forest-frame" hidden>
+    <a-dumpling title='forest.html' temperament='phlegmatic' id="forest-frame" hidden>
         <d-iframe style="--scaleFactor: 0.5;" id="forest" src="./1.html"></d-iframe>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame title='blog' temperament='phlegmatic' id="main-frame" hidden>
+    <a-dumpling title='blog' temperament='phlegmatic' id="main-frame" hidden>
         <d-iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></d-iframe>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame title='cyberpunk 2077' temperament='choleric' id="narrative" width=35 height=80 hidden>
-        <iframe style="--scaleFactor: 1.0;" id="main" src="../../jub/narrative.html"></iframe>
-    </draggable-frame>
+    <a-dumpling title='cyberpunk 2077' temperament='choleric' id="narrative" width=35 height=80 hidden>
+        <d-iframe style="--scaleFactor: 1.0;" id="main" src="../../jub/narrative.html"></d-iframe>
+    </a-dumpling>
 
-    <draggable-frame title='promedator' temperament='melancholic' id="promedator" hidden>
-        <iframe style="--scaleFactor: 1.0;" id="main" src="../bucket.html"></iframe>
-    </draggable-frame>
+    <a-dumpling title='promedator' temperament='melancholic' id="promedator" hidden>
+        <d-iframe style="--scaleFactor: 1.0;" id="main" src="../bucket.html"></d-iframe>
+    </a-dumpling>
 
     <div id=" icons" class="icons">
-        <!--If you want to add more icons that open frames just copy the structure below: target is the draggable-frame's id you want the icon to open, and src is a link to the image for the icon -->
+        <!--If you want to add more icons that open frames just copy the structure below: target is the a-dumpling's id you want the icon to open, and src is a link to the image for the icon -->
 
         <pc-icon target="alidator-frame" name='alidator' src="./images/icons/alidator.png"></pc-icon>
 
@@ -126,7 +126,7 @@
     <img id="claribelle" src="./images/Claribelle.png" hidden>
 
     <script type="module" src="../shared/d-iframe.js"></script>
-    <script type="module" src="../shared/draggable-frame.js"></script>
+    <script type="module" src="../shared/a-dumpling.js"></script>
     <script type="module">
         import "../../global.js"
 
