@@ -10,7 +10,7 @@
 
 /* layer */
 .ForestLayer, .ForestLayer--framed, .ForestLayer--overlay, .ForestLayer--scroll {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;

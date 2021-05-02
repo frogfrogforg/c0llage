@@ -205,7 +205,7 @@ the 1 day marshmallow">
   </p>
 
   <!--this position is all extremely broken a rework on draggable frame is highly needed-->
-  <draggable-frame hidden id='door1' y=780>
+  <draggable-frame temperament='phlegmatic' hidden id='door1'>
     <div class='doorframe'>
       <img class='door' src='../gatherings/forest/images/doors/door1.jpg'>
       <button class='inspect'
@@ -216,37 +216,46 @@ the 1 day marshmallow">
     </div>
   </draggable-frame>
 
-  <draggable-frame hidden id='keys' y=780 x=30 width=30 height=30>
+  <draggable-frame temperament='phlegmatic' hidden id='keys' width=30 height=30>
     <div>
       <span id='foundKeys'>
       </span>
     </div>
   </draggable-frame>
 
-  <draggable-frame hidden id='door2' y=780>
+  <draggable-frame temperament='phlegmatic' hidden id='door2'>
     <div class='doorframe'>
       <img class='door' src='../gatherings/forest/images/doors/door2.jpg'>
     </div>
   </draggable-frame>
 
-  <draggable-frame hidden id='door3' y=780>
+  <draggable-frame temperament='phlegmatic' hidden id='door3'>
     <div class='doorframe'>
       <img class='door' src='../gatherings/forest/images/doors/door3.jpg'>
     </div>
   </draggable-frame>
 
-  <draggable-frame hidden id='door4' y=780>
+  <draggable-frame temperament='phlegmatic' hidden id='door4'>
     <div class='doorframe'>
       <img class='door' src='../gatherings/forest/images/doors/door4.jpg'>
 
     </div>
   </draggable-frame>
 
-  <draggable-frame hidden id='door5' y=780>
+  <draggable-frame temperament='phlegmatic' hidden id='door5'>
     <div class='doorframe'>
       <img class='door' src='../gatherings/forest/images/doors/door5.jpg'>
     </div>
   </draggable-frame>
+
+  <div class="ForestLayer--overlay">
+    <section id="frames" class="ForestLayer-content"></section>
+  </div>
+  </div>
+
+  <div class="ForestLayer--overlay">
+    <section id="inventory" class="ForestLayer-content"></section>
+  </div>
 
   <script>
     window.gotKeys = function () {
