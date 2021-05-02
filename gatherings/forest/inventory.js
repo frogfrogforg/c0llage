@@ -39,7 +39,7 @@ function loadFromState() {
 function saveToState() {
   let inventory = [];
   Array.from($mEl.children).forEach((child) => {
-    if (child.tagName == "DRAGGABLE-FRAME" && child.visible) {
+    if (child.tagName == "A-DUMPLING" && child.visible) {
       let iframe = child.querySelector("iframe");
       // TODO: ^ use a-dumpling.iframe property once that is being set correctly
 
