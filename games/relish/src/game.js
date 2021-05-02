@@ -4,7 +4,7 @@ import { getPlate } from "./plates.js"
 
 // -- constants --
 const kFrameScale = 60 / 15
-const kPlatePattern = /(#([^\?]*))?(\?.*)?/
+const kPlatePattern = /(#([^\?]*))?(\?(.*))?/
 
 // -- props -
 let mTime = null
@@ -22,10 +22,16 @@ function main(assets) {
   // initialize
   initData()
   initView("canvas", assets)
-  initEvents()
+
+  // parse hash
+  const match = location.hash.match(kPlatePattern)
+
+  // init events with correct target
+  const target = findEventTarget(match[4]) || getCanvas()
+  initEvents(target)
 
   // set initial plate, if any
-  const name = location.hash.match(kPlatePattern)[2]
+  const name = match[2]
   if (name != null) {
     setPlateByName(name)
   }
@@ -71,20 +77,36 @@ function isSimFrame() {
   return mFrame % kFrameScale === 0
 }
 
+// finds the target for mouse events in parent window, if any
+function findEventTarget(query) {
+  if (query == null) {
+    return null
+  }
+
+  const id = new URLSearchParams(query).get("target")
+  if (id == null) {
+    return null
+  }
+
+  const doc = window.parent.document
+  const target = doc.getElementById(id)
+
+  return target
+}
+
 // -- events --
-function initEvents() {
+function initEvents($target) {
   // add resize events
-  const root = window
-  root.addEventListener("resize", debounce(didResize, 500))
+  const $root = window
+  $root.addEventListener("resize", debounce(didResize, 500))
 
   // add mouse events
-  const $canvas = getCanvas()
-  $canvas.addEventListener("click", didClick)
-  $canvas.addEventListener("pointermove", didMove)
-  $canvas.addEventListener("pointerdown", didChangeButtons)
-  $canvas.addEventListener("pointerenter", didChangeButtons)
-  $canvas.addEventListener("pointerup", didChangeButtons)
-  $canvas.addEventListener("pointerout", didChangeButtons)
+  $target.addEventListener("click", didClick)
+  $target.addEventListener("pointermove", didMove)
+  $target.addEventListener("pointerdown", didChangeButtons)
+  $target.addEventListener("pointerenter", didChangeButtons)
+  $target.addEventListener("pointerup", didChangeButtons)
+  $target.addEventListener("pointerout", didChangeButtons)
 }
 
 // -- e/resize
