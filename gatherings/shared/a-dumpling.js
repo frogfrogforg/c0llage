@@ -212,7 +212,7 @@ export class Dumpling extends HTMLParsedElement {
     }
     //#endregion
 
-    ////#region focus logic
+    //#region focus logic
     this.bringToTop()
 
     if (!this.hasAttribute('focused')) {
@@ -407,13 +407,14 @@ export class Dumpling extends HTMLParsedElement {
     // record initial mouse position (we need to calc dx/dy manually on move
     // b/c evt.offset, the pos within the element, doesn't seem to include
     // borders, etc.)
-    this.mx = evt.clientX
-    this.my = evt.clientY
+    this.mx0 = evt.clientX
+    this.my0 = evt.clientY
 
     // start the operation
     switch (this.op) {
       case Ops.Scale:
-        this.onScaleStart(this.x0 + f.width, this.y0 + f.height); break
+        this.onScaleStart()
+        break
     }
   }
 
@@ -421,14 +422,14 @@ export class Dumpling extends HTMLParsedElement {
     evt.preventDefault()
 
     // apply the operation
-    const cx = evt.clientX
-    const cy = evt.clientY
+    const mx = evt.clientX
+    const my = evt.clientY
 
     switch (this.op) {
       case Ops.Move:
-        this.onDrag(cx, cy); break
+        this.onDrag(mx, my); break
       case Ops.Scale:
-        this.onScale(cx, cy); break
+        this.onScale(mx, my); break
     }
   }
 
@@ -459,64 +460,83 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // -- e/drag
-  onDrag(cx, cy) {
-    this.style.left = `${this.x0 + cx - this.mx}px`
-    this.style.top = `${this.y0 + cy - this.my}px`
+  onDrag(mx, my) {
+    this.style.left = `${this.x0 + mx - this.mx0}px`
+    this.style.top = `${this.y0 + my - this.my0}px`
   }
 
-  onScaleStart(x, y) {
-    this.ox = x - this.mx
-    this.oy = y - this.my
+  onScaleStart() {
+    const dmplng = this.getBoundingClientRect()
+
+    // capture the frame's w/h at the beginning of the op
+    this.dw = dmplng.width
+    this.dh = dmplng.height
+
+    // get the scale target, we calculate some scaling against the target
+    // element's size
+    const target = this.findScaleTarget()
+
+    if (target != null) {
+      const tr = target.getBoundingClientRect()
+
+      // capture the target's w/h at the beginning of the op
+      this.tw = tr.width
+      this.th = tr.height
+
+      // and if this is the first ever time scaling frame, also set the
+      // target's initial w/h as its style. we'll use `transform` to scale
+      // the target in most cases, so it can't use percentage sizing.
+      if (!this.isScaleSetup) {
+        this.tw0 = this.tw
+        this.th0 = this.th
+
+        target.style.transformOrigin = "top left"
+        target.style.width = this.tw0
+        target.style.height = this.th0
+
+        this.isScaleSetup = true
+      }
+    }
   }
 
-  onScale(cx, cy) {
-    const newWidth =
-      Math.max(
-        cx + this.ox - this.x0,
-        MinContentWidth)
-    const newHeight =
-      Math.max(
-        cy + this.oy - this.y0,
-        MinContentHeight)
+  onScale(mx, my) {
+    // get the mouse delta; we'll use this to update the sizes captured
+    // at the start of each scale op
+    const dx = mx - this.mx0
+    const dy = my - this.my0
 
-    const scaleFactorX = newHeight / (this.getInitialHeight())
-    const scaleFactorY = newWidth / (this.getInitialWidth())
-    const scaleFactor = Math.min(
-      scaleFactorX,
-      scaleFactorY
-    )
-
-    // choleric doesn't scale
+    // unless choleric, update the frame's size. this resizes the outer frame
     if (this.temperament !== choleric) {
-      this.style.width = `${newWidth}px`
-      this.style.height = `${newHeight}px`
+      this.style.width = `${this.dw + dx}px`
+      this.style.height = `${this.dh + dy}px`
     }
 
-    // TODO??
+    // get the target, the frame's content, to apply temperamental scaling
     const target = this.findScaleTarget()
     if (target != null) {
-      if (!target.dataset.setup) {
-        const r = target.getBoundingClientRect()
-        // target.style.transformOrigin = `${r.top} ${r.left}`
-        target.style.transformOrigin = 'top left'
-        target.style.width = r.width
-        target.style.height = r.height
-        target.dataset.setup = true
-      }
+      // calculate the scale factor based on the target's w/h ratios
+      const scaleX = (this.tw + dx) / this.tw0
+      const scaleY = (this.th + dy) / this.th0
 
-      if (this.temperament === sanguine) {
-        target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
-      } else if (this.temperament === phlegmatic) {
-        // revert to basic style
-        target.style.width = '100%'
-        target.style.height = '100%'
-      } else if (this.temperament === choleric) {
-        // Do nothing, choleric works as it is
-      } else { // melancholic
-        target.style.transform = `scale(${scaleFactor})`
+      switch (this.temperament) {
+        case sanguine:
+          target.style.transform = `scale(${scaleX}, ${scaleY})`
+          break
+        case melancholic:
+          target.style.transform = `scale(${Math.min(scaleX, scaleY)})`
+          break
+        case phlegmatic:
+          target.style.width = "100%"
+          target.style.height = "100%"
+          break
+        case choleric:
+          target.style.width = `${this.tw + dx}px`
+          target.style.height = `${this.th + dy}px`
+          break
       }
     }
   }
+
 
   findScaleTarget() {
     const body = this.querySelector(`#${this.id}-body`)

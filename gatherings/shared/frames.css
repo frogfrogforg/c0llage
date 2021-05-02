@@ -1,6 +1,6 @@
 :root {
   --frame-header-height-param: 0.69vmin;
-  --frame-padding: 0.8vmin;
+  --frame-padding: 0.4vmin;
 }
 
 a-dumpling {
@@ -101,8 +101,8 @@ d-iframe iframe {
 
 .Frame-header-blank {
   flex-grow: 1;
-  background-image: url("../shared/img/window-head.gif");
-  background-repeat: repeat-x;
+  background-image: url("../shared/img/window-head.png");
+  background-repeat: round;
   /* background-size: cover; */
   margin-left: calc(var(--frame-header-height-param) * 0.2);
   cursor: grab;
