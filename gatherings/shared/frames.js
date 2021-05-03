@@ -33,7 +33,7 @@ const DefaultTemperament = 'melancholic'
 const minContentHeight = 20
 const minContentWidth = 20
 
-const tagName = 'draggable-frame'
+const tagName = 'a-dumpling'
 const hiddenClassName = 'Frame-Hidden'
 
 const frameTemplate = `<article id="$id" class="Frame">

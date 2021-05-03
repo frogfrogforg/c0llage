@@ -5,7 +5,7 @@ export const paths = {
   curr: process.cwd(),
   build: {
     ignore: "./build/build.ignore",
-    layout: "./build/layout.t.html",
+    layout: "./gatherings/forest/layouts",
   },
   ext: {
     partial: ".p.html"

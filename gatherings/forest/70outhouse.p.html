@@ -17,21 +17,21 @@
 </style>
 
 <body>
-    <img class="background" src="./images/70.png"></img>
+    <img class="background" src="./images/70.png">
 
     <div class="crop" style="width: 13vmin;position: absolute;top: 52%;left: 1.9%;height: 42.0vmin;overflow: hidden;transform: rotate(6deg);">
         <button class="hotspot centered talk" id="stare" onclick="Frames.toggle('staring')" style="position: absolute;margin: 10vmin;margin-top: 18vmin;" title="do i... do i know you?">
-            <img src="./images/staring.png" style="height: 28vmin;"></img>
+            <img src="./images/staring.png" style="height: 28vmin;">
         </button>
     </div>
 
-    <draggable-frame temperament="phlegmatic" hidden id="staring" class="staring">
+    <a-dumpling temperament="phlegmatic" hidden id="staring" class="staring">
         <span>he's just staring at an empty space in the forest</span>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame temperament='phlegmatic' persistent id="test">
+    <a-dumpling temperament='phlegmatic' persistent id="test">
         <iframe src='./items/backbutton.html'></iframe>
-    </draggable-frame>
+    </a-dumpling>
 </body>
 
 <script>

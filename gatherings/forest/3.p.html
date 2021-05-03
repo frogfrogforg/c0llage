@@ -12,23 +12,24 @@
 </script>
 
 <body>
-  <img class="background" src="./images/3.png"></img>
+  <img class="background" src="./images/3.png">
   <a class="hotspot move" href="./2.html" style="left: -5%; top: 86.666%; width: 105%; height: 10.888%"></a>
   <a class="hotspot inspect" href="./4.html" style="left: 37.111%; top: 39.888%; width: 20.555%; height: 20.111%"></a>
-  <a class="hotspot cursor-keyboard" href="javascript:void(0);" onclick="Frames.show('keyboard-protip')"
-    style="left: 32.111%; top: 65.888%; width: 34.555%; height: 4.8%"></a>
+  <button class="hotspot cursor-keyboard" onclick="Frames.show('keyboard-protip')" style="left: 32.111%;
+top: 66%;
+width: 36.9%;
+height: 7.8%;"></button>
   <a class="hotspot inspect" href="./18netbook.html"
     style="left: 73.111%;top: 44.888%; width: 20.555%;height: 18.111%;"></a>
 
   <div id="floppyDrive" class="hotspot centered" ondrop="diskDriveDrop(event)" ondragover="event.preventDefault()"
     style="left: 54%; top: 64%; width: 12%; height: 5%"></div>
-  <draggable-frame id='keyboard-protip' height=20 hidden>
+  <a-dumpling id='keyboard-protip' height=20 hidden>
     <div>
       <span>surprisingly, the keyboard is still usable!</span>
     </div>
-
-  </draggable-frame>
+  </a-dumpling>
 </body>
 
 <!-- invisible link, for sitemap purposes -->
-<a href="./2003-transition1.html" style="display:none"></a> 
+<a href="./2003-transition1.html" style="display:none"></a>

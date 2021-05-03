@@ -1,5 +1,5 @@
 <body>
-    <img class="background" src="./images/DirtBully.png"></img>
+    <img class="background" src="./images/DirtBully.png">
 
     <a class="hotspot centered talk" href="#" onclick="DirtTalk()"
         style=" left: 67.888%; top: 69.666%; width: 25%; height: 43%" data-turbo="false"></a>
@@ -7,20 +7,19 @@
     <a class="hotspot centered move" href="./80meditation.html"
         style="left: 40.549%; top: 42.955%; width: 19.920%; height: 18.383%;"></a>
 
-    <draggable-frame id="test">
-        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5"
-            href="./5person_on_computer.html">
+    <a-dumpling id="backTo5" min-size=8 max-size=16 min-pos=-2 max-pos=7>
+        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="./5person_on_computer.html">
             🔙
         </a>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
+    <a-dumpling hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
         <span> u r nerd </span>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame hidden id="bully2" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
+    <a-dumpling hidden id="bully2" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
         <span> u r nerder </span>
-    </draggable-frame>
+    </a-dumpling>
 </body>
 
 <script type="module">

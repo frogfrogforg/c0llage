@@ -55,44 +55,41 @@
 </style>
 
 <body>
-    <img class="background" src="./images/16.png"></img>
+    <img class="background" src="./images/16.png">
 
     <a class="hotspot centered talk" href="#" onclick="Frames.toggle('afraid'); RandomizeScattered();"
-        style="left: 62.888%; top: 34.666%; width: 42.0%; height: 42.0%"
-        data-turbo="false">
+        style="left: 62.888%; top: 34.666%; width: 42.0%; height: 42.0%" data-turbo="false">
         <img src="./images/angeleyes.gif" class="eyes" style="top:46%;left:7%;transform: rotate(22deg);">
-        <img src="./images/angeleyes.gif" class="eyes"
-            style="top:25%;left:34%;transform: rotate(-17deg) scale(125%);">
-        <img src="./images/angeleyes.gif" class="eyes"
-            style="top: 69%;left: 8%;transform: rotate(59deg) scale(90%);">
+        <img src="./images/angeleyes.gif" class="eyes" style="top:25%;left:34%;transform: rotate(-17deg) scale(125%);">
+        <img src="./images/angeleyes.gif" class="eyes" style="top: 69%;left: 8%;transform: rotate(59deg) scale(90%);">
         <img src="./images/angeleyes.gif" class="eyes" style="top: 53%;left: 70%;transform: rotate(5deg);">
         <img src="./images/angeleyes.gif" class="eyes"
             style="top: 67%;left: 57%;transform: rotate(-27deg) scale(120%);">
         <img src="./images/angel.png" class="angel">
     </a>
 
-    <draggable-frame x=0 y=0 width=24 height=23>
-        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5"
-            href="10forest_edge.html">
+    <a-dumpling x=0 y=0 width=24 height=23>
+        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="10forest_edge.html">
             🔙
         </a>
-    </draggable-frame>
+    </a-dumpling>
 
-    <draggable-frame hidden temperament="sanguine" id="afraid" x=0 y=69 width=69 height=42.0>
+    <a-dumpling hidden temperament="sanguine" id="afraid" x=0 y=69 width=69 height=42.0>
         <div
             style="color:#F5EDD2;background-color:black;width:100%;height:100%;font-size:10vmin;overflow-y:scroll;overflow-x: hidden;word-wrap:break-word;">
             <div id="starNest" style="z-index:0;">
-                <div style="z-index:1;">BE NOT AFRAID, FOR TODAY I MEAN YOU NO HARM.
-                    <BR><BR>ACTUALLY I WAS SORT OF ON A DATE.
-                    <BR><BR>ACTUALLY I SORT OF CAN'T FIND MY DATE.
-                    <BR><BR>YOU WOULD THINK THAT NOTHING COULD ESCAPE MY DIVINE SIGHT. YOU WOULD THINK
-                    THAT THAT IF I AM IN ALL THINGS & IF ALL THINGS ARE IN ME, GETTING LOST WOULD BE A
-                    LITTLE BIT IMPOSSIBLE.
-                    <BR><BR>BUT THAT'S WHAT I LOVE ABOUT THIS BOY. HE NEVER STOPS SURPRISING ME :.:)
-                </div>
+            </div>
+            <div style="z-index:2;color:white;font-weight:bold;position:relative;margin:1vmin;">BE NOT AFRAID, FOR TODAY
+                I MEAN YOU NO HARM.
+                <BR><BR>ACTUALLY I WAS SORT OF ON A DATE.
+                <BR><BR>ACTUALLY I SORT OF CAN'T FIND MY DATE.
+                <BR><BR>YOU WOULD THINK THAT NOTHING COULD ESCAPE MY DIVINE SIGHT. YOU WOULD THINK
+                THAT THAT IF I AM IN ALL THINGS & IF ALL THINGS ARE IN ME, GETTING LOST WOULD BE A
+                LITTLE BIT IMPOSSIBLE.
+                <BR><BR>BUT THAT'S WHAT I LOVE ABOUT THIS MORTAL. HE NEVER STOPS SURPRISING ME :.:)
             </div>
         </div>
-    </draggable-frame>
+    </a-dumpling>
 </body>
 
 <script>//make some stars
@@ -127,6 +124,7 @@
             thisGuy.style.top = randomTop + "%";
             thisGuy.style.left = randomLeft + "%";
             thisGuy.style.transform = "scale(" + randomScale + "%)";
+            thisGuy.style.zIndex = 0;
 
         }
     }
