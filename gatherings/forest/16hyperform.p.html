@@ -139,4 +139,39 @@
     }
 
     RandomizeScattered();
+
+</script>
+
+<script type="module">
+  import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
+
+  let doNothingTimerSeconds = 60;
+  let timer = setTimeout(doNothingTimeout, 
+      		   doNothingTimerSeconds * 1000);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(doNothingTimeout, 
+      		 doNothingTimerSeconds * 1000);
+  }
+
+  function doNothingTimeout() {
+    // if we don't remove the event listeners, all of these
+    // will keep triggering the timer
+    document.removeEventListener("mousemove", resetTimer)
+    document.removeEventListener("click", resetTimer)
+    document.removeEventListener("keydown", resetTimer)
+    document.removeEventListener("keypress", resetTimer)
+    document.removeEventListener("keyup", resetTimer)
+
+    Turbo.visit("26flowers.html")
+  }
+  
+  // if you even twitch, set the timer back to 0
+  document.addEventListener("mousemove", resetTimer)
+  document.addEventListener("click", resetTimer)
+  document.addEventListener("keydown", resetTimer)
+  document.addEventListener("keypress", resetTimer)
+  document.addEventListener("keyup", resetTimer)
+
 </script>
