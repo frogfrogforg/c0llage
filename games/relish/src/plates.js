@@ -33,11 +33,12 @@ const kPlates = {
   ...initPlate({
     name: "sky",
     poke: "point",
-    data: {
-      float0: 8,
-      float1: 0.70,
-      float2: 0.98,
-    },
+    colors: [
+      "#1A1A03",
+      "#1A1A03",
+      "#949455",
+      "#937A70",
+    ],
   }),
 }
 
