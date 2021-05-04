@@ -1,0 +1,13 @@
+texture0="abstract::gras-long-dry-diff.dds"
+clamp0=0,0,0
+
+blend=0
+depthmask=1
+depthtest=1
+overlay=0
+zsort=0
+cullface=0
+castshadows=1
+
+shader="abstract::mesh_diffuse_sway_meshlayer.vert","abstract::mesh_diffuse_alphatest_terrainnormals.frag"
+shadowshader="abstract::mesh_shadow_sway_meshlayer.vert","abstract::mesh_shadow.frag"

@@ -84,7 +84,7 @@
     outline: none;
 }
 
-.hotspot:hover {
+.hotspot:hover:not(button) {
     background-color:#04000422;
     filter: blur(30px);
     transition: all 0.1s ease-in;
