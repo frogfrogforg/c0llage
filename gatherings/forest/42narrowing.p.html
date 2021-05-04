@@ -31,7 +31,7 @@
   <a class="hotspot move" href="./40chewing.html"
     style="left: 0%; bottom: 0%; width: 14%; height: 14%;"></a>
 
-  <a id="notice" class="hotspot move is-waiting is-hidden" href="#"
+  <a id="narrow" class="hotspot move is-waiting is-hidden" href="#"
     style="left: 22%; top: 54%; width: 12%; height: 12%;"></a>
 
   <!-- dialogs -->
@@ -51,7 +51,7 @@
 <script type="module">
   // -- props --
   const $mRelish = document.getElementById("relish")
-  const $mNotice = document.getElementById("notice")
+  const $mNarrow = document.getElementById("narrow")
 
   // -- lifetime --
   async function main() {
@@ -64,24 +64,24 @@
       $mRelish.contentWindow.addEventListener("pointerup", didGrabRelish)
     }
 
-    // skip notice step if already performed
-    if (d.State.didNoticeLeaves) {
-      notice()
+    // skip narrow step if already performed
+    if (d.State.didNarrowOnLeaves) {
+      narrow()
     } else {
-      $mNotice.addEventListener("click", didClickNotice)
+      $mNarrow.addEventListener("click", didClickNotice)
     }
   }
 
   // -- commands --
   function grab() {
-    $mNotice.classList.toggle("is-hidden", false)
+    $mNarrow.classList.toggle("is-hidden", false)
     $mRelish.contentWindow.removeEventListener("pointerup", didGrabRelish)
   }
 
-  function notice() {
-    $mNotice.href = "./43noticing.html"
-    $mNotice.classList.toggle("is-waiting", false)
-    $mNotice.removeEventListener("click", didClickNotice)
+  function narrow() {
+    $mNarrow.href = "./43noticing.html"
+    $mNarrow.classList.toggle("is-waiting", false)
+    $mNarrow.removeEventListener("click", didClickNotice)
   }
 
   // -- events --
@@ -109,10 +109,10 @@
     await seconds(10.0)
 
     // flag this step out next time
-    d.State.didNoticeLeaves = true
+    d.State.didNarrowOnLeaves = true
 
-    // transition to notice state
-    notice()
+    // transition to narrow state
+    narrow()
   }
 
   // -- utils --
