@@ -1,0 +1,129 @@
+<style>
+  .Chewables {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .is-hidden {
+    display: none;
+    pointer-events: none;
+  }
+
+  .is-waiting {
+    cursor: zoom-in !important;
+  }
+</style>
+
+<body>
+  <img class="background" src="./images/42.png">
+
+  <d-iframe
+      id="relish"
+      class="Chewables"
+      src="../../games/relish/game.html#sky"
+      autoload>
+  </d-iframe>
+
+  <!-- hotpots -->
+  <a class="hotspot move" href="./40chewing.html"
+    style="left: 0%; bottom: 0%; width: 14%; height: 14%;"></a>
+
+  <a id="narrow" class="hotspot move is-waiting is-hidden" href="#"
+    style="left: 22%; top: 54%; width: 12%; height: 12%;"></a>
+
+  <!-- dialogs -->
+  <a-dumpling id="ouch-dialog" temperament="phlegmatic" hidden x=20 y=50 width=16 height=20>
+    <div class="Dialog">
+        <p class="Dialog-text">some gloves would be nice...</p>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="wait-dialog" temperament="phlegmatic" hidden x=25 y=20 width=16 height=20>
+    <div class="Dialog">
+        <p class="Dialog-text">you can't quite make out what it is</p>
+    </div>
+  </a-dumpling>
+</body>
+
+<script type="module">
+  // -- props --
+  const $mRelish = document.getElementById("relish")
+  const $mNarrow = document.getElementById("narrow")
+
+  // -- lifetime --
+  async function main() {
+    await frame()
+
+    // skip grab step if already performed
+    if (d.State.didGrabBranch) {
+      grab()
+    } else {
+      $mRelish.contentWindow.addEventListener("pointerup", didGrabRelish)
+    }
+
+    // skip narrow step if already performed
+    if (d.State.didNarrowOnLeaves) {
+      narrow()
+    } else {
+      $mNarrow.addEventListener("click", didClickNotice)
+    }
+  }
+
+  // -- commands --
+  function grab() {
+    $mNarrow.classList.toggle("is-hidden", false)
+    $mRelish.contentWindow.removeEventListener("pointerup", didGrabRelish)
+  }
+
+  function narrow() {
+    $mNarrow.href = "./43noticing.html"
+    $mNarrow.classList.toggle("is-waiting", false)
+    $mNarrow.removeEventListener("click", didClickNotice)
+  }
+
+  // -- events --
+  async function didGrabRelish(evt) {
+    await seconds(1.0)
+
+    // show dialog
+    Frames.show("ouch-dialog")
+
+    // flag this step out next time
+    d.State.didGrabBranch = true
+
+    // transition to grabbed state
+    grab()
+  }
+
+  async function didClickNotice(evt) {
+    evt.preventDefault()
+
+    // show dialog
+    Frames.show("wait-dialog")
+
+    // transition to neutral state
+    // TODO: do something better
+    await seconds(10.0)
+
+    // flag this step out next time
+    d.State.didNarrowOnLeaves = true
+
+    // transition to narrow state
+    narrow()
+  }
+
+  // -- utils --
+  function frame() {
+    return new Promise(requestAnimationFrame)
+  }
+
+  function seconds(sec) {
+    return new Promise((res, _) => setTimeout(res, sec * 1000))
+  }
+
+  // -- bootstrap --
+  main()
+</script>

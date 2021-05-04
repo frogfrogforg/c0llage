@@ -203,7 +203,7 @@ d-iframe iframe {
   background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
   background-size: cover;
-  cursor: nw-resize;
+  cursor: nwse-resize;
 }
 
 .Frame-Scaling .Frame-handle{
