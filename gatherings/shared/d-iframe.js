@@ -1,5 +1,5 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
-import { DraggableFrame } from "./draggable-frame.js"
+import { Dumpling } from "./a-dumpling.js"
 
 // -- constants --
 const kPermittedAttrs = new Set([
@@ -16,7 +16,7 @@ class DeferredIframeElement extends HTMLParsedElement {
   iframeAttrs = null
   _iframe = null
   get iframe() {
-    if(this._iframe == null) {
+    if (this._iframe == null) {
       return this // kind of a hack
     }
     return this._iframe
@@ -34,12 +34,12 @@ class DeferredIframeElement extends HTMLParsedElement {
 
     // autoplay when nested in a window frame and it opens
     let parent = this.parentNode
-    while (parent != null && !(parent instanceof DraggableFrame)) {
+    while (parent != null && !(parent instanceof Dumpling)) {
       parent = parent.parentNode
     }
 
     if (parent != null) {
-      parent.addEventListener(DraggableFrame.ShowEvent, this.load.bind(this))
+      parent.addEventListener(Dumpling.ShowEvent, this.load.bind(this))
     }
   }
 
@@ -70,12 +70,9 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   loadUrl(url) {
-    console.log(url)
     if (!url) {
-      console.log(`destroying iframe`)
       this.destroyIframe()
     } else if (this._iframe == null || this.src != url) {
-      console.log(`creating iframe`)
       // TODO: set d-iframe url?
       this.destroyIframe()
       this.createIframe(url)
@@ -106,20 +103,24 @@ class DeferredIframeElement extends HTMLParsedElement {
     this._iframe = null
   }
 
-  // -- properties --
+  // -- iframe api --
+  focus() {
+    if (this._iframe != null) {
+      this._iframe.focus()
+    }
+  }
+
+  // -- i/queries
   get src() {
     return this.getAttribute("src")
   }
 
-  set src(val) {
-    return this._iframe.setAttribute("src", val)
+  get contentWindow() {
+    return this._iframe && this._iframe.contentWindow
   }
 
-  focus() {
-    if(this._iframe != null) {
-      this._iframe.focus
-    }
-
+  get contentDocument() {
+    return this._iframe && this._iframe.contentDocument
   }
 }
 

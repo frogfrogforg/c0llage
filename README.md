@@ -2,8 +2,8 @@
 
 live @ https://nostalgic-engelbart.netlify.app/
 
-| channel | status   |
-| ------- | -------- |
+| channel | status                                                                                                                                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | dev     | [![Netlify Status](https://api.netlify.com/api/v1/badges/2d805f27-ae43-4430-a3a1-be770b1f47e0/deploy-status)](https://app.netlify.com/sites/hungry-engelbart/deploys)    |
 | live    | [![Netlify Status](https://api.netlify.com/api/v1/badges/6860a8e5-060b-4ff4-8fbc-7643404c0d84/deploy-status)](https://app.netlify.com/sites/nostalgic-engelbart/deploys) |
 
@@ -47,3 +47,5 @@ TODO: is there a way to create an alias command that has parameters, so I can ch
 [Bitsy Hacks](https://github.com/seleb/bitsy-hacks). But more specifically this awesome tool that helps you add the hacks in a nice way: https://ayolland.itch.io/borksy
 
 [jsnes](https://github.com/bfirsh/jsnes) browser snes emulator
+
+[Max Bittker's broider](https://maxbittker.github.io/broider/) an very nice css border pattern making tool

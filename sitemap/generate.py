@@ -1,6 +1,6 @@
 # usage: python3 generate.py
 
-# minor TODO: visually identify links that are inside draggable-frames
+# minor TODO: visually identify links that are inside a-dumplings
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -97,7 +97,7 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False, dra
                     neighbor = normjoin(os.path.dirname(this), href)
                 if (not neighbor.endswith('.html')):
                     # kind of a hack to handle links like "<...>/keyboard", where the server still returns keyboard/index.html
-                    neighbor = normjoin(neighbor, 'index.html') 
+                    neighbor = normjoin(neighbor, 'index.html')
 
                 if (not neighbor in seen_paths):
                     to_process.append((neighbor, this, href))
@@ -129,7 +129,7 @@ g_extended.set_overlap(False)
 
 # options: "dot", "neato", "fdp", "sfdp", "twopi", "circo"
 # https://graphviz.org/
-prog = "neato" # seems to work best without much tweaking 
+prog = "neato" # seems to work best without much tweaking
 extended_prog = "dot" # simple tree, looks cleaner for complex graph
 
 g.write_svg("sitemap.svg", prog=prog)

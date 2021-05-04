@@ -1,9 +1,8 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
-
 window.Frames = {
-  ...staticize('show'),
-  ...staticize('hide'),
+  ...staticize('show', 'open'),
+  ...staticize('hide', 'close'),
   ...staticize('toggle'),
   ...staticize('bringToTop'),
   ...staticize('addEventListener', "listen"),
@@ -33,6 +32,9 @@ const frameTemplate = `
       <div class="Frame-header-back Frame-header-button"> ☚ </div>
       <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
       <div class="Frame-header-blank">
+        <div class="Frame-header-title-container">
+          <div class="Frame-header-title" id="$id-title"></div>
+        </div>
       </div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
@@ -51,22 +53,22 @@ const MinContentWidth = 100
 const TemperamentData = {
   sanguine: {
     emoji: '🏄‍♂️',
-    alert: 'hello gamer',
+    alert: 'hold left shift to sneak',
     noBackMessage: "OH YEAH, I TRY THAT EVERY TIME AS WELL!"
   },
   phlegmatic: {
     emoji: '🆓',
-    alert: 'go on gamer',
+    alert: 'if you ever don`t know what to do with a window, try typing `gamer.` something special might happen.',
     noBackMessage: "great attitude! keep messing around and you might find some fun stuff around here =)"
   },
   choleric: {
     emoji: '🥗',
-    alert: 'get at me gamer',
+    alert: 'want to see your ad here? email me at frank.lantz@nyu.edu',
     noBackMessage: "you can't do that!"
   },
   melancholic: {
     emoji: '🐛',
-    alert: 'im no gamer',
+    alert: 'there`s never any shame in going back (using the buttons in the corner of your internet browser).',
     noBackMessage: "there's no going back from here..."
   }
 }
@@ -79,7 +81,7 @@ const phlegmatic = 'phlegmatic'
 const DefaultTemperament = 'melancholic'
 
 // Frame random spawn tuning parameters, in %
-const FrameRandomness = {
+const FrameRng = {
   margin: 2,
   MinSize: 20,
   MaxSize: 40
@@ -101,34 +103,21 @@ function makeId(length) {
   return result
 }
 
-export class DraggableFrame extends HTMLParsedElement {
+export class Dumpling extends HTMLParsedElement {
   // -- constants --
   static ShowEvent = "show-frame"
   static HideEvent = "hide-frame"
 
   // -- lifetime --
   parsedCallback() {
-    console.log(this.attributes)
     const id = this.getAttribute('id') || makeId(5)
-    console.log('creating frame element ' + id)
+    this.id = id
 
     this.setVisible(!this.hasAttribute('hidden'))
 
-    // the current manipulation
-    this.op = null
-    // the initial el x-pos
-    this.x0 = 0.0
-    // the initial el y-pos
-    this.y0 = 0.0
-    // the initial mouse x-pos
-    this.mx = 0.0
-    // the initial mouse y-pos
-    this.my = 0.0
-    // the zIndex to make the current element be always on top
-
     const templateHtml = frameTemplate.replaceAll('$id', id)
 
-    // move original children of <draggable-frame> to be children of the body element
+    // move original children of <a-dumpling> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)
     const originalChildren = [...this.children]
     this.innerHTML = templateHtml
@@ -155,6 +144,9 @@ export class DraggableFrame extends HTMLParsedElement {
 
     //#region Header Button Functionality
 
+    // title
+    this.title = this.getAttribute('title')
+
     // Temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
     this.classList.toggle(this.temperament, true)
@@ -179,24 +171,22 @@ export class DraggableFrame extends HTMLParsedElement {
     }
 
     // Maximize button
-    const hasIframe = this.hasIframe() // can't really find the iframe because it might be deferred, but d-iframe should also work here
+    const iframe = this.findIframe()
     const maximizeButton = this.querySelector(`#${id}-max`)
 
-    if(this.hasAttribute('maximize') && hasIframe) {
-        maximizeButton.onclick = () => {
-          const iframe = this.findIframe()
-          window.open(iframe.contentDocument.location, '_self')
-        }
-      } else {
-        maximizeButton.style.display = 'none'
+    if (this.hasAttribute('maximize') && iframe != null) {
+      maximizeButton.onclick = () => {
+        window.open(iframe.contentDocument.location, '_self')
       }
+    } else {
+      maximizeButton.style.display = 'none'
+    }
 
     // back button
     const backButton = this.querySelector(`.Frame-header-back`)
-    if (!this.hasAttribute('no-back') && hasIframe) {
+    if (!this.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
-        const iframe = this.findIframe()
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
         if (iframe.contentWindow.history.length > 2) {
           iframe.contentWindow.history.back()
@@ -209,7 +199,7 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    ////#region focus logic
+    //#region focus logic
     this.bringToTop()
 
     if (!this.hasAttribute('focused')) {
@@ -217,20 +207,28 @@ export class DraggableFrame extends HTMLParsedElement {
     }
     //#endregion
 
-    if (this.hasAttribute('permanent') || this.hasAttribute('persistent')) {
-      console.log(this.parentElement)
-      if (this.parentElement.id !== 'inventory') {
-        const inventory = document.getElementById('inventory')
-        if(inventory.querySelector(`#${this.id}`)) {
-          // there is a copy already, remove
-          // maybe we might want non unique permanent frames?
-          console.log(`${this.id} is not unique, deleting`)
+    // move to the correct container if necessary
+    let pid = "frames"
+    if (this.hasAttribute("permanent") || this.hasAttribute("persistent")) {
+      pid = "inventory"
+    }
+
+    if (this.parentElement.id !== pid) {
+      const parent = document.getElementById(pid)
+
+      // parent can be null on computer right now; anywhere that doesn't use
+      // the template
+      if (parent != null) {
+        // there is a copy already, remove
+        // maybe we might want non unique permanent frames?
+        // TODO: does this miss a case where the el was already added to the correct
+        // parent? (e.g. this.parentElement.id === pid)
+        if (pid === "inventory" && parent.querySelector(`#${this.id}`) != null) {
           this.remove()
-          return;
-        } else {
-          console.log(`${this.id} moved to inventory`)
-          inventory.appendChild(this)
+          return
         }
+
+        parent.appendChild(this)
       }
     }
 
@@ -240,22 +238,33 @@ export class DraggableFrame extends HTMLParsedElement {
 
   onClose() {
     const diframe = this.querySelector('d-iframe')
-    if(diframe != null) {
+    if (diframe != null) {
       diframe.destroyIframe()
     }
-
-    // const iframe = this.findIframe()
-    // iframe.contentWindow.location.reload(false);
 
     this.hide()
   }
 
   initStyleFromAttributes() {
+    const fallbackAttributes = (...params) => {
+      for (const attrName of params) {
+        const attr = this.getAttribute(attrName)
+        if (attr != null) return attr;
+      }
+      return null
+    }
+
     let width = 0
     if (this.getAttribute('width')) {
       width = this.attributes.width.value
     } else {
-      width = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+      const minSize = parseFloat(fallbackAttributes(
+        'min-width', 'width-min', 'min-size', 'size-min'))
+        || FrameRng.MinSize
+      const maxSize = parseFloat(fallbackAttributes(
+        'max-width', 'max-size', 'size-max'))
+        || FrameRng.MaxSize
+      width = (minSize + Math.random() * (maxSize - minSize))
     }
 
     this.style.width = width + '%'
@@ -264,17 +273,30 @@ export class DraggableFrame extends HTMLParsedElement {
     if (this.attributes.height) {
       height = this.attributes.height.value
     } else {
-      height = (FrameRandomness.MinSize + Math.random() * (FrameRandomness.MaxSize - FrameRandomness.MinSize))
+      const minSize = parseFloat(fallbackAttributes(
+        'min-height', 'height-min', 'min-size', 'size-min'))
+        || FrameRng.MinSize
+      const maxSize = parseFloat(fallbackAttributes(
+        'max-height', 'height-max', 'max-size', 'size-max'))
+        || FrameRng.MaxSize
+      height = (minSize + Math.random() * (maxSize - minSize))
     }
     this.style.height = height + '%'
+
+    // TODO: maybe have some aspect ratio attribute so that can be specified instead of both width and height
 
     let x = 0
     if (this.attributes.x) {
       x = this.attributes.x.value
     } else {
+      const xMin = parseFloat(fallbackAttributes(
+        'x-min', 'min-x', 'pos-min', 'min-pos'))
+        || FrameRng.margin
+      const xMax = parseFloat(fallbackAttributes(
+        'x-max', 'max-x', 'pos-max', 'max-pos'))
+        || (100 - FrameRng.margin - width)
       x =
-        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - width)))
-      //console.log(width)
+        xMin + Math.random() * (xMax - xMin)
     }
     this.style.left = x + '%'
 
@@ -282,9 +304,14 @@ export class DraggableFrame extends HTMLParsedElement {
     if (this.attributes.y) {
       y = this.attributes.y.value
     } else {
+      const yMin = parseFloat(fallbackAttributes(
+        'y-min', 'min-y', 'pos-min', 'min-pos'))
+        || FrameRng.margin
+      const yMax = parseFloat(fallbackAttributes(
+        'y-max', 'max-y', 'pos-max', 'max-pos'))
+        || (100 - FrameRng.margin - height)
       y =
-        Math.max(0, (FrameRandomness.margin + Math.random() * (100 - 2 * FrameRandomness.margin - height)))
-      //console.log(height)
+        yMin + Math.random() * (yMax - yMin)
     }
     this.style.top = y + '%'
   }
@@ -331,12 +358,12 @@ export class DraggableFrame extends HTMLParsedElement {
 
   hide() {
     this.setVisible(false)
-    this.dispatchEvent(new Event(DraggableFrame.HideEvent))
+    this.dispatchEvent(new Event(Dumpling.HideEvent))
   }
 
   show() {
     this.setVisible(true)
-    this.dispatchEvent(new Event(DraggableFrame.ShowEvent))
+    this.dispatchEvent(new Event(Dumpling.ShowEvent))
 
     this.bringToTop()
   }
@@ -357,33 +384,37 @@ export class DraggableFrame extends HTMLParsedElement {
     }
   }
 
-  listen = addEventListener
+  open = this.show
+  close = this.hide
+  clisten = addEventListener
 
   onMouseDown = (evt) => {
-    const target = evt.target
-    evt.preventDefault() // what does this do ?
+    // TODO: probably don't need to prevent default, there should no default
+    // mousedown behavior on the header/handle
+    evt.preventDefault()
 
-    // Bring this frame to top of stack
+    // bring this frame to top of stack
     this.bringToTop()
 
-    // determine operation
-    const classes = target.classList
+    // determine gesture, if any
+    const classes = evt.target.classList
     if (classes.contains('Frame-header-blank')) {
-      this.op = Ops.Move
-      this.classList.toggle(kDraggingClass, true)
+      this.gesture = { type: Ops.Move }
     } else if (classes.contains('Frame-handle')) {
-      this.op = Ops.Scale
-      this.classList.toggle(kScalingClass, true)
-    } else {
-      this.op = null
+      this.gesture = { type: Ops.Scale }
     }
 
-    if (this.op == null) {
+    if (this.gesture == null) {
       return
     }
 
-    console.log('mouse down on ' + this.id)
-    console.log('parent is ' + this.parentElement.id)
+    // apply op style
+    switch (this.gesture.type) {
+      case Ops.Move:
+        this.classList.toggle(kDraggingClass, true); break
+      case Ops.Scale:
+        this.classList.toggle(kScalingClass, true); break
+    }
 
     // disable collisions with iframes
     const iframes = document.querySelectorAll('iframe')
@@ -391,38 +422,49 @@ export class DraggableFrame extends HTMLParsedElement {
       iframe.style.pointerEvents = 'none'
     }
 
-    // record initial x/y position
-    const f = this.getBoundingClientRect()
-    const p = this.parentElement.getBoundingClientRect()
+    // record initial position
+    const dr = this.getBoundingClientRect()
+    const pr = this.parentElement.getBoundingClientRect()
 
-    this.x0 = f.x - p.x
-    this.y0 = f.y - p.y
+    this.gesture.initialPosition = {
+      x: dr.x - pr.x,
+      y: dr.y - pr.y,
+    }
 
     // record initial mouse position (we need to calc dx/dy manually on move
     // b/c evt.offset, the pos within the element, doesn't seem to include
     // borders, etc.)
-    this.mx = evt.clientX
-    this.my = evt.clientY
+    this.gesture.initialMousePosition = {
+      x: evt.clientX,
+      y: evt.clientY,
+    }
 
     // start the operation
-    switch (this.op) {
+    switch (this.gesture.type) {
       case Ops.Scale:
-        this.onScaleStart(this.x0 + f.width, this.y0 + f.height); break
+        this.onScaleStart(dr)
+        break
     }
   }
 
   onMouseMove = (evt) => {
+    if (this.gesture == null) {
+      return
+    }
+
+    // TODO: probably don't need to prevent default, there should no default
+    // mousemove behavior on the header/handle
     evt.preventDefault()
 
     // apply the operation
-    const cx = evt.clientX
-    const cy = evt.clientY
+    const mx = evt.clientX
+    const my = evt.clientY
 
-    switch (this.op) {
+    switch (this.gesture.type) {
       case Ops.Move:
-        this.onDrag(cx, cy); break
+        this.onDrag(mx, my); break
       case Ops.Scale:
-        this.onScale(cx, cy); break
+        this.onScale(mx, my); break
     }
   }
 
@@ -433,112 +475,112 @@ export class DraggableFrame extends HTMLParsedElement {
       iframe.style.pointerEvents = null
     }
 
+    // reset gesture style
     this.classList.toggle(kDraggingClass, false)
     this.classList.toggle(kScalingClass, false)
-    this.op = null
-  }
 
-  getInitialWidth() {
-    if (!this.initialWidth) {
-      this.initialWidth = this.getBoundingClientRect().width
-    }
-    return this.initialWidth
-  }
-
-  getInitialHeight() {
-    if (!this.initialHeight) {
-      this.initialHeight = this.getBoundingClientRect().height
-    }
-    return this.initialHeight
+    // clear gesture
+    this.gesture = null
   }
 
   // -- e/drag
-  onDrag(cx, cy) {
-    this.style.left = `${this.x0 + cx - this.mx}px`
-    this.style.top = `${this.y0 + cy - this.my}px`
+  onDrag(mx, my) {
+    const p0 = this.gesture.initialPosition
+    const m0 = this.gesture.initialMousePosition
+
+    // get the mouse delta
+    const dx = mx - m0.x
+    const dy = my - m0.y
+
+    // apply it to the initial position
+    this.style.left = `${p0.x + dx}px`
+    this.style.top = `${p0.y + dy}px`
   }
 
-  onScaleStart(x, y) {
-    this.ox = x - this.mx
-    this.oy = y - this.my
-  }
-
-  onScale(cx, cy) {
-    const newWidth =
-      Math.max(
-        cx + this.ox - this.x0,
-        MinContentWidth)
-    const newHeight =
-      Math.max(
-        cy + this.oy - this.y0,
-        MinContentHeight)
-
-    const scaleFactorX = newHeight / (this.getInitialHeight())
-    const scaleFactorY = newWidth / (this.getInitialWidth())
-    const scaleFactor = Math.min(
-      scaleFactorX,
-      scaleFactorY
-    )
-
-    // choleric doesn't scale
-    if (this.temperament !== choleric) {
-      this.style.width = `${newWidth}px`
-      this.style.height = `${newHeight}px`
+  onScaleStart(dr) {
+    // capture the frame's w/h at the beginning of the gesture
+    this.gesture.initialSize = {
+      w: dr.width,
+      h: dr.height
     }
 
-    // TODO??
+    // get the scale target, we calculate some scaling against the target
+    // element's size
     const target = this.findScaleTarget()
     if (target != null) {
-      if (!target.dataset.setup) {
-        const r = target.getBoundingClientRect()
-        // target.style.transformOrigin = `${r.top} ${r.left}`
-        target.style.transformOrigin = 'top left'
-        target.style.width = r.width
-        target.style.height = r.height
-        target.dataset.setup = true
+      const tr = target.getBoundingClientRect()
+
+      // capture the target's w/h at the beginning of the op
+      this.gesture.initialTargetSize = {
+        w: tr.width,
+        h: tr.height,
       }
 
-      if (this.temperament === sanguine) {
-        target.style.transform = `scale(${scaleFactorY}, ${scaleFactorX})`
-      } else if (this.temperament === phlegmatic) {
-        // revert to basic style
-        target.style.width = '100%'
-        target.style.height = '100%'
-      } else if (this.temperament === choleric) {
-        // Do nothing, choleric works as it is
-      } else { // melancholic
-        target.style.transform = `scale(${scaleFactor})`
+      // and if this is the first ever time scaling frame, also set the
+      // target's initial w/h as its style. we'll use `transform` to scale
+      // the target in most cases, so it can't use percentage sizing.
+      if (!this.isScaleSetup) {
+        this.baseTargetSize = this.gesture.initialTargetSize
+
+        target.style.transformOrigin = "top left"
+        target.style.width = this.baseTargetSize.w
+        target.style.height = this.baseTargetSize.h
+
+        this.isScaleSetup = true
       }
     }
   }
 
-  // -- nested [d-]iframe hacks --
-  findIframe() {
-    return this.findIframeInChildren(this.bodyElement.children)
-  }
+  onScale(mx, my) {
+    const s0 = this.gesture.initialSize
+    const m0 = this.gesture.initialMousePosition
 
-  hasIframe() { 
-    const child = this.bodyElement.children[0]
-    switch (child && child.nodeName) {
-      case "IFRAME":
-        return true
-      case "D-IFRAME":
-        return true
-      default:
-        return null
+    // get the mouse delta; we'll use this to update the sizes captured
+    // at the start of each scale op
+    const dx = mx - m0.x
+    const dy = my - m0.y
+
+    // unless choleric, update the frame's size. this resizes the outer frame
+    if (this.temperament !== choleric) {
+      this.style.width = `${s0.w + dx}px`
+      this.style.height = `${s0.h + dy}px`
+    }
+
+    // get the target, the frame's content, to apply temperamental scaling
+    const target = this.findScaleTarget()
+    if (target != null) {
+      const tsb = this.baseTargetSize
+      const ts0 = this.gesture.initialTargetSize
+
+      // calculate the scale factor based on the target's w/h ratios
+      const scaleX = (ts0.w + dx) / tsb.w
+      const scaleY = (ts0.h + dy) / tsb.h
+
+      switch (this.temperament) {
+        case sanguine:
+          target.style.transform = `scale(${scaleX}, ${scaleY})`
+          break
+        case melancholic:
+          target.style.transform = `scale(${Math.min(scaleX, scaleY)})`
+          break
+        case phlegmatic:
+          target.style.width = "100%"
+          target.style.height = "100%"
+          break
+        case choleric:
+          target.style.width = `${this.tw + dx}px`
+          target.style.height = `${this.th + dy}px`
+          break
+      }
     }
   }
+
 
   findScaleTarget() {
     const body = this.querySelector(`#${this.id}-body`)
     const child = body.firstElementChild
     if (child == null) {
       return null
-    }
-
-    // d-iframes can be scaled directly?
-    if (child.nodeName === "D-IFRAME") {
-      return child
     }
 
     // search for a wrapped iframe (youtube embed is one level deep)
@@ -551,19 +593,34 @@ export class DraggableFrame extends HTMLParsedElement {
     return child
   }
 
+  // -- q/iframe --
+  findIframe() {
+    return this.findIframeInChildren(this.bodyElement.children)
+  }
+
   findIframeInChildren(children) {
     const child = children[0]
     switch (child && child.nodeName) {
       case "IFRAME":
-        return child
       case "D-IFRAME":
-        // This doesn't work since child.iframe is null at this point
-        // TODO fix
-        return child.iframe
+        return child
       default:
         return null
     }
   }
+
+  _title = null
+
+  set title(value) {
+    const titleEl = this.querySelector(`#${this.id}-title`)
+    this._title = value;
+    if (value == null) {
+      titleEl.style.display = 'none'
+    } else {
+      titleEl.style.display = 'block'
+      titleEl.innerHTML = value;
+    }
+  }
 }
 
-customElements.define('draggable-frame', DraggableFrame)
+customElements.define('a-dumpling', Dumpling)

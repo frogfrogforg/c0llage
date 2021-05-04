@@ -6,9 +6,6 @@ import { ignores } from "./ignores.mjs"
 import { template } from "./template.mjs"
 import { read } from "./utils.mjs"
 
-// -- constants --
-const kBodyTagPattern = /<\/?body>/g
-
 // -- commands --
 export async function clean() {
   // destroy dist directory
@@ -71,10 +68,7 @@ async function compile(entry) {
   const dst = path.join(paths.dist, rename(entry))
 
   const partial = await read(src)
-  const cleaned = partial.replace(kBodyTagPattern, "")
-
-  const tmpl = await template()
-  const compiled = tmpl(cleaned)
+  const compiled = await template(partial)
 
   await fs.writeFile(dst, compiled)
 }

@@ -1,0 +1,64 @@
+<!-- template: neutral -->
+
+<style>
+    .monastery-body {
+        background-color: blue;
+        margin: 0px;
+        transform: scale(2);
+        transform-origin: top left;
+    }
+
+    .monastery-body iframe {
+        overflow: hidden;
+    }
+
+    #monastery {
+        width: 1024px;
+        pointer-events: none;
+    }
+
+    .monastery-window {
+        position: absolute;
+        z-index: -1;
+    }
+
+    .monastery-window iframe {
+        border: 0;
+        --scaleFactor: 0.6;
+        /*scale iframe content by this factor (probably breaks on older browsers)*/
+        width: calc(100%/var(--scaleFactor));
+        height: calc(100%/var(--scaleFactor));
+        transform: scale(var(--scaleFactor));
+        transform-origin: top left;
+    }
+</style>
+
+<body>
+    <div class="ForestLayer--scroll">
+        <div class='monastery-body'>
+            <img id=monastery src="../gureli.png">
+
+            <div class=monastery-window style="left:413px; top:532px; width:85px; height:69px;">
+                <iframe style="--scaleFactor: 0.3;" src="../../d/tender morning.html" title="tender morning"></iframe>
+            </div>
+
+            <div class=monastery-window
+                style="left:660px; top:492px; width:56px; height:60px; transform:skew(-4deg, 15deg)">
+                <iframe src="../../mut/salada-gratuita.html" title="Salada Gratuita"></iframe>
+            </div>
+
+            <div class=monastery-window style="left:357px; top:363px; width:92px; height:70px;">
+                <iframe style="--scaleFactor: 0.3;" src="../../games/guttersour/WEB/index.html"
+                    title="guttersour"></iframe>
+            </div>
+
+            <div class=monastery-window style="left:195px; top:407px; width:46px; height:59px;">
+                <iframe src="../../Jen/jenGame2.html" title="jen game 2"></iframe>
+            </div>
+
+            <a-dumpling no-close temperament='phlegmatic' persistent id="backbutton">
+                <iframe src='./items/backbutton.html'></iframe>
+            </a-dumpling>
+        </div>
+    </div>
+</body>
