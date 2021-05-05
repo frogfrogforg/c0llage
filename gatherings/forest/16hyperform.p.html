@@ -143,9 +143,13 @@
 </script>
 
 <script type="module">
+  // the following code makes it so that, once you visit this node,
+  // if you idle for long enough (doNothingTimerSeconds), you'll
+  // start looking at flowers
+
   import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
 
-  let doNothingTimerSeconds = 60;
+  let doNothingTimerSeconds = 69;
   let timer = setTimeout(doNothingTimeout, 
       		   doNothingTimerSeconds * 1000);
 
@@ -157,7 +161,7 @@
 
   function doNothingTimeout() {
     // if we don't remove the event listeners, all of these
-    // will keep triggering the timer
+    // events will keep triggering the timer
     document.removeEventListener("mousemove", resetTimer)
     document.removeEventListener("click", resetTimer)
     document.removeEventListener("keydown", resetTimer)

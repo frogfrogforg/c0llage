@@ -1,5 +1,35 @@
+<style>
+  .words {
+      background-color: lightpink;
+      color: black;
+      font-size: 16px;
+      overflow-y: scroll;
+  }
+  a:link {
+    color: black;
+    text-decoration: underline;
+  }
+  a:hover {
+    color: white;
+  }
+  a:visited {
+    color: black;
+  }
+</style>
+
 <body>
     <img class="background" src="./images/26flowers.png">
-    <a class="hotspot inspect" href="./27flowers.html"
-        style="left: 33.704%; top: 0.333%; width: 30.333%; height: 20.333%;"> </a>
+    <a-dumpling hidden id="words" x=10 y=15 width=40 height=15 bodyClass="words">
+      <p>you find yourself blankly staring at some <a href="./260flowers.html">flowers</a></p>
+    </a-dumpling>
 </body>
+
+<script> 
+
+  function showWords() {
+      Frames.show('words');
+  }
+
+  setTimeout(showWords, 3*1000);
+
+</script>
