@@ -1,0 +1,104 @@
+<style>
+  .Leaf {
+    position: absolute;
+    top: 44.5%;
+    left: 49.7%;
+    cursor: pointer;
+  }
+</style>
+
+<body>
+  <img class="background" src="./images/43.png">
+  <img id="leaf" class="Leaf" src="./images/43-quiet-leaf.png">
+
+  <!-- hotpots -->
+  <a class="hotspot move" href="./42narrowing.html"
+    style="left: 0%; bottom: 0%; width: 14%; height: 14%;"></a>
+
+  <!-- dialogs -->
+  <a-dumpling id="notice-dialog" temperament="phlegmatic" hidden x=25 y=40 width=16 height=20>
+    <div class="Dialog">
+      <p class="Dialog-text">it doesn't sound like anything</p>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="nice-dialog" temperament="phlegmatic" hidden x=30 y=45 width=16 height=20>
+    <div class="Dialog">
+      <p class="Dialog-text">which is kind of nice</p>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="quiet-leaf" temperament="choleric" no-close hidden x=110 y=38>
+    <img src="./images/quiet-leaf.png">
+  </a-dumpling>
+</body>
+
+<script type="module">
+  import { kInventory } from "./inventory.js"
+
+  // -- props --
+  let mStep = 0
+
+  // -- p/el
+  const $mLeaf = document.getElementById("leaf")
+  const $mItem = document.getElementById("quiet-leaf")
+
+  // -- lifetime --
+  async function main() {
+    if (d.State.didGetLeaf) {
+      complete()
+      return
+    }
+
+    $mLeaf.addEventListener("click", didClickLeaf)
+
+    // so the dumpling doesn't overwrite our styles
+    await frame()
+    $mItem.style.width = "min-content"
+    $mItem.style.height = "min-content"
+  }
+
+  // -- commands --
+  function notice() {
+    Frames.show("notice-dialog")
+    mStep = 1
+  }
+
+  function acknowledge() {
+    Frames.show("nice-dialog")
+    mStep = 2
+  }
+
+  function loot() {
+    kInventory.add({ el: $mItem })
+    $mItem.show()
+
+    d.State.didGetLeaf = true
+    complete()
+  }
+
+  function complete() {
+    $mLeaf.remove()
+    mStep = 3
+  }
+
+  // -- events --
+  function didClickLeaf() {
+    switch (mStep) {
+    case 0:
+      notice(); break
+    case 1:
+      acknowledge(); break
+    case 2:
+      loot(); break
+    }
+  }
+
+  // -- utils --
+  function frame() {
+    return new Promise(requestAnimationFrame)
+  }
+
+  // -- bootstrap --
+  main()
+</script>

@@ -47,8 +47,8 @@ const kDraggingClass = 'Frame-Dragging'
 const kScalingClass = 'Frame-Scaling'
 const kUnfocusedClass = 'Frame-Unfocused'
 // TODO: make this an attribute with these as default values?
-const MinContentHeight = 100
-const MinContentWidth = 100
+const MinContentHeight = 40
+const MinContentWidth = 40
 
 const TemperamentData = {
   sanguine: {
@@ -63,7 +63,7 @@ const TemperamentData = {
   },
   choleric: {
     emoji: '🥗',
-    alert: 'want to see your ad here? email me at frank.lantz@nyu.edu',
+    alert: 'want to see your ad here? email us at frank.lantz@nyu.edu',
     noBackMessage: "you can't do that!"
   },
   melancholic: {
@@ -537,13 +537,33 @@ export class Dumpling extends HTMLParsedElement {
 
     // get the mouse delta; we'll use this to update the sizes captured
     // at the start of each scale op
-    const dx = mx - m0.x
-    const dy = my - m0.y
+    let dx = mx - m0.x
+    let dy = my - m0.y
 
     // unless choleric, update the frame's size. this resizes the outer frame
     if (this.temperament !== choleric) {
-      this.style.width = `${s0.w + dx}px`
-      this.style.height = `${s0.h + dy}px`
+      let newWidth = s0.w + dx;
+      let newHeight = s0.h + dy;
+
+      // TODO: allow negatively-scaled windows:
+      // let xflip = (newWidth < 0) ? -1 : 1
+      // if (newWidth < 0) {
+      //   // todo flip
+      //   this.style.transform = "scale(-1, 1)"
+      //   newWidth = -newWidth;
+      // } else {
+      //   this.style.transform = "scale(1, 1)"
+      // }
+
+      newWidth = Math.max(newWidth, MinContentWidth);
+      newHeight = Math.max(newHeight, MinContentHeight);
+
+      // update dx/dy to reflect actual change to window size
+      dx = newWidth - s0.w;
+      dy = newHeight - s0.h;
+
+      this.style.width = `${newWidth}px`
+      this.style.height = `${newHeight}px`
     }
 
     // get the target, the frame's content, to apply temperamental scaling
@@ -559,15 +579,21 @@ export class Dumpling extends HTMLParsedElement {
       switch (this.temperament) {
         case sanguine:
           target.style.transform = `scale(${scaleX}, ${scaleY})`
+          target.style.width = `${100/scaleX}%`
+          target.style.height = `${100/scaleY}%`
           break
         case melancholic:
-          target.style.transform = `scale(${Math.min(scaleX, scaleY)})`
+          let s = Math.min(scaleX, scaleY)
+          target.style.transform = `scale(${s})`
+          target.style.width = `${100/s}%`
+          target.style.height = `${100/s}%`
           break
         case phlegmatic:
           target.style.width = "100%"
           target.style.height = "100%"
           break
         case choleric:
+          // IMPORTANT - DO NOT REMOVE
           target.style.width = `${this.tw + dx}px`
           target.style.height = `${this.th + dy}px`
           break
