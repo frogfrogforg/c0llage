@@ -8,6 +8,8 @@ const initialState = {
   visitedAlidator: false,
   visitedPrometeus: false,
   teeth: 0,
+  stealthy: false,
+  stoleFrogFrame: false
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

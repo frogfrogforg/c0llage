@@ -9,8 +9,8 @@
 <body>
     <img class="background" src="./images/19.png">
 
-    <a class="hotspot centered inspect" onclick="Frames.toggle('halt')"
-        style="left: 95.888%; top: 54.666%; width: 8%; height: 90%"></a>
+    <button class="hotspot centered inspect" onclick="goToOtherSide()"
+        style="left: 95.888%; top: 54.666%; width: 8%; height: 90%"></button>
 
     <div style="position:absolute;width:auto;top:42%;left:27%;transform:rotate(1deg);"><a class="talk"
             onclick="startWizardConversation()">
@@ -26,6 +26,7 @@
     <a-dumpling hidden id="halt" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
         <span style="font-family: cursive;">don't worry about it. <br>i have it under control.<br>(∩ ͡~
             ͜ʖ ͡°)⊃━☆ﾟ. *</span>
+        <span>aaaaa</span>
     </a-dumpling>
 
     <a-dumpling hidden id="dialog" x=10 y=69 width=70 height=30 bodyClass="InvertedFrame">
@@ -59,11 +60,12 @@
     </a-dumpling>
 </body>
 
-<script>
+<script type="module">
+    import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
     var initiatedConversation = false
     var wizardTimerSeconds = 10
 
-    function startWizardConversation() {
+    window.startWizardConversation = function () {
         Frames.toggle('dialog')
         if (!initiatedConversation) {
             setTimeout(wizardTimeout, wizardTimerSeconds * 1000)
@@ -71,7 +73,16 @@
         }
     }
 
+
     function wizardTimeout() {
         Frames.show('waited')
+    }
+
+    window.goToOtherSide = function () {
+        if (d.State.stealthy) {
+            Turbo.visit("./20the_source")
+        } else {
+            Frames.show('halt')
+        }
     }
 </script>

@@ -171,12 +171,10 @@
                 s.forEach(condition => {
                     passesAllConditions &&= d.State[condition]
 
-                    console.log('adding listener to', condition, d.State[condition])
 
                     d.State.listen(condition, () => {
                         const passesAllConditions = s
                             .reduce((aggregate, condition) => aggregate && d.State[condition], true)
-                        console.log("AAAAAA", passesAllConditions)
                         icon.classList.toggle('icon-hidden', !passesAllConditions)
                     })
                 });
@@ -185,7 +183,6 @@
 
                 ['hide-frame', 'show-frame'].forEach((eventName) => {
                     targetFrame.addEventListener(eventName, (e) => {
-                        console.log(eventName)
                         icon.classList.toggle('icon-opened', targetFrame.visible)
                     })
                 })
