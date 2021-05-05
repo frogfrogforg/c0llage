@@ -67,7 +67,6 @@ async function renderGame(nextBody) {
 
 // add random query string to links and iframe src to allow arbitrary recursion
 function randomizeLinks() {
-  console.log(window.location.href, "randomize links");
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
@@ -87,6 +86,10 @@ function randomizeLinks() {
 
 // append r=<rand> param, preserving existing query
 function randomizeUrl(str) {
+  if (str == null) {
+    return str
+  }
+
   const [path, search] = str.split("?")
   const params = new URLSearchParams(search)
   params.append("r", Math.random().toString().slice(2))
