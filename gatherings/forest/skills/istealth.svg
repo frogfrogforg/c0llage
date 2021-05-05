@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink= "http://www.w3.org/1999/xlink" style="fill: none;" width="150" height="150">
   <g transform='translate(-65.4, 0) scale(0.15)'>
-    <path id=' halfeye-left' transform='translate(1860, 0) scale(-1.0, 1)' style="stroke-width: 18px; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(195, 195, 195); fill: none;" d="
+    <path id=' halfeye-left' transform='translate(1860, 0) scale(-1.0, 1)' style="stroke-width: 18px; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(220, 220, 220); fill: none;" d="
   M930,360 
   Q1095,375 1215,495 
   Q1215,495 1215,495 
@@ -75,7 +75,7 @@
     A75,0 0 0,1 990,495
     " fill="freeze" />
     </path>
-    <path id='halfeye-right' style="stroke-width: 18px; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(195, 195, 195); fill: none;" d="
+    <path id='halfeye-right' style="stroke-width: 18px; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(220, 220, 220); fill: none;" d="
   M930,360 
   Q1095,375 1215,495 
   Q1215,495 1215,495 

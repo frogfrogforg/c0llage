@@ -20,20 +20,24 @@
   }
 
   @keyframes mechanic {
-        50% {
-            transform: translate(0%, 30%);
-            filter: hue-rotate(1600deg);
-            opacity: 80%;
-        }
-
-        100% {}
+    50% {
+      transform: translate(0%, 30%);
+      filter: hue-rotate(1600deg);
+      opacity: 80%;
     }
 
-    @keyframes reveal {
-      from  {filter:blur(69px);cursor:not-allowed;}
-      to    {}
+    100% {}
+  }
 
+  @keyframes reveal {
+    from {
+      filter: blur(69px);
+      cursor: not-allowed;
     }
+
+    to {}
+
+  }
 </style>
 
 <body>
@@ -60,20 +64,25 @@
 
       <div class="CosmodromeCol">
         <img class="CosmodromeBg" src="./images/cosmodrome/80victory.gif">
-        <button class="hotspot talk" onclick="Frames.show('mechanic')"><img class="CosmodromeBg" src="./images/cosmodrome/SPOILERS.png"></button>
+        <button class="hotspot talk" onclick="Frames.show('mechanic')"><img class="CosmodromeBg"
+            src="./images/cosmodrome/SPOILERS.png"></button>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
 
 
   <a-dumpling temperament='sanguine' id="mechanic" title="It's a me!" hidden persistent width=50 height=50>
-    <div style="font-family:fantasy;"><span>hello.</span><div style="color:red;font-size:5vmin;animation: mechanic 12s infinite;animation-timing-function: linear;">i am the game mechanic.</div><br><span>i made the game. not this one though.</span></div><br><br>
-  
-  <button onclick="Frames.show('help')">please help me, Mario. the game, it is broken</button>
+    <div style="font-family:fantasy;"><span>hello.</span>
+      <div style="color:red;font-size:5vmin;animation: mechanic 12s infinite;animation-timing-function: linear;">i am
+        the game mechanic.</div><br><span>i made the game. not this one though.</span>
+    </div><br><br>
+
+    <button onclick="Frames.show('help')">please help me, Mario. the game, it is broken</button>
   </a-dumpling>
 
   <a-dumpling temperament='sanguine' id="help" hidden persistent width=50 height=50 x=10>
-    <span>to fix any game, you must type the forbidden word onto it. you must utter the unutterable. in your heart, you already know it.</span><br><br>
+    <span>to fix any game, you must type the forbidden word onto it. you must utter the unutterable. in your heart, you
+      already know it.</span><br><br>
 
     <button onclick="Frames.show('gamer')">yes, i know it</button>
   </a-dumpling>
@@ -81,19 +90,22 @@
   <a-dumpling temperament='sanguine' id="gamer" hidden persistent width=50 height=50 x=4>
     <span>then say it.</span><br><br>
 
-    <span style="animation:reveal 6s 1; animation-timing-function:ease-out;"><a href="https://frogfrogforg.itch.io/super-cosmodrome?password=verysecretpassword"><button >"gamer"</button></a></span>
+    <span style="animation:reveal 6s 1; animation-timing-function:ease-out;"><a
+        href="https://frogfrogforg.itch.io/super-cosmodrome?password=verysecretpassword"><button>"gamer"</button></a></span>
   </a-dumpling>
 
 </body>
 
 <script>
+  console.log('hello my friends')
   // -- props --
-  let $el = null
+  cosmodromeEl = null
 
   // -- init --
   function main() {
-    $el = document.getElementById("cosmodrome")
-    $el.style.overflow = "hidden"
+    console.log("loaded cosmodrome")
+    cosmodromeEl = document.getElementById("cosmodrome")
+    cosmodromeEl.style.overflow = "hidden"
 
     initTouch()
     loopGuard()
@@ -101,23 +113,23 @@
 
   //  -- guard --
   function loopGuard() {
-    if ($el.style.overflow != "hidden") {
+    if (cosmodromeEl.style.overflow != "hidden") {
       alert("nice try gamer")
     }
 
-    $el.style.overflow = "hidden"
+    cosmodromeEl.style.overflow = "hidden"
     requestAnimationFrame(loopGuard)
   }
 
   // -- touch --
-  let isTouching = false
-  let xi = null
-  let yi = null
+  isTouching = false
+  xi = null
+  yi = null
 
   function initTouch() {
-    $el.addEventListener("pointerdown", didStartTouch)
-    $el.addEventListener("pointermove", didMoveTouch)
-    $el.addEventListener("pointerup", didEndTouch)
+    cosmodromeEl.addEventListener("pointerdown", didStartTouch)
+    cosmodromeEl.addEventListener("pointermove", didMoveTouch)
+    cosmodromeEl.addEventListener("pointerup", didEndTouch)
 
     const html = document.querySelector("html")
     html.addEventListener("pointerout", (evt) => {
@@ -138,14 +150,14 @@
       return
     }
 
-    const a = Math.PI / 3
+    const a = (new Date()).getMilliseconds() / 360
     const x = evt.clientX
     const y = evt.clientY
 
     const dx = x - xi
     const dy = y - yi
 
-    $el.scrollBy({
+    cosmodromeEl.scrollBy({
       top: Math.cos(a) * dx - Math.sin(a) * dy,
       left: Math.sin(a) * dx + Math.cos(a) * dy,
     })
