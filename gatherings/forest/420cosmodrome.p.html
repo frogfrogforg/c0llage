@@ -18,6 +18,22 @@
     user-select: none;
     pointer-events: none;
   }
+
+  @keyframes mechanic {
+        50% {
+            transform: translate(0%, 30%);
+            filter: hue-rotate(1600deg);
+            opacity: 80%;
+        }
+
+        100% {}
+    }
+
+    @keyframes reveal {
+      from  {filter:blur(69px);cursor:not-allowed;}
+      to    {}
+
+    }
 </style>
 
 <body>
@@ -44,9 +60,30 @@
 
       <div class="CosmodromeCol">
         <img class="CosmodromeBg" src="./images/cosmodrome/80victory.gif">
+        <button class="hotspot talk" onclick="Frames.show('mechanic')"><img class="CosmodromeBg" src="./images/cosmodrome/SPOILERS.png"></button>
       </div>
     </main>
   </div>
+
+
+  <a-dumpling temperament='sanguine' id="mechanic" title="It's a me!" hidden persistent width=50 height=50>
+    <div style="font-family:fantasy;"><span>hello.</span><div style="color:red;font-size:5vmin;animation: mechanic 12s infinite;animation-timing-function: linear;">i am the game mechanic.</div><br><span>i made the game. not this one though.</span></div><br><br>
+  
+  <button onclick="Frames.show('help')">please help me, Mario. the game, it is broken</button>
+  </a-dumpling>
+
+  <a-dumpling temperament='sanguine' id="help" hidden persistent width=50 height=50 x=10>
+    <span>to fix any game, you must type the forbidden word onto it. you must utter the unutterable. in your heart, you already know it.</span><br><br>
+
+    <button onclick="Frames.show('gamer')">yes, i know it</button>
+  </a-dumpling>
+
+  <a-dumpling temperament='sanguine' id="gamer" hidden persistent width=50 height=50 x=4>
+    <span>then say it.</span><br><br>
+
+    <span style="animation:reveal 6s 1; animation-timing-function:ease-out;"><a href="https://frogfrogforg.itch.io/super-cosmodrome?password=verysecretpassword"><button >"gamer"</button></a></span>
+  </a-dumpling>
+
 </body>
 
 <script>
