@@ -34,6 +34,20 @@
     }
 
     @animate {}
+
+    .realgame {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+    }
   </style>
 </head>
 
@@ -61,6 +75,10 @@
       <div id="unity-fullscreen-button"></div>
       <div id="unity-build-title">cosmodrome v0.2.4</div>
     </div>
+  </div>
+  <div id="the-real-game" style='display: none;' class="realgame">
+    <iframe src="https://archive.org/embed/msdos_Ultimate_DOOM_The_1995" width="960" height="600" frameborder="0"
+      webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
   </div>
   <script>
 
@@ -94,6 +112,31 @@
     //};
     //document.body.appendChild(script);
 
+    function waitForWordTyped(word, callback) {
+      function letterRecursion(word, i) {
+        if (i >= word.length) {
+          callback()
+        } else {
+          let f = (e) => {
+            delete (ev);
+            if (e.key === word[i]) {
+              letterRecursion(word, i + 1)
+            } else {
+              letterRecursion(word, 0)
+            }
+            window.removeEventListener('keypress', f)
+          }
+          window.addEventListener('keypress', f)
+        }
+      }
+
+      letterRecursion(word, 0)
+    }
+
+    waitForWordTyped('gamer', () => {
+      document.getElementById('unity-container').style.display = 'none'
+      document.getElementById('the-real-game').style.display = 'block'
+    })
 
     progress = 0;
     totalTime = 1000;
