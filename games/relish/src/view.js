@@ -25,7 +25,6 @@ let mDrawSize = null
 let mViewSize = null
 let mPlate = null
 let mFg = null
-let mIsSizeInvalid = false
 
 // -- p/data
 let dColors = null
@@ -42,7 +41,7 @@ export function initData() {
   dColors.set([...kClearColor, ...kClearColor, ...kClearColor, ...kClearColor], 0)
 }
 
-export function init(id, assets) {
+export function init(id, plate, assets) {
   // set props
   mCanvas = document.getElementById(id)
   if (mCanvas == null) {
@@ -56,7 +55,8 @@ export function init(id, assets) {
     return false
   }
 
-  // hang on to assets
+  // assign deps
+  mPlate = plate
   mAssets = assets
 
   // initialize viewport sizes
@@ -69,6 +69,9 @@ export function init(id, assets) {
   mTextures = initTextures()
   mFramebuffers = initFramebuffers()
   mBuffers = initBuffers()
+
+  // configure plate
+  setPlate(plate)
 
   return true
 }
@@ -614,7 +617,7 @@ function initDrawSize(viewSize) {
 
 // finds the scaled simulation size
 function initSimSize(drawSize) {
-  const side = drawSize.w / kScale
+  const side = Math.min(drawSize.w / kScale, mPlate.size)
   return initSize(side, side)
 }
 

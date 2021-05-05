@@ -19,28 +19,28 @@ function main(assets) {
   // capture els
   $mMain = document.getElementById("main")
 
-  // initialize
-  initData()
-  initView("canvas", assets)
-
   // parse hash
   const match = location.hash.match(kPlatePattern)
+  const plate = getPlate(match[2])
+
+  // initialize
+  initData()
+  initView("canvas", plate, assets)
 
   // init events with correct target
   const target = findEventTarget(match[4]) || getCanvas()
   initEvents(target)
 
-  // set initial plate, if any
-  const name = match[2]
-  if (name != null) {
-    setPlateByName(name)
-  }
-
   // start loop
-  loop()
+  start()
 }
 
 // -- commands --
+function start() {
+  mIsPaused = false
+  loop()
+}
+
 function loop() {
   if (!mIsPaused) {
     mTime = performance.now() / 1000

@@ -33,11 +33,12 @@ const kPlates = {
   ...initPlate({
     name: "sky",
     poke: "point",
+    size: 512,
     colors: [
-      "#1A1A03",
-      "#1A1A03",
-      "#949455",
-      "#937A70",
+      "#719743",
+      "#8DEDBE",
+      "#53573D",
+      "#ED8DD7",
     ],
   }),
 }
@@ -51,6 +52,7 @@ function initPlate({
 }) {
   const plate = {
     rand: true,
+    size: 1024,
     ...props,
     poke: getPoke(poke
       || "point"),
