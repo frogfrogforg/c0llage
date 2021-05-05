@@ -96,15 +96,15 @@
 
 </body>
 
-<script>
+<script type="module">
   // -- props --
-  cosmodromeEl = null
+  let $el = null
 
   // -- init --
   function main() {
     console.log("loaded cosmodrome")
-    cosmodromeEl = document.getElementById("cosmodrome")
-    cosmodromeEl.style.overflow = "hidden"
+    $el = document.getElementById("cosmodrome")
+    $el.style.overflow = "hidden"
 
     initTouch()
     loopGuard()
@@ -112,23 +112,23 @@
 
   //  -- guard --
   function loopGuard() {
-    if (cosmodromeEl.style.overflow != "hidden") {
+    if ($el.style.overflow != "hidden") {
       alert("nice try gamer")
     }
 
-    cosmodromeEl.style.overflow = "hidden"
+    $el.style.overflow = "hidden"
     requestAnimationFrame(loopGuard)
   }
 
   // -- touch --
-  isTouching = false
-  xi = null
-  yi = null
+  let isTouching = false
+  let xi = null
+  let yi = null
 
   function initTouch() {
-    cosmodromeEl.addEventListener("pointerdown", didStartTouch)
-    cosmodromeEl.addEventListener("pointermove", didMoveTouch)
-    cosmodromeEl.addEventListener("pointerup", didEndTouch)
+    $el.addEventListener("pointerdown", didStartTouch)
+    $el.addEventListener("pointermove", didMoveTouch)
+    $el.addEventListener("pointerup", didEndTouch)
 
     const html = document.querySelector("html")
     html.addEventListener("pointerout", (evt) => {
@@ -156,7 +156,7 @@
     const dx = x - xi
     const dy = y - yi
 
-    cosmodromeEl.scrollBy({
+    $el.scrollBy({
       top: Math.cos(a) * dx - Math.sin(a) * dy,
       left: Math.sin(a) * dx + Math.cos(a) * dy,
     })
