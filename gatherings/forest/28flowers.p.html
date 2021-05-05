@@ -1,19 +1,66 @@
+<!-- template: neutral -->
+
 <style>
-    .thoughts {
-        background-color: bisque;
-        color: indigo;
-        font-size: 16px;
-        overflow-y: scroll;
-    }
+  .flower-words {
+      background-color: lightpink;
+      color: black;
+      font-size: 16px;
+      overflow-y: scroll;
+  }
+  .flower-words a:link, a:visited {
+    color: black;
+  }
+  .flower-words a:hover {
+    color: black;
+  }
+
+  .stranger-words {
+      background-color: darkslateblue;
+      color: antiquewhite;
+      font-size: 16px;
+      overflow-y: scroll;
+  }
+  .stranger-words a:link, a:visited {
+    color: antiquewhite;
+  }
+  .stranger-words a:hover {
+    color: aquamarine;
+  }
+
 </style>
 
 <body>
     <img class="background" src="./images/28flowers.png">
 
-    <a class="hotspot move" href="./nonoenoneone.html"
-        style="left: 60%; top: 60%; width: 40%; height: 40%;"> </a>
-
-    <a-dumpling id="thoughts" x=10 y=15 width=40 height=15 bodyClass="thoughts">
-        <p>you stop and look at the flowers</p>
+    <a-dumpling id="words0" x=-20 y=-10 width=80 height=30 bodyClass="stranger-words">
+      <p>They put out their cigarette on their thigh and slip the butt back into the box</p>
+      <p>"Well, back to it. See ya around."</p>
+      <p> They zip up their bag and walk past you.</p>
     </a-dumpling>
+
+    <a-dumpling hidden id="words1" x=40 y=30 width=80 height=30 bodyClass="stranger-words">
+      <p>You're back alone again with only the ghost of their presence <a href="#" onclick="showWords()" data-turbo="false">lingering</a> in your ears.</p>
+    </a-dumpling>
+
+
+
+    <a-dumpling hidden id="words2" x=-10 y=70 width=80 height=30 bodyClass="stranger-words">
+      <p>You look around, and realize that you're at the <a href="420cosmodrome">Cosmodrome</a></p>
+    </a-dumpling>
+
 </body>
+
+<script type="module"> 
+  let words_i = 1;
+
+  window.showWords = function () {
+      Frames.show('words' + words_i);
+
+      words_i++;
+
+      // return false;
+  }
+
+  setTimeout(showWords, 10*1000);
+
+</script>
