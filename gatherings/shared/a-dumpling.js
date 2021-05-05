@@ -63,7 +63,7 @@ const TemperamentData = {
   },
   choleric: {
     emoji: '🥗',
-    alert: 'want to see your ad here? email me at frank.lantz@nyu.edu',
+    alert: 'want to see your ad here? email us at frank.lantz@nyu.edu',
     noBackMessage: "you can't do that!"
   },
   melancholic: {

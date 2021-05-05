@@ -1,0 +1,42 @@
+<style>
+      .aside{
+        background-image:url(./images/71-a.png);
+       background-size: contain;
+       background-repeat: no-repeat;
+        min-width:97%;
+        min-height:100%;
+        position: absolute;
+      }
+
+      .letters{
+          color:white;
+          top:75%;
+          left:34%;
+          position: absolute;
+          font-size: 4.20vmin;
+          font-family: georgia;
+          text-shadow: black 2px 2px 7px;
+      }
+
+      .letters a{
+          color:cornflowerblue;
+          text-decoration: underline;
+      }  
+</style>
+<body>
+    <img class="background" src="./images/71.png">
+
+    <a class="hotspot centered move" href="./72floodzone.html" style="top:18%;left:83%;width:32%;height:34%;"></a>
+
+    <a class="hotspot centered move" href="./70outhouse.html" style="top:90%;left:74%;width:50%;height:12%;"></a>
+
+    <a class="inspect centered" onclick="Frames.toggle('a71')" style="top:43%;left:27%;width:10%;height:10%;border:7px groove #a94f18;border-radius:100%;position:absolute;"></a>
+
+    <a-dumpling temperament="choleric" hidden id="a71" style="overflow:hidden;" width=80 height=83 x=30 y=50 >
+        
+        <div class="aside"><span class="letters">this delicate <a onclick="Frames.toggle('silt')">silt</a></span></div>
+    </a-dumpling>
+
+    <a-dumpling temperament='sanguine' id="silt" title='Soil Texture' hidden min-size=60 max-size=80>
+        <d-iframe style="--scaleFactor: 1.0;" id="silt-wiki" src="https://passel2.unl.edu/view/lesson/0cff7943f577/2"></d-iframe></a-dumpling> 
+</body>
