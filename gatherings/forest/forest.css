@@ -116,6 +116,26 @@
    100% { transform: translateX(0%); }
 }
 
+.stealthIcon {
+      position: fixed;
+      cursor: none;
+      animation: fadeIn 0.05s ease-in;
+      opacity: 1.0;
+      pointer-events: none;
+      visibility: hidden;
+      /* border: orangered solid; */
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0.0;
+      }
+
+      100% {
+        opacity: 1.0;
+      }
+    }
+
 /* cursors */
 .cursor-inspect,
 .inspect {

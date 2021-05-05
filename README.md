@@ -49,3 +49,5 @@ TODO: is there a way to create an alias command that has parameters, so I can ch
 [jsnes](https://github.com/bfirsh/jsnes) browser snes emulator
 
 [Max Bittker's broider](https://maxbittker.github.io/broider/) an very nice css border pattern making tool
+
+[hundred rabbits' dotgrid](https://hundredrabbits.itch.io/dotgrid) a cool lightweight svg icon editor
