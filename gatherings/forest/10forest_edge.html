@@ -1,0 +1,88 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!-- caching -->
+  <meta name="turbo-cache-control" content="no-cache">
+
+  <!-- title -->
+  <title>welcome</title>
+
+  <!-- scrapers -->
+  <meta property="og:title" content="c0llage">
+  <meta property="og:type" content="FROGCUBE">
+  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
+  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
+  <meta property="og:description" content="In 1884, meridian time personnel met
+in Washington to change Forg time.
+First words said was that only 1 day
+could be used on Forg to not change
+the 1 day marshmallow">
+
+  <!-- styling -->
+  <link rel="stylesheet" href="forest.css">
+  <link rel="stylesheet" href="../shared/frames.css">
+
+  <!-- scripts -->
+  <script type="module" src="../../global.js"> </script>
+  <script type="module" src="../shared/draggable-frame.js"></script>
+  <script type="module" src="../shared/d-iframe.js"></script>
+  <script type="module" src="forest.js"></script>
+</head>
+
+<body>
+  <div id="game">
+    <div class="container">
+      <main id="main" class="content">
+        <!-- page -->
+        <style>
+    .ClearFrame {
+        opacity: 0;
+        font-size: 30px;
+    }
+
+    .small-church {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+
+    <img class="background" src="./images/forest_edge.jpg">
+    </img>
+
+    <a class="hotspot inspect" href="../monastery.html"
+        style="left: 43%; top: 70%; width: 22%; height: 18%;">
+        <img class="small-church" src="./images/smallchurch.png">
+    </a>
+
+    <a class="hotspot move" href="16hyperform.html"
+        style="left: 47%; top: 19%; width: 34%; height: 20%;">
+    </a>
+
+    <a class="hotspot move" href="21other_shores.html"
+        style="left: 2%; top: 2%; width: 18%; height: 67%;">
+    </a>
+
+    <section id="frames" class="Frames">
+        <draggable-frame id="test" x=20 y=20 width=15 height=15>
+            <a class="move" style="font-size: 2vw; text-decoration: none; opacity: 0.5" href="./2.html">
+                🔙
+            </a>
+        </draggable-frame>
+    </section>
+
+        <!-- frames -->
+        <section id="frame$" class="Frames"></section>
+      </main>
+    </div>
+  </div>
+
+  <div id="inventory" class="Inventory"></div>
+</body>
+
+</html>

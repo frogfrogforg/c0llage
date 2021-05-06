@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!-- caching -->
+  <meta name="turbo-cache-control" content="no-cache">
+
+  <!-- title -->
+  <title>welcome</title>
+
+  <!-- scrapers -->
+  <meta property="og:title" content="c0llage">
+  <meta property="og:type" content="FROGCUBE">
+  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
+  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
+  <meta property="og:description" content="In 1884, meridian time personnel met
+in Washington to change Forg time.
+First words said was that only 1 day
+could be used on Forg to not change
+the 1 day marshmallow">
+
+  <!-- styling -->
+  <link rel="stylesheet" href="forest.css">
+  <link rel="stylesheet" href="../shared/frames.css">
+
+  <!-- scripts -->
+  <script type="module" src="../../global.js"></script>
+  <script type="module" src="../shared/a-dumpling.js"></script>
+  <script type="module" src="../shared/d-iframe.js"></script>
+  <script type="module" src="../shared/c-picky.js"></script>
+  <script type="module" src="forest.js"></script>
+  <script src="./skills/stealth.js" defer></script>
+</head>
+
+<body class="Forest">
+  <div id="game">
+    <div class="ForestLayer--framed">
+      <main id="main" class="ForestLayer-content broider-4">
+        <style>
+    .swan {
+        position: absolute;
+        left: 20%;
+        top: 50%;
+        width: 30%;
+        height: 30%;
+    }
+
+    .speechbubble {
+        width: 69.69%;
+        height: 42.069%;
+        position: absolute;
+        border: 2px solid black;
+        border-radius: 50%;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .bubbletail {
+        width: 1%;
+        height: 1%;
+        position: absolute;
+        top: 90%;
+        left: 70%;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 20px solid black;
+        transform: skew(40deg) rotate(214deg);
+    }
+
+
+    .Frame-content {
+        /* background-color: rgba(0, 0, 0, 0); */
+    }
+</style>
+
+
+    <div style="overflow: hidden; width: 100%; height: 100%; position: absolute; top:0; left: 0;">
+
+        <iframe id="swanvideo" src="about:blank"
+            style="position: absolute; width: 100%; height: 100%; top:25%; left:0; z-index: 0; overflow: hidden;"></iframe>
+
+    </div>
+    <img class="background" src="./images/swan_lake.png">
+
+    <a-dumpling hidden temperament="sanguine" id="pwnd" x=15 y=25 width=30 height=25
+        bodyClass="transparentframe">
+        <div class="speechbubble">
+            <span>
+                u just got <a target="_blank" href='https://duckduckgo.com/?q="pwn`ed"'>
+                    PWN`ed
+                </a> n00b!
+            </span>
+            <div class="bubbletail"></div>
+        </div>
+    </a-dumpling>
+
+    <a-dumpling hidden id="gutter" x=55 y=62 width=30 height=25>
+        <d-iframe src='../../games/guttersour/WEB/index.html'></d-iframe>
+    </a-dumpling>
+
+    <button class="hotspot cursor-salad" onclick="Frames.show('gutter')"
+        style="left: 52%; top: 65.666%; width: 20%; height: 18%"></button>
+    <img id="swan" class="swan talk" onclick="window.onclickswan()" src="./images/swanglasses_shady.png">
+
+
+<script type="module">
+    let swanOpen = false
+    let swanY = 0
+    let clickedSwan = false
+    const swanFlySpeed = 0.25
+    window.onclickswan = function () {
+        if (!clickedSwan) {
+            document.getElementById('swanvideo').src = "https://archive.org/embed/SwanLakeDanceOfTheCygnets&autoplay=1"
+            clickedSwan = true
+        }
+        Frames.show('pwnd')
+
+        document.getElementById('swan').src =
+            !swanOpen
+                ? "./images/swanglasses_happy.png"
+                : "./images/swanglasses_shady.png"
+        swanOpen = !swanOpen
+
+        swanY -= swanFlySpeed
+        document.getElementById('swan').style.marginTop = swanY + '%'
+    }
+</script>
+      </main>
+    </div>
+
+    <div class="ForestLayer--overlay">
+      <section id="frames" class="ForestLayer-content"></section>
+    </div>
+  </div>
+
+  <div class="ForestLayer--overlay">
+    <section id="inventory" class="ForestLayer-content"></section>
+  </div>
+
+  <div class="ForestLayer--overlay">
+    <section class="ForestLayer-content">
+      <object type='image/svg+xml' data='./skills/istealth.svg' class='stealthIcon' id='stealthSVG' style="fill: none;">
+      </object>
+    </section>
+  </div>
+</body>
+
+</html>
