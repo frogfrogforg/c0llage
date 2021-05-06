@@ -43,7 +43,7 @@ function saveToState() {
       let iframe = child.querySelector("iframe");
       // TODO: ^ use a-dumpling.iframe property once that is being set correctly
 
-      let item = { id: child.id, src: iframe.src };
+      let item = { id: child.id, src: iframe && iframe.src };
       inventory.push(item);
       // console.log(item);
     }
