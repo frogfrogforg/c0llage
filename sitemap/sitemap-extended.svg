@@ -1224,13 +1224,13 @@
 <path fill="none" stroke="black" d="M2598.04,-849.178C2588.87,-839.291 2577.85,-826.248 2570,-813.22 2557.91,-793.152 2548.32,-768.294 2542.09,-749.791"/>
 <polygon fill="black" stroke="black" points="2545.4,-748.661 2538.98,-740.236 2538.75,-750.828 2545.4,-748.661"/>
 </g>
-<!-- ../ty.html -->
-<g id="node84" class="node"><title>../ty.html</title>
+<!-- ../ty/ty.html -->
+<g id="node84" class="node"><title>../ty/ty.html</title>
 <polygon fill="none" stroke="black" points="5075,-666.22 5009,-666.22 5009,-630.22 5075,-630.22 5075,-666.22"/>
-<text text-anchor="middle" x="5042" y="-644.52" font-family="Times New Roman,serif" font-size="14.00">../ty.html</text>
+<text text-anchor="middle" x="5042" y="-644.52" font-family="Times New Roman,serif" font-size="14.00">../ty/ty.html</text>
 </g>
-<!-- ../blogs/dumplings/dumplings.html&#45;&gt;../ty.html -->
-<g id="edge150" class="edge"><title>../blogs/dumplings/dumplings.html&#45;&gt;../ty.html</title>
+<!-- ../blogs/dumplings/dumplings.html&#45;&gt;../ty/ty.html -->
+<g id="edge150" class="edge"><title>../blogs/dumplings/dumplings.html&#45;&gt;../ty/ty.html</title>
 <path fill="none" stroke="black" d="M2719.63,-854.266C2735.5,-852.526 2751.68,-850.793 2767,-849.22 2937.96,-831.669 2981.6,-835.523 3152,-813.22 3342.83,-788.244 3395.17,-798.187 3579,-741.22 3617.37,-729.331 3621.89,-712.394 3661,-703.22 3947.68,-635.969 4693.01,-728.945 4999.09,-666.822"/>
 <polygon fill="black" stroke="black" points="4999.85,-670.24 5008.91,-664.743 4998.4,-663.392 4999.85,-670.24"/>
 </g>
@@ -1389,13 +1389,13 @@
 <ellipse fill="none" stroke="black" cx="5042" cy="-566.35" rx="114.28" ry="18"/>
 <text text-anchor="middle" x="5042" y="-562.65" font-family="Times New Roman,serif" font-size="14.00">https://www.indiebound.org/</text>
 </g>
-<!-- ../ty.html&#45;&gt;https://www.indiebound.org/ -->
-<g id="edge195" class="edge"><title>../ty.html&#45;&gt;https://www.indiebound.org/</title>
+<!-- ../ty/ty.html&#45;&gt;https://www.indiebound.org/ -->
+<g id="edge195" class="edge"><title>../ty/ty.html&#45;&gt;https://www.indiebound.org/</title>
 <path fill="none" stroke="black" d="M5036.32,-629.89C5035.22,-619.562 5034.97,-606.228 5035.57,-594.527"/>
 <polygon fill="black" stroke="black" points="5039.07,-594.614 5036.35,-584.373 5032.09,-594.072 5039.07,-594.614"/>
 </g>
-<!-- ../ty.html&#45;&gt;https://www.indiebound.org/ -->
-<g id="edge196" class="edge"><title>../ty.html&#45;&gt;https://www.indiebound.org/</title>
+<!-- ../ty/ty.html&#45;&gt;https://www.indiebound.org/ -->
+<g id="edge196" class="edge"><title>../ty/ty.html&#45;&gt;https://www.indiebound.org/</title>
 <path fill="none" stroke="black" d="M5047.68,-629.89C5048.78,-619.562 5049.03,-606.228 5048.43,-594.527"/>
 <polygon fill="black" stroke="black" points="5051.91,-594.072 5047.65,-584.373 5044.93,-594.614 5051.91,-594.072"/>
 </g>
@@ -1835,13 +1835,13 @@
 <path fill="none" stroke="black" d="M3570.55,-721.213C3879.04,-721.044 5817.08,-717.948 6402,-667.22 6615.3,-648.722 6669.9,-643.537 6878,-593.22 6884.96,-591.538 6892.19,-589.52 6899.31,-587.364"/>
 <polygon fill="black" stroke="black" points="6900.43,-590.682 6908.93,-584.357 6898.34,-584.001 6900.43,-590.682"/>
 </g>
-<!-- ..\ty.html -->
-<g id="node120" class="node"><title>..\ty.html</title>
+<!-- ..\ty\ty.html -->
+<g id="node120" class="node"><title>..\ty\ty.html</title>
 <polygon fill="none" stroke="black" points="4991,-666.22 4929,-666.22 4929,-630.22 4991,-630.22 4991,-666.22"/>
 <text text-anchor="middle" x="4960" y="-644.52" font-family="Times New Roman,serif" font-size="14.00">..ty.html</text>
 </g>
-<!-- ..\home.html&#45;&gt;..\ty.html -->
-<g id="edge220" class="edge"><title>..\home.html&#45;&gt;..\ty.html</title>
+<!-- ..\home.html&#45;&gt;..\ty\ty.html -->
+<g id="edge220" class="edge"><title>..\home.html&#45;&gt;..\ty\ty.html</title>
 <path fill="none" stroke="black" d="M3570.9,-711.745C3587.09,-708.467 3605.83,-705.137 3623,-703.22 4104.28,-649.518 4228.41,-692.753 4712,-667.22 4784.69,-663.382 4869.22,-656.791 4918.46,-652.738"/>
 <polygon fill="black" stroke="black" points="4919.03,-656.203 4928.71,-651.889 4918.45,-649.227 4919.03,-656.203"/>
 </g>
@@ -2184,13 +2184,13 @@
 <path fill="none" stroke="black" d="M6963.28,-548.016C6965.88,-535.679 6967.87,-518.857 6968.51,-504.75"/>
 <polygon fill="black" stroke="black" points="6972.01,-504.682 6968.72,-494.61 6965.01,-504.534 6972.01,-504.682"/>
 </g>
-<!-- ..\ty.html&#45;&gt;https://www.indiebound.org/ -->
-<g id="edge227" class="edge"><title>..\ty.html&#45;&gt;https://www.indiebound.org/</title>
+<!-- ..\ty\ty.html&#45;&gt;https://www.indiebound.org/ -->
+<g id="edge227" class="edge"><title>..\ty\ty.html&#45;&gt;https://www.indiebound.org/</title>
 <path fill="none" stroke="black" d="M4972.11,-629.89C4982.56,-618.537 4997.76,-603.551 5011.39,-591.095"/>
 <polygon fill="black" stroke="black" points="5014.08,-593.383 5019.19,-584.1 5009.41,-588.172 5014.08,-593.383"/>
 </g>
-<!-- ..\ty.html&#45;&gt;https://www.indiebound.org/ -->
-<g id="edge228" class="edge"><title>..\ty.html&#45;&gt;https://www.indiebound.org/</title>
+<!-- ..\ty\ty.html&#45;&gt;https://www.indiebound.org/ -->
+<g id="edge228" class="edge"><title>..\ty\ty.html&#45;&gt;https://www.indiebound.org/</title>
 <path fill="none" stroke="black" d="M4983.47,-629.89C4996.13,-618.719 5011.41,-604.031 5023.28,-591.696"/>
 <polygon fill="black" stroke="black" points="5025.86,-594.053 5030.17,-584.373 5020.77,-589.255 5025.86,-594.053"/>
 </g>
