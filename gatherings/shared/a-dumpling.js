@@ -202,7 +202,7 @@ export class Dumpling extends HTMLParsedElement {
     //#region focus logic
     this.bringToTop()
 
-    if (!this.hasAttribute('focused')) {
+    if (!this.hasAttribute('focused') && !this.focused) {
       this.classList.toggle(kUnfocusedClass, true)
     }
     //#endregion
@@ -377,6 +377,7 @@ export class Dumpling extends HTMLParsedElement {
     if (!this.visible) return
     this.style.zIndex = window.Frames.topZIndex++
     window.dispatchEvent(new Event('new-top-frame'))
+    this.focused = true
     this.classList.toggle(kUnfocusedClass, false)
     const iframe = this.findIframe()
     if (iframe != null) {

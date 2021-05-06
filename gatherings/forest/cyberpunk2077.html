@@ -1,4 +1,5 @@
 <head>
+  <script type="module" src="../../global.js"></script>
   <style>
     body {
       height: 100%;
@@ -49,11 +50,16 @@
       clearTimeout(timeoutId);
       //timeoutId = setTimeout(randomize, 3000);
     }
+
+    function clicky() {
+      randomize();
+      d.State.clickedCyberpunk2077 = true;
+    }
   </script>
 </head>
 
 <body onload="randomize()">
   <div class="container">
-    <pre id="text" onclick="randomize()"></pre>
+    <pre id="text" onclick="clicky()"></pre>
   </div>
 </body>
