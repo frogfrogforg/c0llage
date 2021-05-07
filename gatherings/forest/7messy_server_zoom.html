@@ -1,0 +1,101 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!-- caching -->
+  <meta name="turbo-cache-control" content="no-cache">
+
+  <!-- title -->
+  <title>welcome</title>
+
+  <!-- scrapers -->
+  <meta property="og:title" content="c0llage">
+  <meta property="og:type" content="FROGCUBE">
+  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
+  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
+  <meta property="og:description" content="In 1884, meridian time personnel met
+in Washington to change Forg time.
+First words said was that only 1 day
+could be used on Forg to not change
+the 1 day marshmallow">
+
+  <!-- styling -->
+  <link rel="stylesheet" href="forest.css">
+  <link rel="stylesheet" href="../shared/frames.css">
+
+  <!-- scripts -->
+  <script type="module" src="../../global.js"> </script>
+  <script type="module" src="../shared/draggable-frame.js"></script>
+  <script type="module" src="../shared/d-iframe.js"></script>
+  <script type="module" src="forest.js"></script>
+</head>
+
+<body>
+  <div id="game">
+    <div class="container">
+      <main id="main" class="content">
+        <!-- page -->
+            <style>
+        .CustomFrameBody {
+            background-color: blue;
+            font-size: 8em;
+        }
+
+        .CustomFrameBody a {
+            color: yellow;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+
+    <img class="background" src="./images/messyserver_screen.jpg">
+    </img>
+
+    <a class="hotspot inspect" href="javascript:void(0)" onclick="openNarrative()"
+        style="left: 22.27%; top: 21.61%; width: 44.49%; height: 37.32%">
+    </a>
+    <section id="frames" class="Frames">
+        <draggable-frame hidden persistent id="narrative" x=25 y=27.5 width=40 height=29>
+            <d-iframe autoload src="../../Jen/narrative.html"> </d-iframe>
+        </draggable-frame>
+        <draggable-frame temperament='sanguine' id="button" x=110 y=5 width=30 height=90
+            bodyClass="CustomFrameBody">
+            <a class="hotspot move" href="./6messy_server_screen.html">
+                <div>
+                    B
+                </div>
+                <div>
+                    A
+                </div>
+                <div>
+                    C
+                </div>
+                <div>
+                    K
+                </div>
+            </a>
+        </draggable-frame>
+    </section>
+
+
+<script>
+    function openNarrative() {
+        if (!d.State.sawMessyServerNarrative) {
+            d.State.sawMessyServerNarrative = true
+        }
+
+        Frames.toggle('narrative')
+    }
+</script>
+        <!-- frames -->
+        <section id="frame$" class="Frames"></section>
+      </main>
+    </div>
+  </div>
+
+  <div id="inventory" class="Inventory"></div>
+</body>
+
+</html>

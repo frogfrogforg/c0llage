@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
   <meta charset="UTF-8">
@@ -26,38 +25,29 @@ the 1 day marshmallow">
   <link rel="stylesheet" href="../shared/frames.css">
 
   <!-- scripts -->
-  <script type="module" src="../../global.js"></script>
-  <script type="module" src="../shared/a-dumpling.js"></script>
+  <script type="module" src="../../global.js"> </script>
+  <script type="module" src="../shared/draggable-frame.js"></script>
   <script type="module" src="../shared/d-iframe.js"></script>
-  <script type="module" src="../shared/c-picky.js"></script>
   <script type="module" src="forest.js"></script>
-  <script src="./skills/stealth.js" defer></script>
 </head>
 
-<body class="Forest">
+<body>
   <div id="game">
-    <div class="ForestLayer--framed">
-      <main id="main" class="ForestLayer-content broider-4">
-        {{content}}
+    <div class="container">
+      <main id="main" class="content">
+        <!-- page -->
+        
+    <img class="background" src="./images/2.png"></img>
+    <a class="hotspot move" href="./1.html" style="left: 15%; top: 85%; width: 70%; height: 15%"></a>
+    <a class="hotspot inspect" href="./3.html" style="left: 39.555%; top: 40.000%; width: 27.000%; height: 18.222%"></a>
+    <a class="hotspot move" href="./10forest_edge.html" style="left: -3%; top: 0%; width: 8%; height: 80%"></a>
+        <!-- frames -->
+        <section id="frame$" class="Frames"></section>
       </main>
     </div>
-    <div class="ForestLayer--overlay">
-      <section id="frames" class="ForestLayer-content"></section>
-    </div>
-  </div>
   </div>
 
-
-  <div class="ForestLayer--overlay">
-    <section id="inventory" class="ForestLayer-content"></section>
-  </div>
-
-  <div class="ForestLayer--overlay">
-    <section class="ForestLayer-content">
-      <object type='image/svg+xml' data='./skills/istealth.svg' class='stealthIcon' id='stealthSVG' style="fill: none;">
-      </object>
-    </section>
-  </div>
+  <div id="inventory" class="Inventory"></div>
 </body>
 
 </html>
