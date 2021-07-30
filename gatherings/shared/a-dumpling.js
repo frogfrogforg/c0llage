@@ -254,30 +254,26 @@ export class Dumpling extends HTMLParsedElement {
       return null
     }
 
-    let width = 0
-    if (this.getAttribute('width')) {
-      width = this.attributes.width.value
-    } else {
+    let width = fallbackAttributes('width', 'w')
+    if (width == null) {
       const minSize = parseFloat(fallbackAttributes(
-        'min-width', 'width-min', 'min-size', 'size-min'))
+        'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
         || FrameRng.MinSize
       const maxSize = parseFloat(fallbackAttributes(
-        'max-width', 'max-size', 'size-max'))
+        'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
         || FrameRng.MaxSize
       width = (minSize + Math.random() * (maxSize - minSize))
     }
 
     this.style.width = width + '%'
 
-    let height = 0
-    if (this.attributes.height) {
-      height = this.attributes.height.value
-    } else {
+    let height = fallbackAttributes('height', 'h')
+    if (height == null) {
       const minSize = parseFloat(fallbackAttributes(
-        'min-height', 'height-min', 'min-size', 'size-min'))
+        'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
         || FrameRng.MinSize
       const maxSize = parseFloat(fallbackAttributes(
-        'max-height', 'height-max', 'max-size', 'size-max'))
+        'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
         || FrameRng.MaxSize
       height = (minSize + Math.random() * (maxSize - minSize))
     }
