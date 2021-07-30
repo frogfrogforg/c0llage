@@ -8,11 +8,11 @@ let raised = new Set()
 export const Events = {
   // -- commands --
   listen(name, listener) {
-    root.addEventListener(name, (e) => listener(e.detail.value))
+    root.addEventListener(name, (e) => listener(e.detail))
   },
   raise(name, value) {
     raised.add(name)
-    console.log(`Raising event: ${name}`)
+    console.log(`Raising event: ${name} with ${value}`)
     root.dispatchEvent(new CustomEvent(name, { detail: value || false }))
   },
   // -- constants --
