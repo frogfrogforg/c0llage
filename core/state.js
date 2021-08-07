@@ -9,7 +9,9 @@ const initialState = {
   visitedPrometeus: false,
   teeth: 0,
   stealthy: false,
-  stoleFrogFrame: false
+  stoleFrogFrame: false,
+  inventory: [],
+  referrer: ""
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
@@ -19,7 +21,7 @@ const state = JSON.parse((window.localStorage.getItem("state") || "false")) || i
 // by `clear`.
 Object.setPrototypeOf(state, {
   save() {
-    console.log('saving state', state)
+    onBeforeSaveStateListeners.forEach(listener => listener());
     window.localStorage.setItem("state", JSON.stringify(state))
   },
   listen(property, callback) {
@@ -29,22 +31,28 @@ Object.setPrototypeOf(state, {
     )
   },
   clear() {
-    Object.keys(state).forEach(k => delete state[k])
+    Object.keys(state).forEach(k => state[k] = null)
+    Object.keys(initialState).forEach(k => ProxyState[k] = initialState[k])
     this.save()
   }
 })
 
 // proxy get/set for unknown keys to the state object
-export const State = new Proxy(state, {
+const ProxyState = new Proxy(state, {
   get(target, prop) {
     return Reflect.get(target, prop)
   },
   set(target, prop, value) {
     const r = Reflect.set(target, prop, value)
-    Events.raise(Events.getStateChangeEvent(prop))
+    if(initialState[prop] == null) {
+      console.error(`please define state properties on the initialState on core/state.js, property: ${prop}`)
+    }
+    Events.raise(Events.getStateChangeEvent(prop), value)
     return r
   },
 })
+
+export { ProxyState as State }
 
 const onBeforeSaveStateListeners = [];
 
@@ -57,8 +65,4 @@ export const addOnBeforeSaveStateListener = (listener) => {
   onBeforeSaveStateListeners.push(listener);
 }
 
-// -- events --
-window.top.addEventListener("beforeunload", () => {
-  onBeforeSaveStateListeners.forEach(listener => listener());
-  State.save()
-})
+

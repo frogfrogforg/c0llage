@@ -5,6 +5,12 @@
       font-size: 16px;
       overflow-y: scroll;
   }
+  .lethe {
+      background-color: midnightblue;
+      color: aliceblue;
+      font-size: 16px;
+      overflow-y: scroll;
+  }
   a:link {
     color: black;
     text-decoration: underline;
@@ -22,6 +28,14 @@
     <a-dumpling hidden id="words" x=10 y=15 width=40 height=15 bodyClass="words">
       <p>you find yourself blankly staring at some <a href="./260flowers.html">flowers</a></p>
     </a-dumpling>
+
+    <a-dumpling hidden id="lethe" x=58 y=82 width=40 height=15 bodyClass="lethe">
+      <p>you come upon a river. it looks cold</p>
+      <p>staring into midnight blue water you realize you're sick at looking at flowers. in fact, you're sick of this whole place, sick of all these discordant creatures who don't care about you, sick of not ever knowing quite where you are</p>
+      <p>you just want to go back home and and take a nap</p>
+      <p></p>
+      <p><a href="./welcome.html">drink to forget</a></p>
+    </a-dumpling>
 </body>
 
 <script> 
@@ -30,6 +44,11 @@
       Frames.show('words');
   }
 
+  function showLethe() {
+      Frames.show('lethe');
+  }
+
   setTimeout(showWords, 3*1000);
+  setTimeout(showLethe, 60*1000);
 
 </script>
