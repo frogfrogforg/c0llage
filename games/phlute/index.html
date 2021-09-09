@@ -22,12 +22,13 @@
       nooscillator.connect(gainNode)
       gainNode.connect(audioCtx.destination);
       gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+      var notes = [523.25, 587.33, 659.25, 783.99, 880]
       // create Oscillator node
       for(let i = 0; i < 5; i++) {
         const oscGainNode = audioCtx.createGain();
         const oscillator = audioCtx.createOscillator();
         oscillator.type = 'square';
-        oscillator.frequency.setValueAtTime(480 + 40 * i, audioCtx.currentTime); // value in hertz
+        oscillator.frequency.setValueAtTime(notes[i], audioCtx.currentTime); // value in hertz
         oscillator.connect(oscGainNode);
         oscGainNode.connect(gainNode)
         oscillator.start();
@@ -49,8 +50,7 @@
 
         var average = values / length;
 
-        gainNode.gain.setValueAtTime(average/50, audioCtx.currentTime);
-
+        gainNode.gain.setValueAtTime((average-10)/50, audioCtx.currentTime);
       }
     })
     .catch(function (err) {
