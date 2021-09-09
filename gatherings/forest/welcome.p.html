@@ -62,9 +62,7 @@
 <script>
     // TODO: I absolutely hate this, but I am tired and I cant figure out another way to make this thing show when coming from another window
     setTimeout(() => {
-        console.log('coisando')
         const hash = window.location.hash.slice(1)
-        console.log(hash)
         if (hash === 'gamermode') {
             Frames.toggle('speedrun')
         }

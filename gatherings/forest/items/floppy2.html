@@ -1,0 +1,38 @@
+<head>
+  <script>
+  function mydragstart(e) {
+   //e.dataTransfer.setData(format, 'Dragme');
+    //e.dataTransfer.effectAllowed = dragEffect;
+
+    var target = e.target;
+    console.log(target)
+    target.style.backgroundColor = 'pink';
+    target.style.cursor = 'grabbing';
+
+    //return true;
+  }
+
+  function mydragend(e) {
+    var target = e.target;
+    target.style.backgroundColor = '';
+    target.style.cursor = 'pointer';
+    //return true;
+  }
+  </script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #990099;
+    }
+
+    #floppy {
+      display: block;
+    }
+  </style>
+</head>
+
+<body class="floppyBody">
+  <span id="floppy" ondragend="mydragend(event)" ondragstart="mydragstart(event)" draggable="true">Drag Me</span>
+</body>

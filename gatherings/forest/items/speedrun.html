@@ -88,7 +88,7 @@
     if (hours <= 0) {
       return `${minutes}:${seconds}`;
     } else {
-      hours = (hours).slice(-2);
+      hours = ('' + hours).slice(-2);
       return `${hours}:${minutes}:${seconds}`;
     }
   }

@@ -24,7 +24,6 @@ function main() {
   kInventory.loadFromState();
   addOnBeforeSaveStateListener(kInventory.saveToState)
 
-
   // bind events
   addEventListener("beforeunload", didRefresh)
   document.addEventListener("turbo:before-visit", didStartVisit)
@@ -107,6 +106,7 @@ function didChangeState() {
 
 function didRefresh(evt) {
   evt.preventDefault()
+  d.State.save()
   return evt.returnValue = "don't leave gamer"
 }
 

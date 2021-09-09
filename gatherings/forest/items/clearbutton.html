@@ -1,0 +1,69 @@
+<head>
+  <link rel="stylesheet" href="../forest.css">
+  <script type="module" src="../../shared/a-dumpling.js"></script>
+  <script type="module" src="../../shared/d-iframe.js"></script>
+  <link rel="stylesheet" href="../../shared/frames.css">
+  <style>
+    html,
+    body {
+      position: relative;
+      top: 0;
+      left: 0;
+      margin: 0;
+    }
+
+    .clearbutton {
+      /* color: red; */
+      font-size: 15vmin;
+      /* background-color: darkblue; */
+      background-color: black;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clearbutton button {
+      /* color: red; */
+      font-size: 50vmin;
+      width: 100%;
+      height: 100%;
+      overflow: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .clearbutton-body {
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .clearbutton-content {}
+  </style>
+</head>
+
+<script type="module">
+  import '../../../global.js'
+  window.clearState = function () {
+    if (window.confirm("Are you sure? The park will consume all your leftovers")) {
+      d.State.clear();
+      window.top.location.href = "https://frogfrogforg.itch.io/super-cosmodrome"
+    }
+  }
+</script>
+
+<body class='clearbutton-body'>
+  <div class='clearbutton'>
+    <button onclick='clearState()'>
+      <div class='clearbutton-content'>♻️</div>
+    </button>
+  </div>
+</body>
