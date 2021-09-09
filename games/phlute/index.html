@@ -1,0 +1,94 @@
+<body>
+
+<script>
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscGains = []
+  
+
+  let btns = [false, false, false, false, false]
+  navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+    .then(function (stream) {
+      audioContext = new AudioContext();
+      analyser = audioContext.createAnalyser();
+      microphone = audioContext.createMediaStreamSource(stream);
+      javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+      analyser.smoothingTimeConstant = 0.8;
+      analyser.fftSize = 1024;
+
+      const gainNode = audioCtx.createGain();
+      const nooscillator = audioCtx.createOscillator();
+      nooscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // value in hertz
+      nooscillator.connect(gainNode)
+      gainNode.connect(audioCtx.destination);
+      gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+      // create Oscillator node
+      for(let i = 0; i < 5; i++) {
+        const oscGainNode = audioCtx.createGain();
+        const oscillator = audioCtx.createOscillator();
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(480 + 40 * i, audioCtx.currentTime); // value in hertz
+        oscillator.connect(oscGainNode);
+        oscGainNode.connect(gainNode)
+        oscillator.start();
+        oscGains.push(oscGainNode)
+      }
+
+      microphone.connect(analyser);
+      analyser.connect(javascriptNode);
+      javascriptNode.connect(audioContext.destination);
+      javascriptNode.onaudioprocess = function () {
+        var array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        var values = 0;
+
+        var length = array.length;
+        for (var i = 0; i < length; i++) {
+          values += (array[i]);
+        }
+
+        var average = values / length;
+
+        gainNode.gain.setValueAtTime(average/50, audioCtx.currentTime);
+
+      }
+    })
+    .catch(function (err) {
+      /* handle the error */
+    });
+    
+    
+    window.addEventListener('load', function() {
+
+    let flute = document.getElementById("flute")
+      for(let i = 0; i < 5; i++) {
+        let btn = document.createElement('button')
+        btn.innerHTML = "O"
+        btn.style.width = '100%'
+        btn.style.height = '100%'
+        btn.onpointerdown = function() {
+          console.log("AAAAAA" + i)
+          oscGains[i].gain.setValueAtTime(1, audioCtx.currentTime);
+        }
+        btn.onpointerup = function() {
+          console.log("BBBBB" + i)
+          oscGains[i].gain.setValueAtTime(0, audioCtx.currentTime);
+        }
+        flute.appendChild(btn)
+      }
+    })
+</script>
+<style>
+  .fluteholes {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+<div id="flute" class="fluteholes">
+</div>
+
+</body>
