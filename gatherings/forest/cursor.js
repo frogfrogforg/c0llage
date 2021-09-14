@@ -1,3 +1,7 @@
+// -- constants --
+const kDefaultCursorUrl = "url(./images/cursors/cursor_pointer.svg)"
+
+// -- impls --
 class Cursor {
   // -- props --
   // the active cursor element, if any
@@ -7,6 +11,7 @@ class Cursor {
   $hit = null
 
   // -- commands --
+  // show the cursor, if necessary
   show() {
     // if not already visible
     if (this.$el != null) {
@@ -24,10 +29,16 @@ class Cursor {
     // use pointer events to move the virtual cursor
     document.addEventListener("pointerdown", this.onPointerDown)
     document.addEventListener("turbo:before-visit", this.onBeforeVisit)
+    document.addEventListener("turbo:after-visit", this.onAfterVisit)
 
+    // store props
     this.$el = $cursor
+
+    // set initial cursor
+    this.syncCursor()
   }
 
+  // move the cursor to a position and update its cursor
   moveTo(x, y) {
     const $el = this.$el
     if ($el == null) {
@@ -39,10 +50,18 @@ class Cursor {
     $el.style.top = `${y}px`
 
     // update the cursor style from the element
-    $el.style.background = this.getCursorUrl()
+    this.syncCursor()
+  }
+
+  // update the current cursor image
+  syncCursor() {
+    if (this.$el != null) {
+      this.$el.style.backgroundImage = this.getCursorUrl()
+    }
   }
 
   // -- queries --
+  // if the element be clicked virtually
   isVirtualizable($hit) {
     return (
       $hit.tagName === "A" ||
@@ -50,12 +69,15 @@ class Cursor {
     )
   }
 
+  // infer the current cursor url from hit target
   getCursorUrl() {
+    // if no hit target, use the default
     const $hit = this.$hit
     if ($hit == null) {
-      return ""
+      return kDefaultCursorUrl
     }
 
+    // otherwise try and extract the hit's cursor url
     const hitStyle = document.defaultView.getComputedStyle($hit)
     const hitCursorUrl = hitStyle.cursor.match(/url\([^\)]*\)/)
 
@@ -63,7 +85,7 @@ class Cursor {
       return hitCursorUrl[0]
     }
 
-    return ""
+    return kDefaultCursorUrl
   }
 
   cancelEvent(evt) {
@@ -100,17 +122,20 @@ class Cursor {
     }
 
     // move the cursor
-    this.moveTo(x, y, $hit)
+    this.moveTo(x, y)
   }
 
   onBeforeVisit = (evt) => {
-    if (this.$el == null) {
-      return
-    }
-
     // prevent navigation
-    if (this.$hit != null) {
+    if (this.$el != null && this.$hit != null) {
       this.cancelEvent(evt)
+    }
+  }
+
+  onAfterVisit = (evt) => {
+    // reset cursor
+    if (this.$el != null && this.$hit != null) {
+      this.syncCursor()
     }
   }
 }
