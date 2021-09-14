@@ -136,6 +136,17 @@
       }
     }
 
+/* virtual cursor */
+.Cursor {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    background: magenta;
+    pointer-events: none;
+    transition: 0.3s ease-in-out;
+    transition-property: top left;
+}
+
 /* cursors */
 .cursor-inspect,
 .inspect {

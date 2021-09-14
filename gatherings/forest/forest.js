@@ -1,5 +1,6 @@
 import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
+import { kCursor } from "./cursor.js"
 import { kInventory } from "./inventory.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
 
@@ -20,7 +21,10 @@ function main() {
   // capture elements
   $mGame = document.getElementById("game")
 
-  // inventory (persistent windows) loading and saving:
+  // add cursor
+  kCursor.show()
+
+  // inventory (persistent windows) loading and saving
   kInventory.loadFromState();
   addOnBeforeSaveStateListener(kInventory.saveToState)
 
@@ -32,7 +36,7 @@ function main() {
 }
 
 // -- commands --
-async function renderGame(nextBody) {
+function renderGame(nextBody) {
   // get the game element to replace
   const nextGame = nextBody.querySelector("#game") || nextBody
 
@@ -44,9 +48,6 @@ async function renderGame(nextBody) {
   for (const child of Array.from(nextGame.children)) {
     $mGame.appendChild(child)
   }
-
-  // wait a frame to activate scripts
-  // await frames(1)
 
   // ivate any inert script tags in the new game
   const scripts = $mGame.querySelectorAll("script")
@@ -69,19 +70,17 @@ function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
-    if(el.href == null) return
+    if (el.href == null) return
     el.href = randomizeUrl(el.href)
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
   iframes.forEach((el) => {
-    console.log(el.id)
     el.src = randomizeUrl(el.src)
   })
 
   var dframes = Array.from(document.getElementsByTagName('d-iframe'))
   dframes.forEach((el) => {
-    console.log(el.id)
     el.setAttribute("src", randomizeUrl(el.getAttribute("src")))
   })
 }
@@ -95,7 +94,7 @@ function randomizeUrl(str) {
   const [path, search] = str.split("?")
   const params = new URLSearchParams(search)
   params.append("r", Math.random().toString().slice(2))
-  window.top.console.log("randomizing url", params.toString())
+
   return `${path}?${params.toString()}`
 }
 
@@ -118,25 +117,6 @@ function didCatchRender(evt) {
   evt.preventDefault()
   // render new game
   renderGame(evt.detail.newBody)
-}
-
-// -- utils --
-function frames(count) {
-  return new Promise((res, _) => {
-    let i = -1
-
-    function loop() {
-      i++
-
-      if (i === count) {
-        res()
-      } else {
-        requestAnimationFrame(loop)
-      }
-    }
-
-    loop()
-  })
 }
 
 // -- bootstrap --
