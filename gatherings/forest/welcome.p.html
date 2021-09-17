@@ -57,6 +57,56 @@
     <a-dumpling temperament='choleric' id='speedrun' persistent hidden x=110 y=00 width=40 height=90>
         <iframe src='./items/speedrun.html'></iframe>
     </a-dumpling>
+
+    <a-dumpling temperament='choleric' persistent x=105 y=65 width=40 height=40>
+        <div>
+            <script type="module">
+                import { kInventory } from "./inventory.js"
+                const assistant = document.getElementById('virtual-assistant')
+                let clickCount = 0
+                const phrases = [
+                    "Hello friend, feel free to ask for help whenever you feel lost",
+                    "I am here to give you peace and tranquility",
+                    "Click around, look for changed in your cursor, find friends, and most importantly, live the experience, theres's nothing to understand, really"
+                ]
+                function onNoPhrase(i) {
+                    return `You clicked me ${i} times before`
+                }
+                function OnClickAssitant(e) {
+                    const invRect = document.getElementById('inventory').getBoundingClientRect()
+                    const selfRect = assistant.getBoundingClientRect()
+                    const xOffset = -20
+                    const yOffset = -20 + (clickCount % 10) * 20
+                    const x = (xOffset + selfRect.right - invRect.left) / invRect.width * 100
+                    const y = (yOffset + selfRect.top - invRect.top) / invRect.height * 100
+                    kInventory.add({
+                        id: 'assistant' + clickCount,
+                        html: `
+                            <a-dumpling persistent temperament="phlegmatic" x=${x} y=${y} width=20 height=20>
+                                <div>
+                                    ${clickCount < phrases.length ? phrases[clickCount] : onNoPhrase(clickCount)}
+                                </div>
+                            </a-dumpling>
+                        `
+                    })
+                    clickCount++
+                }
+                assistant.onclick = OnClickAssitant;
+            </script>
+            <style>
+                .virtual-assistant {
+                    cursor: help;
+                }
+                .virtual-assistant img {
+                    width: 100%;
+                    height: 100%;
+                }
+            </style>
+            <div class='virtual-assistant'>
+                <img id='virtual-assistant' src="../../d/img/irene.gif">
+            </div>
+        </div>
+    </a-dumpling>
 </body>
 
 <script>
