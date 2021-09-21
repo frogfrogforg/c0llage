@@ -147,7 +147,7 @@
     background-size: contain;
     background-repeat: no-repeat;
     transition: 0.5s cubic-bezier(.56,1.34,.65,.97);
-    transition-property: top left;
+    transition-property: top, left;
     pointer-events: none;
 }
 
