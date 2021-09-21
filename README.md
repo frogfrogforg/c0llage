@@ -9,6 +9,11 @@ live @ https://nostalgic-engelbart.netlify.app/
 
 ## [Documentation](./docs/index.md)
 
+To build the website and start a local server:
+```
+npm start
+```
+
 ## Events
 
   [This page](Events.md) describes how to use the event system we currently have in place.
