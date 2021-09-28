@@ -1,4 +1,10 @@
 // -- constants --
+// the css class
+const kClassCursor = "Cursor"
+
+// the css class for the animation
+const kClassCursorBin = "Cursor--inBin"
+
 // the default cursor style when nothing is hit
 const kDefaultCursorStyle = {
   backgroundImage: "url(./images/cursors/cursor_pointer.svg)"
@@ -19,12 +25,20 @@ class Cursor {
   // the current move -- { id: int, end: float }
   move = null
 
-  // the move duration
-  moveDuration = 0.0
+  // the transition animation duration
+  animDuration = 0.0
 
   // -- commands --
+  toggle(x, y) {
+    if (this.$el == null) {
+      this.grab(x, y)
+    } else {
+      this.return(x, y)
+    }
+  }
+
   // show the cursor, if necessary
-  show() {
+  grab(x, y) {
     // if not already visible
     if (this.$el != null) {
       return
@@ -32,7 +46,7 @@ class Cursor {
 
     // create a new cursor
     const $cursor = document.createElement("div")
-    $cursor.classList.add("Cursor")
+    $cursor.classList.add(kClassCursor, kClassCursorBin)
 
     // and append it
     const $parent = document.body
@@ -49,10 +63,37 @@ class Cursor {
 
     // store props
     this.$el = $cursor
-    this.moveDuration = duration
+    this.animDuration = duration
 
     // apply default style
+    this.moveTo(x, y)
     this.syncCursorStyle()
+
+    // run the animation
+    requestAnimationFrame(() => {
+      $cursor.classList.remove(kClassCursorBin)
+    })
+  }
+
+  return(x, y) {
+    // if not already hidden
+    const $el = this.$el
+    if ($el == null) {
+      return
+    }
+
+    // put the cursor back in the bin
+    $el.classList.add(kClassCursorBin)
+
+    setTimeout(() => {
+      const parent = $el.parentElement
+      if (parent != null) {
+        parent.removeChild($el)
+      }
+    }, this.animDuration * 1000)
+
+    // and clear it
+    this.$el = null
   }
 
   // move the cursor to a position and update its cursor
@@ -74,7 +115,7 @@ class Cursor {
     // start a new move, polling for cursor
     this.move = {
       id: requestAnimationFrame(this.onPollCursorAtPos),
-      end: new Date() + this.moveDuration,
+      end: new Date() + this.animDuration,
     }
   }
 

@@ -1,6 +1,5 @@
 import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
-import { kCursor } from "./cursor.js"
 import { kInventory } from "./inventory.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
 
@@ -20,9 +19,6 @@ function main() {
 
   // capture elements
   $mGame = document.getElementById("game")
-
-  // add cursor
-  kCursor.show()
 
   // inventory (persistent windows) loading and saving
   kInventory.loadFromState();

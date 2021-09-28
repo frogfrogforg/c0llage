@@ -139,17 +139,20 @@
 /* virtual cursor */
 .Cursor {
     position: fixed;
-    width: 48px;
-    height: 48px;
-    top: 105vmax;
-    left: 50%;
-    font-size: 48px;
+    width: 52px;
+    height: 52px;
+    font-size: 52px;
     background-position: top -5px left -5px;
     background-size: contain;
     background-repeat: no-repeat;
     transition: 0.5s cubic-bezier(.56,1.34,.65,.97);
-    transition-property: top, left;
+    transition-property: top, left, transform;
+    transform: none;
     pointer-events: none;
+}
+
+.Cursor--inBin {
+    transform: scale(0.0) rotate(180deg)
 }
 
 /* cursors */
