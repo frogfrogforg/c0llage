@@ -1,0 +1,108 @@
+<html>
+<head>
+    <style>
+        body{
+            color:#222222;
+            background:#ffefcd;
+            font-family:georgia;
+            margin:4.20%;
+            font-size: 4vmin;
+            
+        }
+
+        .junk-display{
+            padding:2%;
+            border:1px solid black;
+            width: 70vmin;
+            height:37vmin;
+            cursor:crosshair;
+        }
+
+/* REMEMBERTHIS!!! You can use this to select specific words */
+        /* .junk-item:nth-child(3){
+            border:4px red solid;
+        } */
+
+        .junk-item{
+            color:transparent;
+            user-select: none;
+            transition: color 6.9s linear 0s;
+            /* animation:hide 6.9s linear;
+            animation-iteration-count: 1; */
+            display:inline-block;
+            margin-left:1.2%;
+        }
+
+        .junk-item:hover{
+            color:#222222;
+            animation: reveal .420s linear;
+            animation-iteration-count:1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes reveal{
+            0%      {color:#e7e7e7;}
+            100%    {color:#222222;}
+        }
+
+        @keyframes hide{
+            0%      {color:#222222}
+            100%    {color:transparent}
+        }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <!-- first box -->
+<section id="firstbox">
+    <div class="junk-src0">Some some text to text in the area in texting & here. Here is where in the area there is some text text that is here here is that text that text that text. In time & in place & in text & in testing texting text & here.
+    </div>
+    <div class="junk-src1">How is it.</div>
+
+    <div class="junk-display">
+        <div class="p0"></div><br>
+        <div class="p1"></div>
+    </div>
+
+
+    <script>
+        // MOVE WORDS FROM SRCX TO PX
+        function junk(source, target){
+            var words = $("div." + source).text().split(" ");
+            var num;
+
+            $("div." + source).empty();
+            
+            $.each(words, function(i, v) {
+                $("div." + target).append($("<span class='junk-item " + target + "'>" + words +"</span>").text(v));
+            });
+        }
+
+        junk("junk-src0", "p0");
+        junk("junk-src1", "p1");
+
+        // RANDOMIZE FRAGMENTS
+
+        // function fragment(target, start, end, amount){
+        //     $(target + (":nth-child(n+" + start + "):nth-child(-n+" + end + ")").css({"color" : "#222222", "transition:" : "0"})
+        
+
+
+        // parts to this function:
+        // find appropriate span class - find a range of nth-children in span class - select a number of them - make them always visible
+
+    </script>
+</section>
+
+    <!-- second box -->
+<section id="secondbox">
+
+
+</section>
+</body>
+
+</html>

@@ -136,10 +136,29 @@
       }
     }
 
+/* virtual cursor */
+.Cursor {
+    position: fixed;
+    width: 52px;
+    height: 52px;
+    font-size: 52px;
+    background-position: top -5px left -5px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: 0.5s cubic-bezier(.56,1.34,.65,.97);
+    transition-property: top, left, transform;
+    transform: none;
+    pointer-events: none;
+}
+
+.Cursor--inBin {
+    transform: scale(0.0) rotate(180deg)
+}
+
 /* cursors */
 .cursor-inspect,
 .inspect {
-    cursor:url("../shared/img/inspect.png") 16 0, auto;
+    cursor: url("../shared/img/inspect.png") 16 0, auto;
 }
 
 .cursor-talk,
@@ -153,69 +172,69 @@
 }
 
 .cursor-haunt {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">👻</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">👻</text></svg>'), auto;
 }
 
 .cursor-salad {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🥗</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🥗</text></svg>'), auto;
 }
 
 .cursor-gift {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🎁</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🎁</text></svg>'), auto;
 }
 
 .cursor-pick-up {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40" transform="rotate(0, 30, 30)">👌</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging" transform="rotate(0, 30, 30)">👌</text></svg>'), auto;
 }
 
 .cursor-cow {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🐄</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🐄</text></svg>'), auto;
 }
 
 .cursor-kiss {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">💋</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">💋</text></svg>'), auto;
 }
 
 .cursor-heart {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">♥️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">♥️</text></svg>'), auto;
 }
 
 .cursor-keyboard {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">⌨️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">⌨️</text></svg>'), auto;
 }
 
 .cursor-lotus {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🧘</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🧘</text></svg>'), auto;
 }
 
 .cursor-tree {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🌲</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🌲</text></svg>'), auto;
 }
 
 .cursor-park {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🏞️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🏞️</text></svg>'), auto;
 }
 
 .cursor-stop {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🛑</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🛑</text></svg>'), auto;
 }
 
 .cursor-bus {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🚌</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🚌</text></svg>'), auto;
 }
 
 .cursor-bird {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🐦</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🐦</text></svg>'), auto;
 }
 
 .cursor-shoes {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🥾</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🥾</text></svg>'), auto;
 }
 
 .cursor-photo {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🖼️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🖼️</text></svg>'), auto;
 }
 
 .cursor-spy {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" height="40" width="40"><text x="0" y="40" font-size="40">🕵️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🕵️</text></svg>'), auto;
 }
