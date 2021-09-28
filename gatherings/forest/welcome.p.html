@@ -29,6 +29,13 @@
 <body>
     <img class="background" src="./images/landing.gif">
 
+    <img
+      id="pointer-bin"
+      class="hotspot noblur"
+      src="./images/pointer_bin.png"
+      style="cursor: grab; top: 79%; left: 27%; width: 20%;"
+    >
+
     <div class="welcome"><a class="cursor-shoes" style="color: #2e26c7" href="./1.html">please leave your shoes<br> at
             the door</a>
         <br>— the parks staff
@@ -59,7 +66,9 @@
     </a-dumpling>
 </body>
 
-<script>
+<script type="module">
+    import { kCursor } from "./cursor.js"
+
     // TODO: I absolutely hate this, but I am tired and I cant figure out another way to make this thing show when coming from another window
     setTimeout(() => {
         const hash = window.location.hash.slice(1)
@@ -68,6 +77,7 @@
         }
     }, 1000)
 
+    // stop sign
     document.getElementById("stop").addEventListener("click", (evt) => {
         evt.preventDefault()
 
@@ -77,6 +87,14 @@
 
         // mellow era
         Frames.toggle("stop-dialog")
+    })
+
+    // get or return the cursor
+    document.getElementById("pointer-bin").addEventListener("click", (evt) => {
+      kCursor.toggle(
+        evt.clientX,
+        evt.clientY
+      )
     })
 </script>
 

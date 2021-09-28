@@ -4,6 +4,7 @@ import { kInventory } from "./inventory.js"
 // -- constants --
 const kLinkId = "highway-link"
 const kTransitId = "public-transit"
+const kHighwaySteps = 420
 
 // -- templates --
 const kTransitHtml = `
@@ -38,7 +39,7 @@ function traverse(id) {
   const step = State.highwayStep || 0
 
   // if we haven't reached the goal, move. otherwise, redirect to the exit
-  if (step < 600) {
+  if (step < kHighwaySteps) {
     move(id, step)
   } else {
     exit()
