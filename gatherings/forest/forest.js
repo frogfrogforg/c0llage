@@ -69,16 +69,19 @@ function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
+    if(el.href == null) return
     el.href = randomizeUrl(el.href)
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
   iframes.forEach((el) => {
+    console.log(el.id)
     el.src = randomizeUrl(el.src)
   })
 
   var dframes = Array.from(document.getElementsByTagName('d-iframe'))
   dframes.forEach((el) => {
+    console.log(el.id)
     el.setAttribute("src", randomizeUrl(el.getAttribute("src")))
   })
 }
@@ -92,6 +95,7 @@ function randomizeUrl(str) {
   const [path, search] = str.split("?")
   const params = new URLSearchParams(search)
   params.append("r", Math.random().toString().slice(2))
+  window.top.console.log("randomizing url", params.toString())
   return `${path}?${params.toString()}`
 }
 
