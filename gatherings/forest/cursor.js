@@ -5,6 +5,9 @@ const kClassCursor = "Cursor"
 // the css class for the animation
 const kClassCursorBin = "Cursor--inBin"
 
+// the id of the pointer bin
+const kIdPointerBin = "pointer-bin"
+
 // the default cursor style when nothing is hit
 const kDefaultCursorStyle = {
   backgroundImage: "url(./images/cursors/cursor_pointer.svg)"
@@ -166,7 +169,7 @@ class Cursor {
     const $hit = document.elementFromPoint(x, y)
 
     // ignore elements that aren't virtualizable
-    if ($hit != null && !this.isVirtualizable($hit)) {
+    if ($hit != null && !this.isHitTarget($hit)) {
       return null
     }
 
@@ -176,33 +179,66 @@ class Cursor {
   // find the cursor style from the hit
   findCursorStyle() {
     const $hit = this.$hit
+
     // if no hit target, use the default
-    if ($hit == null) {
+    if ($hit == null || $hit.id === kIdPointerBin) {
       return kDefaultCursorStyle
     }
 
     // otherwise try and extract stuff from the hit's cursor url
-    const hitStyle = window.getComputedStyle($hit).cursor
+    const cursor = window.getComputedStyle($hit).cursor
+    console.log(cursor)
+
+    // if this is a native cursor, use the custom image
+    const url = this.findCursorUrlFromNativeCursor(cursor)
+    if (url != null) {
+      return { backgroundImage: url }
+    }
 
     // if we find an svg, use its text directly
-    const hitSvg = hitStyle.match(/.*<text.*>(.*)<\/text>.*/)
+    const hitSvg = cursor.match(/.*<text.*>(.*)<\/text>.*/)
     if (hitSvg != null && hitSvg[1] != null) {
       // the emoji is url encoded by getComputedStyle, so decode it
       return { innerHtml: window.decodeURI(hitSvg[1]) }
     }
 
     // otherwise, try and use the entire url as an image
-    const hitUrl = hitStyle.match(/url\(.*\)/)
+    const hitUrl = cursor.match(/url\(.*\)/)
     if (hitUrl != null && hitUrl[0] != null) {
       return { backgroundImage: hitUrl }
     }
 
-    // otherotherwise, we found no match so use the default style
+    // otherwise, we found no match so use the default style
     return kDefaultCursorStyle
   }
 
-  // if the element be clicked virtually
-  isVirtualizable($hit) {
+  // gets the cursor style from a native cursor (e.g. "grab"), if any
+  findCursorUrlFromNativeCursor(cursor) {
+    switch (cursor) {
+    case "pointer":
+      return "url(./images/cursors/cursor_hover.svg)"
+    case "grab":
+      return "url(./images/cursors/cursor_grab.svg)"
+    case "grabbing":
+      return "url(./images/cursors/cursor_grabbing.svg)"
+    case "move":
+      return "url(./images/cursors/cursor_move.svg)"
+    case "text":
+      return "url(./images/cursors/cursor_text.svg)"
+    default:
+      return null
+    }
+  }
+
+  // if the element responds to the virtual cursor
+  isCursorTarget($hit) {
+    const style = window.getComputedStyle($hit)
+    const value = style.getPropertyValue("--is-cursor-target")
+    return value === "true"
+  }
+
+  // if the element can be clicked virtually
+  isHitTarget($hit) {
     return (
       $hit.tagName === "A" ||
       $hit.classList.contains("hotspot")
@@ -212,6 +248,11 @@ class Cursor {
   // -- events --
   onPointerDown = (evt) => {
     if (this.$el == null) {
+      return
+    }
+
+    // ignore non-participating elements
+    if (!this.isCursorTarget(evt.target)) {
       return
     }
 

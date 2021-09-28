@@ -6,6 +6,9 @@
     margin: 0;
     padding: 0;
     background: blue;
+
+    /* allow virtual cursor */
+    --is-cursor-target: true;
 }
 
 /* layer */
