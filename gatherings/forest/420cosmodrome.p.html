@@ -4,6 +4,7 @@
   .Cosmodrome-content {
     display: flex;
     flex-direction: row;
+    cursor: grab;
   }
 
   .CosmodromeCol--sticky {
@@ -66,7 +67,7 @@
         <img class="CosmodromeBg" src="./images/cosmodrome/3d.gif">
         <img class="CosmodromeBg" src="./images/cosmodrome/3e.gif">
       </div>
-      
+
 
       <div class="CosmodromeCol">
         <img class="CosmodromeBg" src="./images/cosmodrome/4a.gif">
@@ -79,8 +80,8 @@
       <div class="CosmodromeCol">
         <img class="CosmodromeBg" src="./images/cosmodrome/5a.gif">
         <button class="hotspot talk" onclick="Frames.show('mechanic')"><img class="CosmodromeBg"
-          src="./images/cosmodrome/SPOILERS.png"></button>
-          <img class="CosmodromeBg" src="./images/cosmodrome/5b.gif">
+            src="./images/cosmodrome/SPOILERS.png"></button>
+        <img class="CosmodromeBg" src="./images/cosmodrome/5b.gif">
         <img class="CosmodromeBg" src="./images/cosmodrome/5c.gif">
         <img class="CosmodromeBg" src="./images/cosmodrome/5d.gif">
         <img class="CosmodromeBg" src="./images/cosmodrome/5e.gif">
@@ -167,7 +168,9 @@
       return
     }
 
-    const a = (new Date()).getMilliseconds() / 360
+
+    const DRAG_ROTATION_SPEED = 0.8;
+    const a = DRAG_ROTATION_SPEED * (new Date()).getMilliseconds() / 360
     const x = evt.clientX
     const y = evt.clientY
 
