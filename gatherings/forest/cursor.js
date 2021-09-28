@@ -1,5 +1,8 @@
 // -- constants --
-const kDefaultCursorUrl = "url(./images/cursors/cursor_pointer.svg)"
+// the default cursor style when nothing is hit
+const kDefaultCursorStyle = {
+  backgroundImage: "url(./images/cursors/cursor_pointer.svg)"
+}
 
 // -- impls --
 class Cursor {
@@ -30,7 +33,6 @@ class Cursor {
     // create a new cursor
     const $cursor = document.createElement("div")
     $cursor.classList.add("Cursor")
-    $cursor.style.backgroundImage = this.findCursorUrl(null)
 
     // and append it
     const $parent = document.body
@@ -48,6 +50,9 @@ class Cursor {
     // store props
     this.$el = $cursor
     this.moveDuration = duration
+
+    // apply default style
+    this.syncCursorStyle()
   }
 
   // move the cursor to a position and update its cursor
@@ -74,7 +79,7 @@ class Cursor {
   }
 
   // sync cursor with item at the current pos
-  syncCursorAtPos() {
+  syncCursorHitTarget() {
     const $el = this.$el
     if ($el == null) {
       return
@@ -87,10 +92,18 @@ class Cursor {
     }
 
     this.$hit = $hit
-    console.log("sync hit to", $hit)
 
-    // update the cursor url
-    $el.style.backgroundImage = this.findCursorUrl($hit)
+    // update the cursor style w/ this hit
+    this.syncCursorStyle()
+  }
+
+  // sync cursor style w/ current hit
+  syncCursorStyle() {
+    const $el = this.$el
+    const style = this.findCursorStyle()
+
+    $el.innerHTML = style.innerHtml || ""
+    $el.style.backgroundImage = style.backgroundImage || ""
   }
 
   // cancel the native event
@@ -119,23 +132,32 @@ class Cursor {
     return $hit
   }
 
-  // find the cursor image url from the hit
-  findCursorUrl($hit) {
+  // find the cursor style from the hit
+  findCursorStyle() {
+    const $hit = this.$hit
     // if no hit target, use the default
     if ($hit == null) {
-      return kDefaultCursorUrl
+      return kDefaultCursorStyle
     }
 
-    // otherwise try and extract the hit's cursor url
-    const hitStyle = window.getComputedStyle($hit)
-    const hitCursorUrl = hitStyle.cursor.match(/url\([^\)]*\)/)
+    // otherwise try and extract stuff from the hit's cursor url
+    const hitStyle = window.getComputedStyle($hit).cursor
 
-    // return the match, if any
-    if (hitCursorUrl && hitCursorUrl[0]) {
-      return hitCursorUrl[0]
+    // if we find an svg, use its text directly
+    const hitSvg = hitStyle.match(/.*<text.*>(.*)<\/text>.*/)
+    if (hitSvg != null && hitSvg[1] != null) {
+      // the emoji is url encoded by getComputedStyle, so decode it
+      return { innerHtml: window.decodeURI(hitSvg[1]) }
     }
 
-    return kDefaultCursorUrl
+    // otherwise, try and use the entire url as an image
+    const hitUrl = hitStyle.match(/url\(.*\)/)
+    if (hitUrl != null && hitUrl[0] != null) {
+      return { backgroundImage: hitUrl }
+    }
+
+    // otherotherwise, we found no match so use the default style
+    return kDefaultCursorStyle
   }
 
   // if the element be clicked virtually
@@ -189,7 +211,7 @@ class Cursor {
     }
 
     // sync the cursor
-    this.syncCursorAtPos()
+    this.syncCursorHitTarget()
 
     // keep polling
     move.id = requestAnimationFrame(this.onPollCursorAtPos)
@@ -207,7 +229,7 @@ class Cursor {
   onAfterVisit = (evt) => {
     // reset cursor
     if (this.$el != null && this.$hit != null) {
-      this.syncCursorAtPos()
+      this.syncCursorHitTarget()
     }
   }
 }
