@@ -32,16 +32,8 @@ class Cursor {
   animDuration = 0.0
 
   // -- commands --
-  toggle(x, y) {
-    if (this.$el == null) {
-      this.grab(x, y)
-    } else {
-      this.return(x, y)
-    }
-  }
-
   // show the cursor, if necessary
-  grab(x, y) {
+  grab(pos) {
     // if not already visible
     if (this.$el != null) {
       return
@@ -69,7 +61,7 @@ class Cursor {
     this.animDuration = duration
 
     // apply default style
-    this.moveTo(x, y)
+    this.moveTo(pos)
     this.syncCursorStyle()
 
     // run the animation
@@ -78,7 +70,7 @@ class Cursor {
     })
   }
 
-  return(x, y) {
+  return() {
     // if not already hidden
     const $el = this.$el
     if ($el == null) {
@@ -100,15 +92,15 @@ class Cursor {
   }
 
   // move the cursor to a position and update its cursor
-  moveTo(x, y) {
+  moveTo(pos) {
     const $el = this.$el
     if ($el == null) {
       return
     }
 
     // update cursor position
-    $el.style.left = `${x}px`
-    $el.style.top = `${y}px`
+    $el.style.left = `${pos.x}px`
+    $el.style.top = `${pos.y}px`
 
     // cancel existing move
     if (this.move != null) {
@@ -161,12 +153,12 @@ class Cursor {
   // finds the hit at the current position, if any
   findHitAtPos() {
     const rect = this.$el.getBoundingClientRect()
-    return this.findHitAtPoint(rect.x, rect.y)
+    return this.findHitAtPoint(rect)
   }
 
   // find the hit at a point, if any
-  findHitAtPoint(x, y) {
-    const $hit = document.elementFromPoint(x, y)
+  findHitAtPoint(pos) {
+    const $hit = document.elementFromPoint(pos.x, pos.y)
 
     // ignore elements that aren't virtualizable
     if ($hit != null && !this.isHitTarget($hit)) {
@@ -230,11 +222,19 @@ class Cursor {
     }
   }
 
+  // get the pointer pos from the event
+  findClickPos(evt) {
+    return {
+      x: evt.pageX,
+      y: evt.pageY,
+    }
+  }
+
   // if the element responds to the virtual cursor
   isCursorTarget($hit) {
     const style = window.getComputedStyle($hit)
     const value = style.getPropertyValue("--is-cursor-target")
-    return value === "true"
+    return value.trim() === "true"
   }
 
   // if the element can be clicked virtually
@@ -246,6 +246,14 @@ class Cursor {
   }
 
   // -- events --
+  onToggle = (evt) => {
+    if (this.$el == null) {
+      this.grab(this.findClickPos(evt))
+    } else {
+      this.return()
+    }
+  }
+
   onPointerDown = (evt) => {
     if (this.$el == null) {
       return
@@ -257,10 +265,10 @@ class Cursor {
     }
 
     // get click pos
-    const { clientX: x, clientY: y } = evt
+    const pos = this.findClickPos(evt)
 
     // check underneath the cursor
-    const $hit = this.findHitAtPoint(x, y)
+    const $hit = this.findHitAtPoint(pos)
     const prev = this.$hit
 
     // if it matches the current hit, run the standard event
@@ -279,7 +287,7 @@ class Cursor {
     }
 
     // move the cursor
-    this.moveTo(x, y)
+    this.moveTo(pos)
   }
 
   // poll the cursor at the current position
