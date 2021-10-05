@@ -90,12 +90,7 @@
     })
 
     // get or return the cursor
-    document.getElementById("pointer-bin").addEventListener("click", (evt) => {
-      kCursor.toggle(
-        evt.clientX,
-        evt.clientY
-      )
-    })
+    document.getElementById("pointer-bin").addEventListener("click", kCursor.onToggle)
 </script>
 
 <script type="module">
@@ -140,5 +135,4 @@
     document.addEventListener("keydown", resetTimer)
     document.addEventListener("keypress", resetTimer)
     document.addEventListener("keyup", resetTimer)
-
 </script>
