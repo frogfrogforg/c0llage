@@ -75,7 +75,7 @@ var summerHtmlImageMapCreator = (function() {
          * @returns {string} - a string with escaped < and >
          */
         encode : function(str) {
-            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br />').replace(/ /g, '&nbsp;');
         },
         
         /**
@@ -620,7 +620,7 @@ var summerHtmlImageMapCreator = (function() {
                     html_code += utils.encode('<img src="' + state.image.filename + '" alt="" usemap="#map" />') +
                         '<br />' + utils.encode('<map name="map">') + '<br />';
                     utils.foreachReverse(state.areas, function(x) {
-                        html_code += '&nbsp;&nbsp;&nbsp;&nbsp;' + utils.encode(x.toHTMLMapElementString()) + '<br />';
+                        html_code += '    ' + utils.encode(x.toHTMLMapElementString()) + '<br />';
                     });
                     html_code += utils.encode('</map>');
                 } else {
@@ -629,6 +629,31 @@ var summerHtmlImageMapCreator = (function() {
                     });
                 }
                 return html_code;
+            },
+
+            getSVGCode : function(arg) {
+                var svg_code = '';
+                if (arg) {
+                    if (!state.areas.length) {
+                        return '0 objects';
+                    }
+                    svg_code += utils.encode('<svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000" >\n')
+                    
+                    svg_code += utils.encode('    ' + '<image xlink:href="' + state.image.filename + '"></image>\n')
+                    utils.foreachReverse(state.areas, function(x) {
+                        svg_code += '    ' + utils.encode('<a xlink:href="' + x._attributes.href + '">\n')
+                        svg_code += '        ' + utils.encode(x.toSVGElementString() + '\n');
+                        svg_code += '    ' + utils.encode('</a>\n')
+                    });
+                    svg_code += utils.encode('</svg>')
+
+                } else {
+                    utils.foreachReverse(state.areas, function(x) {
+                        svg_code += x.toSVGElementString();
+                    });
+                }
+                console.log(svg_code);
+                return svg_code;
             }
         };
     })();
@@ -799,6 +824,11 @@ var summerHtmlImageMapCreator = (function() {
         circle : 'circle',
         poly : 'polygon'
     };
+    Area.SVG_NAMES_TO_AREA_NAMES = {
+        rect : 'rectangle',
+        circle : 'circle',
+        polygon : 'polygon'
+    };
     Area.ATTRIBUTES_NAMES = ['HREF', 'ALT', 'TITLE'];
     
     /**
@@ -826,6 +856,7 @@ var summerHtmlImageMapCreator = (function() {
     Area.prototype.onStopEditing = 
     Area.prototype.toString = 
     Area.prototype.toHTMLMapElementString =
+    Area.prototype.toSVGElementString =
     Area.prototype.getCoordsForDisplayingInfo = 
     Area.prototype.ABSTRACT_METHOD;
     
@@ -962,12 +993,52 @@ var summerHtmlImageMapCreator = (function() {
     };
 
     /**
-     * Creates new areas from html-string with <area /> elements
+     * Creates new areas from html-string with <svg> and <rect> hotspots
      * 
      * @param htmlStr {string}
      * @returns {Array} - array with areas
      */
     Area.createAreasFromHTMLOfMap = function(htmlStr) {
+        if (!htmlStr) {
+            return false;
+        } 
+
+        let parser = new DOMParser();
+        let htmlDoc = parser.parseFromString(htmlStr, 'text/html');
+
+        let svgEl = htmlDoc.querySelector("#hotspot-map"); // Assume there's just one svg
+        let anchorEls = svgEl.querySelectorAll("a");
+        Array.from(anchorEls).forEach(anchorEl => {
+            // Assume shape (rect/circle/polygon) is only child of <a>
+            let shapeEl = anchorEl.firstElementChild;
+
+            let type = Area.SVG_NAMES_TO_AREA_NAMES[shapeEl.tagName];
+
+            let attributes = {
+                href: anchorEl.getAttributeNS('http://www.w3.org/1999/xlink', 'href')
+                // TODO: add title and alt attributes
+            }
+
+            Area.fromJSON({
+                type : type,
+                coords : Area.CONSTRUCTORS[type].getCoordsFromSvgElement(shapeEl),
+                attributes : attributes
+            });
+        });
+        // TODO parse image?
+
+        console.log(htmlDoc);
+
+        return Boolean(false);
+    };
+
+    /**
+     * Creates new areas from html-string with <area /> elements
+     * 
+     * @param htmlStr {string}
+     * @returns {Array} - array with areas
+     */
+    Area.createAreasFromHTMLOfMap_Old = function(htmlStr) {
         if (!htmlStr) {
             return false;
         } 
@@ -1326,6 +1397,21 @@ var summerHtmlImageMapCreator = (function() {
     };
 
     /**
+     * Returns svg-string of area svg element with params of this rectangle
+     * 
+     * @returns {string}
+     */
+    Rectangle.prototype.toSVGElementString = function() {
+        return '<rect '
+            + 'x='+this._coords.x+' '
+            + 'y='+this._coords.y+' '
+            + 'width='+this._coords.width+' '
+            + 'height='+this._coords.height+' '
+            + '/>';
+    };
+
+
+    /**
      * Returns coords for area attributes form
      * 
      * @returns {Object} - object width coordinates of point
@@ -1375,6 +1461,29 @@ var summerHtmlImageMapCreator = (function() {
             y : htmlCoordsArray[1],
             width : htmlCoordsArray[2] - htmlCoordsArray[0],
             height : htmlCoordsArray[3] - htmlCoordsArray[1]
+        };
+    };
+
+    Rectangle.testSvgEl = function(svgEl) {
+        return svgEl.tagName == "rect"
+    };
+
+    /**
+     * Returns circle coords object from svg <rect> element
+     * 
+     * @param svgEl {...}
+     * @returns {Object}
+     */
+    Rectangle.getCoordsFromSvgElement = function(svgEl) {
+        if (!Rectangle.testSvgEl(svgEl)) {    
+            throw new Error('This svg element is not valid for rectangle');
+        }
+
+        return {
+            x : svgEl.x.baseVal.value,
+            y : svgEl.y.baseVal.value,
+            width : svgEl.width.baseVal.value,
+            height: svgEl.height.baseVal.value
         };
     };
 
@@ -1513,6 +1622,7 @@ var summerHtmlImageMapCreator = (function() {
      * @returns {Circle} - this area
      */
     Circle.prototype.setSVGCoords = function(coords) {
+        debugger;
         this._el.setAttribute('cx', coords.cx);
         this._el.setAttribute('cy', coords.cy);
         this._el.setAttribute('r', coords.radius);
@@ -1707,6 +1817,19 @@ var summerHtmlImageMapCreator = (function() {
     };
 
     /**
+     * Returns svg-string of area svg element with params of this circle
+     * 
+     * @returns {string}
+     */
+    Circle.prototype.toSVGElementString = function() {
+        return '<circle '
+            + 'cx='+this._coords.cx+' '
+            + 'cy='+this._coords.cy+' '
+            + 'r='+this._coords.radius+' '
+            + '/>';
+    };
+
+    /**
      * Returns coords for area attributes form
      * 
      * @returns {Object} - coordinates of point
@@ -1755,6 +1878,28 @@ var summerHtmlImageMapCreator = (function() {
             cx : htmlCoordsArray[0],
             cy : htmlCoordsArray[1],
             radius : htmlCoordsArray[2]
+        };
+    };
+
+    Circle.testSvgEl = function(svgEl) {
+        return svgEl.tagName == "circle"
+    };
+
+    /**
+     * Returns circle coords object from svg <circle> element
+     * 
+     * @param svgEl {...}
+     * @returns {Object}
+     */
+    Circle.getCoordsFromSvgElement = function(svgEl) {
+        if (!Circle.testSvgEl(svgEl)) {    
+            throw new Error('This svg element is not valid for circle');
+        }
+
+        return {
+            cx : svgEl.cx.baseVal.value,
+            cy : svgEl.cy.baseVal.value,
+            radius : svgEl.r.baseVal.value
         };
     };
     
@@ -2079,6 +2224,20 @@ var summerHtmlImageMapCreator = (function() {
     };
 
     /**
+     * Returns svg-string of area svg element with params of this polygon
+     * 
+     * @returns {string}
+     */
+    Polygon.prototype.toSVGElementString = function() {
+        var str = this._coords.points.map(function(item) {
+            return item.x + ', ' + item.y;
+        }).join(' ');
+        return '<polygon '
+            + 'points="' + str + '"'
+            + '/>';
+    };
+
+    /**
      * Returns coords for area attributes form
      * 
      * @returns {Object} - coordinates of point
@@ -2133,6 +2292,32 @@ var summerHtmlImageMapCreator = (function() {
 
         return {
             points : points
+        };
+    };
+
+
+    Polygon.testSvgEl = function(svgEl) {
+        return svgEl.tagName == "polygon"
+    };
+
+    /**
+     * Returns polygon coords object from svg <polygon> element
+     * 
+     * @param svgEl {...}
+     * @returns {Object}
+     */
+    Polygon.getCoordsFromSvgElement = function(svgEl) {
+        if (!Polygon.testSvgEl(svgEl)) {    
+            throw new Error('This svg element is not valid for polygon');
+        }
+
+        let points = Array.from(svgEl.points).map(point => ({
+            x: point.x,
+            y: point.y
+        }));
+
+        return {
+            points: points
         };
     };
 
@@ -2284,6 +2469,28 @@ var summerHtmlImageMapCreator = (function() {
             }
         };
     })();
+
+    /* For html code of created map */
+    var svg_code = (function(){
+        var block = utils.id('code'),
+            content = utils.id('code_content'),
+            close_button = block.querySelector('.close_button');
+            
+        close_button.addEventListener('click', function(e) {
+            utils.hide(block);
+            e.preventDefault();
+        }, false);
+            
+        return {
+            print: function() {
+                content.innerHTML = app.getSVGCode(true);
+                utils.show(block);
+            },
+            hide: function() {
+                utils.hide(block);
+            }
+        };
+    })();
     
 
     /* Edit selected area info */
@@ -2399,7 +2606,17 @@ var summerHtmlImageMapCreator = (function() {
             load_button = utils.id('load_code_button'),
             close_button = form.querySelector('.close_button');
         
+        // unused, just for reference:
+        function load_Old(e) {
+            if (Area.createAreasFromHTMLOfMap_Old(code_input.value)) {
+                hide();
+            }
+                
+            e.preventDefault();
+        }
+
         function load(e) {
+            // TODO also parse image
             if (Area.createAreasFromHTMLOfMap(code_input.value)) {
                 hide();
             }
@@ -2652,8 +2869,7 @@ var summerHtmlImageMapCreator = (function() {
             }
         };
     })();
-    get_image.show();
-    
+    get_image.show();    
 
     /* Buttons and actions */
     var buttons = (function() {
@@ -2666,7 +2882,8 @@ var summerHtmlImageMapCreator = (function() {
             edit = utils.id('edit'),
             clear = utils.id('clear'),
             from_html = utils.id('from_html'),
-            to_html = utils.id('to_html'),
+            // to_html = utils.id('to_html'),
+            to_svg = utils.id('to_svg'),
             preview = utils.id('preview'),
             new_image = utils.id('new_image'),
             show_help = utils.id('show_help');
@@ -2738,6 +2955,15 @@ var summerHtmlImageMapCreator = (function() {
             
             e.preventDefault();
         }
+
+        function onToSvgButtonClick(e) {
+            console.log('to svg');
+            // Generate svg code only
+            info.unload();
+            svg_code.print();
+            
+            e.preventDefault();
+        }
         
         function onPreviewButtonClick(e) {
             if (app.getMode() === 'preview') {
@@ -2802,7 +3028,8 @@ var summerHtmlImageMapCreator = (function() {
         polygon.addEventListener('click', onShapeButtonClick, false);
         clear.addEventListener('click', onClearButtonClick, false);
         from_html.addEventListener('click', onFromHtmlButtonClick, false);
-        to_html.addEventListener('click', onToHtmlButtonClick, false);
+//        to_html.addEventListener('click', onToHtmlButtonClick, false);
+        to_svg.addEventListener('click', onToSvgButtonClick, false);
         preview.addEventListener('click', onPreviewButtonClick, false);
         edit.addEventListener('click', onEditButtonClick, false);
         new_image.addEventListener('click', onNewImageButtonClick, false);
