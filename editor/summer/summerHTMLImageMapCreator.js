@@ -175,7 +175,8 @@ var summerHtmlImageMapCreator = (function() {
                     filename : null,
                     width: 0,
                     height: 0
-                }
+                },
+                savedHtmlDoc : ""
             },
             KEYS = {
                 F1     : 112,
@@ -444,6 +445,12 @@ var summerHtmlImageMapCreator = (function() {
             domElements : domElements,
             saveInLocalStorage : localStorageWrapper.save,
             loadFromLocalStorage : localStorageWrapper.restore,
+            setSavedHtmlDoc : function(htmlDoc) {
+                state.savedHtmlDoc = htmlDoc;
+            },
+            getSavedHtmlDoc : function() {
+                return state.savedHtmlDoc;
+            },
             hide : function() {
                 utils.hide(domElements.container);
                 return this;
@@ -632,6 +639,30 @@ var summerHtmlImageMapCreator = (function() {
             },
 
             getSVGCode : function(arg) {
+                var svg_code = '';
+                if (arg) {
+                    if (!state.areas.length) {
+                        return '0 objects';
+                    }
+                    svg_code += '<svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000" >\n';
+                    
+                    svg_code += '    <image xlink:href="' + state.image.filename + '"></image>\n'
+                    utils.foreachReverse(state.areas, function(x) {
+                        svg_code += '    ' + '<a xlink:href="' + x._attributes.href + '">\n'
+                        svg_code += '        ' + x.toSVGElementString() + '\n';
+                        svg_code += '    ' + '</a>\n'
+                    });
+                    svg_code += '</svg>'
+
+                } else {
+                    utils.foreachReverse(state.areas, function(x) {
+                        svg_code += x.toSVGElementString();
+                    });
+                }
+                console.log(svg_code);
+                return svg_code;
+            },
+            getSVGCodexxx : function(arg) {
                 var svg_code = '';
                 if (arg) {
                     if (!state.areas.length) {
@@ -998,15 +1029,7 @@ var summerHtmlImageMapCreator = (function() {
      * @param htmlStr {string}
      * @returns {Array} - array with areas
      */
-    Area.createAreasFromHTMLOfMap = function(htmlStr) {
-        if (!htmlStr) {
-            return false;
-        } 
-
-        let parser = new DOMParser();
-        let htmlDoc = parser.parseFromString(htmlStr, 'text/html');
-
-        let svgEl = htmlDoc.querySelector("#hotspot-map"); // Assume there's just one svg
+    Area.createAreasFromSvgElement = function(svgEl) {
         let anchorEls = svgEl.querySelectorAll("a");
         Array.from(anchorEls).forEach(anchorEl => {
             // Assume shape (rect/circle/polygon) is only child of <a>
@@ -1025,11 +1048,8 @@ var summerHtmlImageMapCreator = (function() {
                 attributes : attributes
             });
         });
-        // TODO parse image?
 
-        console.log(htmlDoc);
-
-        return Boolean(false);
+        return Boolean(true);
     };
 
     /**
@@ -1622,7 +1642,6 @@ var summerHtmlImageMapCreator = (function() {
      * @returns {Circle} - this area
      */
     Circle.prototype.setSVGCoords = function(coords) {
-        debugger;
         this._el.setAttribute('cx', coords.cx);
         this._el.setAttribute('cy', coords.cy);
         this._el.setAttribute('r', coords.radius);
@@ -2483,7 +2502,17 @@ var summerHtmlImageMapCreator = (function() {
             
         return {
             print: function() {
-                content.innerHTML = app.getSVGCode(true);
+                let savedHtmlDoc = app.getSavedHtmlDoc();
+                if (savedHtmlDoc) {
+                    content.innerHTML = savedHtmlDoc.querySelector("body").innerHTML;
+                    content.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
+                } else {
+                    content.innerHTML = app.getSVGCode(true);
+                }
+
+                content.innerHTML = utils.encode(content.innerHTML)
+                console.log(content.innerHTML);
+
                 utils.show(block);
             },
             hide: function() {
@@ -2598,7 +2627,6 @@ var summerHtmlImageMapCreator = (function() {
         };
     })();
 
-
     /* Load areas from html code */
     var from_html_form = (function() {
         var form = utils.id('from_html_wrapper'),
@@ -2616,11 +2644,22 @@ var summerHtmlImageMapCreator = (function() {
         }
 
         function load(e) {
-            // TODO also parse image
-            if (Area.createAreasFromHTMLOfMap(code_input.value)) {
-                hide();
-            }
-                
+            let htmlStr = code_input.value;
+            if (htmlStr) {
+                let parser = new DOMParser();
+                // Save html doc so we can save it out later
+                let htmlDoc = parser.parseFromString(htmlStr, 'text/html');
+                app.setSavedHtmlDoc(htmlDoc);
+
+                let svgEl = htmlDoc.querySelector("#hotspot-map");
+
+                // TODO also parse image
+
+                if (Area.createAreasFromSvgElement(svgEl)) {
+                    hide();
+                }
+            } 
+
             e.preventDefault();
         }
         
@@ -3021,8 +3060,8 @@ var summerHtmlImageMapCreator = (function() {
             e.preventDefault();
         }
         
-        save.addEventListener('click', onSaveButtonClick, false);
-        load.addEventListener('click', onLoadButtonClick, false);
+        // save.addEventListener('click', onSaveButtonClick, false);
+        // load.addEventListener('click', onLoadButtonClick, false);
         rectangle.addEventListener('click', onShapeButtonClick, false);
         circle.addEventListener('click', onShapeButtonClick, false);
         polygon.addEventListener('click', onShapeButtonClick, false);
