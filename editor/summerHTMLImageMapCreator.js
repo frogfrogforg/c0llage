@@ -1451,7 +1451,7 @@ var summerHtmlImageMapCreator = (function() {
      * @return {boolean}
      */
     Rectangle.testCoords = function(coords) {
-        return coords.x && coords.y && coords.width && coords.height;
+        return (coords.x !== undefined) && (coords.y !== undefined) && (coords.width !== undefined) && (coords.height !== undefined);
     };
     
     /**
@@ -1868,7 +1868,7 @@ var summerHtmlImageMapCreator = (function() {
      * @return {boolean}
      */
     Circle.testCoords = function(coords) {
-        return coords.cx && coords.cy && coords.radius;
+        return (coords.cx !== undefined) && (coords.cy !== undefined) && (coords.radius !== undefined);
     };
 
     /**
@@ -3069,7 +3069,7 @@ var summerHtmlImageMapCreator = (function() {
         from_html.addEventListener('click', onFromHtmlButtonClick, false);
 //        to_html.addEventListener('click', onToHtmlButtonClick, false);
         to_svg.addEventListener('click', onToSvgButtonClick, false);
-        preview.addEventListener('click', onPreviewButtonClick, false);
+        // preview.addEventListener('click', onPreviewButtonClick, false);
         edit.addEventListener('click', onEditButtonClick, false);
         new_image.addEventListener('click', onNewImageButtonClick, false);
         show_help.addEventListener('click', onShowHelpButtonClick, false);
