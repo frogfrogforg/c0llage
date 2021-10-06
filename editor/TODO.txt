@@ -1,0 +1,6 @@
+- parse <image> element when loading from file, and display image correctly
+- save & load from file instead of from text input/output
+- replace annoying image upload dialog with standard file picker
+
+- preserve attributes on <a> elements
+
