@@ -66,8 +66,10 @@ d-iframe iframe {
   height: 420px;
   width: 420px;
   pointer-events: all;
-
   transform-origin: top left;
+
+  /* ignore virtual cursor */
+  --is-cursor-target: false;
 }
 
 .Frame-content {
