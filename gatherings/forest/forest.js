@@ -24,6 +24,17 @@ function main() {
   kInventory.loadFromState();
   addOnBeforeSaveStateListener(kInventory.saveToState)
 
+  // add the assisstant into the inventory
+  kInventory.add({
+    id: "assistant",
+    src: "items/assistant",
+    attrs: {
+      "no-back": true,
+      "no-close": true,
+      "persistent": true,
+    }
+  })
+
   // bind events
   addEventListener("beforeunload", didRefresh)
   document.addEventListener("turbo:before-visit", didStartVisit)
@@ -94,6 +105,12 @@ function randomizeUrl(str) {
   return `${path}?${params.toString()}`
 }
 
+// reset everything
+function reset() {
+  kInventory.clear()
+  d.State.clear()
+}
+
 // -- events --
 function didChangeState() {
   randomizeLinks()
@@ -114,6 +131,9 @@ function didCatchRender(evt) {
   // render new game
   renderGame(evt.detail.newBody)
 }
+
+// -- exports --
+window.reset = reset
 
 // -- bootstrap --
 main()
