@@ -1,0 +1,32 @@
+<head>
+  <script type='module'>
+    const COIN_TYPES_COUNT = 6
+    const img = document.body.querySelector('img')
+
+    img.src = `../images/coins/coin${Math.floor(Math.random() * COIN_TYPES_COUNT)}.png`
+
+    window.dragCoin = (evt) => {
+      evt.dataTransfer.setData("text", "quarter");
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    img {
+      height: 70vmin;
+    }
+
+    .coin-itself {
+      cursor: grab;
+    }
+  </style>
+</head>
+
+<body class="coinBody">
+  <img class='coin-itself' draggable="true" ondragstart="dragCoin(event)" src="../images/coins/coin0.png">
+</body>

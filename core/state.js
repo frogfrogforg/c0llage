@@ -11,7 +11,9 @@ const initialState = {
   stealthy: false,
   stoleFrogFrame: false,
   inventory: [],
-  referrer: ""
+  referrer: "",
+  hasQuarters: false,
+  quarters: 0
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
