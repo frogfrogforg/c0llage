@@ -23,9 +23,6 @@ export async function template(partial) {
     // parse the name and props
     name = match[1]
     props = decodeProps(match[2])
-    if (match != null) {
-      console.log(name)
-    }
 
     // remove the header
     partial = partial.slice(match[0].length)
