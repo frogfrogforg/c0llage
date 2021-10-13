@@ -46,6 +46,8 @@ const kVisibleClass = 'Frame-Visible'
 const kDraggingClass = 'Frame-Dragging'
 const kScalingClass = 'Frame-Scaling'
 const kUnfocusedClass = 'Frame-Unfocused'
+const kScaleSetupAttr = 'is-scale-setup'
+
 // TODO: make this an attribute with these as default values?
 const MinContentHeight = 40
 const MinContentWidth = 40
@@ -360,13 +362,60 @@ export class Dumpling extends HTMLParsedElement {
   show() {
     this.setVisible(true)
     this.dispatchEvent(new Event(Dumpling.ShowEvent))
-
     this.bringToTop()
   }
 
+  // show/hide dumpling and init inner target style
   setVisible(isVisible) {
+    // update visibility
     this.visible = isVisible
     this.classList.toggle(kVisibleClass, isVisible)
+
+    if (isVisible) {
+    }
+
+    // initialize style on show
+    if (isVisible) {
+      this.initInnerTargetStyle()
+    }
+  }
+
+  // init the style of the inner target; it may already be scaled
+  initInnerTargetStyle() {
+    // find the inner target
+    const $target = this.findInnerTarget()
+    if ($target == null) {
+      return
+    }
+
+    // get the target's rect
+    const tr = $target.getBoundingClientRect()
+
+    // set the initial size. only do this once (e.g. not on reopen)
+    if (this.initialTargetSize == null) {
+      this.initialTargetSize = {
+        w: tr.width,
+        h: tr.height,
+      }
+    }
+
+    // transform from the corner
+    $target.style.transformOrigin = "top left"
+
+    // if there is a previous style, restore that
+    let style = this.innerTargetStyle
+
+    // otherwise, use the initial height and width
+    if (style == null) {
+      const tsi = this.initialTargetSize
+      style = {
+        width: tsi.w,
+        height: tsi.h,
+      }
+    }
+
+    // apply the style
+    this.setTargetStyle($target, style)
   }
 
   bringToTop() {
@@ -431,7 +480,7 @@ export class Dumpling extends HTMLParsedElement {
     // record initial mouse position (we need to calc dx/dy manually on move
     // b/c evt.offset, the pos within the element, doesn't seem to include
     // borders, etc.)
-    this.gesture.initialMousePosition = {
+    this.gesture.startMousePosition = {
       x: evt.clientX,
       y: evt.clientY,
     }
@@ -483,7 +532,7 @@ export class Dumpling extends HTMLParsedElement {
   // -- e/drag
   onDrag(mx, my) {
     const p0 = this.gesture.initialPosition
-    const m0 = this.gesture.initialMousePosition
+    const m0 = this.gesture.startMousePosition
 
     // get the mouse delta
     const dx = mx - m0.x
@@ -496,41 +545,29 @@ export class Dumpling extends HTMLParsedElement {
 
   onScaleStart(dr) {
     // capture the frame's w/h at the beginning of the gesture
-    this.gesture.initialSize = {
+    this.gesture.startSize = {
       w: dr.width,
       h: dr.height
     }
 
-    // get the scale target, we calculate some scaling against the target
-    // element's size
-    const target = this.findScaleTarget()
-    if (target != null) {
-      const tr = target.getBoundingClientRect()
+    // get the inner body to scale
+    const $target = this.findInnerTarget()
+    if ($target == null) {
+      return
+    }
 
-      // capture the target's w/h at the beginning of the op
-      this.gesture.initialTargetSize = {
-        w: tr.width,
-        h: tr.height,
-      }
+    const tr = $target.getBoundingClientRect()
 
-      // and if this is the first ever time scaling frame, also set the
-      // target's initial w/h as its style. we'll use `transform` to scale
-      // the target in most cases, so it can't use percentage sizing.
-      if (!this.isScaleSetup) {
-        this.baseTargetSize = this.gesture.initialTargetSize
-
-        target.style.transformOrigin = "top left"
-        target.style.width = this.baseTargetSize.w
-        target.style.height = this.baseTargetSize.h
-
-        this.isScaleSetup = true
-      }
+    // capture the target's w/h at the beginning of the op
+    this.gesture.startTargetSize = {
+      w: tr.width,
+      h: tr.height,
     }
   }
 
   onScale(mx, my) {
-    const s0 = this.gesture.initialSize
-    const m0 = this.gesture.initialMousePosition
+    const s0 = this.gesture.startSize
+    const m0 = this.gesture.startMousePosition
 
     // get the mouse delta; we'll use this to update the sizes captured
     // at the start of each scale op
@@ -564,56 +601,75 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // get the target, the frame's content, to apply temperamental scaling
-    const target = this.findScaleTarget()
-    if (target != null) {
-      const tsb = this.baseTargetSize
-      const ts0 = this.gesture.initialTargetSize
+    const $target = this.findInnerTarget()
+    if ($target != null) {
+      // size of frame on open & at start of scale op
+      const tsi = this.initialTargetSize
+      const ts0 = this.gesture.startTargetSize
 
       // calculate the scale factor based on the target's w/h ratios
-      const scaleX = (ts0.w + dx) / tsb.w
-      const scaleY = (ts0.h + dy) / tsb.h
+      const scaleX = (ts0.w + dx) / tsi.w
+      const scaleY = (ts0.h + dy) / tsi.h
 
+      // determine scale style based on temperament
+      let style = {}
       switch (this.temperament) {
         case sanguine:
-          target.style.transform = `scale(${scaleX}, ${scaleY})`
-          target.style.width = `${100/scaleX}%`
-          target.style.height = `${100/scaleY}%`
+          style.transform = `scale(${scaleX}, ${scaleY})`
+          style.width = `${100/scaleX}%`
+          style.height = `${100/scaleY}%`
           break
         case melancholic:
           let s = Math.min(scaleX, scaleY)
-          target.style.transform = `scale(${s})`
-          target.style.width = `${100/s}%`
-          target.style.height = `${100/s}%`
+          style.transform = `scale(${s})`
+          style.width = `${100/s}%`
+          style.height = `${100/s}%`
           break
         case phlegmatic:
-          target.style.width = "100%"
-          target.style.height = "100%"
+          style.width = "100%"
+          style.height = "100%"
           break
         case choleric:
           // IMPORTANT - DO NOT REMOVE
-          target.style.width = `${this.tw + dx}px`
-          target.style.height = `${this.th + dy}px`
+          style.width = `${this.tw + dx}px`
+          style.height = `${this.th + dy}px`
           break
       }
+
+      // apply target style
+      this.setTargetStyle($target, style)
     }
   }
 
+  // set the target's style
+  setTargetStyle($target, attrs) {
+    // store attrs for restoration (if dumpling is closed and reopened)
+    this.innerTargetStyle = attrs
 
-  findScaleTarget() {
-    const body = this.querySelector(`#${this.id}-body`)
-    const child = body.firstElementChild
-    if (child == null) {
+    // update element style
+    Object.assign($target.style, attrs)
+  }
+
+  // find the content's body for scaling
+  findInnerTarget() {
+    const $body = this.querySelector(`#${this.id}-body`)
+    if ($body == null) {
+      return
+    }
+
+    const $child = $body.firstElementChild
+    if ($child == null) {
       return null
     }
 
     // search for a wrapped iframe (youtube embed is one level deep)
-    const iframe = this.findIframe()
-    if (iframe != null) {
-      return iframe.contentDocument.body
+    const $iframe = this.findIframe()
+    if ($iframe != null) {
+      return $iframe.contentDocument.body
     }
 
     // otherwise, return first child
-    return child
+    return $child
   }
 
   // -- q/iframe --

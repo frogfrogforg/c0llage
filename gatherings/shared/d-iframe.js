@@ -15,6 +15,7 @@ class DeferredIframeElement extends HTMLParsedElement {
   // -- props --
   iframeAttrs = null
   _iframe = null
+
   get iframe() {
     if (this._iframe == null) {
       return this // kind of a hack
@@ -32,7 +33,7 @@ class DeferredIframeElement extends HTMLParsedElement {
       this.load()
     }
 
-    // autoplay when nested in a window frame and it opens
+    // autoplay when nested in a dumpling and it opens
     let parent = this.parentNode
     while (parent != null && !(parent instanceof Dumpling)) {
       parent = parent.parentNode
