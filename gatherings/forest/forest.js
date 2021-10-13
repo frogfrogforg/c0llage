@@ -24,6 +24,19 @@ function main() {
   kInventory.loadFromState();
   addOnBeforeSaveStateListener(kInventory.saveToState)
 
+  // add the assisstant into the inventory
+  kInventory.add({
+    id: "assistant",
+    dumpling: {
+      src: "items/assistant",
+      attrs: {
+        "no-back": true,
+        "no-close": true,
+        "persistent": true,
+      }
+    }
+  })
+
   // bind events
   addEventListener("beforeunload", didRefresh)
   document.addEventListener("turbo:before-visit", didStartVisit)

@@ -145,7 +145,7 @@ export class Dumpling extends HTMLParsedElement {
     //#region Header Button Functionality
 
     // title
-    this.title = this.getAttribute('title')
+    this.title = this.findTitle()
 
     // Temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
@@ -643,6 +643,18 @@ export class Dumpling extends HTMLParsedElement {
       titleEl.style.display = 'block'
       titleEl.innerHTML = value;
     }
+  }
+
+  findTitle() {
+    // use the attr if available
+    const title = this.getAttribute("title")
+    if (title != null) {
+      return title
+    }
+
+    // otherwise, if we have a nested iframe
+    const iframe = this.findIframe()
+    return iframe?.contentDocument?.title
   }
 }
 
