@@ -27,13 +27,11 @@ function main() {
   // add the assisstant into the inventory
   kInventory.add({
     id: "assistant",
-    dumpling: {
-      src: "items/assistant",
-      attrs: {
-        "no-back": true,
-        "no-close": true,
-        "persistent": true,
-      }
+    src: "items/assistant",
+    attrs: {
+      "no-back": true,
+      "no-close": true,
+      "persistent": true,
     }
   })
 
@@ -107,6 +105,12 @@ function randomizeUrl(str) {
   return `${path}?${params.toString()}`
 }
 
+// reset everything
+function reset() {
+  kInventory.clear()
+  d.State.clear()
+}
+
 // -- events --
 function didChangeState() {
   randomizeLinks()
@@ -127,6 +131,9 @@ function didCatchRender(evt) {
   // render new game
   renderGame(evt.detail.newBody)
 }
+
+// -- exports --
+window.reset = reset
 
 // -- bootstrap --
 main()

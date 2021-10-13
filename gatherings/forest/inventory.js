@@ -7,7 +7,7 @@ let $mEl = document.getElementById("inventory")
 // add an item into the inventory. must have some way to get its id and
 // html element. here are some options:
 //
-// { id: "assistant", dumpling: { src: "./items/assistant" } }
+// { id: "assistant", src: "./items/assistant" }
 // { id: "tbranch",  html: "<img src="tbranch.png">" }
 // { el: document.getElementById("squirrel") }
 function add(props) {
@@ -68,10 +68,8 @@ function saveToState() {
     // add dumpling to the inventory
     record.push({
       id: child.id,
-      dumpling: {
-        src,
-        attrs,
-      },
+      src,
+      attrs,
     })
   }
 
@@ -94,19 +92,20 @@ function getItemEl({
   id,
   el: $item,
   html,
-  dumpling: dmp
+  src,
+  attrs
 }) {
   // if we have a src path, make a new dumpling
-  if (dmp != null) {
+  if (src != null) {
     // build the attrs string
-    const attrs = Object.entries({ ...dmp.attrs, id })
+    attrs = Object.entries({ ...attrs, id })
       .map(([name, val]) => `${name}=${JSON.stringify(val)}`)
       .join(" ")
 
     // template the html
     html = `
       <a-dumpling ${attrs}>
-        <d-iframe src="${dmp.src}" autoload>
+        <d-iframe src="${src}" autoload>
       </a-dumpling>
     `
   }
@@ -131,8 +130,7 @@ function getItemEl({
 export const kInventory = {
   add,
   find,
+  clear,
   loadFromState,
   saveToState
 }
-
-window.clearInventory = clear
