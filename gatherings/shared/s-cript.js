@@ -7,11 +7,8 @@ const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
 // -- impls --
 class ScriptElement extends HTMLParsedElement {
   // -- props --
-  // the dialogue script; an ordered list of sections
+  // the script model
   script = null
-
-  // the current section index
-  i = 0
 
   // -- lifetime --
   // init the element
@@ -19,7 +16,7 @@ class ScriptElement extends HTMLParsedElement {
     const m = this
 
     // decode script
-    m.script = m.decode()
+    m.script = Script.decode(m.textContent)
 
     // show dialogs when clicking the target
     const $target = m.findTarget()
@@ -40,8 +37,8 @@ class ScriptElement extends HTMLParsedElement {
     }
 
     // find the next line
-    m.advanceOnClickLine()
-    const line = m.findOnClickLine()
+    m.script.advanceOnClickLine()
+    const line = m.script.findOnClickLine()
 
     // close any open dialog
     m.closeOpenDialog()
@@ -66,29 +63,6 @@ class ScriptElement extends HTMLParsedElement {
 
     // add it to the targets parent
     $target.parentElement.appendChild($dialog)
-  }
-
-  // advance to the next onclick line
-  advanceOnClickLine() {
-    const m = this
-
-    // get current section
-    let i = m.i
-    let curr = m.script[i]
-
-    // we've exhaused all our onclick dialogue
-    if (curr == null) {
-      return
-    }
-
-    // if this section is done, advance to the next
-    if (curr.isFinished) {
-      i = m.i = m.findNextOnClickSectionIndex()
-      curr = m.script[i]
-    }
-
-    // advance the line
-    curr.advance()
   }
 
   // close the open dialog dumpling, if any
@@ -116,6 +90,10 @@ class ScriptElement extends HTMLParsedElement {
 
   // find an element by id
   findById(id) {
+    if (id == null) {
+      return null
+    }
+
     return window.top.document.getElementById(id)
   }
 
@@ -126,44 +104,7 @@ class ScriptElement extends HTMLParsedElement {
 
   // find the click target, if one exists
   findTarget() {
-    const m = this
-
-    const tid = m.getAttribute("target")
-    if (!tid) {
-      return null
-    }
-
-    return m.findById(tid)
-  }
-
-  // find the current onclick line
-  findOnClickLine() {
-    // if we have a current section
-    const section = this.script[this.i]
-    if (section == null) {
-      return null
-    }
-
-    // get its current line
-    return section.current
-  }
-
-  // find the index of the next onclick section
-  findNextOnClickSectionIndex() {
-    const m = this
-    const n = m.script.length
-
-    // search through subsequent sections
-    for (let j = m.i + 1; j < n; j++) {
-      // if this section is an unfinished onclick section, switch to that one
-      const next = m.script[j]
-      if (next.isOnClick && !next.isFinished) {
-        return j
-      }
-    }
-
-    // otherwise we have no more onclick dialogue
-    return null;
+    return this.findById(this.getAttribute("target"))
   }
 
   // -- events --
@@ -176,17 +117,86 @@ class ScriptElement extends HTMLParsedElement {
   didClickClose = () => {
     this.closeOpenDialog()
   }
+}
+
+// -- impls/data
+// the script model
+class Script {
+  // -- props --
+  // the dialogue sections
+  sections = null
+
+  // the current section index
+  i = 0
+
+  // -- lifetime --
+  // create a new script
+  constructor(sections) {
+    this.sections = sections
+  }
+
+  // -- commands --
+  // advance to the next onclick line
+  advanceOnClickLine() {
+    const m = this
+
+    // get current section
+    let i = m.i
+    let curr = m.sections[i]
+
+    // we've exhaused all our onclick dialogue
+    if (curr == null) {
+      return
+    }
+
+    // if this section is done, advance to the next
+    if (curr.isFinished) {
+      i = m.i = m.findNextOnClickSectionIndex()
+      curr = m.sections[i]
+    }
+
+    // advance the line
+    curr.advance()
+  }
+
+  // -- queries --
+  // find the current onclick line
+  findOnClickLine() {
+    // if we have a current section
+    const section = this.sections[this.i]
+    if (section == null) {
+      return null
+    }
+
+    // get its current line
+    return section.current
+  }
+
+  // find the index of the next onclick section
+  findNextOnClickSectionIndex() {
+    const m = this
+    const n = m.sections.length
+
+    // search through subsequent sections
+    for (let j = m.i + 1; j < n; j++) {
+      // if this section is an unfinished onclick section, switch to that one
+      const next = m.sections[j]
+      if (next.isOnClick && !next.isFinished) {
+        return j
+      }
+    }
+
+    // otherwise we have no more onclick dialogue
+    return null;
+  }
 
   // -- serialization --
   // decode the script text
-  decode() {
-    const m = this
-
-    // produce a map of name => section
-    const script = []
+  static decode(text) {
+    // produce a list of sections
+    const sections = []
 
     // get the text as lines
-    const text = m.textContent
     const lines = text.split("\n")
 
     // parsing one section at a time
@@ -205,7 +215,7 @@ class ScriptElement extends HTMLParsedElement {
       // it's the current section on success
       if (next != null) {
         curr = next
-        script.push(next)
+        sections.push(next)
       }
       // add a line to the current section
       else if (curr != null) {
@@ -213,11 +223,11 @@ class ScriptElement extends HTMLParsedElement {
       }
     }
 
-    return script
+    return new Script(sections)
   }
 }
 
-// -- impls/structure
+// a named section in a script
 class ScriptSection {
   // -- props --
   // the name
