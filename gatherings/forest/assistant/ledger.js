@@ -1,5 +1,3 @@
-import "../../../global.js"
-
 // a ledger tracking the player's debt
 export class Ledger {
   // -- lifetime --
@@ -21,7 +19,7 @@ export class Ledger {
     return 5
   }
 
-  // the players total debt
+  // the player's total debt in cents
   get total() {
     const m = this
     const total = m.clicks * m.rate
