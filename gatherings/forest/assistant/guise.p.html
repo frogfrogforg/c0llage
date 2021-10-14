@@ -1,0 +1,41 @@
+<!-- template: item {title: assistant} -->
+<head>
+  <script src="../../shared/s-cript.js" type="module"></script>
+</head>
+
+<body>
+  <img class="Guise" src="/d/img/irene.gif">
+
+  <s-cript target="assistant">
+    --- intro [onclick]
+    hello, i'm the forest assistant
+    how are you?
+
+    --- main [onclick, repeat]
+    if you click me i will speak to you
+    nice
+
+    --- ledger
+    you're using the website
+    you've been clicking for a while
+    now is probably as good a time as any...
+    you've used your 100 free clicks, you see
+    from here on out, each click will cost you 1¢
+    i'm sorry, i don't set the policy.
+  </s-cript>
+</body>
+
+<style>
+  /* resets */
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /* styles */
+  .Guise {
+    width: 100%;
+  }
+</style>
+
+<script src="./brain.js" type="module"></script>

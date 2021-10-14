@@ -2,20 +2,15 @@ import "../../global.js"
 import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
 import { kInventory } from "./inventory.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
+import { Assistant } from "./assistant/brain.js"
 
 // -- props --
-let mPath = null
-
-// -- p/elements
 let $mGame = null
 
 // -- lifetime --
 function main() {
   // boostrap turbo
   Turbo.start()
-
-  // set location
-  mPath = document.location.pathname
 
   // capture elements
   $mGame = document.getElementById("game")
@@ -24,22 +19,15 @@ function main() {
   kInventory.loadFromState();
   addOnBeforeSaveStateListener(kInventory.saveToState)
 
-  // add the assisstant into the inventory
-  kInventory.add({
-    id: "assistant",
-    src: "items/assistant",
-    attrs: {
-      "no-back": true,
-      "no-close": true,
-      "persistent": true,
-    }
-  })
-
   // bind events
   addEventListener("beforeunload", didRefresh)
   document.addEventListener("turbo:before-visit", didStartVisit)
+  document.addEventListener("turbo:after-visit", didStartVisit)
   document.addEventListener("turbo:before-render", didCatchRender)
   didChangeState()
+
+  // run post render events first time
+  didFinishRender()
 }
 
 // -- commands --
@@ -56,7 +44,7 @@ function renderGame(nextBody) {
     $mGame.appendChild(child)
   }
 
-  // ivate any inert script tags in the new game
+  // activate any inert script tags in the new game
   const scripts = $mGame.querySelectorAll("script")
   for (const inert of Array.from(scripts)) {
     // clone the inert script tag
@@ -70,6 +58,9 @@ function renderGame(nextBody) {
     const parent = inert.parentElement
     parent.replaceChild(script, inert)
   }
+
+  // run post render events
+  didFinishRender()
 }
 
 // add random query string to links and iframe src to allow arbitrary recursion
@@ -130,6 +121,11 @@ function didCatchRender(evt) {
   evt.preventDefault()
   // render new game
   renderGame(evt.detail.newBody)
+}
+
+function didFinishRender() {
+  // spawn the assistant if possible
+  Assistant.spawn()
 }
 
 // -- exports --
