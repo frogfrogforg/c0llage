@@ -192,7 +192,7 @@ var summerHtmlImageMapCreator = (function() {
                 DELETE : 46,
                 I      : 73,
                 S      : 83,
-                C      : 67
+                D      : 68
             };
 
         function recalcOffsetValues() {
@@ -391,8 +391,8 @@ var summerHtmlImageMapCreator = (function() {
     
                     break;
                 
-                case KEYS.C:
-                    if (state.appMode === 'editing' && state.selectedArea && ctrlDown) {
+                case KEYS.D:
+                    if (state.appMode === 'editing' && state.selectedArea) {
                         state.selectedArea = Area.copy(state.selectedArea);
                     }
                 
@@ -2509,7 +2509,6 @@ var summerHtmlImageMapCreator = (function() {
             print: function() {
                 let savedHtmlDoc = app.getSavedHtmlDoc();
                 if (savedHtmlDoc) {
-                    debugger;
                     content.innerHTML = savedHtmlDoc.querySelector("body").innerHTML;
                     content.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
                 } else {
