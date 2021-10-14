@@ -26,6 +26,20 @@ var summerHtmlImageMapCreator = (function() {
             };
         },
 
+
+        downloadFile(filename, text) {
+          var element = document.createElement('a');
+          element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+          element.setAttribute('download', filename);
+
+          element.style.display = 'none';
+          document.body.appendChild(element);
+
+          element.click();
+
+          document.body.removeChild(element);
+        },
+
         pathBasename : function(path) {
             return path.split('/').reverse()[0];
         },
@@ -2508,17 +2522,19 @@ var summerHtmlImageMapCreator = (function() {
         return {
             print: function() {
                 let savedHtmlDoc = app.getSavedHtmlDoc();
+                let output = document.createElement("body");
+                debugger;
                 if (savedHtmlDoc) {
-                    content.innerHTML = savedHtmlDoc.querySelector("body").innerHTML;
-                    content.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
+                    output.innerHTML = savedHtmlDoc.querySelector("body").innerHTML;
+                    output.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
                 } else {
-                    content.innerHTML = app.getSVGCode(true);
+                    output.innerHTML = app.getSVGCode(true);
                 }
+                // content.innerHTML = "<br>"+utils.encode("<body>\n"+content.innerHTML+"\n<body>");
+                console.log(output);
 
-                content.innerHTML = "<br>"+utils.encode("<body>\n"+content.innerHTML+"\n<body>");
-                console.log(content.innerHTML);
-
-                utils.show(block);
+                utils.downloadFile("123.html", output);
+                // utils.show(block);
             },
             hide: function() {
                 utils.hide(block);
