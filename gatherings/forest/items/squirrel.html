@@ -7,6 +7,10 @@
       background-position: center;
       cursor: pointer;
     }
+    #squirrel {
+      background: url("squirrel.gif");
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -23,12 +27,17 @@
     <audio id="sq3">
         <source src="../sound/squirrel/sq_006.mp3" type="audio/mpeg">
     </audio>
+    <img src="squirrel.gif" />
 
     <script>
       playsound = () => {
         // play random squirrel noise
         let s_i = Math.floor(Math.random() * 4);
         document.getElementById("sq"+s_i).play(); 
+	
+	// here makie it a little more transparent every time
+	
+	
       }
     </script>
 </body>
