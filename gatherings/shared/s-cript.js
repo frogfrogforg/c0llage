@@ -1,8 +1,22 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
 // -- constants --
+// matches section headers
 const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
+
+// matching lines
 const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?/
+
+// attr names
+const kAttrs = {
+  target: "target",
+}
+
+// class names
+const kClass = {
+  close: ".Dialog-close",
+  cursor: "cursor-talk",
+}
 
 // -- impls --
 class ScriptElement extends HTMLParsedElement {
@@ -21,6 +35,7 @@ class ScriptElement extends HTMLParsedElement {
     const $target = m.findTarget()
     if ($target != null) {
       $target.addEventListener("click", m.didClickTarget)
+      $target.classList.toggle(kClass.cursor, true)
     }
   }
 
@@ -54,19 +69,17 @@ class ScriptElement extends HTMLParsedElement {
       </a-dumpling>
     `
 
-    console.log(html)
-
     // create the html el
     const $dialog = document.createElement("div")
     $dialog.innerHTML = html
 
     // close the dialog on button click
-    for (const $close of $dialog.querySelectorAll(".Dialog-close")) {
+    for (const $close of $dialog.querySelectorAll(kClass.close)) {
       $close.addEventListener("click", m.didClickClose)
     }
 
-    // add it to the targets parent
-    $target.parentElement.appendChild($dialog)
+    // spawn the dumpling TODO: dumpling spawner
+    window.top.document.firstElementChild.appendChild($dialog)
   }
 
   // close the open dialog dumpling, if any
@@ -83,32 +96,44 @@ class ScriptElement extends HTMLParsedElement {
   }
 
   // -- queries --
-  // get an id for this script
+  // the id of this element
   get id() {
-    return this.getAttribute("target")
+    return this.targetId
   }
 
+  // the id of the target element
+  get targetId() {
+    return this.getAttribute(kAttrs.target)
+  }
+
+  // the id of a spawned dialog
   get dialogId() {
     return `${this.id}-dialog`
   }
 
-  // find an element by id
-  findById(id) {
+  // find an element by id, starting with the closest window by default
+  findById(id, $window = window) {
     if (id == null) {
       return null
     }
 
-    return window.top.document.getElementById(id)
+    let $target = null
+    do {
+      $target = $window.document.getElementById(id)
+      $window = $window.parent !== $window ? $window.parent : null
+    } while ($target == null && $window != null)
+
+    return $target
   }
 
   // find the open dialog dumpling
   findOpenDialog() {
-    return this.findById(this.dialogId)
+    return this.findById(this.dialogId, window.top)
   }
 
   // find the click target, if one exists
   findTarget() {
-    return this.findById(this.getAttribute("target"))
+    return this.findById(this.targetId)
   }
 
   // -- events --

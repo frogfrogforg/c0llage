@@ -120,24 +120,29 @@
 }
 
 .stealthIcon {
-      position: fixed;
-      cursor: none;
-      animation: fadeIn 0.05s ease-in;
-      opacity: 1.0;
-      pointer-events: none;
-      visibility: hidden;
-      /* border: orangered solid; */
-    }
+  position: fixed;
+  cursor: none;
+  animation: fadeIn 0.05s ease-in;
+  opacity: 1.0;
+  pointer-events: none;
+  visibility: hidden;
+  /* border: orangered solid; */
+}
 
-    @keyframes fadeIn {
-      0% {
-        opacity: 0.0;
-      }
+@keyframes fadeIn {
+  0% {
+    opacity: 0.0;
+  }
 
-      100% {
-        opacity: 1.0;
-      }
-    }
+  100% {
+    opacity: 1.0;
+  }
+}
+
+/* custom elements */
+s-cript {
+  display: none;
+}
 
 /* virtual cursor */
 .Cursor {
@@ -166,7 +171,7 @@
 
 .cursor-talk,
 .talk {
-    cursor: url("../shared/img/talk.png") 16 0, auto;
+  cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">💬</text></svg>'), auto;
 }
 
 .cursor-move,
