@@ -97,8 +97,15 @@ function getItemEl({
 }) {
   // if we have a src path, make a new dumpling
   if (src != null) {
+    // add id and persistent flag
+    attrs = {
+      ...attrs,
+      id,
+      persistent: true,
+    }
+
     // build the attrs string
-    attrs = Object.entries({ ...attrs, id })
+    attrs = Object.entries(attrs)
       .map(([name, val]) => `${name}=${JSON.stringify(val)}`)
       .join(" ")
 

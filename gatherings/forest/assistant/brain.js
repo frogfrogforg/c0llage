@@ -4,20 +4,18 @@ import { Ledger } from "./ledger.js"
 // -- impls --
 export class Assistant {
   // -- props --
-  // the player's ledger
-  ledger = null
+  // ledger: Ledger - the player's ledger
 
   // -- lifetime --
   // creates a new assistant
   constructor() {
-    const m = this
-    m.ledger = new Ledger()
+    this.ledger = new Ledger()
   }
 
   // -- commands --
   // starts the assistant's brain
   start() {
-    console.log("yes it is me, the assistant.")
+    console.log("it is me, the assistant. yes. i am in here, too.")
   }
 
   // -- factories --
@@ -38,7 +36,6 @@ export class Assistant {
         "temperament": "choleric",
         "no-back": true,
         "no-close": true,
-        "persistent": true,
       }
     })
   }

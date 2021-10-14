@@ -1,14 +1,13 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 
 // -- constants --
-// a pattern to parse a header
 const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
+const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?/
 
 // -- impls --
 class ScriptElement extends HTMLParsedElement {
   // -- props --
-  // the script model
-  script = null
+  // script: Script - the script model
 
   // -- lifetime --
   // init the element
@@ -36,30 +35,35 @@ class ScriptElement extends HTMLParsedElement {
       return
     }
 
-    // find the next line
-    m.script.advanceOnClickLine()
-    const line = m.script.findOnClickLine()
-
     // close any open dialog
     m.closeOpenDialog()
 
+    // find the next line
+    m.script.advanceOnClickLine()
+    const l = m.script.findOnClickLine()
+
     // create the dialog
     const html = `
-      <a-dumpling id="${m.dialogId}">
+      <a-dumpling id="${m.dialogId}" w=30 h=25 temperament="phlegmatic">
         <article class="Dialog">
-          <p>${line}</p>
-          <button class="Dialog-close">okay</button>
+          <p>${l.text}</p>
+          <div class="Dialog-buttons">
+            ${l.buttons.map((b) => `<button class="Dialog-close">${b}</button>`).join("\n")}
+          </div>
         </article>
       </a-dumpling>
     `
+
+    console.log(html)
 
     // create the html el
     const $dialog = document.createElement("div")
     $dialog.innerHTML = html
 
     // close the dialog on button click
-    const $close = $dialog.querySelector(".Dialog-close")
-    $close.addEventListener("click", m.didClickClose)
+    for (const $close of $dialog.querySelectorAll(".Dialog-close")) {
+      $close.addEventListener("click", m.didClickClose)
+    }
 
     // add it to the targets parent
     $target.parentElement.appendChild($dialog)
@@ -123,16 +127,15 @@ class ScriptElement extends HTMLParsedElement {
 // the script model
 class Script {
   // -- props --
-  // the dialogue sections
-  sections = null
-
-  // the current section index
-  i = 0
+  // sections: ScriptSection[] - the dialogue sections
+  // i: int - the current section index
 
   // -- lifetime --
   // create a new script
   constructor(sections) {
-    this.sections = sections
+    const m = this
+    m.sections = sections
+    m.i = 0
   }
 
   // -- commands --
@@ -190,7 +193,7 @@ class Script {
     return null;
   }
 
-  // -- serialization --
+  // -- encoding --
   // decode the script text
   static decode(text) {
     // produce a list of sections
@@ -219,7 +222,7 @@ class Script {
       }
       // add a line to the current section
       else if (curr != null) {
-        curr.add(line.trim())
+        curr.add(ScriptLine.decode(line.trim()))
       }
     }
 
@@ -230,24 +233,19 @@ class Script {
 // a named section in a script
 class ScriptSection {
   // -- props --
-  // the name
-  name = ""
-
-  // a map of tags for this section (name => val)
-  tags = {}
-
-  // the lines
-  lines = []
-
-  // the index of the current line
-  i = -1
+  // name: string - the name
+  // tags: [string:any] - a map of tags for this section (name => val)
+  // line: ScriptLine[] - the lines
+  // i: int - the index of the current line
 
   // -- lifetime --
   // create new section
   constructor(name, tags) {
     const m = this
     m.name = name
+    m.lines = []
     m.tags = tags
+    m.i = -1
   }
 
   // -- commands --
@@ -294,8 +292,8 @@ class ScriptSection {
     return this.tags.onclick
   }
 
-  // -- factories --
-  // try to decode a section from a header line: "--- <name> [<tag>...]"
+  // -- encoding --
+  // try to decode a section from a header line: "--- <name> [<tag>,...]"
   static decode(line) {
     // see if the line is a header
     const match = line.match(kHeaderPattern)
@@ -319,4 +317,50 @@ class ScriptSection {
   }
 }
 
+// a line in a script section
+class ScriptLine  {
+  // -- props --
+  // text: string; the line's text
+  // buttons: string[]; the button labels
+
+  // -- lifetime --
+  // create a new line
+  constructor(text, buttons) {
+    const m = this
+    m.text = text
+    m.buttons = buttons
+  }
+
+  // -- encoding --
+  // try to decode a line: "<text> {<button>|...}"
+  static decode(line) {
+    // see if the line is a header
+    const match = line.match(kLinePattern)
+    if (match == null || match.length < 2) {
+      return null
+    }
+
+    // if so, grab the name and tags
+    const text = match[1]
+    const bstr = match[3]
+
+    // convert button str into list of names
+    const buttons = []
+
+    // if we have a list of button names
+    if (bstr) {
+      for (const name of bstr.split("|")) {
+        buttons.push(name.trim())
+      }
+    }
+    // if we only have braces
+    else if (match[2]) {
+      buttons.push("okay")
+    }
+
+    return new ScriptLine(text, buttons)
+  }
+}
+
+// -- install --
 customElements.define("s-cript", ScriptElement)
