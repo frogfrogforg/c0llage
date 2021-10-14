@@ -3,4 +3,3 @@
 - replace annoying image upload dialog with standard file picker
 
 - preserve attributes on <a> elements
-

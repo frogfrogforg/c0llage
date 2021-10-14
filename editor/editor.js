@@ -25,6 +25,10 @@ var summerHtmlImageMapCreator = (function() {
                 y : Math.round(boxCoords.top + window.pageYOffset)
             };
         },
+
+        pathBasename : function(path) {
+            return path.split('/').reverse()[0];
+        },
         
         /**
          * Returns correct coordinates (incl. offsets)
@@ -641,18 +645,19 @@ var summerHtmlImageMapCreator = (function() {
             getSVGCode : function(arg) {
                 var svg_code = '';
                 if (arg) {
-                    if (!state.areas.length) {
-                        return '0 objects';
-                    }
-                    svg_code += '<svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000" >\n';
+                    // if (!state.areas.length) {
+                    //     return '0 objects';
+                    // }
+                    svg_code += '    <svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000" >\n';
                     
-                    svg_code += '    <image xlink:href="' + state.image.filename + '"></image>\n'
+                    // (assume image is in images/ directory)
+                    svg_code += '        <image id="background-img" xlink:href="images/' + state.image.filename + '"></image>\n'
                     utils.foreachReverse(state.areas, function(x) {
-                        svg_code += '    ' + '<a xlink:href="' + x._attributes.href + '">\n'
-                        svg_code += '        ' + x.toSVGElementString() + '\n';
-                        svg_code += '    ' + '</a>\n'
+                        svg_code += '        ' + '<a xlink:href="' + x._attributes.href + '">\n'
+                        svg_code += '            ' + x.toSVGElementString() + '\n';
+                        svg_code += '        ' + '</a>\n'
                     });
-                    svg_code += '</svg>'
+                    svg_code += '    </svg>'
 
                 } else {
                     utils.foreachReverse(state.areas, function(x) {
@@ -2504,13 +2509,14 @@ var summerHtmlImageMapCreator = (function() {
             print: function() {
                 let savedHtmlDoc = app.getSavedHtmlDoc();
                 if (savedHtmlDoc) {
+                    debugger;
                     content.innerHTML = savedHtmlDoc.querySelector("body").innerHTML;
                     content.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
                 } else {
                     content.innerHTML = app.getSVGCode(true);
                 }
 
-                content.innerHTML = utils.encode(content.innerHTML)
+                content.innerHTML = "<br>"+utils.encode("<body>\n"+content.innerHTML+"\n<body>");
                 console.log(content.innerHTML);
 
                 utils.show(block);
@@ -2653,7 +2659,12 @@ var summerHtmlImageMapCreator = (function() {
 
                 let svgEl = htmlDoc.querySelector("#hotspot-map");
 
-                // TODO also parse image
+                let imgEl = htmlDoc.querySelector("#background-img");
+                let filename = imgEl.href.baseVal;
+                let basename = utils.pathBasename(filename); // e.g. 1.png
+
+                // assume image is in the forest images directory
+                app.loadImage("../gatherings/forest/images/"+basename).setFilename(basename);
 
                 if (Area.createAreasFromSvgElement(svgEl)) {
                     hide();
