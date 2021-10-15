@@ -19,10 +19,11 @@ var summerHtmlImageMapCreator = (function() {
          */
         getOffset : function(node) {
             var boxCoords = node.getBoundingClientRect();
-        
             return {
                 x : Math.round(boxCoords.left + window.pageXOffset),
-                y : Math.round(boxCoords.top + window.pageYOffset)
+                y : Math.round(boxCoords.top + window.pageYOffset),
+                w : boxCoords.width,
+                h : boxCoords.height
             };
         },
 
@@ -52,9 +53,10 @@ var summerHtmlImageMapCreator = (function() {
          * @returns {Object} - object with recalculated coordinates, e.g. {x: 100, y: 200}
          */ 
         getRightCoords : function(x, y) {
+            // 1000 is the magic number equal to the side length of the svg viewbox
             return {
-                x : x - app.getOffset('x'),
-                y : y - app.getOffset('y')
+                x : (x - app.getOffset('x'))*(1000/app.getOffset('w')),
+                y : (y - app.getOffset('y'))*(1000/app.getOffset('h'))
             };
         },
         
@@ -220,9 +222,9 @@ var summerHtmlImageMapCreator = (function() {
         domElements.container.addEventListener('mousedown', function(e) { e.preventDefault(); }, false);
 
         /* Disable image dragging */
-        domElements.img.addEventListener('dragstart', function(e){
-            e.preventDefault();
-        }, false);
+        // domElements.img.addEventListener('dragstart', function(e){
+        //     e.preventDefault();
+        // }, false);
 
         /* Display cursor coordinates info */
         var cursor_position_info = (function() {
@@ -482,43 +484,47 @@ var summerHtmlImageMapCreator = (function() {
                 return this;
             },
             setDimensions : function(width, height) {
-                domElements.svg.setAttribute('width', width);
-                domElements.svg.setAttribute('height', height);
-                domElements.container.style.width = width + 'px';
-                domElements.container.style.height = height + 'px';
+                //domElements.svg.setAttribute('width', width);
+                //domElements.svg.setAttribute('height', height);
+                //domElements.container.style.width = width + 'px';
+                //domElements.container.style.height = height + 'px';
                 return this;
             },
             loadImage : function(url) {
-                get_image.showLoadIndicator();
-                domElements.img.src = url;
+                //get_image.showLoadIndicator();
+                // domElements.img.src = url;
+                let img = document.querySelector("#background-img");
+                img.setAttribute('href', url);
                 state.image.src = url;
                 
-                domElements.img.onload = function() {
-                    get_image.hideLoadIndicator().hide();
+                img.onload = function() {
+                    //get_image.hideLoadIndicator().hide();
                     app.show()
-                       .setDimensions(domElements.img.width, domElements.img.height)
+                       // .setDimensions(domElements.img.width, domElements.img.height)
                        .recalcOffsetValues();
+                   state.image.height = img.height;
+                   state.image.width = img.width;
                 };
                 return this;
             },
             preview : (function() {
-                domElements.img.setAttribute('usemap', '#map');
-                domElements.map = document.createElement('map');
-                domElements.map.setAttribute('name', 'map');
-                domElements.container.appendChild(domElements.map);
+                // domElements.img.setAttribute('usemap', '#map');
+                // domElements.map = document.createElement('map');
+                // domElements.map.setAttribute('name', 'map');
+                // domElements.container.appendChild(domElements.map);
                 
                 return function() {
-                    info.unload();
-                    app.setShape(null);
-                    utils.hide(domElements.svg);
-                    domElements.map.innerHTML = app.getHTMLCode();
-                    code.print();
+                    // info.unload();
+                    // app.setShape(null);
+                    // utils.hide(domElements.svg);
+                    // domElements.map.innerHTML = app.getHTMLCode();
+                    // code.print();
                     return this;
                 };
             })(),
             hidePreview : function() {
-                utils.show(domElements.svg);
-                domElements.map.innerHTML = '';
+                // utils.show(domElements.svg);
+                // domElements.map.innerHTML = '';
                 return this;
             },
             addNodeToSvg : function(node) {
@@ -530,18 +536,14 @@ var summerHtmlImageMapCreator = (function() {
                 return this;
             },
             getOffset : function(arg) {
-                switch(arg) {
-                    case 'x':
-                    case 'y':
-                        return state.offset[arg];
-                }
+                return state.offset[arg];
             },
             clear : function(){
-                //remove all areas
+                //remove all areas (g tags)
+                Array.from(domElements.svg.querySelectorAll("g")).forEach((el) => {
+                    domElements.svg.removeChild(el);
+                });
                 state.areas.length = 0;
-                while(domElements.svg.childNodes[0]) {
-                    domElements.svg.removeChild(domElements.svg.childNodes[0]);
-                }
                 code.hide();
                 info.unload();
                 return this;
@@ -662,12 +664,14 @@ var summerHtmlImageMapCreator = (function() {
                     // if (!state.areas.length) {
                     //     return '0 objects';
                     // }
-                    svg_code += '    <svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000" >\n';
+                    svg_code += '    <svg id="hotspot-map"\n'
+                    svg_code += '         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"\n'
+                    svg_code += '         viewBox="0 0 1000 1000" >\n';
                     
                     // (assume image is in images/ directory)
                     svg_code += '        <image id="background-img" xlink:href="images/' + state.image.filename + '"></image>\n'
                     utils.foreachReverse(state.areas, function(x) {
-                        svg_code += '        ' + '<a xlink:href="' + x._attributes.href + '">\n'
+                        svg_code += '        ' + '<a class="'+x._attributes.class+'" xlink:href="' + x._attributes.href + '">\n'
                         svg_code += '            ' + x.toSVGElementString() + '\n';
                         svg_code += '        ' + '</a>\n'
                     });
@@ -702,7 +706,6 @@ var summerHtmlImageMapCreator = (function() {
                         svg_code += x.toSVGElementString();
                     });
                 }
-                console.log(svg_code);
                 return svg_code;
             }
         };
@@ -2522,15 +2525,15 @@ var summerHtmlImageMapCreator = (function() {
         return {
             print: function() {
                 let savedHtmlDoc = app.getSavedHtmlDoc();
-                let output = document.createElement("body");
-                debugger;
+                let output;
                 if (savedHtmlDoc) {
-                    output.innerHTML = savedHtmlDoc.querySelector("body").innerHTML;
+                    output = savedHtmlDoc;
                     output.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
+                    output = output.querySelector("html").innerHTML;
                 } else {
+                    output = document.createElement("body");
                     output.innerHTML = app.getSVGCode(true);
                 }
-                // content.innerHTML = "<br>"+utils.encode("<body>\n"+content.innerHTML+"\n<body>");
                 console.log(output);
 
                 utils.downloadFile("123.html", output);
@@ -2648,6 +2651,27 @@ var summerHtmlImageMapCreator = (function() {
         };
     })();
 
+    function loadFromHtml(htmlStr) {
+        let parser = new DOMParser();
+        // Save html doc so we can save it out later
+        let htmlDoc = parser.parseFromString(htmlStr, 'text/html');
+        app.setSavedHtmlDoc(htmlDoc);
+
+        let svgEl = htmlDoc.querySelector("#hotspot-map");
+
+        let imgEl = htmlDoc.querySelector("#background-img");
+        let filename = imgEl.href.baseVal;
+        let basename = utils.pathBasename(filename); // e.g. 1.png
+
+        // assume image is in the forest images directory
+        app.loadImage("../gatherings/forest/images/"+basename).setFilename(basename);
+
+        Area.createAreasFromSvgElement(svgEl)
+        // if (Area.createAreasFromSvgElement(svgEl)) {
+        // //    hide();
+        // }
+    }
+
     /* Load areas from html code */
     var from_html_form = (function() {
         var form = utils.id('from_html_wrapper'),
@@ -2667,23 +2691,7 @@ var summerHtmlImageMapCreator = (function() {
         function load(e) {
             let htmlStr = code_input.value;
             if (htmlStr) {
-                let parser = new DOMParser();
-                // Save html doc so we can save it out later
-                let htmlDoc = parser.parseFromString(htmlStr, 'text/html');
-                app.setSavedHtmlDoc(htmlDoc);
-
-                let svgEl = htmlDoc.querySelector("#hotspot-map");
-
-                let imgEl = htmlDoc.querySelector("#background-img");
-                let filename = imgEl.href.baseVal;
-                let basename = utils.pathBasename(filename); // e.g. 1.png
-
-                // assume image is in the forest images directory
-                app.loadImage("../gatherings/forest/images/"+basename).setFilename(basename);
-
-                if (Area.createAreasFromSvgElement(svgEl)) {
-                    hide();
-                }
+                loadFromHtml(htmlStr);
             } 
 
             e.preventDefault();
@@ -2707,234 +2715,255 @@ var summerHtmlImageMapCreator = (function() {
     })();
 
 
-    /* Get image form */
-    var get_image = (function() {
-        var block = utils.id('get_image_wrapper'),
-            close_button = block.querySelector('.close_button'),
-            loading_indicator = utils.id('loading'),
-            button = utils.id('button'),
-            filename = null,
-            last_changed = null;
+    // /* Get image form */
+    // var get_image = (function() {
+    //     var block = utils.id('get_image_wrapper'),
+    //         close_button = block.querySelector('.close_button'),
+    //         loading_indicator = utils.id('loading'),
+    //         button = utils.id('button'),
+    //         filename = null,
+    //         last_changed = null;
             
-        // Drag'n'drop - the first way to loading an image
-        var drag_n_drop = (function() {
-            var dropzone = utils.id('dropzone'),
-                dropzone_clear_button = dropzone.querySelector('.clear_button'),
-                sm_img = utils.id('sm_img');
+    //     // Drag'n'drop - the first way to loading an image
+    //     var drag_n_drop = (function() {
+    //         var dropzone = utils.id('dropzone'),
+    //             dropzone_clear_button = dropzone.querySelector('.clear_button'),
+    //             sm_img = utils.id('sm_img');
             
-            function testFile(type) {
-                switch (type) {
-                    case 'image/jpeg':
-                    case 'image/gif':
-                    case 'image/png':
-                        return true;
-                }
-                return false;
-            }
+    //         function testFile(type) {
+    //             switch (type) {
+    //                 case 'image/jpeg':
+    //                 case 'image/gif':
+    //                 case 'image/png':
+    //                     return true;
+    //             }
+    //             return false;
+    //         }
             
-            dropzone.addEventListener('dragover', function(e){
-                utils.stopEvent(e);
-            }, false);
+    //         dropzone.addEventListener('dragover', function(e){
+    //             utils.stopEvent(e);
+    //         }, false);
             
-            dropzone.addEventListener('dragleave', function(e){
-                utils.stopEvent(e);
-            }, false);
+    //         dropzone.addEventListener('dragleave', function(e){
+    //             utils.stopEvent(e);
+    //         }, false);
     
-            dropzone.addEventListener('drop', function(e){
-                utils.stopEvent(e);
+    //         dropzone.addEventListener('drop', function(e){
+    //             utils.stopEvent(e);
     
-                var reader = new FileReader(),
-                    file = e.dataTransfer.files[0];
+    //             var reader = new FileReader(),
+    //                 file = e.dataTransfer.files[0];
                 
-                if (testFile(file.type)) {
-                    dropzone.classList.remove('error');
+    //             if (testFile(file.type)) {
+    //                 dropzone.classList.remove('error');
                     
-                    reader.readAsDataURL(file);
+    //                 reader.readAsDataURL(file);
                     
-                    reader.onload = function(e) {
-                        sm_img.src = e.target.result;
-                        sm_img.style.display = 'inline-block';
-                        filename = file.name;
-                        utils.show(dropzone_clear_button);
-                        last_changed = drag_n_drop;
-                    };
-                } else {
-                    clearDropzone();
-                    dropzone.classList.add('error');
-                }
+    //                 reader.onload = function(e) {
+    //                     sm_img.src = e.target.result;
+    //                     sm_img.style.display = 'inline-block';
+    //                     filename = file.name;
+    //                     utils.show(dropzone_clear_button);
+    //                     last_changed = drag_n_drop;
+    //                 };
+    //             } else {
+    //                 clearDropzone();
+    //                 dropzone.classList.add('error');
+    //             }
     
-            }, false);
+    //         }, false);
     
-            function clearDropzone() {
-                sm_img.src = '';
+    //         function clearDropzone() {
+    //             sm_img.src = '';
                 
-                utils.hide(sm_img)
-                     .hide(dropzone_clear_button);
+    //             utils.hide(sm_img)
+    //                  .hide(dropzone_clear_button);
                      
-                dropzone.classList.remove('error');
+    //             dropzone.classList.remove('error');
                      
-                last_changed = url_input;
-            }
+    //             last_changed = url_input;
+    //         }
             
-            dropzone_clear_button.addEventListener('click', clearDropzone, false);
+    //         dropzone_clear_button.addEventListener('click', clearDropzone, false);
     
-            return {
-                clear : clearDropzone,
-                init : function() {
-                    dropzone.draggable = true;
-                    this.clear();
-                    utils.hide(sm_img)
-                         .hide(dropzone_clear_button);
-                },
-                test : function() {
-                    return Boolean(sm_img.src);
-                },
-                getImage : function() {
-                    return sm_img.src;
-                }
-            };
-        })();
+    //         return {
+    //             clear : clearDropzone,
+    //             init : function() {
+    //                 dropzone.draggable = true;
+    //                 this.clear();
+    //                 utils.hide(sm_img)
+    //                      .hide(dropzone_clear_button);
+    //             },
+    //             test : function() {
+    //                 return Boolean(sm_img.src);
+    //             },
+    //             getImage : function() {
+    //                 return sm_img.src;
+    //             }
+    //         };
+    //     })();
         
-        /* Set a url - the second way to loading an image */
-        var url_input = (function() {
-            var url = utils.id('url'),
-                url_clear_button = url.parentNode.querySelector('.clear_button');
+    //     /* Set a url - the second way to loading an image */
+    //     var url_input = (function() {
+    //         var url = utils.id('url'),
+    //             url_clear_button = url.parentNode.querySelector('.clear_button');
             
-            function testUrl(str) {
-                var url_str = str.trim(),
-                    temp_array = url_str.split('.'),
-                    ext;
+    //         function testUrl(str) {
+    //             var url_str = str.trim(),
+    //                 temp_array = url_str.split('.'),
+    //                 ext;
     
-                if(temp_array.length > 1) {
-                    ext = temp_array[temp_array.length-1].toLowerCase();
-                    switch (ext) {
-                        case 'jpg':
-                        case 'jpeg':
-                        case 'gif':
-                        case 'png':
-                            return true;
-                    }
-                }
+    //             if(temp_array.length > 1) {
+    //                 ext = temp_array[temp_array.length-1].toLowerCase();
+    //                 switch (ext) {
+    //                     case 'jpg':
+    //                     case 'jpeg':
+    //                     case 'gif':
+    //                     case 'png':
+    //                         return true;
+    //                 }
+    //             }
                 
-                return false;
-            }
+    //             return false;
+    //         }
             
-            function onUrlChange() {
-                setTimeout(function(){
-                    if(url.value.length) {
-                        utils.show(url_clear_button);
-                        last_changed = url_input;
-                    } else {
-                        utils.hide(url_clear_button);
-                        last_changed = drag_n_drop;
-                    }
-                }, 0);
-            }
+    //         function onUrlChange() {
+    //             setTimeout(function(){
+    //                 if(url.value.length) {
+    //                     utils.show(url_clear_button);
+    //                     last_changed = url_input;
+    //                 } else {
+    //                     utils.hide(url_clear_button);
+    //                     last_changed = drag_n_drop;
+    //                 }
+    //             }, 0);
+    //         }
             
-            url.addEventListener('keypress', onUrlChange, false);
-            url.addEventListener('change', onUrlChange, false);
-            url.addEventListener('paste', onUrlChange, false);
+    //         url.addEventListener('keypress', onUrlChange, false);
+    //         url.addEventListener('change', onUrlChange, false);
+    //         url.addEventListener('paste', onUrlChange, false);
             
-            function clearUrl() {
-                url.value = '';
-                utils.hide(url_clear_button);
-                url.classList.remove('error');
-                last_changed = url_input;
-            }
+    //         function clearUrl() {
+    //             url.value = '';
+    //             utils.hide(url_clear_button);
+    //             url.classList.remove('error');
+    //             last_changed = url_input;
+    //         }
             
-            url_clear_button.addEventListener('click', clearUrl, false);
+    //         url_clear_button.addEventListener('click', clearUrl, false);
     
-            return {
-                clear : clearUrl,
-                init : function() {
-                    this.clear();
-                    utils.hide(url_clear_button);
-                },
-                test : function() {
-                    if(testUrl(url.value)) {
-                        url.classList.remove('error');
-                        return true;
-                    } else {
-                        url.classList.add('error');
-                    }
-                    return false;
-                },
-                getImage : function() {
-                    var tmp_arr = url.value.split('/');
-                        filename = tmp_arr[tmp_arr.length - 1];
+    //         return {
+    //             clear : clearUrl,
+    //             init : function() {
+    //                 this.clear();
+    //                 utils.hide(url_clear_button);
+    //             },
+    //             test : function() {
+    //                 if(testUrl(url.value)) {
+    //                     url.classList.remove('error');
+    //                     return true;
+    //                 } else {
+    //                     url.classList.add('error');
+    //                 }
+    //                 return false;
+    //             },
+    //             getImage : function() {
+    //                 var tmp_arr = url.value.split('/');
+    //                     filename = tmp_arr[tmp_arr.length - 1];
                         
-                    return url.value.trim();
-                }
-            };
-        })();
+    //                 return url.value.trim();
+    //             }
+    //         };
+    //     })();
         
         
-        /* Block init */
-        function init() {
-            utils.hide(loading_indicator);
-            drag_n_drop.init();
-            url_input.init();
-        }
-        init();
+    //     /* Block init */
+    //     function init() {
+    //         utils.hide(loading_indicator);
+    //         drag_n_drop.init();
+    //         url_input.init();
+    //     }
+    //     init();
         
-        /* Block clear */
-        function clear() {
-            drag_n_drop.clear();
-            url_input.clear();
-            last_changed = null;
-        }
+    //     /* Block clear */
+    //     function clear() {
+    //         drag_n_drop.clear();
+    //         url_input.clear();
+    //         last_changed = null;
+    //     }
         
-        /* Selected image loading */
-        function onButtonClick(e) {
-            if (last_changed === url_input && url_input.test()) {
-                app.loadImage(url_input.getImage()).setFilename(filename);
-            } else if (last_changed === drag_n_drop && drag_n_drop.test()) {
-                app.loadImage(drag_n_drop.getImage()).setFilename(filename);
-            }
+    //     /* Selected image loading */
+    //     function onButtonClick(e) {
+    //         if (last_changed === url_input && url_input.test()) {
+    //             app.loadImage(url_input.getImage()).setFilename(filename);
+    //         } else if (last_changed === drag_n_drop && drag_n_drop.test()) {
+    //             app.loadImage(drag_n_drop.getImage()).setFilename(filename);
+    //         }
             
-            e.preventDefault();
-        }
+    //         e.preventDefault();
+    //     }
         
-        button.addEventListener('click', onButtonClick, false);
+    //     button.addEventListener('click', onButtonClick, false);
         
-        close_button.addEventListener('click', hide, false);
+    //     close_button.addEventListener('click', hide, false);
         
-        function show() {
-            clear();
-            utils.show(block);
-        }
+    //     function show() {
+    //         clear();
+    //         utils.show(block);
+    //     }
         
-        function hide() {
-            utils.hide(block);
-        }
+    //     function hide() {
+    //         utils.hide(block);
+    //     }
         
-        /* Returned object */
-        return {
-            show : function() {
-                app.hide();
-                show();
+    //     /* Returned object */
+    //     return {
+    //         show : function() {
+    //             app.hide();
+    //             show();
                 
-                return this;
-            },
-            hide : function() {
-                app.show();
-                hide();
+    //             return this;
+    //         },
+    //         hide : function() {
+    //             app.show();
+    //             hide();
                 
-                return this;
-            },
-            showLoadIndicator : function() {
-                utils.show(loading_indicator);
+    //             return this;
+    //         },
+    //         showLoadIndicator : function() {
+    //             utils.show(loading_indicator);
                 
-                return this;
-            },
-            hideLoadIndicator : function() {
-                utils.hide(loading_indicator);
+    //             return this;
+    //         },
+    //         hideLoadIndicator : function() {
+    //             utils.hide(loading_indicator);
                 
-                return this;
-            }
-        };
-    })();
-    get_image.show();    
+    //             return this;
+    //         }
+    //     };
+    // })();
+    // get_image.show();   
+    utils.show(utils.id('get_image_wrapper')); 
+
+    var imageFileInput = utils.id("image-file");
+    imageFileInput.addEventListener("change", handleImageFiles, false);
+    function handleImageFiles() {
+      const fileList = this.files; /* now you can work with the file list */
+      let basename = this.files[0].name;
+
+      // assume image is in the forest images directory
+      app.loadImage("../gatherings/forest/images/"+basename).setFilename(basename);
+    }
+
+    var htmlFileInput = utils.id("html-file");
+    htmlFileInput.addEventListener("change", handleHtmlFiles, false);
+    function handleHtmlFiles() {
+      const fileList = this.files; /* now you can work with the file list */
+      this.files[0].text().then((text) => {
+          loadFromHtml(text);
+      });
+    }
+
 
     /* Buttons and actions */
     var buttons = (function() {
@@ -3022,7 +3051,6 @@ var summerHtmlImageMapCreator = (function() {
         }
 
         function onToSvgButtonClick(e) {
-            console.log('to svg');
             // Generate svg code only
             info.unload();
             svg_code.print();
@@ -3092,12 +3120,12 @@ var summerHtmlImageMapCreator = (function() {
         circle.addEventListener('click', onShapeButtonClick, false);
         polygon.addEventListener('click', onShapeButtonClick, false);
         clear.addEventListener('click', onClearButtonClick, false);
-        from_html.addEventListener('click', onFromHtmlButtonClick, false);
+//        from_html.addEventListener('click', onFromHtmlButtonClick, false);
 //        to_html.addEventListener('click', onToHtmlButtonClick, false);
         to_svg.addEventListener('click', onToSvgButtonClick, false);
         // preview.addEventListener('click', onPreviewButtonClick, false);
         edit.addEventListener('click', onEditButtonClick, false);
-        new_image.addEventListener('click', onNewImageButtonClick, false);
+     //   new_image.addEventListener('click', onNewImageButtonClick, false);
         show_help.addEventListener('click', onShowHelpButtonClick, false);
     })();
 

@@ -144,6 +144,7 @@ a:link, a:visited {
     border-radius: 3px;
     box-shadow: rgba(0,0,0,0.2) 0 0 2px 2px;
     display: none;
+    width:  80%;
 }
 .draw#image {
     cursor: crosshair;
@@ -466,11 +467,12 @@ a:link, a:visited {
 /* CSS for SVG-elements */
 
 #svg {
-    position: absolute;
+    /*position: absolute;*/
     top: 0;
     left: 0;
     z-index: 2;
     display: inline-block;
+    /*width: 80%;*/
 }
 #svg rect {
     stroke-width: 3px;

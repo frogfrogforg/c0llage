@@ -1,5 +1,11 @@
 X parse <image> element when loading from file, and display image correctly
-- save & load from file instead of from text input/output
-- replace annoying image upload dialog with standard file picker
+X save & load from file instead of from text input/output
+X replace annoying image upload dialog with standard file picker
 
 - preserve attributes on <a> elements
+
+
+- write method to import from old style hotspots
+X move image inside svg for easy scaling
+
+- bug: "<head></head>" gets added when loading + saving existing html file

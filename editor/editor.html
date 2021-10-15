@@ -27,9 +27,9 @@
                 <!-- <li id="load"><a href="#">load</a></li> -->
                 <li id="show_help"><a href="#">?</a></li>
                 <li id="clear"><a href="#">clear</a></li>
-                <li id="new_image"><a href="#">new image</a></li>
-                <li id="from_html"><a href="#">from html (svg)</a></li>
-                <li id="to_svg"><a href="#">to html (svg)</a></li>
+                <!-- <li id="new_image"><a href="#">new image</a></li> -->
+                <!-- <li id="from_html"><a href="#">from html</a></li> -->
+                <li id="to_svg"><a href="#">save</a></li>
                 <li id="rectangle"><a href="#">rectangle</a></li>
                 <li id="circle"><a href="#">circle</a></li>
                 <li id="polygon"><a href="#">polygon</a></li>
@@ -43,8 +43,10 @@
     </header>
     <div id="image_wrapper">
         <div id="image">
-            <img src="" alt="#" id="img" />
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="svg"></svg>
+            <!-- <img src="" alt="#" id="img" /> -->
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="svg" viewBox="0 0 1000 1000">
+                <image preserveAspectRatio="none" id="background-img" width="1000" height="1000"></image>
+            </svg>
         </div>
     </div>
 </div>
@@ -95,21 +97,17 @@
 <div id="get_image_wrapper">
     <div id="get_image">
         <span title="close" class="close_button"></span>
-        <div id="loading">Loading</div>
-        <div id="file_reader_support">
-            <label>Drag an image</label>
-            <div id="dropzone">
-                <span class="clear_button" title="clear">x</span> 
-                <img src="" alt="preview" id="sm_img" />
-            </div>
-            <b>or</b>
-        </div>
-        <label for="url">type a url</label>
-        <span id="url_wrapper">
-            <span class="clear_button" title="clear">x</span>
-            <input type="text" id="url" />
-        </span>
-        <button id="button">OK</button>
+
+        <label for="image-file">Choose an image from the forest/images directory:</label>
+        <input type="file"
+            id="image-file" name="image-file"
+            accept="image/png, image/jpeg">
+
+        <b>or</b>
+        <label for="html-file">Upload a .p.html file (must have been created from this editor)</label>
+        <input type="file"
+            id="html-file" name="html-file"
+            accept="text/html">
     </div>
 </div>
 
