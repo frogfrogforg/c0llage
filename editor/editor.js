@@ -257,10 +257,7 @@ var summerHtmlImageMapCreator = (function() {
                     
                     app.deselectAll();
                     state.selectedArea.select();
-                    state.selectedArea.editingStartPoint = {
-                        x : e.pageX,
-                        y : e.pageY
-                    };
+                    state.selectedArea.editingStartPoint = utils.getRightCoords(e.pageX, e.pageY);
     
                     if (e.target.classList.contains('helper')) {
                         var helper = e.target;
@@ -671,7 +668,7 @@ var summerHtmlImageMapCreator = (function() {
                     // (assume image is in images/ directory)
                     svg_code += '        <image preserveAspectRatio="none" id="background-img" xlink:href="images/' + state.image.filename + '"></image>\n'
                     utils.foreachReverse(state.areas, function(x) {
-                        svg_code += '        ' + '<a class="'+x._attributes.class+'" xlink:href="' + x._attributes.href + '">\n'
+                        svg_code += '        ' + '<a title="'+x._attributes.title+'" class="'+x._attributes.class+'" xlink:href="' + x._attributes.href + '">\n'
                         svg_code += '            ' + x.toSVGElementString() + '\n';
                         svg_code += '        ' + '</a>\n'
                     });
@@ -828,10 +825,9 @@ var summerHtmlImageMapCreator = (function() {
          */
         this._attributes = {
             href : '',
-            alt : '',
-            title : ''    
+            title : '',
+            class : 'hotspot'    
         };
-
         if (attributes) {
             this.setInfoAttributes(attributes);
         }
@@ -993,9 +989,10 @@ var summerHtmlImageMapCreator = (function() {
      * @param attributes {Object} - Object with attributes for area
      */
     Area.prototype.setInfoAttributes = function(attributes) {
-        this._attributes.href = attributes.href;
-        this._attributes.alt = attributes.alt;
-        this._attributes.title = attributes.title;
+        this._attributes = {...attributes}
+        // this._attributes.href = attributes.href;
+        // this._attributes.alt = attributes.alt;
+        // this._attributes.title = attributes.title;
     };
     
     /**
@@ -1060,8 +1057,10 @@ var summerHtmlImageMapCreator = (function() {
             let type = Area.SVG_NAMES_TO_AREA_NAMES[shapeEl.tagName];
 
             let attributes = {
-                href: anchorEl.getAttributeNS('http://www.w3.org/1999/xlink', 'href')
-                // TODO: add title and alt attributes
+                href: anchorEl.getAttributeNS('http://www.w3.org/1999/xlink', 'href'),
+                title: anchorEl.getAttribute('title'),
+                class: anchorEl.getAttribute('class')
+                // Do we need any other attributes?
             }
 
             Area.fromJSON({
@@ -1383,11 +1382,13 @@ var summerHtmlImageMapCreator = (function() {
      * @params e {MouseEvent} - mousemove event
      */
     Rectangle.prototype.onProcessEditing = function(e) {
+        var coords = utils.getRightCoords(e.pageX, e.pageY);
+
         return this.dynamicEdit(
             this.edit(
                 app.getEditType(),
-                e.pageX - this.editingStartPoint.x,
-                e.pageY - this.editingStartPoint.y
+                coords.x - this.editingStartPoint.x,
+                coords.y - this.editingStartPoint.y
             ),
             e.shiftKey
         );
@@ -1808,9 +1809,14 @@ var summerHtmlImageMapCreator = (function() {
      */
     Circle.prototype.onProcessEditing = function(e) {
         var editType = app.getEditType();
-        
+        var coords = utils.getRightCoords(e.pageX, e.pageY);
+
         return this.dynamicEdit(
-            this.edit(editType, e.pageX - this.editingStartPoint.x, e.pageY - this.editingStartPoint.y)
+            this.edit(
+                editType,
+                coords.x - this.editingStartPoint.x,
+                coords.y - this.editingStartPoint.y
+            )
         );
     };
     
@@ -2199,17 +2205,16 @@ var summerHtmlImageMapCreator = (function() {
      */
     Polygon.prototype.onProcessEditing = function(e) {
         var editType = app.getEditType();
-        
+        var coords = utils.getRightCoords(e.pageX, e.pageY);
         this.redraw(
             this.edit(
                 editType, 
-                e.pageX - this.editingStartPoint.x, 
-                e.pageY - this.editingStartPoint.y
+                coords.x - this.editingStartPoint.x, 
+                coords.y - this.editingStartPoint.y
             )
         );
 
-        this.editingStartPoint.x = e.pageX;
-        this.editingStartPoint.y = e.pageY;
+        this.editingStartPoint = utils.getRightCoords(e.pageX, e.pageY);
     };
     
     /**
@@ -2527,16 +2532,17 @@ var summerHtmlImageMapCreator = (function() {
                 let savedHtmlDoc = app.getSavedHtmlDoc();
                 let output;
                 if (savedHtmlDoc) {
-                    output = savedHtmlDoc;
-                    output.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
-                    output = output.querySelector("html").innerHTML;
+                    let doc = savedHtmlDoc;
+                    doc.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
+                    output = doc.querySelector("html").innerHTML;
                 } else {
-                    output = document.createElement("body");
-                    output.innerHTML = app.getSVGCode(true);
+                    let body = document.createElement("body");
+                    body.innerHTML = app.getSVGCode(true);
+                    output = body.outerHTML;
                 }
                 console.log(output);
 
-                utils.downloadFile("123.html", output.outerHTML);
+                utils.downloadFile("123.html", output);
                 // utils.show(block);
             },
             hide: function() {
@@ -2551,8 +2557,8 @@ var summerHtmlImageMapCreator = (function() {
         var form = utils.id('edit_details'),
             header = form.querySelector('h5'),
             href_attr = utils.id('href_attr'),
-            alt_attr = utils.id('alt_attr'),
             title_attr = utils.id('title_attr'),
+            class_attr = utils.id('class_attr'),
             save_button = utils.id('save_details'),
             close_button = form.querySelector('.close_button'),
             sections = form.querySelectorAll('p'),
@@ -2572,8 +2578,8 @@ var summerHtmlImageMapCreator = (function() {
         function save(e) {
             obj.setInfoAttributes({
                 href : href_attr.value,
-                alt : alt_attr.value,
                 title : title_attr.value,
+                class : class_attr.value,
             });
             
             obj[obj.href ? 'setStyleOfElementWithHref' : 'unsetStyleOfElementWithHref']();
@@ -2615,12 +2621,12 @@ var summerHtmlImageMapCreator = (function() {
         save_button.addEventListener('click', save, false);
         
         href_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
-        alt_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
         title_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
+        class_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
         
         href_attr.addEventListener('change', change, false);
-        alt_attr.addEventListener('change', change, false);
         title_attr.addEventListener('change', change, false);
+        class_attr.addEventListener('change', change, false);
         
         close_button.addEventListener('click', unload, false);
         
@@ -2636,10 +2642,11 @@ var summerHtmlImageMapCreator = (function() {
         
         return {
             load : function(object, new_x, new_y) {
+                debugger;
                 obj = object;
-                href_attr.value = object.href ? object.href : '';
-                alt_attr.value = object.alt ? object.alt : '';
-                title_attr.value = object.title ? object.title : '';
+                href_attr.value = object._attributes.href ? object._attributes.href : '';
+                title_attr.value = object._attributes.title ? object._attributes.title : '';
+                class_attr.value = object._attributes.class ? object._attributes.class : '';
                 utils.show(form);
                 if (new_x && new_y) {
                     x = new_x;
