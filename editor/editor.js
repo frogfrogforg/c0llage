@@ -669,7 +669,7 @@ var summerHtmlImageMapCreator = (function() {
                     svg_code += '         viewBox="0 0 1000 1000" >\n';
                     
                     // (assume image is in images/ directory)
-                    svg_code += '        <image id="background-img" xlink:href="images/' + state.image.filename + '"></image>\n'
+                    svg_code += '        <image preserveAspectRatio="none" id="background-img" xlink:href="images/' + state.image.filename + '"></image>\n'
                     utils.foreachReverse(state.areas, function(x) {
                         svg_code += '        ' + '<a class="'+x._attributes.class+'" xlink:href="' + x._attributes.href + '">\n'
                         svg_code += '            ' + x.toSVGElementString() + '\n';
@@ -2536,7 +2536,7 @@ var summerHtmlImageMapCreator = (function() {
                 }
                 console.log(output);
 
-                utils.downloadFile("123.html", output);
+                utils.downloadFile("123.html", output.outerHTML);
                 // utils.show(block);
             },
             hide: function() {
