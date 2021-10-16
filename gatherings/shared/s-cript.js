@@ -4,8 +4,11 @@ import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 // matches section headers
 const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
 
-// matching lines
+// matches text lines
 const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?/
+
+// matches jump lines
+const kJumpPattern = />>>\s*(\w+)\s*(\[(.*)\])?/
 
 // attr names
 const kAttrs = {
@@ -54,8 +57,8 @@ class ScriptElement extends HTMLParsedElement {
     m.closeOpenDialog()
 
     // find the next line
-    m.script.advanceOnClickLine()
-    const l = m.script.findOnClickLine()
+    m.script.advance()
+    const l = m.script.findCurrentItem()
 
     // create the dialog
     const html = `
@@ -164,58 +167,68 @@ class Script {
   }
 
   // -- commands --
-  // advance to the next onclick line
-  advanceOnClickLine() {
+  // advance to the next line
+  advance() {
     const m = this
 
-    // get current section
-    let i = m.i
-    let curr = m.sections[i]
-
-    // we've exhaused all our onclick dialogue
+    // if we have a current section
+    const curr = this.findCurrent()
     if (curr == null) {
       return
     }
 
-    // if this section is done, advance to the next
-    if (curr.isFinished) {
-      i = m.i = m.findNextOnClickSectionIndex()
-      curr = m.sections[i]
-    }
-
-    // advance the line
+    // advance to the next item
     curr.advance()
+
+    // if the current item is a jump
+    const item = this.findCurrentItem()
+    if (item.kind === ScriptJump.kind) {
+      m.jump(item.name)
+    }
+  }
+
+  // jump to the section w/ the given name
+  jump(name) {
+    const m = this
+
+    // update section index
+    m.i = m.findIndexByName(name)
+
+    // restart the new section, if any
+    const curr = m.findCurrent()
+    if (curr != null) {
+      curr.restart()
+    }
   }
 
   // -- queries --
-  // find the current onclick line
-  findOnClickLine() {
-    // if we have a current section
-    const section = this.sections[this.i]
-    if (section == null) {
-      return null
-    }
-
-    // get its current line
-    return section.current
+  // find the current section, if any
+  findCurrent() {
+    return this.sections[this.i]
   }
 
-  // find the index of the next onclick section
-  findNextOnClickSectionIndex() {
+  // find the index of the section by name
+  findIndexByName(name) {
     const m = this
     const n = m.sections.length
 
-    // search through subsequent sections
-    for (let j = m.i + 1; j < n; j++) {
-      // if this section is an unfinished onclick section, switch to that one
-      const next = m.sections[j]
-      if (next.isOnClick && !next.isFinished) {
+    for (let j = 0; j < n; j++) {
+      if (m.sections[j].name === name) {
         return j
       }
     }
 
-    // otherwise we have no more onclick dialogue
-    return null;
+    return null
+  }
+
+  // find the current section's current item, if any
+  findCurrentItem() {
+    const section = this.findCurrent()
+    if (section == null) {
+      return null
+    }
+
+    return section.current
   }
 
   // -- encoding --
@@ -247,11 +260,20 @@ class Script {
       }
       // add a line to the current section
       else if (curr != null) {
-        curr.add(ScriptLine.decode(line.trim()))
+        curr.add(this.decodeItem(line))
       }
     }
 
     return new Script(sections)
+  }
+
+  // decode a script item
+  static decodeItem(line) {
+    if (line.startsWith(">>>")) {
+      return ScriptJump.decode(line)
+    } else {
+      return ScriptLine.decode(line)
+    }
   }
 }
 
@@ -268,8 +290,8 @@ class ScriptSection {
   constructor(name, tags) {
     const m = this
     m.name = name
-    m.lines = []
     m.tags = tags
+    m.lines = []
     m.i = -1
   }
 
@@ -295,10 +317,15 @@ class ScriptSection {
     if (j < m.lines.length) {
       m.i = j
     }
-    // otherwise, finish (unless taggeed w/ repeat)
+    // otherwise, finish
     else {
-      m.i = m.tags.repeat ? j % n : null
+      m.i = null
     }
+  }
+
+  // move section to first line
+  restart() {
+    this.i = 0
   }
 
   // -- queries --
@@ -342,6 +369,52 @@ class ScriptSection {
   }
 }
 
+// a jump command in a script section
+class ScriptJump {
+  // -- props --
+  // name: string; the name of section to jump to
+  // tags: [string:any] - a map of tags for this jump (name => val)
+
+  // -- lifetime --
+  // create a new jump
+  constructor(name, tags) {
+    const m = this
+    m.name = name
+    m.tags = tags
+  }
+
+  // -- kind --
+  get kind() {
+    return ScriptJump.kind
+  }
+
+  // -- encoding --
+  // try to decode a jump: ">>> <section> [tags...]"
+  static decode(line) {
+    // see if the line is a header
+    const match = line.match(kJumpPattern)
+    if (match == null || match.length < 2) {
+      return null
+    }
+
+    // if so, grab the name and tags
+    const name = match[1]
+    const tstr = match[3]
+
+    // convert string tags into a flags obj
+    const tags = {}
+    if (tstr) {
+      for (const name of tstr.split(",")) {
+        tags[name.trim()] = true
+      }
+    }
+
+    return new ScriptJump(name, tags)
+  }
+}
+
+ScriptJump.kind = "jump"
+
 // a line in a script section
 class ScriptLine  {
   // -- props --
@@ -356,6 +429,11 @@ class ScriptLine  {
     m.buttons = buttons
   }
 
+  // -- kind --
+  get kind() {
+    return ScriptLine.kind
+  }
+
   // -- encoding --
   // try to decode a line: "<text> {<button>|...}"
   static decode(line) {
@@ -365,7 +443,7 @@ class ScriptLine  {
       return null
     }
 
-    // if so, grab the name and tags
+    // if so, grab the name and buttons
     const text = match[1]
     const bstr = match[3]
 
@@ -386,6 +464,8 @@ class ScriptLine  {
     return new ScriptLine(text, buttons)
   }
 }
+
+ScriptLine.kind = "line"
 
 // -- install --
 customElements.define("s-cript", ScriptElement)
