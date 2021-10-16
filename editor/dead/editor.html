@@ -1,0 +1,64 @@
+<head>
+    <link rel="stylesheet" href="../gatherings/forest/common.css">
+    <link rel="stylesheet" href="../gatherings/shared/frames.css">
+    <script type="module" src="../gatherings/forest/forest.js"></script>
+    <script type="module" src="../gatherings/shared/a-dumpling.js"></script>
+    <script src="./editor.js"></script>
+    <style>
+        body {
+            flex-direction: column;
+        }
+
+        #toolbox {
+            margin: 30px;
+            background-color: #eee;
+        }
+
+        .Frame-content {
+            background-color: transparent;
+        }
+
+        .Frame-header {
+            background-color: transparent;
+        }
+
+        .Frame-header-blank {
+            background-image: none;
+        }
+
+        .Frame-Unfocused {
+          filter: none;
+          opacity: 1;
+        }
+
+        .Frame-Dragging {
+          animation: none;
+          box-shadow: none;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <div class="container">
+        <main id="frames" class="content">
+            <img id="background" class="background">
+            <a-dumpling temperament='phlegmatic' width=30 height=30></a-dumpling>
+        </main>
+    </div>
+    <div id="toolbox">
+        <button onclick="addHotspot()">add hotspot</button>
+        <br>
+        <br>
+        <b>Background image<b>
+        <br>
+        <input type="file" id="background-image-input">
+        <br>
+        <br>
+        <b>import HTML<b>
+        <br>
+        <input type="file" id="html-input">
+        <br>
+        <br>
+        <button onclick="exportHtml()">export HTML</button>
+    </div>
+</body>

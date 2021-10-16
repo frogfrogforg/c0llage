@@ -1,64 +1,152 @@
+<!DOCTYPE html>
+<html>
 <head>
-    <link rel="stylesheet" href="../gatherings/forest/common.css">
-    <link rel="stylesheet" href="../gatherings/shared/frames.css">
-    <script type="module" src="../gatherings/forest/forest.js"></script>
-    <script type="module" src="../gatherings/shared/a-dumpling.js"></script>
-    <script src="./editor.js"></script>
-    <style>
-        body {
-            flex-direction: column;
-        }
-
-        #toolbox {
-            margin: 30px;
-            background-color: #eee;
-        }
-
-        .Frame-content {
-            background-color: transparent;
-        }
-
-        .Frame-header {
-            background-color: transparent;
-        }
-
-        .Frame-header-blank {
-            background-image: none;
-        }
-
-        .Frame-Unfocused {
-          filter: none;
-          opacity: 1;
-        }
-
-        .Frame-Dragging {
-          animation: none;
-          box-shadow: none;
-        }
-    </style>
+    <title>Summer html image map creator</title>
+    <link href="main.css" type="text/css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <!--
+        Summer html image map creator
+        http://github.com/summerstyle/summer
+        
+        Copyright 2016 Vera Lobacheva (http://iamvera.com)
+        Released under the MIT license
+    -->
 </head>
+<body>
+<noscript>
+    <div id="noscript">
+        Please, enable javascript in your browser
+    </div>
+</noscript>
+  
+<div id="wrapper">
+    <header id="header">
+        <nav id="nav" class="clearfix">
+            <ul>
+                <!-- <li id="save"><a href="#">save</a></li> -->
+                <!-- <li id="load"><a href="#">load</a></li> -->
+                <li id="show_help"><a href="#">?</a></li>
+                <li id="clear"><a href="#">clear</a></li>
+                <!-- <li id="new_image"><a href="#">new image</a></li> -->
+                <!-- <li id="from_html"><a href="#">from html</a></li> -->
+                <li id="to_svg"><a href="#">save</a></li>
+                <li id="rectangle"><a href="#">rectangle</a></li>
+                <li id="circle"><a href="#">circle</a></li>
+                <li id="polygon"><a href="#">polygon</a></li>
+                <li id="edit"><a href="#">edit</a></li>
+                <!-- <li id="to_html"><a href="#">to html</a></li> -->
+                <!-- <li id="preview"><a href="#">preview</a></li> -->
+            </ul>
+        </nav>
+        <div id="coords"></div>
+        <div id="debug"></div>
+    </header>
+    <div id="image_wrapper">
+        <div id="image">
+            <!-- <img src="" alt="#" id="img" /> -->
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="svg" viewBox="0 0 1000 1000">
+                <image preserveAspectRatio="none" id="background-img" width="1000" height="1000"></image>
+            </svg>
+        </div>
+    </div>
+</div>
 
-<body onload="main()">
-    <div class="container">
-        <main id="frames" class="content">
-            <img id="background" class="background">
-            <a-dumpling temperament='phlegmatic' width=30 height=30></a-dumpling>
-        </main>
+<!-- For html image map code -->
+<div id="code">
+    <span class="close_button" title="close"></span>
+    <div>
+        <pre>
+            <code id="code_content"></code>
+        </pre>
     </div>
-    <div id="toolbox">
-        <button onclick="addHotspot()">add hotspot</button>
-        <br>
-        <br>
-        <b>Background image<b>
-        <br>
-        <input type="file" id="background-image-input">
-        <br>
-        <br>
-        <b>import HTML<b>
-        <br>
-        <input type="file" id="html-input">
-        <br>
-        <br>
-        <button onclick="exportHtml()">export HTML</button>
+</div>
+
+<!-- Edit details block -->
+<form id="edit_details">
+    <h5>Attributes</h5>
+    <span class="close_button" title="close"></span>
+    <p>
+        <label for="href_attr">href</label>
+        <input type="text" id="href_attr" />
+    </p>
+    <p>
+        <label for="title_attr">title</label>
+        <input type="text" id="title_attr" />
+    </p>
+    <p>
+        <label for="class_attr">class</label>
+        <input type="text" id="class_attr" />
+    </p>
+    <button id="save_details">Save</button>
+</form>
+
+<!-- From html block -->
+<div id="from_html_wrapper">
+    <form id="from_html_form">
+        <h5>Loading areas</h5>
+        <span class="close_button" title="close"></span>
+        <p>
+            <label for="code_input">Enter your html code:</label>
+            <textarea id="code_input"></textarea>
+        </p>
+        <button id="load_code_button">Load</button>
+    </form>
+</div>
+  
+<!-- Get image form -->
+<div id="get_image_wrapper">
+    <div id="get_image">
+        <span title="close" class="close_button"></span>
+
+        <label for="image-file">Choose an image from the forest/images directory:</label>
+        <input type="file"
+            id="image-file" name="image-file"
+            accept="image/png, image/jpeg">
+
+        <b>or</b>
+        <label for="html-file">Upload a .p.html file (must have been created from this editor)</label>
+        <input type="file"
+            id="html-file" name="html-file"
+            accept="text/html">
     </div>
+</div>
+
+<!-- Help block -->
+<div id="overlay"></div>
+<div id="help">
+    <span class="close_button" title="close"></span>
+    <div class="txt">
+        <section>
+            <h2>Main</h2>
+            <p><span class="key">F5</span> &mdash; reload the page and display the form for loading image again</p>
+            <p><span class="key">S</span> &mdash; save map params in localStorage</p>
+        </section>
+        <section>
+            <h2>Drawing mode (rectangle / circle / polygon)</h2>
+            <p><span class="key">ENTER</span> &mdash; stop polygon drawing (or click on first helper)</p>
+            <p><span class="key">ESC</span> &mdash; cancel drawing of a new area</p>
+            <p><span class="key">SHIFT</span> &mdash; square drawing in case of a rectangle and right angle drawing in case of a polygon</p>
+        </section>
+        <section>
+            <h2>Editing mode</h2>
+            <p><span class="key">DELETE</span> &mdash; remove a selected area</p>
+            <p><span class="key">ESC</span> &mdash; cancel editing of a selected area</p>
+            <p><span class="key">SHIFT</span> &mdash; edit and save proportions for rectangle</p>
+            <p><span class="key">I</span> &mdash; edit attributes of a selected area (or dblclick on an area)</p>
+            <p><span class="key">D</span> &mdash; duplicate of the selected area</p>
+            <p><span class="key">&uarr;</span> &mdash; move a selected area up</p>
+            <p><span class="key">&darr;</span> &mdash; move a selected area down</p>
+            <p><span class="key">&larr;</span> &mdash; move a selected area to the left</p>
+            <p><span class="key">&rarr;</span> &mdash; move a selected area to the right</p>
+        </section>
+    </div>
+    <footer>
+        <a href="http://github.com/summerstyle/summer">Summer html image map creator 0.5</a><br />
+        &copy; 2016 Vera Lobatcheva<br />
+        MIT License
+    </footer>
+</div>
+
+<script type="text/javascript" src="editor.js"></script>
 </body>
+</html>
