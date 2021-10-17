@@ -44,7 +44,7 @@ class ScriptElement extends HTMLParsedElement {
 
   // -- commands --
   // show the next onclick dialog
-  showOnClickDialog() {
+  showNextDialog() {
     const m = this
 
     // make sure we have a target
@@ -65,6 +65,7 @@ class ScriptElement extends HTMLParsedElement {
       <a-dumpling
         id="${m.dialogId}"
         w=30 h=25
+        title="${m.findTitle($target)}"
         layer="dialogue"
         temperament="phlegmatic"
       >
@@ -144,10 +145,20 @@ class ScriptElement extends HTMLParsedElement {
     return this.findById(this.targetId)
   }
 
+  // find the title of the dialog given the target
+  findTitle($target) {
+    const name = $target.title || $target.ownerDocument.title
+    if (!name) {
+      return ""
+    }
+
+    return `from: ${name}`
+  }
+
   // -- events --
   // when the target is clicked
   didClickTarget = () => {
-    this.showOnClickDialog()
+    this.showNextDialog()
   }
 
   // when the dialog close button is clicked

@@ -160,7 +160,9 @@ export class Dumpling extends HTMLParsedElement {
     //#region Header Button Functionality
 
     // title
-    this.title = this.findTitle()
+    this.findTitle().then((title) => {
+      this.title = title
+    })
 
     // Temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
@@ -678,27 +680,47 @@ export class Dumpling extends HTMLParsedElement {
 
   _title = null
 
+  get title() {
+    return this._title
+  }
+
   set title(value) {
     const titleEl = this.querySelector(`#${this.id}-title`)
     this._title = value;
-    if (value == null) {
+
+    if (!value) {
       titleEl.style.display = 'none'
     } else {
-      titleEl.style.display = 'block'
+      delete titleEl.style.display
       titleEl.innerHTML = value;
     }
   }
 
   findTitle() {
-    // use the attr if available
+    // use attr if available
     const title = this.getAttribute("title")
     if (title != null) {
-      return title
+      return Promise.resolve(title)
     }
 
-    // otherwise, if we have a nested iframe
+    // if we have a nested iframe
     const iframe = this.findIframe()
-    return iframe?.contentDocument?.title
+    if (iframe == null) {
+      return Promise.resolve(null)
+    }
+
+    // use its title
+    const doc = iframe.contentDocument
+    if (doc != null) {
+      return Promise.resolve(doc.title)
+    }
+
+    // or wait for it (this probably doesn't do the right thing when the iframe changes page)
+    return new Promise((resolve) => {
+      iframe.addEventListener("load", () => {
+        resolve(iframe.contentDocument.title)
+      })
+    })
   }
 }
 
