@@ -48,9 +48,6 @@ export class Assistant {
     case 50: return 1
     case 95: return 2
     case 100: return 3
-    case 105: return 4
-    case 108: return 5
-    case 111: return 6
     default: return null
     }
   }

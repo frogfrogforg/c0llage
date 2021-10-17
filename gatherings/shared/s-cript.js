@@ -5,7 +5,7 @@ import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
 
 // matches text lines
-const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?/
+const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?\s*(\[(.*)\])?/
 
 // matches jump lines
 const kJumpPattern = />>>\s*(\w+)\s*(\[(.*)\])?/
@@ -17,8 +17,8 @@ const kAttrs = {
 
 // class names
 const kClass = {
-  close: ".Dialog-close",
   cursor: "cursor-talk",
+  button: "Dialog-button",
 }
 
 // -- impls --
@@ -37,7 +37,7 @@ class ScriptElement extends HTMLParsedElement {
     // show dialogs when clicking the target
     const $target = m.findTarget()
     if ($target != null) {
-      $target.addEventListener("click", m.didClickTarget)
+      $target.addEventListener("click", m.onTargetClick)
       $target.classList.toggle(kClass.cursor, true)
     }
   }
@@ -56,12 +56,15 @@ class ScriptElement extends HTMLParsedElement {
     // close any open dialog
     m.closeOpenDialog()
 
-    // find the next line
+    // advance to the next line
     m.script.advance()
-    const line = m.script.findCurrentItem()
 
     // show the dialog
-    m.showDialog($target, line)
+    m.showDialog(
+      $target,
+      m.script.findCurrentItem(),
+      () => m.showNextDialog(),
+    )
   }
 
   // shows the dialog at section w/ name, item i
@@ -70,16 +73,17 @@ class ScriptElement extends HTMLParsedElement {
 
     m.showDialog(
       m.findTarget(),
-      m.script.findItemAtPath(name, i)
+      m.script.findItemAtPath(name, i),
+      () => m.showDialogAtPath(name, i + 1),
     )
   }
 
   // shows a dialog with the line
-  showDialog($target, line) {
+  showDialog($target, line, cont) {
     const m = this
 
     // create the html el
-    const $el = document.createElement("div")
+    let $el = document.createElement("div")
 
     // create the dialog
     $el.innerHTML = `
@@ -93,16 +97,26 @@ class ScriptElement extends HTMLParsedElement {
         <article class="Dialog">
           <p>${line.text}</p>
           <div class="Dialog-buttons">
-            ${line.buttons.map((b) => `<button class="Dialog-close">${b}</button>`).join("\n")}
+            ${line.buttons.map((b) => `<button class="Dialog-button">${b}</button>`).join("\n")}
           </div>
         </article>
       </a-dumpling>
     `
 
+    $el = $el.firstElementChild
+
     // close the dialog on button click
-    for (const $close of $el.querySelectorAll(kClass.close)) {
-      $close.addEventListener("click", m.didClickClose)
+    for (const $close of $el.querySelectorAll(`.${kClass.button}`)) {
+      $close.addEventListener("click", m.onButtonClick)
     }
+
+    // run any behaivors on dialog hide
+    // TODO: importing a-dumpling.js causes no dialog to ever appear
+    $el.addEventListener("hide-frame", () => {
+      if (m.shouldContinueOnClose(line)) {
+        cont()
+      }
+    })
 
     // spawn the dumpling TODO: dumpling spawner
     window.top.document.firstElementChild.appendChild($el)
@@ -172,15 +186,30 @@ class ScriptElement extends HTMLParsedElement {
     return `from: ${name}`
   }
 
+  // if the next dialog should be shown on close
+  shouldContinueOnClose(line) {
+    return line.tags.cont === true
+  }
+
   // -- events --
   // when the target is clicked
-  didClickTarget = () => {
+  onTargetClick = () => {
     this.showNextDialog()
   }
 
   // when the dialog close button is clicked
-  didClickClose = () => {
+  onButtonClick = () => {
     this.closeOpenDialog()
+  }
+
+  // when the dialog hides for whatever reason
+  onDialogHide = (evt) => {
+    const m = this
+
+    // see if we should show the next dialog
+    if (m.shouldContinueOnClose()) {
+      m.showNextDialog()
+    }
   }
 }
 
@@ -405,15 +434,11 @@ class ScriptSection {
     const name = match[1]
     const tstr = match[3]
 
-    // convert string tags into a flags obj
-    const tags = {}
-    if (tstr) {
-      for (const name of tstr.split(",")) {
-        tags[name.trim()] = true
-      }
-    }
-
-    return new ScriptSection(name, tags)
+    // create the new secction
+    return new ScriptSection(
+      name,
+      decodeTags(tstr),
+    )
   }
 }
 
@@ -449,15 +474,11 @@ class ScriptJump {
     const name = match[1]
     const tstr = match[3]
 
-    // convert string tags into a flags obj
-    const tags = {}
-    if (tstr) {
-      for (const name of tstr.split(",")) {
-        tags[name.trim()] = true
-      }
-    }
-
-    return new ScriptJump(name, tags)
+    // create the new jump
+    return new ScriptJump(
+      name,
+      decodeTags(tstr),
+    )
   }
 }
 
@@ -468,13 +489,15 @@ class ScriptLine  {
   // -- props --
   // text: string; the line's text
   // buttons: string[]; the button labels
+  // tags: [string:any] - a map of tags for this jump (name => val)
 
   // -- lifetime --
   // create a new line
-  constructor(text, buttons) {
+  constructor(text, buttons, tags) {
     const m = this
     m.text = text
     m.buttons = buttons
+    m.tags = tags
   }
 
   // -- kind --
@@ -494,6 +517,7 @@ class ScriptLine  {
     // if so, grab the name and buttons
     const text = match[1]
     const bstr = match[3]
+    const tstr = match[5]
 
     // convert button str into list of names
     const buttons = []
@@ -509,11 +533,31 @@ class ScriptLine  {
       buttons.push("okay")
     }
 
-    return new ScriptLine(text, buttons)
+    // create the new line
+    return new ScriptLine(
+      text,
+      buttons,
+      decodeTags(tstr),
+    )
   }
 }
 
 ScriptLine.kind = "line"
+
+// -- helpers --
+// decode a tag string "[a,b]" into an obj {a: true, b: true}
+function decodeTags(tstr) {
+  const tags = {}
+  if (!tstr) {
+    return tags
+  }
+
+  for (const name of tstr.split(",")) {
+    tags[name.trim()] = true
+  }
+
+  return tags
+}
 
 // -- install --
 customElements.define("s-cript", ScriptElement)

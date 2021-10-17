@@ -180,9 +180,7 @@ export class Dumpling extends HTMLParsedElement {
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
     if (!this.hasAttribute('no-close')) {
-      closeButton.onclick = () => {
-        this.onClose()
-      }
+      closeButton.addEventListener("click", this.onClose)
     } else {
       closeButton.style.display = 'none'
     }
@@ -249,7 +247,7 @@ export class Dumpling extends HTMLParsedElement {
     this.initEvents()
   }
 
-  onClose() {
+  onClose = () => {
     const diframe = this.querySelector('d-iframe')
     if (diframe != null) {
       diframe.destroyIframe()
@@ -365,15 +363,25 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   hide() {
-    this.setVisible(false)
-    this.dispatchEvent(new Event(Dumpling.HideEvent))
+    const m = this
+
+    m.setVisible(false)
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.HideEvent,
+      { detail: m },
+    ))
   }
 
   show() {
-    this.setVisible(true)
-    this.dispatchEvent(new Event(Dumpling.ShowEvent))
+    const m = this
 
-    this.bringToTop()
+    m.setVisible(true)
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.ShowEvent,
+      { detail: m },
+    ))
+
+    m.bringToTop()
   }
 
   setVisible(isVisible) {
