@@ -1,21 +1,63 @@
 import { kInventory } from "../inventory.js"
 import { Ledger } from "./ledger.js"
 
+// -- constants --
+const kScriptId = "script"
+const kLedgerDialogName = "ledger"
+
 // -- impls --
 export class Assistant {
   // -- props --
   // ledger: Ledger - the player's ledger
+  // $script: ScriptElement - the script
 
   // -- lifetime --
   // creates a new assistant
   constructor() {
-    this.ledger = new Ledger()
+    const m = this
+    m.ledger = new Ledger()
+    m.$script = document.getElementById(kScriptId)
   }
 
   // -- commands --
   // starts the assistant's brain
   start() {
+    const m = this
+
+    // hello
     console.log("it is me, the assistant. yes. i am in here, too.")
+
+    // listen to events
+    m.ledger.onChange(m.onLedgerChanged)
+  }
+
+  // shows the dialog for the current ledger state
+  showLedgerDialog() {
+    const m = this
+    const i = m.indexForLedgerDialog()
+    if (i != null) {
+      m.$script.showDialogAtPath(kLedgerDialogName, i)
+    }
+  }
+
+  // -- queries --
+  // gets the index of the ledger dialog line to show, if any
+  indexForLedgerDialog() {
+    switch (this.ledger.clicks) {
+    case 10: return 0
+    case 50: return 1
+    case 95: return 2
+    case 100: return 3
+    case 105: return 4
+    case 108: return 5
+    case 111: return 6
+    default: return null
+    }
+  }
+
+  // -- events --
+  onLedgerChanged = () => {
+    this.showLedgerDialog()
   }
 
   // -- factories --
@@ -27,7 +69,7 @@ export class Assistant {
 
     kInventory.add({
       id: "assistant",
-      src: "./assistant/guise",
+      src: "./assistant/face",
       attrs: {
         "x": 91,
         "y": 7,

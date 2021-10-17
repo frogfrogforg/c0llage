@@ -1,3 +1,5 @@
+import "../../../global.js"
+
 // a ledger tracking the player's debt
 export class Ledger {
   // -- lifetime --
@@ -9,8 +11,14 @@ export class Ledger {
   }
 
   // -- commands --
+  // track a new click
   trackClick() {
     this.clicks++
+  }
+
+  // listen to changes to the ledger
+  onChange(action) {
+    d.State.listen("clicks", action)
   }
 
   // -- queries --

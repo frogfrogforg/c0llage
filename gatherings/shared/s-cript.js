@@ -58,10 +58,31 @@ class ScriptElement extends HTMLParsedElement {
 
     // find the next line
     m.script.advance()
-    const l = m.script.findCurrentItem()
+    const line = m.script.findCurrentItem()
+
+    // show the dialog
+    m.showDialog($target, line)
+  }
+
+  // shows the dialog at section w/ name, item i
+  showDialogAtPath(name, i) {
+    const m = this
+
+    m.showDialog(
+      m.findTarget(),
+      m.script.findItemAtPath(name, i)
+    )
+  }
+
+  // shows a dialog with the line
+  showDialog($target, line) {
+    const m = this
+
+    // create the html el
+    const $el = document.createElement("div")
 
     // create the dialog
-    const html = `
+    $el.innerHTML = `
       <a-dumpling
         id="${m.dialogId}"
         w=30 h=25
@@ -70,25 +91,21 @@ class ScriptElement extends HTMLParsedElement {
         temperament="phlegmatic"
       >
         <article class="Dialog">
-          <p>${l.text}</p>
+          <p>${line.text}</p>
           <div class="Dialog-buttons">
-            ${l.buttons.map((b) => `<button class="Dialog-close">${b}</button>`).join("\n")}
+            ${line.buttons.map((b) => `<button class="Dialog-close">${b}</button>`).join("\n")}
           </div>
         </article>
       </a-dumpling>
     `
 
-    // create the html el
-    const $dialog = document.createElement("div")
-    $dialog.innerHTML = html
-
     // close the dialog on button click
-    for (const $close of $dialog.querySelectorAll(kClass.close)) {
+    for (const $close of $el.querySelectorAll(kClass.close)) {
       $close.addEventListener("click", m.didClickClose)
     }
 
     // spawn the dumpling TODO: dumpling spawner
-    window.top.document.firstElementChild.appendChild($dialog)
+    window.top.document.firstElementChild.appendChild($el)
   }
 
   // close the open dialog dumpling, if any
@@ -223,6 +240,11 @@ class Script {
     return this.sections[this.i]
   }
 
+  // find the section by name
+  findByName(name) {
+    return this.sections[this.findIndexByName(name)]
+  }
+
   // find the index of the section by name
   findIndexByName(name) {
     const m = this
@@ -245,6 +267,11 @@ class Script {
     }
 
     return section.current
+  }
+
+  // find the item i in section w/ name
+  findItemAtPath(name, i) {
+    return this.findByName(name).get(i)
   }
 
   // -- encoding --
@@ -345,9 +372,14 @@ class ScriptSection {
   }
 
   // -- queries --
+  // get the item at the index
+  get(i) {
+    return this.lines[i]
+  }
+
   // get the current line
   get current() {
-    return this.lines[this.i]
+    return this.get(this.i)
   }
 
   // if this section is finished
