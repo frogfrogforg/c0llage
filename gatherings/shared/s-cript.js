@@ -62,7 +62,12 @@ class ScriptElement extends HTMLParsedElement {
 
     // create the dialog
     const html = `
-      <a-dumpling id="${m.dialogId}" w=30 h=25 temperament="phlegmatic">
+      <a-dumpling
+        id="${m.dialogId}"
+        w=30 h=25
+        layer="dialogue"
+        temperament="phlegmatic"
+      >
         <article class="Dialog">
           <p>${l.text}</p>
           <div class="Dialog-buttons">
