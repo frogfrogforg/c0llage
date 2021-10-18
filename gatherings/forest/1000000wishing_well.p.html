@@ -8,7 +8,7 @@
   <button id="wishingWell" class="hotspot cursor-coin" onclick="Frames.show('well1')"
     style="left: 17%; top: 19%; width: 37%; height: 66%;"></button>
 
-  <a-dumpling context="wishingWell" hidden title='a wishing well' id="well1" x=10 y=65 width=62 height=25>
+  <a-dumpling layer="wishingWell" hidden title='a wishing well' id="well1" x=10 y=65 width=62 height=25>
     <div>
       <p>a wishing well! maybe all your dreams will come true!</p>
       <c-picky condition="!hasQuarters">
@@ -22,7 +22,7 @@
     </div>
   </a-dumpling>
 
-  <a-dumpling context="quarterShop" hidden title='quarter shop' id="quarterShop" x=100 y=00 width=40 height=45>
+  <a-dumpling layer="quarterShop" hidden title='quarter shop' id="quarterShop" x=100 y=00 width=40 height=45>
     <div>
       <p>hello stranger! i heard you might need some quarters...</p>
       <p>lucky for you the parks staff is currently accepting donations in exchange for nice prizes, quartes being one
@@ -32,19 +32,17 @@
       <button class="Dialog-button" id="donate">donate now!</button>
     </div>
   </a-dumpling>
-  <a-dumpling context="quarterShop" hidden title='quarter shop' id="quarterKofi" x=98 y=05 width=40 height=80>
+  <a-dumpling layer="kofiShop" hidden title='quarter shop' id="quarterKofi" x=98 y=05 width=40 height=80>
     <iframe id='kofiframe' src='https://ko-fi.com/theparksstaff/?hidefeed=true&widget=true&embed=true&preview=true'
       style='border:none;width:100%;padding:4px;background:#f9f9f9;' height='712' title='theparksstaff'>
       <iframe>
   </a-dumpling>
-  <iframe id='kofiframe' src='https://ko-fi.com/theparksstaff/?hidefeed=true&widget=true&embed=true&preview=true'
-    height='712' title='theparksstaff'></iframe>
-  <a-dumpling context="quarterShop" hidden title='quarter shop' id="quarterExchange" x=96 y=86 width=40 height=25>
+  <a-dumpling layer="quarterShop" hidden title='quarter shop' id="quarterExchange" x=96 y=86 width=40 height=28>
     <div id="waitingForDonation" style="cursor:progress; width: 100%; height: 100%;">
       <p>Waiting for donation</p>
     </div>
     <div id="gotDonation" style="display: none;">
-      <p>thank you for your donation! you may now ented the amount you donated below to exchange for quarters (remember,
+      <p>thank you for your donation! you may now enter the amount you donated below to exchange for quarters (remember,
         1
         quarter = <span id="exchangeRatePerQuarter">69</span> </p>
       <input type="number" title="how much you paid" id="ammountPaid" value=1 step=1>
@@ -52,7 +50,7 @@
     </div>
   </a-dumpling>
 
-  <a-dumpling context="wishingWell" hidden title='a wishing well' id="wish" x=65 y=22 width=40 height=40>
+  <a-dumpling layer="wishingWell" hidden title='a wishing well' id="wish" x=65 y=22 width=40 height=40>
     <div>
       <p>Make <span id="wishMessage">a wish!</span></p>
       <input type="text" title="how much you paid" id="wishTextInput" value=1 step=0.25>
@@ -123,7 +121,7 @@
           attrs: {
             "no-back": true,
             "persistent": false,
-            "context": "quarters",
+            "layer": "quarters",
             width: 25,
             height: 60,
             "min-x": 20,
@@ -146,10 +144,12 @@
 
       document.getElementById('donate').addEventListener('click', () => {
         // TODO: find out a better time here? open ko-fi in a new tab?
+        Frames.hide('quarterShop')
         Frames.show('quarterExchange')
         Frames.show('quarterKofi')
-        const donationTimeSeconds = 10
+        const donationTimeSeconds = 42.0
         window.setTimeout(() => {
+          Frames.show('quarterExchange')
           document.getElementById("waitingForDonation").style.display = "none"
           document.getElementById("gotDonation").style.display = "block"
         }, donationTimeSeconds * 1000)
@@ -172,7 +172,7 @@
               "no-back": true,
               "no-close": true,
               "persistent": true,
-              "context": "quarters",
+              "layer": "quarters",
               width: 20,
               height: 25,
               "min-x": 60,
@@ -181,8 +181,6 @@
               "max-y": 90,
             }
           })
-
-
         }
       })
     }
