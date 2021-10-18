@@ -1,5 +1,10 @@
 import "../../../global.js"
 
+// -- constants --
+const kClicksFree = 100
+const kCentsPerClick = 1
+
+// -- impls --
 // a ledger tracking the player's debt
 export class Ledger {
   // -- lifetime --
@@ -22,15 +27,10 @@ export class Ledger {
   }
 
   // -- queries --
-  // the rate per click in cents
-  get rate() {
-    return 5
-  }
-
   // the player's total debt in cents
   get total() {
-    const m = this
-    const total = m.clicks * m.rate
+    const clicks = Math.max(this.clicks - kClicksFree, 0)
+    const total = clicks * kCentsPerClick
     return total
   }
 

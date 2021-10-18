@@ -21,7 +21,7 @@ function add(props) {
 
 // remove all the elements from the inventory
 function clear() {
-  for (const $el of $mEl.children) {
+  for (const $el of Array.from($mEl.children)) {
     $el.remove()
   }
 }
