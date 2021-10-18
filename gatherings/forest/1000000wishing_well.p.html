@@ -8,42 +8,57 @@
   <button id="wishingWell" class="hotspot cursor-coin" onclick="Frames.show('well1')"
     style="left: 17%; top: 19%; width: 37%; height: 66%;"></button>
 
-  <a-dumpling hidden title='a wishing well' id="well1" x=40 y=15 width=62 height=35>
+  <a-dumpling context="wishingWell" hidden title='a wishing well' id="well1" x=10 y=65 width=62 height=25>
     <div>
-      <p>You found a wishing well! maybe all your dreams will now come true!</p>
+      <p>a wishing well! maybe all your dreams will come true!</p>
       <c-picky condition="!hasQuarters">
-        <p>Sadly, it appears that you have no <button onclick="Frames.show('quarterShop')">
+        <p>sadly, it appears that you have no <button class="Dialog-button" onclick="Frames.show('quarterShop')">
             quarters
-            </a>...</p>
+          </button>...</p>
       </c-picky>
       <c-picky condition="hasQuarters">
-        <p>Thankfully, you have some quarters to spare!</p>
+        <p>thankfully, you have some quarters to spare!</p>
       </c-picky>
     </div>
   </a-dumpling>
 
-  <a-dumpling hidden title='quarter shop' id="quarterShop" x=60 y=15 width=40 height=40>
+  <a-dumpling context="quarterShop" hidden title='quarter shop' id="quarterShop" x=100 y=00 width=40 height=45>
     <div>
-      <p>You found a wishing well! maybe all your dreams will now come true!</p>
-      <input type="number" title="how much you paid" id="ammountPaid" value=1 step=0.25>
-      <button id="exchange">exchange!</button>
+      <p>hello stranger! i heard you might need some quarters...</p>
+      <p>lucky for you the parks staff is currently accepting donations in exchange for nice prizes, quartes being one
+        of them. </p>
+      <p><b>the current exchange rate is <span id="exchangeRate">69</span> for four quarters</b></p>
+
+      <button class="Dialog-button" id="donate">donate now!</button>
+    </div>
+  </a-dumpling>
+  <a-dumpling context="quarterShop" hidden title='quarter shop' id="quarterKofi" x=98 y=05 width=40 height=80>
+    <iframe id='kofiframe' src='https://ko-fi.com/theparksstaff/?hidefeed=true&widget=true&embed=true&preview=true'
+      style='border:none;width:100%;padding:4px;background:#f9f9f9;' height='712' title='theparksstaff'>
+      <iframe>
+  </a-dumpling>
+  <iframe id='kofiframe' src='https://ko-fi.com/theparksstaff/?hidefeed=true&widget=true&embed=true&preview=true'
+    height='712' title='theparksstaff'></iframe>
+  <a-dumpling context="quarterShop" hidden title='quarter shop' id="quarterExchange" x=96 y=86 width=40 height=25>
+    <div id="waitingForDonation" style="cursor:progress; width: 100%; height: 100%;">
+      <p>Waiting for donation</p>
+    </div>
+    <div id="gotDonation" style="display: none;">
+      <p>thank you for your donation! you may now ented the amount you donated below to exchange for quarters (remember,
+        1
+        quarter = <span id="exchangeRatePerQuarter">69</span> </p>
+      <input type="number" title="how much you paid" id="ammountPaid" value=1 step=1>
+      <button class="Dialog-button" id="exchange">exchange!</button>
     </div>
   </a-dumpling>
 
-  <a-dumpling hidden title='a wishing well' id="wish" x=65 y=22 width=40 height=40>
+  <a-dumpling context="wishingWell" hidden title='a wishing well' id="wish" x=65 y=22 width=40 height=40>
     <div>
       <p>Make <span id="wishMessage">a wish!</span></p>
       <input type="text" title="how much you paid" id="wishTextInput" value=1 step=0.25>
-      <button id="wishButton">wish</button>
+      <button class="Dialog-button" id="wishButton">wish</button>
     </div>
   </a-dumpling>
-
-  <template id="coinDumplingTemplate">
-    <a-dumpling no-close no-resize no-back persistent temperament="choleric" id="quarter" title="1/4" min-x=50 max-x=120
-      min-y=50 max-y=90 width=20 height=20>
-      <d-iframe autoload src='./items/quarter.html'></d-iframe>
-    </a-dumpling>
-  </template>
 
   <style>
     .quarter-image {
@@ -83,6 +98,7 @@
     import { kInventory } from "./inventory.js"
 
     const COIN_TYPES_COUNT = 6
+    const exchangeRate = 1.05
 
     window.wellDrop = (evt) => {
       evt.preventDefault();
@@ -99,9 +115,23 @@
         } else {
           d.State.wishes = 1
         }
-        Frames.show('wish')
         // document.getElementById("wishMessage").innerHTML =
         // d.State.wishes == 0 ? ""
+        kInventory.add({
+          id: "wish" + d.State.wishes,
+          src: "items/wish",
+          attrs: {
+            "no-back": true,
+            "persistent": false,
+            "context": "quarters",
+            width: 25,
+            height: 60,
+            "min-x": 20,
+            "max-x": 60,
+            "min-y": 40,
+            "max-y": 70,
+          }
+        })
 
         const dumplingId = evt.dataTransfer.getData("source-dumpling-id")
         Frames.close(dumplingId)
@@ -111,12 +141,22 @@
     function main() {
       document.getElementById('wishingWell').addEventListener('dragover', (e) => e.preventDefault())
       document.getElementById('wishingWell').addEventListener('drop', wellDrop)
+      document.getElementById('exchangeRate').innerHTML = exchangeRate
+      document.getElementById('exchangeRatePerQuarter').innerHTML = exchangeRate / 4
 
-      const coinDumplingTemplate = document.getElementById('coinDumplingTemplate').content.querySelector('a-dumpling')
-      console.log(coinDumplingTemplate)
+      document.getElementById('donate').addEventListener('click', () => {
+        // TODO: find out a better time here? open ko-fi in a new tab?
+        Frames.show('quarterExchange')
+        Frames.show('quarterKofi')
+        const donationTimeSeconds = 10
+        window.setTimeout(() => {
+          document.getElementById("waitingForDonation").style.display = "none"
+          document.getElementById("gotDonation").style.display = "block"
+        }, donationTimeSeconds * 1000)
+      })
       document.getElementById('exchange').addEventListener('click', () => {
         const value = document.getElementById('ammountPaid').value
-        const numCoins = Math.floor(value * 4)
+        const numCoins = Math.floor(value / exchangeRate * 4)
         for (let i = 0; i < numCoins; i++) {
           // d.State.hasQuarters = true
           if (d.State.quarters) {
@@ -132,6 +172,7 @@
               "no-back": true,
               "no-close": true,
               "persistent": true,
+              "context": "quarters",
               width: 20,
               height: 25,
               "min-x": 60,
@@ -140,6 +181,8 @@
               "max-y": 90,
             }
           })
+
+
         }
       })
     }

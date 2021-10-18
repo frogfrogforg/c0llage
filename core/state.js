@@ -15,6 +15,7 @@ const initialState = {
   hasQuarters: false,
   quarters: 0,
   clicks: 0,
+  wished: 0,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

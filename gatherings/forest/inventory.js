@@ -112,7 +112,7 @@ function getItemEl({
     // template the html
     html = `
       <a-dumpling ${attrs}>
-        <d-iframe src="${src}" autoload>
+        <d-iframe dumpling-id="${id}" src="${src}" autoload>
       </a-dumpling>
     `
   }
