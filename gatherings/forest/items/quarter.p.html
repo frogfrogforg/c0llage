@@ -1,0 +1,48 @@
+<!-- template: item {title: assistant} -->
+
+<head>
+  <script type='module'>
+    const COIN_TYPES_COUNT = 6
+    const img = document.body.querySelector('img')
+
+    img.src = `../images/coins/coin${Math.floor(Math.random() * COIN_TYPES_COUNT)}.png`
+
+    const coin = document.getElementById('coin-itself')
+    coin.addEventListener('dragstart', (evt) => {
+      let dumpling = evt.target.ownerDocument.defaultView.frameElement.parentElement
+      while (dumpling.parentNode.tagName !== 'A-DUMPLING' && dumpling.parentNode != document) // uppercase in HTML, lower in XML
+      {
+        dumpling = dumpling.parentNode;
+      }
+
+      if (dumpling.parentNode != document) {
+        dumpling = dumpling.parentNode
+        evt.dataTransfer.setData("source-dumpling-id", dumpling.id);
+      }
+
+      evt.dataTransfer.setData("source", evt.target);
+      evt.dataTransfer.setData("text", "quarter");
+    })
+
+  </script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    img {
+      height: 70vmin;
+    }
+
+    .coin-itself {
+      cursor: grab;
+    }
+  </style>
+</head>
+
+<body class="coinBody">
+  <img id='coin-itself' class='coin-itself' draggable="true" src="../images/coins/coin0.png">
+</body>

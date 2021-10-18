@@ -5,10 +5,10 @@
   <a class="hotspot cursor-move" href="./70outhouse.html" style="left: -10%; width: 120%; height: 15%; bottom: -5%;">
   </a>
 
-  <button class="hotspot cursor-coin" onclick="Frames.show('well1')"
+  <button id="wishingWell" class="hotspot cursor-coin" onclick="Frames.show('well1')"
     style="left: 17%; top: 19%; width: 37%; height: 66%;"></button>
 
-  <a-dumpling hidden title='a wishing well' id="well1" x=40 y=15 width=60 height=30>
+  <a-dumpling hidden title='a wishing well' id="well1" x=40 y=15 width=62 height=35>
     <div>
       <p>You found a wishing well! maybe all your dreams will now come true!</p>
       <c-picky condition="!hasQuarters">
@@ -21,11 +21,20 @@
       </c-picky>
     </div>
   </a-dumpling>
-  <a-dumpling hidden title='quarter shop' id="quarterShop" x=60 y=15 width=40 height=20>
+
+  <a-dumpling hidden title='quarter shop' id="quarterShop" x=60 y=15 width=40 height=40>
     <div>
       <p>You found a wishing well! maybe all your dreams will now come true!</p>
-      <input type="number" title="how much you paid" id="ammountPaid" value=2.30>
+      <input type="number" title="how much you paid" id="ammountPaid" value=1 step=0.25>
       <button id="exchange">exchange!</button>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling hidden title='a wishing well' id="wish" x=65 y=22 width=40 height=40>
+    <div>
+      <p>Make <span id="wishMessage">a wish!</span></p>
+      <input type="text" title="how much you paid" id="wishTextInput" value=1 step=0.25>
+      <button id="wishButton">wish</button>
     </div>
   </a-dumpling>
 
@@ -44,10 +53,65 @@
     }
   </style>
 
+  <head>
+    <script type='module'>
+
+    </script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      img {
+        height: 70vmin;
+      }
+
+      .coin-itself {
+        cursor: grab;
+      }
+    </style>
+  </head>
+
+  <body class="coinBody">
+    <img class='coin-itself' draggable="true" ondragstart="dragCoin(event)" src="../images/coins/coin0.png">
+  </body>
+
   <script type="module">
     import { kInventory } from "./inventory.js"
 
+    const COIN_TYPES_COUNT = 6
+
+    window.wellDrop = (evt) => {
+      evt.preventDefault();
+      if (evt.dataTransfer.getData("text") == "floppy") {
+        Frames.hide("floppy")
+        document.getElementById("main").classList.toggle("screenshake-loop");
+        // window.location.href="2003-transition1.html"
+        Turbo.visit("2003-transition1.html")
+      }
+      if (evt.dataTransfer.getData("text") == "quarter") {
+        d.State.quarters -= 1
+        if (d.State.wishes) {
+          d.State.wishes += 1
+        } else {
+          d.State.wishes = 1
+        }
+        Frames.show('wish')
+        // document.getElementById("wishMessage").innerHTML =
+        // d.State.wishes == 0 ? ""
+
+        const dumplingId = evt.dataTransfer.getData("source-dumpling-id")
+        Frames.close(dumplingId)
+      }
+    }
+
     function main() {
+      document.getElementById('wishingWell').addEventListener('dragover', (e) => e.preventDefault())
+      document.getElementById('wishingWell').addEventListener('drop', wellDrop)
+
       const coinDumplingTemplate = document.getElementById('coinDumplingTemplate').content.querySelector('a-dumpling')
       console.log(coinDumplingTemplate)
       document.getElementById('exchange').addEventListener('click', () => {
@@ -61,10 +125,21 @@
             d.State.quarters = 1
           }
 
-          const newElement = document.importNode(coinDumplingTemplate, true)
-          newElement.id = newElement.id + d.State.quarters
-          document.body.appendChild(newElement)
-          console.log('coins: ', d.State.quarters)
+          kInventory.add({
+            id: "quarter" + d.State.quarters,
+            src: "items/quarter",
+            attrs: {
+              "no-back": true,
+              "no-close": true,
+              "persistent": true,
+              width: 20,
+              height: 25,
+              "min-x": 60,
+              "max-x": 110,
+              "min-y": 70,
+              "max-y": 90,
+            }
+          })
         }
       })
     }
