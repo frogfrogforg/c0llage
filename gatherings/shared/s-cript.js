@@ -4,11 +4,14 @@ import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
 // matches section headers
 const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
 
-// matches text lines
-const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?\s*(\[(.*)\])?/
+// matches hook lines
+const kHookPattern = /\*\*\*\s*(.*)/
 
 // matches jump lines
-const kJumpPattern = />>>\s*(\w+)\s*(\[(.*)\])?/
+const kJumpPattern = /==>\s*(\w+)\s*(\[(.*)\])?/
+
+// matches text lines
+const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?\s*(\[(.*)\])?/
 
 // attr names
 const kAttrs = {
@@ -25,8 +28,14 @@ const kClass = {
 class ScriptElement extends HTMLParsedElement {
   // -- props --
   // script: Script - the script model
+  // hooks: [string: () => string] - a map of hooks that render custom dialogs
 
   // -- lifetime --
+  constructor() {
+    super()
+    this.hooks = []
+  }
+
   // init the element
   parsedCallback() {
     const m = this
@@ -47,45 +56,126 @@ class ScriptElement extends HTMLParsedElement {
   showNextDialog() {
     const m = this
 
-    // make sure we have a target
-    const $target = m.findTarget()
-    if ($target == null) {
-      return
-    }
-
     // close any open dialog
     m.closeOpenDialog()
 
     // advance to the next line
     m.script.advance()
 
-    // show the dialog
-    m.showDialog(
-      $target,
+    // show the dialog w/ the current item
+    m.showDialogForItem(
       m.script.findCurrentItem(),
       () => m.showNextDialog(),
     )
   }
 
-  // shows the dialog at section w/ name, item i
-  showDialogAtPath(name, i) {
+  // shows the dialog at section w/ name, item j
+  showNamedDialog(name, j) {
     const m = this
 
-    m.showDialog(
-      m.findTarget(),
-      m.script.findItemAtPath(name, i),
-      () => m.showDialogAtPath(name, i + 1),
+    // get the section index
+    const i = m.script.findIdxByName(name)
+    if (i == null) {
+      return
+    }
+
+    m.showDialogAtPath(i, j)
+  }
+
+  // set the current section by name
+  setSectionByName(name) {
+    this.script.setIdxByName(name)
+  }
+
+  // adds a new rendering hook for the name
+  onHook(name, render) {
+    this.hooks[name] = render
+  }
+
+  // -- c/helpers
+  // show the dialog w/ this path
+  showDialogAtPath(i, j) {
+    const m = this
+
+    // resolve the path
+    const path = m.script.findNextPath(i, j)
+    if (path == null) {
+      return
+    }
+
+    // show the dialog
+    m.showDialogForItem(
+      m.script.findItemByPath(...path),
+      () => m.showDialogAtPath(i, j + 1),
     )
   }
 
-  // shows a dialog with the line
-  showDialog($target, line, cont) {
+  // shows a dialog for the item
+  showDialogForItem(item, cont) {
     const m = this
+
+    // make sure we have an item
+    if (item == null) {
+      return
+    }
+
+    // if it's a hook, render the custom html
+    if (item.kind === ScriptHook.kind) {
+      m.showDialogForHook(item, cont)
+    } else {
+      m.showDialogForLine(item, cont)
+    }
+  }
+
+  // show a dialog for the hook
+  showDialogForHook(hook, cont) {
+    const m = this
+
+    const render = m.hooks[hook.name]
+    if (render == null) {
+      return
+    }
+
+    const html = render(cont)
+    if (html) {
+      m.showDialog(html)
+    }
+  }
+
+  // show a dialog for the line
+  showDialogForLine(line, cont) {
+    const m = this
+
+    const html = `
+      <article class="Dialog">
+        <p>${line.text}</p>
+        <div class="Dialog-buttons">
+          ${line.buttons.map((b) => `<button class="Dialog-button">${b}</button>`).join("\n")}
+        </div>
+      </article
+    `
+
+    m.showDialog(html, () => {
+      if (m.shouldContinueOnClose(line) && cont != null) {
+        cont()
+      }
+    })
+  }
+
+  // shows a dialog with the line
+  showDialog(html, cont) {
+    const m = this
+
+    // make sure we have a target
+    const $target = m.findTarget()
+    if ($target == null) {
+      return
+    }
 
     // create the html el
     let $el = document.createElement("div")
 
-    // create the dialog
+    // render and unwrap the dialog
     $el.innerHTML = `
       <a-dumpling
         id="${m.dialogId}"
@@ -94,12 +184,7 @@ class ScriptElement extends HTMLParsedElement {
         layer="dialogue"
         temperament="phlegmatic"
       >
-        <article class="Dialog">
-          <p>${line.text}</p>
-          <div class="Dialog-buttons">
-            ${line.buttons.map((b) => `<button class="Dialog-button">${b}</button>`).join("\n")}
-          </div>
-        </article>
+        ${html}
       </a-dumpling>
     `
 
@@ -113,7 +198,7 @@ class ScriptElement extends HTMLParsedElement {
     // run any behaivors on dialog hide
     // TODO: importing a-dumpling.js causes no dialog to ever appear
     $el.addEventListener("hide-frame", () => {
-      if (m.shouldContinueOnClose(line)) {
+      if (cont != null) {
         cont()
       }
     })
@@ -151,6 +236,16 @@ class ScriptElement extends HTMLParsedElement {
     return `${this.id}-dialog`
   }
 
+  // find the open dialog dumpling
+  findOpenDialog() {
+    return this.findById(this.dialogId, window.top)
+  }
+
+  // find the click target, if one exists
+  findTarget() {
+    return this.findById(this.targetId)
+  }
+
   // find an element by id, starting with the closest window by default
   findById(id, $window = window) {
     if (id == null) {
@@ -164,16 +259,6 @@ class ScriptElement extends HTMLParsedElement {
     } while ($target == null && $window != null)
 
     return $target
-  }
-
-  // find the open dialog dumpling
-  findOpenDialog() {
-    return this.findById(this.dialogId, window.top)
-  }
-
-  // find the click target, if one exists
-  findTarget() {
-    return this.findById(this.targetId)
   }
 
   // find the title of the dialog given the target
@@ -201,16 +286,6 @@ class ScriptElement extends HTMLParsedElement {
   onButtonClick = () => {
     this.closeOpenDialog()
   }
-
-  // when the dialog hides for whatever reason
-  onDialogHide = (evt) => {
-    const m = this
-
-    // see if we should show the next dialog
-    if (m.shouldContinueOnClose()) {
-      m.showNextDialog()
-    }
-  }
 }
 
 // -- impls/data
@@ -233,49 +308,51 @@ class Script {
   advance() {
     const m = this
 
-    // if we have a current section
-    const curr = this.findCurrent()
+    // from the current path
+    const curr = m.findCurrentPath()
     if (curr == null) {
       return
     }
 
-    // advance to the next item
-    curr.advance()
-
-    // if the current item is a jump
-    const item = this.findCurrentItem()
-    if (item.kind === ScriptJump.kind) {
-      m.jump(item.name)
+    // find the next valid path
+    const next = m.findNextPath(curr[0], curr[1] + 1)
+    if (next == null) {
+      return
     }
+
+    // update state
+    m.i = next[0]
+    m.sections[m.i].i = next[1]
   }
 
-  // jump to the section w/ the given name
-  jump(name) {
-    const m = this
-
-    // update section index
-    m.i = m.findIndexByName(name)
-
-    // restart the new section, if any
-    const curr = m.findCurrent()
-    if (curr != null) {
-      curr.restart()
-    }
+  // set the current index by name
+  setIdxByName(name) {
+    this.i = this.findIdxByName(name)
   }
 
   // -- queries --
-  // find the current section, if any
-  findCurrent() {
-    return this.sections[this.i]
+  // find the current section's current item, if any
+  findCurrentItem() {
+    const section = this.sections[this.i]
+    if (section == null) {
+      return null
+    }
+
+    return section.current
   }
 
-  // find the section by name
-  findByName(name) {
-    return this.sections[this.findIndexByName(name)]
+  // find the item at the index path [i, j]
+  findItemByPath(i, j) {
+    const section = this.sections[i]
+    if (section == null) {
+      return null
+    }
+
+    return section.get(j)
   }
 
   // find the index of the section by name
-  findIndexByName(name) {
+  findIdxByName(name) {
     const m = this
     const n = m.sections.length
 
@@ -288,19 +365,52 @@ class Script {
     return null
   }
 
-  // find the current section's current item, if any
-  findCurrentItem() {
-    const section = this.findCurrent()
+  // find the current index path [i, j]
+  findCurrentPath() {
+    const m = this
+
+    // get current section idx
+    const i = m.i
+
+    // ensure it exists
+    const section = m.sections[i]
     if (section == null) {
       return null
     }
 
-    return section.current
+    // if it has a current item
+    const j = section.i
+    if (j == null) {
+      return null
+    }
+
+    // produce path
+    return [i, j]
   }
 
-  // find the item i in section w/ name
-  findItemAtPath(name, i) {
-    return this.findByName(name).get(i)
+  // find the next valid path from a start path, resolving any jumps
+  findNextPath(i, j) {
+    const m = this
+
+    while (true) {
+      // if we have the section
+      const section = m.sections[i]
+      if (section == null) {
+        return null
+      }
+
+      // stop unless its a jump
+      const item = section.get(j)
+      if (item.kind !== ScriptJump.kind) {
+        break
+      }
+
+      // but jump if it is
+      i = m.findIdxByName(item.name)
+      j = 0
+    }
+
+    return [i, j]
   }
 
   // -- encoding --
@@ -341,8 +451,10 @@ class Script {
 
   // decode a script item
   static decodeItem(line) {
-    if (line.startsWith(">>>")) {
+    if (line.startsWith("==>")) {
       return ScriptJump.decode(line)
+    }  else if (line.startsWith("***")) {
+      return ScriptHook.decode(line)
     } else {
       return ScriptLine.decode(line)
     }
@@ -373,33 +485,6 @@ class ScriptSection {
     this.lines.push(line)
   }
 
-  // advance to the next line, or loop if repeating
-  advance() {
-    const m = this
-
-    // don't advance if finished
-    if (m.isFinished) {
-      return
-    }
-
-    const j = m.i + 1
-    const n = m.lines.length
-
-    // if we have more lines, continue
-    if (j < m.lines.length) {
-      m.i = j
-    }
-    // otherwise, finish
-    else {
-      m.i = null
-    }
-  }
-
-  // move section to first line
-  restart() {
-    this.i = 0
-  }
-
   // -- queries --
   // get the item at the index
   get(i) {
@@ -409,16 +494,6 @@ class ScriptSection {
   // get the current line
   get current() {
     return this.get(this.i)
-  }
-
-  // if this section is finished
-  get isFinished() {
-    return !this.tags.repeat && this.i >= this.lines.length - 1
-  }
-
-  // if this section is finished
-  get isOnClick() {
-    return this.tags.onclick
   }
 
   // -- encoding --
@@ -462,7 +537,7 @@ class ScriptJump {
   }
 
   // -- encoding --
-  // try to decode a jump: ">>> <section> [tags...]"
+  // try to decode a jump: "==> <section> [tags...]"
   static decode(line) {
     // see if the line is a header
     const match = line.match(kJumpPattern)
@@ -483,6 +558,41 @@ class ScriptJump {
 }
 
 ScriptJump.kind = "jump"
+
+// a hook in a script section
+class ScriptHook  {
+  // -- props --
+  // name: string; the line's text
+
+  // -- lifetime --
+  // create a new line
+  constructor(name) {
+    this.name = name
+  }
+
+  // -- kind --
+  get kind() {
+    return ScriptHook.kind
+  }
+
+  // -- encoding --
+  // try to decode a line: "<text> {<button>|...}"
+  static decode(line) {
+    // see if the line is a header
+    const match = line.match(kHookPattern)
+    if (match == null || match.length < 2) {
+      return null
+    }
+
+    // if so, grab the name
+    const name = match[1]
+
+    // create the new line
+    return new ScriptHook(name)
+  }
+}
+
+ScriptHook.kind = "hook"
 
 // a line in a script section
 class ScriptLine  {

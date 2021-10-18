@@ -2,7 +2,10 @@ import { kInventory } from "../inventory.js"
 import { Ledger } from "./ledger.js"
 
 // -- constants --
-const kScriptId = "script"
+const kIdScript = "script"
+const kIdMainDialog = "main-dialog"
+const kScriptHookMain = "main-hook"
+const kScriptHookDebts = "debts-hook"
 const kLedgerDialogName = "ledger"
 
 // -- impls --
@@ -10,13 +13,15 @@ export class Assistant {
   // -- props --
   // ledger: Ledger - the player's ledger
   // $script: ScriptElement - the script
+  // $dialog: HTMLTemplateLement
 
   // -- lifetime --
   // creates a new assistant
   constructor() {
     const m = this
     m.ledger = new Ledger()
-    m.$script = document.getElementById(kScriptId)
+    m.$script = document.getElementById(kIdScript)
+    m.$dialog = document.getElementById(kIdMainDialog)
   }
 
   // -- commands --
@@ -29,14 +34,16 @@ export class Assistant {
 
     // listen to events
     m.ledger.onChange(m.onLedgerChanged)
+    m.$script.onHook(kScriptHookMain, m.onMainHook)
+    m.$script.onHook(kScriptHookDebts, m.onDebtsHook)
   }
 
   // shows the dialog for the current ledger state
   showLedgerDialog() {
     const m = this
-    const i = m.indexForLedgerDialog()
-    if (i != null) {
-      m.$script.showDialogAtPath(kLedgerDialogName, i)
+    const j = m.indexForLedgerDialog()
+    if (j != null) {
+      m.$script.showNamedDialog(kLedgerDialogName, j)
     }
   }
 
@@ -55,6 +62,18 @@ export class Assistant {
   // -- events --
   onLedgerChanged = () => {
     this.showLedgerDialog()
+  }
+
+  onMainHook = () => {
+    return this.$dialog.innerHTML
+  }
+
+  onDebtsHook = () => {
+    return `
+      <article class="Dialog">
+        here is where you would pay
+      </article
+    `
   }
 
   // -- factories --
