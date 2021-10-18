@@ -14,6 +14,7 @@ const initialState = {
   referrer: "",
   hasQuarters: false,
   quarters: 0
+  clicks: 0,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

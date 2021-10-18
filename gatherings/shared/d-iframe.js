@@ -13,19 +13,23 @@ const kPermittedAttrs = new Set([
 // -- impls --
 class DeferredIframeElement extends HTMLParsedElement {
   // -- props --
-  iframeAttrs = null
-  _iframe = null
-  get iframe() {
-    if (this._iframe == null) {
-      return this // kind of a hack
-    }
-    return this._iframe
-  }
+  // _iframe: HTMLIFrameElement; the underlying iframe, doesn't exist until load is called
+  // _iframeAttrs: [string: any]; attributes passed to the iframe
+  // _iframeEvents: any[][]; an array of events to install on the iframe
 
   // -- lifetime --
+  constructor() {
+    super()
+
+    const m = this
+    m._iframe = null
+    m._iframeEvents = []
+    m._iframeAttrs = {}
+  }
+
   parsedCallback() {
     // capture iframe attrs
-    this.parseIframeAttrs()
+    this.parseAttrs()
 
     // autoload if necessary
     if (this.hasAttribute("autoload")) {
@@ -44,19 +48,20 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   // -- l/helpers
-  parseIframeAttrs() {
-    const attrs = {}
+  // split d-iframe and iframe attritbues
+  parseAttrs() {
+    const m = this
 
-    for (const a of this.attributes) {
+    // for every non d-iframe attr
+    for (const a of m.attributes) {
       if (kPermittedAttrs.has(a.name)) {
         continue
       }
 
-      attrs[a.name] = a.value
-      this.removeAttribute(a.name)
+      // add it to the iframe attrs
+      m._iframeAttrs[a.name] = a.value
+      m.removeAttribute(a.name)
     }
-
-    this.iframeAttrs = attrs
   }
 
   // -- commands --
@@ -81,17 +86,26 @@ class DeferredIframeElement extends HTMLParsedElement {
 
   // -- c/helpers
   createIframe(url) {
-    this._iframe = document.createElement('iframe');
+    const m = this
+
+    // create the iframe
+    m._iframe = document.createElement('iframe');
 
     // add a nested iframe w/ no src
-    this.appendChild(this._iframe)
+    m.appendChild(m._iframe)
 
     // copy attibutes to the iframe
-    for (const name in this.iframeAttrs) {
-      this._iframe.setAttribute(name, this.iframeAttrs[name])
+    for (const name in m._iframeAttrs) {
+      m._iframe.setAttribute(name, m._iframeAttrs[name])
     }
 
-    this._iframe.src = url
+    // add events to the iframe
+    for (const args of m._iframeEvents) {
+      m._iframe.addEventListener(...args)
+    }
+
+    // load url
+    m._iframe.src = url
   }
 
   destroyIframe() {
@@ -103,10 +117,31 @@ class DeferredIframeElement extends HTMLParsedElement {
     this._iframe = null
   }
 
+  // -- queries --
+  get iframe() {
+    if (this._iframe == null) {
+      return this // kind of a hack
+    }
+    return this._iframe
+  }
+
   // -- iframe api --
   focus() {
     if (this._iframe != null) {
       this._iframe.focus()
+    }
+  }
+
+  addEventListener(...args) {
+    const m = this
+
+    // store for future iframes
+    m._iframeEvents.push(args)
+
+    // add to the current iframe if exists
+    const doc = m.contentDocument
+    if (doc != null) {
+      doc.addEventListener(...args)
     }
   }
 

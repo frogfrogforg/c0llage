@@ -220,13 +220,13 @@ d-iframe iframe {
 }
 
 .Frame-header-title {
+  display: inline-flex;
+  align-items: center;
   font-family: monospace;
-  font-size: calc(var(--frame-header-height-param) * 2.2);
+  height: calc(var(--frame-header-height-param) * 2.5);
   padding-left: 1vmin;
   padding-right: 1vmin;
   background-color: #dadada;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .choleric .Frame-handle{

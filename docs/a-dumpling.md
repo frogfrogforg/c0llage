@@ -15,7 +15,7 @@ The way to do so is by creating an element named `<a-dumpling>`
 A complete dumpling looks something like this
 
 ```html
-<a-dumpling id='example' x=10 y=20 width=30 height=40 temperament='sanguine' bodyClass='coolclass' focused hidden noClose>
+<a-dumpling id='example' x=10 y=20 width=30 height=40 temperament='sanguine' bodyClass='coolclass' hidden noClose>
   <!-- some content here-->
   <!-- if content is iframe or d-iframe, the frame will have maximize and back buttons-->
 </a-dumpling>

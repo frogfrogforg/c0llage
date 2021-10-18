@@ -6,7 +6,6 @@ window.Frames = {
   ...staticize('toggle'),
   ...staticize('bringToTop'),
   ...staticize('addEventListener', "listen"),
-  topZIndex: 69
 }
 
 function staticize(...names) {
@@ -42,10 +41,20 @@ const frameTemplate = `
   </div>
 `
 
+// -- constants --
+// -- c/style
 const kVisibleClass = 'Frame-Visible'
 const kDraggingClass = 'Frame-Dragging'
 const kScalingClass = 'Frame-Scaling'
 const kUnfocusedClass = 'Frame-Unfocused'
+
+// -- c/focus
+// the default focus layer
+const kLayerDefault = "default"
+
+// the event when the top z-index changes for a layer
+const kEventFocusChange = "focus-change"
+
 // TODO: make this an attribute with these as default values?
 const MinContentHeight = 40
 const MinContentWidth = 40
@@ -72,6 +81,7 @@ const TemperamentData = {
     noBackMessage: "there's no going back from here..."
   }
 }
+
 // for helping with autocomplete
 const sanguine = 'sanguine'
 const choleric = 'choleric'
@@ -87,7 +97,6 @@ const FrameRng = {
   MaxSize: 40
 }
 
-// -- events --
 const Ops = {
   Move: 'Move',
   Scale: 'Scale'
@@ -103,6 +112,12 @@ function makeId(length) {
   return result
 }
 
+// -- statics --
+// a map of layer name => top z-index
+const sTopIndexByLayer = {
+}
+
+// -- impls --
 export class Dumpling extends HTMLParsedElement {
   // -- constants --
   static ShowEvent = "show-frame"
@@ -145,7 +160,9 @@ export class Dumpling extends HTMLParsedElement {
     //#region Header Button Functionality
 
     // title
-    this.title = this.findTitle()
+    this.findTitle().then((title) => {
+      this.title = title
+    })
 
     // Temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
@@ -163,9 +180,7 @@ export class Dumpling extends HTMLParsedElement {
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
     if (!this.hasAttribute('no-close')) {
-      closeButton.onclick = () => {
-        this.onClose()
-      }
+      closeButton.addEventListener("click", this.onClose)
     } else {
       closeButton.style.display = 'none'
     }
@@ -201,10 +216,6 @@ export class Dumpling extends HTMLParsedElement {
 
     //#region focus logic
     this.bringToTop()
-
-    if (!this.hasAttribute('focused') && !this.focused) {
-      this.classList.toggle(kUnfocusedClass, true)
-    }
     //#endregion
 
     // move to the correct container if necessary
@@ -236,7 +247,7 @@ export class Dumpling extends HTMLParsedElement {
     this.initEvents()
   }
 
-  onClose() {
+  onClose = () => {
     const diframe = this.querySelector('d-iframe')
     if (diframe != null) {
       diframe.destroyIframe()
@@ -313,6 +324,8 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   initEvents() {
+    const m = this
+
     // NOTE: calling `addEventListener` twice with the same listener should _not_
     // add duplicate callbacks as long as the listeners have reference equality.
     // if you use `method.bind(this)` it _will_ add duplicate events, as it creates
@@ -336,11 +349,8 @@ export class Dumpling extends HTMLParsedElement {
       }
     })
 
-    window.addEventListener("new-top-frame", () => {
-      if (this.style.zIndex !== window.Frames.topZIndex) {
-        this.classList.toggle(kUnfocusedClass, true)
-      }
-    })
+    // when the focused dumpling changes
+    window.addEventListener(kEventFocusChange, m.onFocusChange)
   }
 
   // -- commands --
@@ -353,15 +363,25 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   hide() {
-    this.setVisible(false)
-    this.dispatchEvent(new Event(Dumpling.HideEvent))
+    const m = this
+
+    m.setVisible(false)
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.HideEvent,
+      { detail: m },
+    ))
   }
 
   show() {
-    this.setVisible(true)
-    this.dispatchEvent(new Event(Dumpling.ShowEvent))
+    const m = this
 
-    this.bringToTop()
+    m.setVisible(true)
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.ShowEvent,
+      { detail: m },
+    ))
+
+    m.bringToTop()
   }
 
   setVisible(isVisible) {
@@ -370,11 +390,25 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   bringToTop() {
-    if (!this.visible) return
-    this.style.zIndex = window.Frames.topZIndex++
-    window.dispatchEvent(new Event('new-top-frame'))
-    this.focused = true
-    this.classList.toggle(kUnfocusedClass, false)
+    const m = this
+    if (!m.visible) {
+      return
+    }
+
+    // update layer's top index
+    let i = sTopIndexByLayer[m.layer] || 69
+    i = sTopIndexByLayer[m.layer] = i + 1
+
+    // update state (using style as state)
+    this.style.zIndex = i
+
+    // update visibility of frames
+    window.dispatchEvent(new CustomEvent(
+      kEventFocusChange,
+      { detail: { layer: m.layer } }
+    ))
+
+    // focus iframe if necessary
     const iframe = this.findIframe()
     if (iframe != null) {
       iframe.focus()
@@ -385,6 +419,7 @@ export class Dumpling extends HTMLParsedElement {
   close = this.hide
   clisten = addEventListener
 
+  // -- events --
   onMouseDown = (evt) => {
     // TODO: probably don't need to prevent default, there should no default
     // mousedown behavior on the header/handle
@@ -598,6 +633,25 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
+  // -- e/focus
+  // when the focused dumpling changes for a layer
+  onFocusChange = (evt) => {
+    const m = this
+    if (evt.detail.layer != m.layer) {
+      return
+    }
+
+    m.classList.toggle(
+      kUnfocusedClass,
+      m.style.zIndex != sTopIndexByLayer[m.layer]
+    )
+  }
+
+  // -- queries --
+  // this dumpling's layer, the default value is "default"; specify like: <a-dumpling layer="dialogue">
+  get layer() {
+    return this.getAttribute("layer") || kLayerDefault
+  }
 
   findScaleTarget() {
     const body = this.querySelector(`#${this.id}-body`)
@@ -634,27 +688,47 @@ export class Dumpling extends HTMLParsedElement {
 
   _title = null
 
+  get title() {
+    return this._title
+  }
+
   set title(value) {
     const titleEl = this.querySelector(`#${this.id}-title`)
     this._title = value;
-    if (value == null) {
+
+    if (!value) {
       titleEl.style.display = 'none'
     } else {
-      titleEl.style.display = 'block'
+      delete titleEl.style.display
       titleEl.innerHTML = value;
     }
   }
 
   findTitle() {
-    // use the attr if available
+    // use attr if available
     const title = this.getAttribute("title")
     if (title != null) {
-      return title
+      return Promise.resolve(title)
     }
 
-    // otherwise, if we have a nested iframe
+    // if we have a nested iframe
     const iframe = this.findIframe()
-    return iframe?.contentDocument?.title
+    if (iframe == null) {
+      return Promise.resolve(null)
+    }
+
+    // use its title
+    const doc = iframe.contentDocument
+    if (doc != null) {
+      return Promise.resolve(doc.title)
+    }
+
+    // or wait for it (this probably doesn't do the right thing when the iframe changes page)
+    return new Promise((resolve) => {
+      iframe.addEventListener("load", () => {
+        resolve(iframe.contentDocument.title)
+      })
+    })
   }
 }
 

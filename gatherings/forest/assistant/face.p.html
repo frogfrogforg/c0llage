@@ -1,0 +1,46 @@
+<!-- template: item {title: assistant} -->
+
+<head>
+  <script src="../../shared/s-cript.js" type="module"></script>
+</head>
+
+<body id="assistant">
+  <img class="Face" src="/d/img/irene.gif">
+
+  <s-cript id="script" start="intro" target="assistant">
+    --- intro
+    hello, i'm the forest assistant {cool|nice to meet you}
+    how are you?
+    >>> main
+
+    --- main
+    if you click me i will speak to you {}
+    nice {nice}
+    >>> main
+
+    --- ledger
+    wow, you're using the website! {yes}
+    you've been at it for a while...but if you're feeling excited, keep going. there's still so much more to click on, i promise. {}
+    i guess i should probably tell you soon... {huh|what}
+    you've just used your 100 free clicks, you see. {my...} [cont]
+    your free clicks. {my clicks} [cont]
+    from here on out, each click will cost you 1¢. {...} [cont]
+    i'm sorry, i don't set the policy. i don't really even enforce it. you'll have to take that one up with the wizards... {.} [cont]
+    ...but i can help you settle up your debts. {how|no}
+  </s-cript>
+</body>
+
+<style>
+  /* resets */
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /* styles */
+  .Face {
+    width: 100%;
+  }
+</style>
+
+<script src="./brain.js" type="module"></script>
