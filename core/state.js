@@ -13,7 +13,7 @@ const initialState = {
   inventory: [],
   referrer: "",
   hasQuarters: false,
-  quarters: 0
+  quarters: 0,
   clicks: 0,
 }
 
