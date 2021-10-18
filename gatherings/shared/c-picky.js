@@ -14,7 +14,6 @@ const kPermittedAttrs = new Set([
 class StateConditionalElement extends HTMLParsedElement {
   // -- lifetime --
   parsedCallback() {
-    console.log(this.children)
     const conditionsString = this.getAttribute('wants') || this.getAttribute('condition') || ''
     const s = conditionsString.trim().split(' ').filter(i => i)
     let passesAllConditions = true;
@@ -22,17 +21,14 @@ class StateConditionalElement extends HTMLParsedElement {
       passesAllConditions &&= condition[0] === '!'
                   ? !d.State[condition.slice(1)]
                   : d.State[condition]
-      console.log('adding listener to', condition, d.State[condition])
 
       d.State.listen(condition, () => {
-        console.log("AAAAAA")
         const passesAllConditions = s
                 .reduce((aggregate, condition) => 
                   aggregate && 
                   condition[0] === '!'
                   ? !d.State[condition.slice(1)]
                   : d.State[condition], true)
-              console.log("AAAAAA", passesAllConditions)
               this.setChildrenVisibility(passesAllConditions)
             })
       });

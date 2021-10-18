@@ -8,6 +8,15 @@
       // window.location.href="2003-transition1.html"
       Turbo.visit("2003-transition1.html")
     }
+    if (evt.dataTransfer.getData("text") == "quarter") {
+      d.State.quarters -= 1
+      if (!d.State.hasComputerQuarters) {
+        d.State.hasComputerQuarters
+        d.State.computerQuarters = 1
+      } else {
+        d.State.computerQuarters++
+      }
+    }
   }
 </script>
 

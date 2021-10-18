@@ -421,9 +421,11 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- events --
   onMouseDown = (evt) => {
-    // TODO: probably don't need to prevent default, there should no default
     // mousedown behavior on the header/handle
-    evt.preventDefault()
+
+    // TODO: probably don't need to prevent default, there should no default.
+    // Commented preventDefault here so that you can interact with non iframed stuff inside dumplings
+    // evt.preventDefault()
 
     // bring this frame to top of stack
     this.bringToTop()
@@ -486,7 +488,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // TODO: probably don't need to prevent default, there should no default
     // mousemove behavior on the header/handle
-    evt.preventDefault()
+    // evt.preventDefault()
 
     // apply the operation
     const mx = evt.clientX
