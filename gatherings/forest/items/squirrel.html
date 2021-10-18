@@ -1,14 +1,19 @@
 <head>
   <style>
     body {
+      /*
       background: url("squirrel.gif");
+      */
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
       cursor: pointer;
+      margin: 0px;
     }
-    #squirrel {
+    #squirrel-gif {
       background: url("squirrel.gif");
+      height: 100%;
+      width: 100%;
       cursor: pointer;
     }
   </style>
@@ -27,15 +32,22 @@
     <audio id="sq3">
         <source src="../sound/squirrel/sq_006.mp3" type="audio/mpeg">
     </audio>
-    <img src="squirrel.gif" />
+    <img id="squirrel-gif" src="squirrel.gif" />
 
     <script>
+
+      let squirrel_opacity = 1;
       playsound = () => {
         // play random squirrel noise
         let s_i = Math.floor(Math.random() * 4);
         document.getElementById("sq"+s_i).play(); 
-	
+
+
 	// here makie it a little more transparent every time
+        let squirrel_gif = document.getElementById("squirrel-gif");
+
+	squirrel_opacity -= .1;
+	squirrel_gif.style.opacity = squirrel_opacity;
 	
 	
       }
