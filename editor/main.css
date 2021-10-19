@@ -351,13 +351,12 @@ a:link, a:visited {
 }
 #help {
     display: none;
-    width: 400px;
+    width: 80%;
     border-radius: 3px;
     background: #FFF;
     position: absolute;
     top: 35px;
-    left: 50%;
-    margin-left: -200px;
+    left: 10%;
     z-index: 1003;
     box-shadow: rgba(0,0,0,0.2) 0 0 2px 2px;
 }

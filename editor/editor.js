@@ -2204,6 +2204,7 @@ var summerHtmlImageMapCreator = (function() {
      * @params e {MouseEvent} - mousemove event
      */
     Polygon.prototype.onProcessEditing = function(e) {
+        console.log("onProcessEditing");
         var editType = app.getEditType();
         var coords = utils.getRightCoords(e.pageX, e.pageY);
         this.redraw(
@@ -2214,7 +2215,7 @@ var summerHtmlImageMapCreator = (function() {
             )
         );
 
-        this.editingStartPoint = utils.getRightCoords(e.pageX, e.pageY);
+        this.editingStartPoint = coords;
     };
     
     /**
@@ -2227,11 +2228,13 @@ var summerHtmlImageMapCreator = (function() {
     Polygon.prototype.onStopEditing = function(e) {
         var editType = app.getEditType();
     
+        var coords = utils.getRightCoords(e.pageX, e.pageY);
+
         this.setCoords(
             this.edit(
                 editType, 
-                e.pageX - this.editingStartPoint.x, 
-                e.pageY - this.editingStartPoint.y
+                coords.x - this.editingStartPoint.x, 
+                coords.y - this.editingStartPoint.y
             )
         ).redraw();
     
