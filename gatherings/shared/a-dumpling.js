@@ -395,11 +395,16 @@ export class Dumpling extends HTMLParsedElement {
       return
     }
 
-    // update layer's top index
-    let i = sTopIndexByLayer[m.layer] || 69
+    // find the highest top index cross-layer
+    let i = 69
+    for (const j of Object.values(sTopIndexByLayer)) {
+      i = Math.max(i, j)
+    }
+
+    // and use an index one higher
     i = sTopIndexByLayer[m.layer] = i + 1
 
-    // update state (using style as state)
+    // update state (using style to store state)
     this.style.zIndex = i
 
     // update visibility of frames
