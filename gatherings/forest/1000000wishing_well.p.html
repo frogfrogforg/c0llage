@@ -8,7 +8,7 @@
   <button id="wishingWell" class="hotspot cursor-coin" onclick="Frames.show('well1')"
     style="left: 17%; top: 19%; width: 37%; height: 66%;"></button>
 
-  <a-dumpling layer="wishingWell" hidden title='a wishing well' id="well1" x=10 y=65 width=62 height=25>
+  <a-dumpling layer="wishingWell" hidden title='a wishing well' id="well1" x=10 y=65 width=62 height=28>
     <div>
       <p>a wishing well! maybe all your dreams will come true!</p>
       <c-picky condition="!hasQuarters">
@@ -43,7 +43,7 @@
       <p>Waiting for donation</p>
     </div>
     <div id="gotDonation" style="display: none;">
-      <p>thank you for your donation! you may now enter the amount you donated below to exchange for quarters (remember,
+      <p>after donating, you may enter the amount donated below in exchange for quarters (remember,
         1
         quarter = <span id="exchangeRatePerQuarter">69/4</span> </p>
       <input type="number" title="how much you paid" id="ammountPaid" value=1 step=1>
@@ -103,7 +103,7 @@
     document.getElementById('exchangeRatePerQuarter').innerHTML = exchangeRate / 4
 
     document.getElementById('donate').addEventListener('click', () => {
-      // TODO: find out a better time here? open ko-fi in a new tab?
+      // TODO: find out a better time here? open ko-fi in a new tab? check for the iframe src?
       Frames.hide('quarterShop')
       Frames.show('quarterExchange')
       Frames.show('quarterKofi')
