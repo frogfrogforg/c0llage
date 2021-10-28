@@ -14,8 +14,7 @@
   <img id="leaf" class="Leaf" src="./images/43-quiet-leaf.png">
 
   <!-- hotpots -->
-  <a class="hotspot move" href="./42narrowing.html"
-    style="left: 0%; bottom: 0%; width: 14%; height: 14%;"></a>
+  <a class="hotspot cursor-move" href="./42narrowing.html" style="left: 0%; bottom: 0%; width: 14%; height: 14%;"></a>
 
   <!-- dialogs -->
   <a-dumpling id="notice-dialog" temperament="phlegmatic" hidden x=25 y=40 width=16 height=20>
@@ -87,12 +86,12 @@
   // -- events --
   function didClickLeaf() {
     switch (mStep) {
-    case 0:
-      notice(); break
-    case 1:
-      acknowledge(); break
-    case 2:
-      loot(); break
+      case 0:
+        notice(); break
+      case 1:
+        acknowledge(); break
+      case 2:
+        loot(); break
     }
   }
 

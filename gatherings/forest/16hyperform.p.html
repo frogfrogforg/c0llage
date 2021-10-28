@@ -57,7 +57,7 @@
 <body>
     <img class="background" src="./images/16.png">
 
-    <a class="hotspot centered talk noblur" href="#" onclick="Frames.toggle('afraid'); RandomizeScattered();"
+    <a class="hotspot centered cursor-talk noblur" href="#" onclick="Frames.toggle('afraid'); RandomizeScattered();"
         style="left: 62.888%; top: 34.666%; width: 42.0%; height: 42.0%" data-turbo="false">
         <img src="./images/angeleyes.gif" class="eyes" style="top:46%;left:7%;transform: rotate(22deg);">
         <img src="./images/angeleyes.gif" class="eyes" style="top:25%;left:34%;transform: rotate(-17deg) scale(125%);">
@@ -69,7 +69,7 @@
     </a>
 
     <a-dumpling x=0 y=0 width=24 height=23>
-        <a class="move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="10forest_edge.html">
+        <a class="cursor-move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="10forest_edge.html">
             🔙
         </a>
     </a-dumpling>
@@ -143,39 +143,39 @@
 </script>
 
 <script type="module">
-  // the following code makes it so that, once you visit this node,
-  // if you idle for long enough (doNothingTimerSeconds), you'll
-  // start looking at flowers
+    // the following code makes it so that, once you visit this node,
+    // if you idle for long enough (doNothingTimerSeconds), you'll
+    // start looking at flowers
 
-  import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
+    import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
 
-  let doNothingTimerSeconds = 69;
-  let timer = setTimeout(doNothingTimeout, 
-      		   doNothingTimerSeconds * 1000);
+    let doNothingTimerSeconds = 69;
+    let timer = setTimeout(doNothingTimeout,
+        doNothingTimerSeconds * 1000);
 
-  function resetTimer() {
-    clearTimeout(timer);
-    timer = setTimeout(doNothingTimeout, 
-      		 doNothingTimerSeconds * 1000);
-  }
+    function resetTimer() {
+        clearTimeout(timer);
+        timer = setTimeout(doNothingTimeout,
+            doNothingTimerSeconds * 1000);
+    }
 
-  function doNothingTimeout() {
-    // if we don't remove the event listeners, all of these
-    // events will keep triggering the timer
-    document.removeEventListener("mousemove", resetTimer)
-    document.removeEventListener("click", resetTimer)
-    document.removeEventListener("keydown", resetTimer)
-    document.removeEventListener("keypress", resetTimer)
-    document.removeEventListener("keyup", resetTimer)
+    function doNothingTimeout() {
+        // if we don't remove the event listeners, all of these
+        // events will keep triggering the timer
+        document.removeEventListener("mousemove", resetTimer)
+        document.removeEventListener("click", resetTimer)
+        document.removeEventListener("keydown", resetTimer)
+        document.removeEventListener("keypress", resetTimer)
+        document.removeEventListener("keyup", resetTimer)
 
-    Turbo.visit("26flowers.html")
-  }
-  
-  // if you even twitch, set the timer back to 0
-  document.addEventListener("mousemove", resetTimer)
-  document.addEventListener("click", resetTimer)
-  document.addEventListener("keydown", resetTimer)
-  document.addEventListener("keypress", resetTimer)
-  document.addEventListener("keyup", resetTimer)
+        Turbo.visit("26flowers.html")
+    }
+
+    // if you even twitch, set the timer back to 0
+    document.addEventListener("mousemove", resetTimer)
+    document.addEventListener("click", resetTimer)
+    document.addEventListener("keydown", resetTimer)
+    document.addEventListener("keypress", resetTimer)
+    document.addEventListener("keyup", resetTimer)
 
 </script>

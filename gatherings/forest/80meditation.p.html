@@ -1,13 +1,13 @@
 <body>
   <img class="background" src="./images/70meditation.png">
 
-  <button id='meditationGuide' class='hotspot talk' style="top: 38%;
+  <button id='meditationGuide' class='hotspot cursor-talk' style="top: 38%;
 left: 8%;
 height: 30%;
 width: 28%;" onclick="meditationSequence()">
   </button>
 
-  <button class='hotspot talk' style="top: 36%;
+  <button class='hotspot cursor-talk' style="top: 36%;
     left: 66%;
     height: 38%;
     width: 28%;
@@ -94,7 +94,7 @@ width: 28%;" onclick="meditationSequence()">
 
     Frames.hide('meditation2')
     Frames.show('meditation3')
-    guide.classList.remove('talk')
+    guide.classList.remove('cursor-talk')
     guide.classList.add('cursor-lotus')
     yield;
     Frames.hide('meditation3')
