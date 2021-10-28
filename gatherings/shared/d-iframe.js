@@ -1,5 +1,5 @@
 import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
-import { Dumpling } from "./a-dumpling.js"
+import { Dumpling } from "/core/dumpling/a-dumpling.js"
 
 // -- constants --
 const kPermittedAttrs = new Set([
