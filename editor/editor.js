@@ -2674,7 +2674,7 @@ var summerHtmlImageMapCreator = (function() {
         let basename = utils.pathBasename(filename); // e.g. 1.png
 
         // assume image is in the forest images directory
-        app.loadImage("../gatherings/forest/images/"+basename).setFilename(basename);
+        app.loadImage("/forest/images/"+basename).setFilename(basename);
 
         Area.createAreasFromSvgElement(svgEl)
         // if (Area.createAreasFromSvgElement(svgEl)) {
@@ -2962,7 +2962,7 @@ var summerHtmlImageMapCreator = (function() {
       let basename = this.files[0].name;
 
       // assume image is in the forest images directory
-      app.loadImage("../gatherings/forest/images/"+basename).setFilename(basename);
+      app.loadImage("/forest/images/"+basename).setFilename(basename);
     }
 
     var htmlFileInput = utils.id("html-file");

@@ -18,7 +18,7 @@ window.top.d.State
 d.State
 ```
 
-State is a plain js object, and can store whatever you want. However, it's good practice to define the initial values of things in the state, which can be done in the file [global.js](../global.js).
+State is a plain js object, and can store whatever you want. However, it's good practice to define the initial values of things in the state, which can be done in the file [global.js](/global.js).
 
 Currently the initialState is defined as the following:
 ```js

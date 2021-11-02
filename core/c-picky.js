@@ -1,5 +1,5 @@
-import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
-import { State } from "../../core/state.js"
+import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
+import { State } from "/core/state.js"
 
 // -- constants --
 const kPermittedAttrs = new Set([

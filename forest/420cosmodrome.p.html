@@ -1,0 +1,195 @@
+<!-- template: neutral -->
+
+<style>
+  .Cosmodrome-content {
+    display: flex;
+    flex-direction: row;
+    cursor: grab;
+  }
+
+  .CosmodromeCol--sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  .CosmodromeBg {
+    display: block;
+    width: 100vmin;
+    height: 100vmin;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  @keyframes mechanic {
+    50% {
+      transform: translate(0%, 30%);
+      filter: hue-rotate(1600deg);
+      opacity: 80%;
+    }
+
+    100% {}
+  }
+
+  @keyframes reveal {
+    from {
+      filter: blur(69px);
+      cursor: not-allowed;
+    }
+
+    to {}
+
+  }
+</style>
+
+<body>
+  <main id="cosmodrome" class="ForestLayer Cosmodrome">
+    <div class="Cosmodrome-content">
+      <div class="CosmodromeCol CosmodromeCol--sticky">
+        <img class="CosmodromeBg" src="./images/cosmodrome/1a.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/1b.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/1c.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/1d.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/1e.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/2a.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/2b.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/2c.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/2d.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/2e.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/3a.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/3b.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/3c.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/3d.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/3e.gif">
+      </div>
+
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/4a.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/4b.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/4c.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/4d.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/4e.gif">
+      </div>
+
+      <div class="CosmodromeCol">
+        <img class="CosmodromeBg" src="./images/cosmodrome/5a.gif">
+        <button class="hotspot cursor-talk" onclick="Frames.show('mechanic')"><img class="CosmodromeBg"
+            src="./images/cosmodrome/SPOILERS.png"></button>
+        <img class="CosmodromeBg" src="./images/cosmodrome/5b.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/5c.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/5d.gif">
+        <img class="CosmodromeBg" src="./images/cosmodrome/5e.gif">
+      </div>
+    </div>
+  </main>
+
+
+  <a-dumpling temperament='sanguine' id="mechanic" title="It's a me!" hidden persistent width=50 height=50>
+    <div style="font-family:fantasy;"><span>hello.</span>
+      <div style="color:red;font-size:5vmin;animation: mechanic 12s infinite;animation-timing-function: linear;">i am
+        the game mechanic.</div><br><span>i made the game. not this one though.</span>
+    </div><br><br>
+
+    <button onclick="Frames.show('help')">please help me, Mario. the game, it is broken</button>
+  </a-dumpling>
+
+  <a-dumpling temperament='sanguine' id="help" hidden persistent width=50 height=50 x=10>
+    <span>to fix any game, you must type the forbidden word onto it. you must utter the unutterable. in your heart, you
+      already know it.</span><br><br>
+
+    <button onclick="Frames.show('gamer')">yes, i know it</button>
+  </a-dumpling>
+
+  <a-dumpling temperament='sanguine' id="gamer" hidden persistent width=50 height=50 x=4>
+    <span>then say it.</span><br><br>
+
+    <span style="animation:reveal 6s 1; animation-timing-function:ease-out;"><a
+        href="https://frogfrogforg.itch.io/super-cosmodrome?password=verysecretpassword"><button>"gamer"</button></a></span>
+  </a-dumpling>
+
+</body>
+
+<script type="module">
+  // -- props --
+  let $el = null
+
+  // -- init --
+  function main() {
+    console.log("loaded cosmodrome")
+    $el = document.getElementById("cosmodrome")
+    $el.style.overflow = "hidden"
+
+    initTouch()
+    loopGuard()
+  }
+
+  //  -- guard --
+  function loopGuard() {
+    if ($el.style.overflow != "hidden") {
+      alert("nice try gamer")
+    }
+
+    $el.style.overflow = "hidden"
+    requestAnimationFrame(loopGuard)
+  }
+
+  // -- touch --
+  let isTouching = false
+  let xi = null
+  let yi = null
+
+  function initTouch() {
+    $el.addEventListener("pointerdown", didStartTouch)
+    $el.addEventListener("pointermove", didMoveTouch)
+    $el.addEventListener("pointerup", didEndTouch)
+
+    const html = document.querySelector("html")
+    html.addEventListener("pointerout", (evt) => {
+      if (evt.target == html) {
+        this.didEndTouch()
+      }
+    })
+  }
+
+  function didStartTouch(evt) {
+    isTouching = true
+    xi = evt.clientX
+    yi = evt.clientY
+  }
+
+  function didMoveTouch(evt) {
+    if (!isTouching) {
+      return
+    }
+
+
+    const DRAG_ROTATION_SPEED = 0.8;
+    const a = DRAG_ROTATION_SPEED * (new Date()).getMilliseconds() / 360
+    const x = evt.clientX
+    const y = evt.clientY
+
+    const dx = x - xi
+    const dy = y - yi
+
+    $el.scrollBy({
+      top: Math.cos(a) * dx - Math.sin(a) * dy,
+      left: Math.sin(a) * dx + Math.cos(a) * dy,
+    })
+
+    xi = x
+    yi = y
+  }
+
+  function didEndTouch() {
+    isTouching = false
+  }
+
+  // -- boostrap --
+  main()
+</script>

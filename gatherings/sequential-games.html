@@ -10,7 +10,7 @@
         }
     </style>
     <script type="module">
-        import "../global.js"
+        import "/global.js"
 
         // Button logic
         document.getElementById('pressed-me').onpointerdown = () => {
@@ -70,7 +70,7 @@
 
         d.Events.listen('mario.freesalad', () => {
             console.log("Hello salad")
-            document.getElementById("guttersour-iframe").src = "../games/guttersour/WEB/index.html"
+            document.getElementById("guttersour-iframe").src = "/games/guttersour/WEB/index.html"
             console.log("Hello salad load")
             // TODO: do something to hide unity loader?
             // make guttersour raise an event on start
@@ -110,12 +110,12 @@
 
 <body>
     <a-dumpling id="bitsy" temperament='phlegmatic'>
-        <iframe id="alidator" src="../Jen/alidator.html"></iframe>
-        <iframe id="salada" style="display: none" src="../mut/salada-gratuita.html"></iframe>
+        <iframe id="alidator" src="/Jen/alidator.html"></iframe>
+        <iframe id="salada" style="display: none" src="/mut/salada-gratuita.html"></iframe>
     </a-dumpling>
 
     <a-dumpling id="tanooki" temperament='phlegmatic' hidden>
-        <iframe id="tanooki-iframe" src="../games/free-tanooki"></iframe>
+        <iframe id="tanooki-iframe" src="/games/free-tanooki"></iframe>
     </a-dumpling>
 
     <a-dumpling id="buttonthing" temperament='sanguine' width=20 height=10>
@@ -123,7 +123,7 @@
     </a-dumpling>
 
     <a-dumpling id="bucket" temperament='phlegmatic' hidden width=60 height=50>
-        <iframe src="../games/free-juice/free_juice.html"></iframe>
+        <iframe src="/games/free-juice/free_juice.html"></iframe>
     </a-dumpling>
 
     <a-dumpling id="guttersour" temperament='phlegmatic' hidden>
