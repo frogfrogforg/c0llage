@@ -52,6 +52,7 @@ Current State Information
   - `sawMessyServerNarrative`: set to true when opening the narrative in the messy computer
   - `visitedAlidator`: set to true when getting the sparkling light in alidator
   - `visitedPrometeus`: set to true when talking to the bird in prometheus (salada prometida),
+  - `visitedFranBlog`: set to true on first open of fran's blog
 
 TODO
 ----

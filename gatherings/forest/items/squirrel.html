@@ -33,6 +33,7 @@
     <img id="squirrel-gif" src="squirrel.gif" />
 
     <script>
+      console.log("visited fran?? " + d.State.visitedFranBlog);
 
       let squirrel_opacity = 1;
       playsound = () => {
@@ -41,7 +42,9 @@
         document.getElementById("sq"+s_i).play(); 
 
 
-	// here makie it a little more transparent every time
+	// and also make it a little more transparent every time
+	// (this reveals the fransquirrel)
+	
         let squirrel_gif = document.getElementById("squirrel-gif");
       
 	      squirrel_opacity -= .1;
