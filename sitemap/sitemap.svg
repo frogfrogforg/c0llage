@@ -9,18 +9,18 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1029.23)">
 <title>my_graph</title>
 <polygon fill="white" stroke="none" points="-4,4 -4,-1029.23 2982.42,-1029.23 2982.42,4 -4,4"/>
-<!-- ../gatherings/forest/welcome.html -->
-<g id="node1" class="node"><title>../gatherings/forest/welcome.html</title>
+<!-- /forest/welcome.html -->
+<g id="node1" class="node"><title>/forest/welcome.html</title>
 <polygon fill="none" stroke="red" points="624.251,-240.739 423.251,-240.739 423.251,-204.739 624.251,-204.739 624.251,-240.739"/>
-<text text-anchor="middle" x="523.751" y="-219.039" font-family="Times New Roman,serif" font-size="14.00" fill="red">../gatherings/forest/welcome.html</text>
+<text text-anchor="middle" x="523.751" y="-219.039" font-family="Times New Roman,serif" font-size="14.00" fill="red">/forest/welcome.html</text>
 </g>
 <!-- ..\gatherings\forest\1.html -->
 <g id="node2" class="node"><title>..\gatherings\forest\1.html</title>
 <polygon fill="none" stroke="black" points="1663.74,-259.109 1516.74,-259.109 1516.74,-223.109 1663.74,-223.109 1663.74,-259.109"/>
 <text text-anchor="middle" x="1590.24" y="-237.409" font-family="Times New Roman,serif" font-size="14.00">..gatheringsforest1.html</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\1.html -->
-<g id="edge1" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\1.html</title>
+<!-- /forest/welcome.html&#45;&gt;..\gatherings\forest\1.html -->
+<g id="edge1" class="edge"><title>/forest/welcome.html&#45;&gt;..\gatherings\forest\1.html</title>
 <path fill="none" stroke="black" d="M624.564,-224.475C833.965,-228.082 1312.61,-236.327 1506.43,-239.666"/>
 <polygon fill="black" stroke="black" points="1506.5,-243.167 1516.56,-239.84 1506.62,-236.168 1506.5,-243.167"/>
 </g>
@@ -29,8 +29,8 @@
 <polygon fill="none" stroke="black" points="662.99,-167.066 338.99,-167.066 338.99,-131.066 662.99,-131.066 662.99,-167.066"/>
 <text text-anchor="middle" x="500.99" y="-145.366" font-family="Times New Roman,serif" font-size="14.00">..gatheringsforest55highway_to_the_cosmodrome.html</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html -->
-<g id="edge2" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html</title>
+<!-- /forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html -->
+<g id="edge2" class="edge"><title>/forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html</title>
 <path fill="none" stroke="black" d="M518.125,-204.528C515.534,-196.141 512.403,-186.007 509.53,-176.708"/>
 <polygon fill="black" stroke="black" points="512.847,-175.589 506.551,-167.068 506.159,-177.655 512.847,-175.589"/>
 </g>

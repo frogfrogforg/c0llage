@@ -1,0 +1,54 @@
+<style>
+    .vanish {
+        animation: vanish 4s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes vanish {
+        0% {}
+
+        100% {
+            opacity: 0;
+            transform: skew(10deg);
+            pointer-events: none;
+            margin: 0;
+        }
+    }
+</style>
+
+<body>
+    <img class="background" src="./images/70.png">
+
+    <div class="crop"
+        style="width: 13vmin;position: absolute;top: 52%;left: 1.9%;height: 42.0vmin;overflow: hidden;transform: rotate(6deg);">
+        <button class="hotspot centered cursor-talk" id="stare" onclick="Frames.toggle('staring')"
+            style="position: absolute;margin: 10vmin;margin-top: 18vmin;" title="do i... do i know you?">
+            <img src="./images/staring.png" style="height: 28vmin;">
+        </button>
+    </div>
+
+    <a class="hotspot centered cursor-move" href="./71floodgate.html"
+        style="top:56%;left:83%;width:32%;height:34%;"></a>
+
+    <a class="hotspot centered cursor-move" href="./40chewing.html" style="top:94%;left:23%;width:44%;height:10%;"></a>
+
+    <a class="hotspot centered cursor-move" href="./1000000wishing_well.html"
+        style="top: 90%; right: -18%; width: 19%; height: 25%;"></a>
+
+    <a-dumpling temperament="phlegmatic" hidden id="staring" class="staring">
+        <!-- <span>he's just staring at an empty space in the forest</span> -->
+        <iframe src='./scarecrow-whisper'></iframe>
+    </a-dumpling>
+
+    <a-dumpling temperament='phlegmatic' persistent id="test">
+        <iframe src='./items/backbutton.html'></iframe>
+    </a-dumpling>
+</body>
+
+<script>
+    document.getElementById('stare').addEventListener('click', function () {
+        document.querySelector('.cursor-talk').classList.add('vanish');
+    });
+</script>

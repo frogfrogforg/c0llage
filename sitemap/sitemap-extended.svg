@@ -9,18 +9,18 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1467.22)">
 <title>my_graph</title>
 <polygon fill="white" stroke="none" points="-4,4 -4,-1467.22 7849.5,-1467.22 7849.5,4 -4,4"/>
-<!-- ../gatherings/forest/welcome.html -->
-<g id="node1" class="node"><title>../gatherings/forest/welcome.html</title>
+<!-- /forest/welcome.html -->
+<g id="node1" class="node"><title>/forest/welcome.html</title>
 <polygon fill="none" stroke="red" points="5530.5,-1463.22 5329.5,-1463.22 5329.5,-1427.22 5530.5,-1427.22 5530.5,-1463.22"/>
-<text text-anchor="middle" x="5430" y="-1441.52" font-family="Times New Roman,serif" font-size="14.00" fill="red">../gatherings/forest/welcome.html</text>
+<text text-anchor="middle" x="5430" y="-1441.52" font-family="Times New Roman,serif" font-size="14.00" fill="red">/forest/welcome.html</text>
 </g>
 <!-- ..\gatherings\forest\1.html -->
 <g id="node2" class="node"><title>..\gatherings\forest\1.html</title>
 <polygon fill="none" stroke="black" points="665.5,-1391.22 518.5,-1391.22 518.5,-1355.22 665.5,-1355.22 665.5,-1391.22"/>
 <text text-anchor="middle" x="592" y="-1369.52" font-family="Times New Roman,serif" font-size="14.00">..gatheringsforest1.html</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\1.html -->
-<g id="edge1" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\1.html</title>
+<!-- /forest/welcome.html&#45;&gt;..\gatherings\forest\1.html -->
+<g id="edge1" class="edge"><title>/forest/welcome.html&#45;&gt;..\gatherings\forest\1.html</title>
 <path fill="none" stroke="black" d="M5329.23,-1442.76C4694.58,-1433.58 1258.54,-1383.86 675.956,-1375.44"/>
 <polygon fill="black" stroke="black" points="675.597,-1371.93 665.548,-1375.28 675.496,-1378.93 675.597,-1371.93"/>
 </g>
@@ -29,8 +29,8 @@
 <polygon fill="none" stroke="black" points="6065,-1247.22 5741,-1247.22 5741,-1211.22 6065,-1211.22 6065,-1247.22"/>
 <text text-anchor="middle" x="5903" y="-1225.52" font-family="Times New Roman,serif" font-size="14.00">..gatheringsforest55highway_to_the_cosmodrome.html</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html -->
-<g id="edge2" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html</title>
+<!-- /forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html -->
+<g id="edge2" class="edge"><title>/forest/welcome.html&#45;&gt;..\gatherings\forest\55highway_to_the_cosmodrome.html</title>
 <path fill="none" stroke="black" d="M5467.91,-1427.07C5553.64,-1388.28 5762.24,-1293.9 5856,-1251.49"/>
 <polygon fill="black" stroke="black" points="5857.57,-1254.61 5865.24,-1247.3 5854.69,-1248.24 5857.57,-1254.61"/>
 </g>
@@ -39,8 +39,8 @@
 <ellipse fill="none" stroke="black" cx="4461" cy="-476.61" rx="79.0865" ry="18"/>
 <text text-anchor="middle" x="4461" y="-472.91" font-family="Times New Roman,serif" font-size="14.00">https://twitter.com/</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;https://twitter.com/ -->
-<g id="edge3" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;https://twitter.com/</title>
+<!-- /forest/welcome.html&#45;&gt;https://twitter.com/ -->
+<g id="edge3" class="edge"><title>/forest/welcome.html&#45;&gt;https://twitter.com/</title>
 <path fill="none" stroke="black" d="M5329.59,-1427.15C5261.57,-1409.16 5184,-1373.11 5184,-1302.22 5184,-1302.22 5184,-1302.22 5184,-647.22 5184,-598.597 5200.84,-572.336 5165,-539.48 5120.53,-498.714 4728.84,-484.069 4549.71,-479.47"/>
 <polygon fill="black" stroke="black" points="4549.61,-475.966 4539.53,-479.213 4549.44,-482.964 4549.61,-475.966"/>
 </g>
@@ -49,8 +49,8 @@
 <polygon fill="none" stroke="black" points="5483.5,-1247.22 5364.5,-1247.22 5364.5,-1211.22 5483.5,-1211.22 5483.5,-1247.22"/>
 <text text-anchor="middle" x="5424" y="-1225.52" font-family="Times New Roman,serif" font-size="14.00">..miscversion.html</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;..\misc\version.html -->
-<g id="edge4" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;..\misc\version.html</title>
+<!-- /forest/welcome.html&#45;&gt;..\misc\version.html -->
+<g id="edge4" class="edge"><title>/forest/welcome.html&#45;&gt;..\misc\version.html</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M5429.52,-1427.07C5428.48,-1390.05 5426.02,-1302.4 5424.77,-1257.61"/>
 <polygon fill="black" stroke="black" points="5428.26,-1257.35 5424.48,-1247.45 5421.26,-1257.55 5428.26,-1257.35"/>
 </g>
@@ -59,8 +59,8 @@
 <polygon fill="none" stroke="black" points="5722.5,-1247.22 5501.5,-1247.22 5501.5,-1211.22 5722.5,-1211.22 5722.5,-1247.22"/>
 <text text-anchor="middle" x="5612" y="-1225.52" font-family="Times New Roman,serif" font-size="14.00">..gatheringsforestitemsspeedrun.html</text>
 </g>
-<!-- ../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\items\speedrun.html -->
-<g id="edge5" class="edge"><title>../gatherings/forest/welcome.html&#45;&gt;..\gatherings\forest\items\speedrun.html</title>
+<!-- /forest/welcome.html&#45;&gt;..\gatherings\forest\items\speedrun.html -->
+<g id="edge5" class="edge"><title>/forest/welcome.html&#45;&gt;..\gatherings\forest\items\speedrun.html</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M5444.59,-1427.07C5476.67,-1389.35 5553.46,-1299.05 5590.84,-1255.1"/>
 <polygon fill="black" stroke="black" points="5593.53,-1257.34 5597.34,-1247.45 5588.2,-1252.8 5593.53,-1257.34"/>
 </g>
@@ -1244,13 +1244,13 @@
 <path fill="none" stroke="black" d="M2718.95,-849.173C2756.22,-840.973 2797.92,-829.326 2834,-813.22 2912.8,-778.043 2913.76,-734.975 2994,-703.22 3089.73,-665.335 3209.75,-653.868 3282.57,-650.493"/>
 <polygon fill="black" stroke="black" points="3283.12,-653.973 3292.96,-650.052 3282.82,-646.979 3283.12,-653.973"/>
 </g>
-<!-- ../gatherings/forest/420cosmodrome.html -->
-<g id="node86" class="node"><title>../gatherings/forest/420cosmodrome.html</title>
+<!-- /forest/420cosmodrome.html -->
+<g id="node86" class="node"><title>/forest/420cosmodrome.html</title>
 <polygon fill="none" stroke="black" points="2825,-813.22 2579,-813.22 2579,-777.22 2825,-777.22 2825,-813.22"/>
-<text text-anchor="middle" x="2702" y="-791.52" font-family="Times New Roman,serif" font-size="14.00">../gatherings/forest/420cosmodrome.html</text>
+<text text-anchor="middle" x="2702" y="-791.52" font-family="Times New Roman,serif" font-size="14.00">/forest/420cosmodrome.html</text>
 </g>
-<!-- ../blogs/dumplings/dumplings.html&#45;&gt;../gatherings/forest/420cosmodrome.html -->
-<g id="edge152" class="edge"><title>../blogs/dumplings/dumplings.html&#45;&gt;../gatherings/forest/420cosmodrome.html</title>
+<!-- ../blogs/dumplings/dumplings.html&#45;&gt;/forest/420cosmodrome.html -->
+<g id="edge152" class="edge"><title>../blogs/dumplings/dumplings.html&#45;&gt;/forest/420cosmodrome.html</title>
 <path fill="none" stroke="black" d="M2636.51,-848.917C2647.46,-840.101 2660.95,-829.252 2672.82,-819.695"/>
 <polygon fill="black" stroke="black" points="2675.14,-822.32 2680.74,-813.325 2670.76,-816.867 2675.14,-822.32"/>
 </g>
@@ -1474,8 +1474,8 @@
 <ellipse fill="none" stroke="black" cx="2708" cy="-722.22" rx="108.581" ry="18"/>
 <text text-anchor="middle" x="2708" y="-718.52" font-family="Times New Roman,serif" font-size="14.00">https://frogfrogforg.itch.io/</text>
 </g>
-<!-- ../gatherings/forest/420cosmodrome.html&#45;&gt;https://frogfrogforg.itch.io/ -->
-<g id="edge153" class="edge"><title>../gatherings/forest/420cosmodrome.html&#45;&gt;https://frogfrogforg.itch.io/</title>
+<!-- /forest/420cosmodrome.html&#45;&gt;https://frogfrogforg.itch.io/ -->
+<g id="edge153" class="edge"><title>/forest/420cosmodrome.html&#45;&gt;https://frogfrogforg.itch.io/</title>
 <path fill="none" stroke="black" d="M2703.45,-777.033C2704.13,-769.01 2704.95,-759.268 2705.71,-750.289"/>
 <polygon fill="black" stroke="black" points="2709.21,-750.508 2706.56,-740.249 2702.23,-749.919 2709.21,-750.508"/>
 </g>

@@ -18,7 +18,7 @@ def make_review():
 
 def blogpost(image_fn):
   if image_fn.endswith("COSMODUMPLING.png"):
-    location = '<a href="/gatherings/forest/420cosmodrome.html">THE COSMODROME</a>'
+    location = '<a href="/forest/420cosmodrome.html">THE COSMODROME</a>'
     rating = "🐸"*3
     review = "Would not recommend...."
   else:

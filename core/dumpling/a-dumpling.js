@@ -1,4 +1,4 @@
-import { HTMLParsedElement } from "../../lib/html-parsed-element@0.4.0.js"
+import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
 window.Frames = {
   ...staticize('show', 'open'),

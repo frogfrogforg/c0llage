@@ -30,11 +30,11 @@ d.Events.raise("haunt.me")
 then import the `global.js` script into your page. **note**, you'll have to use relative paths. for example, if you are two folders deep it would look like:
 
 ```html
-<script type="module" src="../../global.js">
+<script type="module" src="/global.js">
 ```
 
 or if you're importing it from a javascript [module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules):
 
 ```js
-import "../../global.js"
+import "/global.js"
 ```

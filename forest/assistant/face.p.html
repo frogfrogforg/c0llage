@@ -1,0 +1,58 @@
+<!-- template: item {title: assistant} -->
+
+<head>
+  <script src="/core/s-cript.js" type="module"></script>
+</head>
+
+<body id="assistant">
+  <img class="Face" src="/d/img/irene.gif">
+
+  <template id="main-dialog">
+    <article class="Dialog">
+      <p>yes, come to me any time</p>
+
+      <div class="Dialog-buttons">
+        <button class="Dialog-button">thank you</button>
+      </div>
+    </article>
+  </template>
+
+  <s-cript id="script" target="assistant">
+    --- intro
+    hello, i'm the forest assistant {cool | nice to meet you}
+    how are you?
+    ==> main
+
+    --- main
+    *** main-hook
+    ==> main
+
+    --- ledger
+    wow, you're using the website! {yes}
+    you've been at it for a while...but if you're feeling excited, keep going. there's still so much more to click on, i
+    promise. {}
+    i guess i should probably tell you soon... {huh | what}
+    you've just used your 100 free clicks, you see. {my...} [cont]
+    your free clicks. {my clicks} [cont]
+    from here on out, each click will cost you 1¢. {...} [cont]
+    i'm sorry, i don't set the policy. i don't really even enforce it. you'll have to take that one up with the parks
+    staff... {.} [cont]
+    ...but i can help you settle up your debts to them. {how | no} [cont]
+    *** debts-hook
+  </s-cript>
+</body>
+
+<style>
+  /* resets */
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /* styles */
+  .Face {
+    width: 100%;
+  }
+</style>
+
+<script src="./brain.js" type="module"></script>

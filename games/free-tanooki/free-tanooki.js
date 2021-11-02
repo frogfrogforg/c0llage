@@ -1,4 +1,4 @@
-import "../../global.js"
+import "/global.js"
 
 //
 //

@@ -1,0 +1,98 @@
+<style>
+    .Cow {
+        position: absolute;
+        top: 63%;
+        height: 30%;
+        z-index: 1;
+    }
+</style>
+
+<body>
+    <img class="background" src="./images/25.png">
+
+    <!-- cows -->
+    <img id="cow-left" class="Cow cursor-cow" style="left: 5%; width: 30%;" src="./images/Cows.png">
+
+    <img id="cow-right" class="Cow cursor-cow" style="left: 54%; width: 43%" src="./images/Cow1.png">
+
+    <a-dumpling persistent width=20 height=14 min-pos=-2 max-pos=7>
+        <a class="cursor-move" style="font-size: 2vw; text-decoration: none; opacity: 0.5"
+            href="./19wizards_domain.html">
+            🔙 19
+        </a>
+    </a-dumpling>
+
+    <a href="./13microwave.html" class="hotspot cursor-move" style="top: 60%; left: 2%; height: 18%; width: 22%;"></a>
+
+    <!-- secret cow -->
+    <div style="visibility:hidden; top: 17%; left: 20%; position:absolute" id="cow-sky">
+        cow in the sky
+    </div>
+</body>
+
+<script type="module">
+    // -- props --
+    let $cowLeft = null
+    let $cowRight = null
+    let $cowSky = null
+    let isKissing = false
+
+    // -- commands --
+    // see if it's time to kiss
+    function checkForKiss() {
+        if (isKissing) {
+            return true
+        }
+
+        const frameL = $cowLeft.getBoundingClientRect()
+        const frameR = $cowRight.getBoundingClientRect()
+
+        if (frameL.right - frameR.left > 100) {
+            kiss()
+        }
+
+        return isKissing
+    }
+
+    // make the cows kiss
+    function kiss() {
+        isKissing = true
+        $cowLeft.classList.add("cursor-kiss")
+        $cowRight.classList.add("cursor-kiss")
+        $cowSky.style.visibility = "visible"
+    }
+
+    // move in for the kiss
+    function moveInForKiss($cow, velocity) {
+        // did they kiss?
+        if (checkForKiss()) {
+            return
+        }
+
+        // if not, move the cow. get current pos
+        const left = $cow.style.left
+        const pct = Number.parseInt(left.split("%")[0])
+
+        // update with velocity
+        $cow.style.left = `${pct + velocity}%`
+    }
+
+    // -- main --
+    function main() {
+        // get cows
+        $cowLeft = document.getElementById("cow-left")
+        $cowRight = document.getElementById("cow-right")
+        $cowSky = document.getElementById("cow-sky")
+
+        // move cows on click
+        $cowLeft.addEventListener("click", (evt) => {
+            moveInForKiss($cowLeft, 1.0)
+        })
+
+        $cowRight.addEventListener("click", (evt) => {
+            moveInForKiss($cowRight, -1.0)
+        })
+    }
+
+    main()
+</script>

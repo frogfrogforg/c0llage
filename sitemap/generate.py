@@ -123,10 +123,10 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False, dra
     return graph
 
 
-g = crawl("../gatherings/forest/welcome.html", "..", draw_images=False)
-g_images = crawl("../gatherings/forest/welcome.html", "..",
+g = crawl("/forest/welcome.html", "..", draw_images=False)
+g_images = crawl("/forest/welcome.html", "..",
                  draw_images=True, relative_pathnames=False)
-g_extended = crawl("../gatherings/forest/welcome.html", "..",
+g_extended = crawl("/forest/welcome.html", "..",
                    include_external=True, include_iframe=True)  # kinda redundant but simplest way
 
 g.set_overlap(False)
