@@ -65,13 +65,14 @@
   window.showWords = function () {
       Frames.show('words' + words_i);
 
+      console.log("showwords!");
+
       if (words_i == 3) {
 	setTimeout(showWords, 15*1000);
       }
 
       words_i++;
 
-      // return false;
   }
 
   setTimeout(showWords, 3*1000);
