@@ -36,7 +36,40 @@
 <p> maybe in the future, somebody will find this page half-unearthed in the middle of a thriving and forest, and maybe they will read some of it and perhaps they will even glean something useful </p>
 
 
-now: resize top image to the size of the entire container
+now: fix flowers
+
+o seems like 27flowers.html is broken
+
+later:
+turn assistant off in flowers
+disable reset (presentation mode)
+
+<h3>11/9</h3>
+<p>lol the problem was a "src" instead of "href" in a link tag. once again its wild what happens when you step away and come back</p>
+<p>yay that somewhat fixes it, but it's still broken in other ways</p>
+<p></p>
+
+<h3>11/4</h3>
+<p>o seems like 27flowers.html is broken</p>
+<p>i also don't like that the assistant is there during flowers</p>
+<p>260flowers is also broken if it's opened directly?</p>
+<p>yeah for some reason if 260flowers is opened directly, the assistant looks weierd and the dumplings never pop up</p>
+<p>there's a MIME error thing for dumpling.css?</p>
+<p>also now it's hanging at the end of 27flowers?</p>
+<p>lets fix 27flowers first</p>
+<p>oof it's hard to recreate the bug... if i just refresh 27flowers, the dumpling is in the right spot, although the css is broken</p>
+<p>the css issues have something to do with why the position is whack</p>
+<p>yeah okay i'll go back to debugging the css thing from 260floers</p>
+<p>i might have to ask ty help for this one it looks like a glue thing</p>
+<p>ok i'm seeing that in `dist/` 260 flowers has</p>
+<p>`<script type="module" src="/core/dumpling/dumpling.css"></script>`</p>
+<p>whereas in most other files it's `type="stylesheet"`. i'm not super sure how the build system works, but that looks weird</p>
+<p>oh so `layouts/neutral.t.html` has `type="module"` instead of `type="stylesheet"`. i wonder if that's a bug. that would explain why monastery also has that dumpling.css error.</p>
+<p>well i squashed the error but the css still seems fucked up</p>
+<p>maybe it's a cache issue?</p>
+<p>ok yeah idk i think there's eomthing else wrong with the template, maybe it has to do with why the dumpling isn't even showing up on Frame.show(). i think i'll just ask ty for help at the next meeting</p>
+<p></p>
+<p></p>
 
 <h3>11/2</h3>
 <p>have to fix fransquirrel in old forest</p>

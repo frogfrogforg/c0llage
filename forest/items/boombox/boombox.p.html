@@ -1,0 +1,94 @@
+<!-- template: item {title: boombox} -->
+
+<head>
+  <style>
+    .boombox-body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .boombox {
+      width: 134vh;
+      height: 80vh;
+      position: relative;
+    }
+
+    .boombox-part {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      height: 100%;
+    }
+
+    .boombox-speaker.playing {
+      animation-name: "speakers-on";
+      animation-duration: 0.6s;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes speakers-on {
+      0% {
+        scale: 1.0;
+      }
+
+      50% {
+        scale: 1.2;
+      }
+
+      100% {
+        scale: 1.0;
+      }
+    }
+
+    .boombox-sound {
+      display: none;
+    }
+
+    #boombox-speaker-small-left {
+      transform-origin: 9% 32%;
+    }
+
+    #boombox-speaker-small-right {
+      transform-origin: 91% 32%;
+    }
+
+    #boombox-speaker-big-left {
+      transform-origin: 24% 60%;
+    }
+
+    #boombox-speaker-big-right {
+      transform-origin: 76% 60%;
+    }
+  </style>
+
+  <script type="module">
+    const stations = {
+      ambient: 'https://archive.org/embed/HNCSW520211021', //https://archive.org/details/hamiltonbioacousticsfieldrecordings?tab=about
+      radio: 'https://archive.org/embed/HNCSW520211021', //https://archive.org/details/hamiltonbioacousticsfieldrecordings?tab=about
+    }
+
+    const boombox = document.getElementById('boombox')
+    boombox.addEventListener('click', () => {
+      const sound = document.getElementById('boombox-sound')
+      sound.src = stations.ambient + '&autoplay=1'
+      document.querySelectorAll('.boombox-speaker').forEach(speaker => {
+        speaker.classList.add('playing')
+      })
+    })
+  </script>
+</head>
+
+<body class="boombox-body">
+  <div id='boombox' class="boombox">
+    <img id='boombox-case' class='boombox-part' src="./body.png">
+    <img id='boombox-speaker-small-left' class='boombox-part boombox-speaker' src="./speakerTL.png">
+    <img id='boombox-speaker-small-right' class='boombox-part boombox-speaker' src="./speakerTR.png">
+    <img id='boombox-speaker-big-left' class='boombox-part boombox-speaker' src="./speakerBL.png">
+    <img id='boombox-speaker-big-right' class='boombox-part boombox-speaker' src="./speakerBR.png">
+    <img id='boombox-screen' class='boombox-part' src="./screen.png">
+    <img id='boombox-cassete' class='boombox-part' src="./cassete.png">
+    <iframe id='boombox-sound' class='boombox-sound' src="" width="500" height="140" frameborder="0"
+      webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen autoplay></iframe>
+  </div>
+</body>

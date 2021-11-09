@@ -143,29 +143,38 @@ function didRefresh(evt) {
 
 /// on player click on anything
 function didClick(evt) {
-  const $t = evt.target
+  // see if there is an enclosing link
+  let $t = evt.target
+  while ($t != null && $t.tagName.toLowerCase() !== "a") {
+    $t = $t.parentElement
+  }
 
-  // if it's a link
-  if ($t.tagName !== "A") {
+  // if we found one
+  if ($t == null) {
     return
   }
 
-  // and it has a url
-  const href = $t.href
+  // grab its url (an svg link's href is an object)
+  let href = $t.href
+  if (typeof href === "object") {
+    href = href.baseVal.toString()
+  }
+
+  // if we found one
   if (!href) {
     return
   }
 
-  // stop navigation, we're navigating manually
-  evt.preventDefault()
-
   // if we should visit this url
-  const url = new URL($t.href)
+  const url = new URL(href, mUrl)
   if (!shouldStartVisit(url)) {
     return
   }
 
-  // add to history
+  // perform an in-page visit instead of the browser default
+  evt.preventDefault()
+
+  // add history entry
   history.pushState({}, "", url)
 
   // visit page
