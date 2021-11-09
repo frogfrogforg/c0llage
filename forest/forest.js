@@ -37,18 +37,11 @@ function main() {
 // -- commands --
 /// visit the url and update the game
 async function visit(url) {
-  // if the paths aren't the same (a hashchange may trigger popstate, but
-  // we don't want to re-render)
-  if (mUrl.pathname === url.pathname) {
-    return
-  }
-
   // run pre visit events
   didStartVisit()
 
   // update the browser url
   mUrl = url
-  history.pushState(null, "", url)
 
   // download the page
   const resp = await fetch(url)
@@ -129,6 +122,14 @@ function reset() {
   d.State.clear()
 }
 
+// -- queries --
+/// if the url should fire a visit
+function shouldStartVisit(url) {
+  // if the paths aren't the same (a hashchange may trigger popstate, but
+  // we don't want to re-render)
+  return mUrl.pathname !== url.pathname
+}
+
 // -- events --
 function didChangeState() {
   randomizeLinks()
@@ -158,13 +159,27 @@ function didClick(evt) {
   // stop navigation, we're navigating manually
   evt.preventDefault()
 
-  // render the page w/ url
-  visit(new URL($t.href))
+  // if we should visit this url
+  const url = new URL($t.href)
+  if (!shouldStartVisit(url)) {
+    return
+  }
+
+  // add to history
+  history.pushState({}, "", url)
+
+  // visit page
+  visit(url)
 }
 
 /// on pop state
-function didPopState(evt) {
-  visit(document.location)
+function didPopState() {
+  const url = new URL(document.location.href)
+  if (!shouldStartVisit(url)) {
+    return
+  }
+
+  visit(url)
 }
 
 function didStartVisit() {
