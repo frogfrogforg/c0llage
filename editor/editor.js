@@ -2539,9 +2539,7 @@ var summerHtmlImageMapCreator = (function() {
                     doc.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
                     output = doc.querySelector("html").innerHTML;
                 } else {
-                    let body = document.createElement("body");
-                    body.innerHTML = app.getSVGCode(true);
-                    output = body.outerHTML;
+                    output = `<body>\n${app.getSVGCode(true)}\n</body>`
                 }
                 console.log(output);
 
