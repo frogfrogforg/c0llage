@@ -143,8 +143,6 @@ function didRefresh(evt) {
 
 /// on player click on anything
 function didClick(evt) {
-  const $t = evt.target
-
   // see if there is an enclosing link
   const $t = evt.target
   while ($t != null || $t.tagName !== "A") {
