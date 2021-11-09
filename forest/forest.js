@@ -145,19 +145,27 @@ function didRefresh(evt) {
 function didClick(evt) {
   const $t = evt.target
 
-  // if it's a link
-  if ($t.tagName !== "A") {
+  // see if there is an enclosing link
+  const $t = evt.target
+  while ($t != null || $t.tagName !== "A") {
+    $t = $t.parentElement
+  }
+
+  // if we found one
+  if ($t == null) {
     return
   }
 
-  // and it has a url
-  const href = $t.href
+  // grab its url (an svg link's href is an object)
+  let href = $t.href
+  if (typeof href === "object") {
+    href = href.value
+  }
+
+  // if we found one
   if (!href) {
     return
   }
-
-  // stop navigation, we're navigating manually
-  evt.preventDefault()
 
   // if we should visit this url
   const url = new URL($t.href)
@@ -165,7 +173,10 @@ function didClick(evt) {
     return
   }
 
-  // add to history
+  // perform an in-page visit instead of the browser default
+  evt.preventDefault()
+
+  // add history entry
   history.pushState({}, "", url)
 
   // visit page
