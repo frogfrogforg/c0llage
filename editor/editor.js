@@ -1,4 +1,4 @@
-/*
+26/*
  * Summer html image map creator
  * http://github.com/summerstyle/summer
  *
@@ -666,7 +666,7 @@ var summerHtmlImageMapCreator = (function() {
                     svg_code += '         viewBox="0 0 1000 1000" >\n';
                     
                     // (assume image is in images/ directory)
-                    svg_code += '        <image preserveAspectRatio="none" id="background-img" xlink:href="images/' + state.image.filename + '"></image>\n'
+                    svg_code += '        <image preserveAspectRatio="none" id="background-img" xlink:href="' + state.image.filename + '"></image>\n'
                     utils.foreachReverse(state.areas, function(x) {
                         svg_code += '        ' + '<a title="'+x._attributes.title+'" class="'+x._attributes.class+'" xlink:href="' + x._attributes.href + '">\n'
                         svg_code += '            ' + x.toSVGElementString() + '\n';
@@ -2539,9 +2539,7 @@ var summerHtmlImageMapCreator = (function() {
                     doc.querySelector("#hotspot-map").outerHTML = app.getSVGCode(true);
                     output = doc.querySelector("html").innerHTML;
                 } else {
-                    let body = document.createElement("body");
-                    body.innerHTML = app.getSVGCode(true);
-                    output = body.outerHTML;
+                    output = `<body>\n${app.getSVGCode(true)}\n</body>`
                 }
                 console.log(output);
 
@@ -2645,7 +2643,6 @@ var summerHtmlImageMapCreator = (function() {
         
         return {
             load : function(object, new_x, new_y) {
-                debugger;
                 obj = object;
                 href_attr.value = object._attributes.href ? object._attributes.href : '';
                 title_attr.value = object._attributes.title ? object._attributes.title : '';
@@ -2671,10 +2668,10 @@ var summerHtmlImageMapCreator = (function() {
 
         let imgEl = htmlDoc.querySelector("#background-img");
         let filename = imgEl.href.baseVal;
-        let basename = utils.pathBasename(filename); // e.g. 1.png
 
-        // assume image is in the forest images directory
-        app.loadImage("/forest/images/"+basename).setFilename(basename);
+        // assume image is relative to /forest/
+        // TODO: Also handle absolute image hrefs
+        app.loadImage("/forest/"+filename).setFilename(filename);
 
         Area.createAreasFromSvgElement(svgEl)
         // if (Area.createAreasFromSvgElement(svgEl)) {
@@ -2955,14 +2952,13 @@ var summerHtmlImageMapCreator = (function() {
     // get_image.show();   
     utils.show(utils.id('get_image_wrapper')); 
 
-    var imageFileInput = utils.id("image-file");
-    imageFileInput.addEventListener("change", handleImageFiles, false);
-    function handleImageFiles() {
-      const fileList = this.files; /* now you can work with the file list */
-      let basename = this.files[0].name;
+    var imageFileInput = utils.id("image-filename");
+    imageFileInput.addEventListener("change", handleImageFilename, false);
+    function handleImageFilename() {
+      const filename = this.value; /* now you can work with the file list */
 
       // assume image is in the forest images directory
-      app.loadImage("/forest/images/"+basename).setFilename(basename);
+      app.loadImage("/forest/images/"+filename).setFilename("images/"+filename);
     }
 
     var htmlFileInput = utils.id("html-file");

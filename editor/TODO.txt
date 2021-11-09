@@ -8,7 +8,7 @@ X preserve attributes on <a> elements
 - write method to import from old style hotspots
 X move image inside svg for easy scaling
 
-- improve formatting of html output
+X improve formatting of html output
 
 - preserve target attribute on <a>
 

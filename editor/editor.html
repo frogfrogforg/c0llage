@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Summer html image map creator</title>
-    <link href="main.css" type="text/css" rel="stylesheet" />
+    <link href="editor.css" type="text/css" rel="stylesheet" />
     <meta charset="UTF-8" />
     <!--
         Summer html image map creator
@@ -98,10 +98,9 @@
     <div id="get_image">
         <span title="close" class="close_button"></span>
 
-        <label for="image-file">Choose an image from the forest/images directory:</label>
-        <input type="file"
-            id="image-file" name="image-file"
-            accept="image/png, image/jpeg">
+        <label for="image-filename">Enter a filename for an existing image in forest/images, e.g. "1.png"</label>
+        <input type="text"
+            id="image-filename" name="image-filename">
 
         <b>or</b>
         <label for="html-file">Upload a .p.html file (must have been created from this editor)</label>

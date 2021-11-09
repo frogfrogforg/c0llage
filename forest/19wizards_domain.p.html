@@ -61,7 +61,6 @@
 </body>
 
 <script type="module">
-    import * as Turbo from "/lib/@hotwired/turbo@7.0.0-beta.4.js"
     var initiatedConversation = false
     var wizardTimerSeconds = 10
 
@@ -80,7 +79,7 @@
 
     window.goToOtherSide = function () {
         if (d.State.stealthy) {
-            Turbo.visit("./20the_source")
+            visit("./20the_source")
         } else {
             Frames.show('halt')
         }
