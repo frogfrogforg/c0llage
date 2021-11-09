@@ -50,7 +50,7 @@
       <p>You hear feet stamping on leaves and turn to see someone approaching.</p>
       <p>"Hey, sorry."
       <p>Their head is shaved, and you notice the tattered loops of a backpack over a dark crop top. Their eyes are locked onto you.</p>
-      <p>"Have you seen anyone walk by? Ginger? A little taller than me? General air of idiocy?"</p>
+      <p>"Have you seen anyone walk by? Ginger? A little shorter than me? General air of idiocy?"</p>
     </a-dumpling>
 
     <a-dumpling hidden id="words4" x=10 y=14 width=80 height=20 bodyClass="stranger-words">
@@ -65,13 +65,14 @@
   window.showWords = function () {
       Frames.show('words' + words_i);
 
+      console.log("showwords!");
+
       if (words_i == 3) {
 	setTimeout(showWords, 15*1000);
       }
 
       words_i++;
 
-      // return false;
   }
 
   setTimeout(showWords, 3*1000);

@@ -374,6 +374,7 @@ export class Dumpling extends HTMLParsedElement {
 
   show() {
     const m = this
+    console.log("DEBUG: show!!");
 
     m.setVisible(true)
     m.dispatchEvent(new CustomEvent(
