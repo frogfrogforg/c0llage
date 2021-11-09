@@ -68,6 +68,8 @@
         <img src="./images/angel.png" class="angel">
     </a>
 
+    <a class="hotspot cursor-move" href="./10forest_edge.html" style="left: 0%; top: 0%; width: 10%; height: 100%"></a>
+
     <a-dumpling x=0 y=0 width=24 height=23>
         <a class="cursor-move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="10forest_edge.html">
             🔙
@@ -139,16 +141,12 @@
     }
 
     RandomizeScattered();
-
 </script>
 
 <script type="module">
     // the following code makes it so that, once you visit this node,
     // if you idle for long enough (doNothingTimerSeconds), you'll
     // start looking at flowers
-
-    import * as Turbo from "/lib/@hotwired/turbo@7.0.0-beta.4.js"
-
     let doNothingTimerSeconds = 69;
     let timer = setTimeout(doNothingTimeout,
         doNothingTimerSeconds * 1000);
@@ -168,7 +166,7 @@
         document.removeEventListener("keypress", resetTimer)
         document.removeEventListener("keyup", resetTimer)
 
-        Turbo.visit("26flowers.html")
+        visit("26flowers.html")
     }
 
     // if you even twitch, set the timer back to 0
@@ -177,5 +175,4 @@
     document.addEventListener("keydown", resetTimer)
     document.addEventListener("keypress", resetTimer)
     document.addEventListener("keyup", resetTimer)
-
 </script>
