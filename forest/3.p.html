@@ -1,12 +1,11 @@
 <script type="module">
-  import * as Turbo from "/lib/@hotwired/turbo@7.0.0-beta.4.js"
   window.diskDriveDrop = (evt) => {
     evt.preventDefault();
     if (evt.dataTransfer.getData("text") == "floppy") {
       Frames.hide("floppy")
       document.getElementById("main").classList.toggle("screenshake-loop");
       // window.location.href="2003-transition1.html"
-      Turbo.visit("2003-transition1.html")
+      visit("2003-transition1.html")
     }
     if (evt.dataTransfer.getData("text") == "quarter") {
       d.State.quarters -= 1

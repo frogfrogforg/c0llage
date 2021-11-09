@@ -1,16 +1,19 @@
 import "/global.js"
-import * as Turbo from "/lib/@hotwired/turbo@7.0.0-beta.4.js"
 import { kInventory } from "./inventory.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
 import { Assistant } from "./assistant/brain.js"
 
 // -- props --
+/// the current location
+let mUrl = null
+
+/// the game element
 let $mGame = null
 
 // -- lifetime --
 function main() {
-  // boostrap turbo
-  Turbo.start()
+  /// set props
+  mUrl = document.location
 
   // capture elements
   $mGame = document.getElementById("game")
@@ -20,30 +23,54 @@ function main() {
   addOnBeforeSaveStateListener(kInventory.saveToState)
 
   // bind events
-  addEventListener("beforeunload", didRefresh)
-  document.addEventListener("turbo:before-visit", didStartVisit)
-  document.addEventListener("turbo:after-visit", didStartVisit)
-  document.addEventListener("turbo:before-render", didCatchRender)
-  didChangeState()
+  const d = document
+  const w = window
+  d.addEventListener("click", didClick)
+  w.addEventListener("popstate", didPopState)
+  w.addEventListener("beforeunload", didRefresh)
 
-  // run post render events first time
-  didFinishRender()
+  // run post visit events first time
+  didChangeState()
+  didFinishVisit()
 }
 
 // -- commands --
-function renderGame(nextBody) {
-  // get the game element to replace
-  const nextGame = nextBody.querySelector("#game") || nextBody
+/// visit the url and update the game
+async function visit(url) {
+  // if the paths aren't the same (a hashchange may trigger popstate, but
+  // we don't want to re-render)
+  if (mUrl.pathname === url.pathname) {
+    return
+  }
 
-  // append children of next game
+  // run pre visit events
+  didStartVisit()
+
+  // update the browser url
+  mUrl = url
+  history.pushState(null, "", url)
+
+  // download the page
+  const resp = await fetch(url)
+  const text = await resp.text()
+
+  // render the element
+  const $el = document.createElement("html")
+  $el.innerHTML = text
+
+  // extract the game
+  const $next = $el.querySelector("#game")
+
+  // replace children of game element
   while ($mGame.firstChild) {
     $mGame.removeChild($mGame.lastChild)
   }
 
-  for (const child of Array.from(nextGame.children)) {
+  for (const child of Array.from($next.children)) {
     $mGame.appendChild(child)
   }
 
+  // TODO: do we need this?
   // activate any inert script tags in the new game
   const scripts = $mGame.querySelectorAll("script")
   for (const inert of Array.from(scripts)) {
@@ -59,8 +86,8 @@ function renderGame(nextBody) {
     parent.replaceChild(script, inert)
   }
 
-  // run post render events
-  didFinishRender()
+  // run post visit events
+  didFinishVisit()
 }
 
 // add random query string to links and iframe src to allow arbitrary recursion
@@ -113,23 +140,45 @@ function didRefresh(evt) {
   return evt.returnValue = "don't leave gamer"
 }
 
-function didStartVisit() {
-  d.State.referrer = document.location.pathname
-}
+/// on player click on anything
+function didClick(evt) {
+  const $t = evt.target
 
-function didCatchRender(evt) {
+  // if it's a link
+  if ($t.tagName !== "A") {
+    return
+  }
+
+  // and it has a url
+  const href = $t.href
+  if (!href) {
+    return
+  }
+
+  // stop navigation, we're navigating manually
   evt.preventDefault()
-  // render new game
-  renderGame(evt.detail.newBody)
+
+  // render the page w/ url
+  visit(new URL($t.href))
 }
 
-function didFinishRender() {
+/// on pop state
+function didPopState(evt) {
+  visit(document.location)
+}
+
+function didStartVisit() {
+  d.State.referrer = mUrl.pathname
+}
+
+function didFinishVisit() {
   // spawn the assistant if possible
   Assistant.spawn()
 }
 
 // -- exports --
 window.reset = reset
+window.visit = visit
 
 // -- bootstrap --
 main()
