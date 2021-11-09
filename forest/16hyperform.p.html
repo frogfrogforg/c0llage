@@ -139,16 +139,12 @@
     }
 
     RandomizeScattered();
-
 </script>
 
 <script type="module">
     // the following code makes it so that, once you visit this node,
     // if you idle for long enough (doNothingTimerSeconds), you'll
     // start looking at flowers
-
-    import * as Turbo from "/lib/@hotwired/turbo@7.0.0-beta.4.js"
-
     let doNothingTimerSeconds = 69;
     let timer = setTimeout(doNothingTimeout,
         doNothingTimerSeconds * 1000);
@@ -168,7 +164,7 @@
         document.removeEventListener("keypress", resetTimer)
         document.removeEventListener("keyup", resetTimer)
 
-        Turbo.visit("26flowers.html")
+        visit("26flowers.html")
     }
 
     // if you even twitch, set the timer back to 0
@@ -177,5 +173,4 @@
     document.addEventListener("keydown", resetTimer)
     document.addEventListener("keypress", resetTimer)
     document.addEventListener("keyup", resetTimer)
-
 </script>
