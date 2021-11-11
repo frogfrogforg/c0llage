@@ -144,8 +144,8 @@ function didRefresh(evt) {
 /// on player click on anything
 function didClick(evt) {
   // see if there is an enclosing link
-  const $t = evt.target
-  while ($t != null || $t.tagName !== "A") {
+  let $t = evt.target
+  while ($t != null && $t.tagName.toLowerCase() !== "a") {
     $t = $t.parentElement
   }
 
@@ -157,7 +157,7 @@ function didClick(evt) {
   // grab its url (an svg link's href is an object)
   let href = $t.href
   if (typeof href === "object") {
-    href = href.value
+    href = href.baseVal.toString()
   }
 
   // if we found one
@@ -166,7 +166,7 @@ function didClick(evt) {
   }
 
   // if we should visit this url
-  const url = new URL($t.href)
+  const url = new URL(href, mUrl)
   if (!shouldStartVisit(url)) {
     return
   }
