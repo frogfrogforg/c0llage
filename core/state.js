@@ -17,6 +17,7 @@ const initialState = {
   clicks: 0,
   wished: 0,
   visitedFranBlog: false,
+  hasBoombox: false,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

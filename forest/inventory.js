@@ -14,8 +14,14 @@ function add(props) {
   const id = getItemId(props)
 
   // don't add duplicate items
-  if (find(id) == null) {
-    $mEl.appendChild(getItemEl(props))
+  const existingItem = find(id)
+  if (existingItem == null) {
+    const newItem = getItemEl(props)
+    $mEl.appendChild(newItem)
+    return newItem
+  } else {
+    existingItem.show()
+    return existingItem
   }
 }
 
