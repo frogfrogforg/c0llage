@@ -132,14 +132,23 @@ class ScriptElement extends HTMLParsedElement {
     const m = this
 
     const render = m.hooks[hook.name]
-    if (render == null) {
-      return
+    if (render != null) {
+      m.showDialog(render(cont))
+    } else {
+      m.showDialogForHtmlHook(hook, cont)
+    }
+  }
+
+  // show a dialog for the hook in an html template
+  showDialogForHtmlHook(hook, cont) {
+    const m = this
+
+    const template = m.findById(hook.name)
+    if (template == null) {
+      throw new Error(`nothing to render for hook: ${hook}`)
     }
 
-    const html = render(cont)
-    if (html) {
-      m.showDialog(html)
-    }
+    m.showDialog(template.innerHTML, cont)
   }
 
   // show a dialog for the line
@@ -165,6 +174,11 @@ class ScriptElement extends HTMLParsedElement {
   // shows a dialog with the line
   showDialog(html, cont) {
     const m = this
+
+    // ignore dialogs with no html
+    if (!html) {
+      return
+    }
 
     // make sure we have a target
     const $target = m.findTarget()
