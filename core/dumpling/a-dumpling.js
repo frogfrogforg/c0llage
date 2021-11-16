@@ -137,6 +137,9 @@ export class Dumpling extends HTMLParsedElement {
     const originalChildren = [...this.children]
     this.innerHTML = templateHtml
     this.bodyElement = this.querySelector(`#${id}-body`)
+    // DEBUG
+    console.log("DEBUG");
+    console.log(this.bodyElement);
     let bodyContainer = this.bodyElement
 
     if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
@@ -374,6 +377,9 @@ export class Dumpling extends HTMLParsedElement {
 
   show() {
     const m = this
+
+    console.log("DEBUG SHOW");
+    console.log(this);
 
     m.setVisible(true)
     m.dispatchEvent(new CustomEvent(
