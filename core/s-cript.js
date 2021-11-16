@@ -1,17 +1,26 @@
 import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
 // -- constants --
-// matches section headers
-const kHeaderPattern = /---\s*(\w+)\s*(\[(.*)\])?/
+// matches section headers: "--- [<ops>] <section-name>"
+const kHeaderPattern = /---\s*(\[.*\])?\s*(\w+)\s*/
 
-// matches hook lines
-const kHookPattern = /\*\*\*\s*(.*)/
+// matches hook lines: "*** [<ops>] <hook-name>"
+const kHookPattern = /\*\*\*\s*(\[.*\])?\s*(.*)/
 
-// matches jump lines
-const kJumpPattern = /==>\s*(\w+)\s*(\[(.*)\])?/
+// matches jump lines: "==> [<ops>] <section-name>"
+const kJumpPattern = /==>\s*(\[.*\])?\s*(\w+)\s*/
 
-// matches text lines
-const kLinePattern = /\s*([^\{]+)\s*(\{(.*)\})?\s*(\[(.*)\])?/
+// matches text lines: "[<ops>] <text> {<button-names>}"
+const kLinePattern = /\s*(\[.*\])?\s*([^\{]+)\s*(\{(.*)\})?\s*/
+
+// matches operations: "[cont]" "[set a]", "[a,!b]"
+const kOperationPattern = /\[(.*)\]/
+
+// the prefix of the set operation
+const kSetOperation = "set"
+
+// the prefix of the continue operation
+const kContOpration = "cont"
 
 // attr names
 const kAttrs = {
@@ -287,7 +296,7 @@ class ScriptElement extends HTMLParsedElement {
 
   // if the next dialog should be shown on close
   shouldContinueOnClose(line) {
-    return line.tags.cont === true
+    return line.operations.cont === true
   }
 
   // -- events --
@@ -479,16 +488,16 @@ class Script {
 class ScriptSection {
   // -- props --
   // name: string - the name
-  // tags: [string:any] - a map of tags for this section (name => val)
+  // operations: [string:any]; a map of operations
   // line: ScriptLine[] - the lines
   // i: int - the index of the current line
 
   // -- lifetime --
   // create new section
-  constructor(name, tags) {
+  constructor(name, operations) {
     const m = this
     m.name = name
-    m.tags = tags
+    m.operations = operations
     m.lines = []
     m.i = -1
   }
@@ -511,7 +520,7 @@ class ScriptSection {
   }
 
   // -- encoding --
-  // try to decode a section from a header line: "--- <name> [<tag>,...]"
+  // try to decode a section from a header line
   static decode(line) {
     // see if the line is a header
     const match = line.match(kHeaderPattern)
@@ -519,14 +528,14 @@ class ScriptSection {
       return null
     }
 
-    // if so, grab the name and tags
-    const name = match[1]
-    const tstr = match[3]
+    // if so, grab the name and operations
+    const name = match[2]
+    const ostr = match[1]
 
     // create the new secction
     return new ScriptSection(
       name,
-      decodeTags(tstr),
+      decodeOperations(ostr),
     )
   }
 }
@@ -535,14 +544,14 @@ class ScriptSection {
 class ScriptJump {
   // -- props --
   // name: string; the name of section to jump to
-  // tags: [string:any] - a map of tags for this jump (name => val)
+  // operations: [string:any]; a map of operations
 
   // -- lifetime --
   // create a new jump
-  constructor(name, tags) {
+  constructor(name, operations) {
     const m = this
     m.name = name
-    m.tags = tags
+    m.operations = operations
   }
 
   // -- kind --
@@ -551,7 +560,7 @@ class ScriptJump {
   }
 
   // -- encoding --
-  // try to decode a jump: "==> <section> [tags...]"
+  // try to decode a jump: "==> [<operations>] <section>"
   static decode(line) {
     // see if the line is a header
     const match = line.match(kJumpPattern)
@@ -559,14 +568,14 @@ class ScriptJump {
       return null
     }
 
-    // if so, grab the name and tags
-    const name = match[1]
-    const tstr = match[3]
+    // if so, grab the name and operations
+    const name = match[2]
+    const ostr = match[1]
 
     // create the new jump
     return new ScriptJump(
       name,
-      decodeTags(tstr),
+      decodeOperations(ostr),
     )
   }
 }
@@ -577,11 +586,13 @@ ScriptJump.kind = "jump"
 class ScriptHook  {
   // -- props --
   // name: string; the line's text
+  // operations: [string:any]; a map of operations
 
   // -- lifetime --
   // create a new line
-  constructor(name) {
+  constructor(name, operations) {
     this.name = name
+    this.operations = operations
   }
 
   // -- kind --
@@ -599,10 +610,14 @@ class ScriptHook  {
     }
 
     // if so, grab the name
-    const name = match[1]
+    const name = match[2]
+    const ostr = match[1]
 
     // create the new line
-    return new ScriptHook(name)
+    return new ScriptHook(
+      name,
+      decodeOperations(ostr)
+    )
   }
 }
 
@@ -613,15 +628,15 @@ class ScriptLine  {
   // -- props --
   // text: string; the line's text
   // buttons: string[]; the button labels
-  // tags: [string:any] - a map of tags for this jump (name => val)
+  // operations: [string:any]; a map of operations
 
   // -- lifetime --
   // create a new line
-  constructor(text, buttons, tags) {
+  constructor(text, buttons, operations) {
     const m = this
     m.text = text
     m.buttons = buttons
-    m.tags = tags
+    m.operations = operations
   }
 
   // -- kind --
@@ -638,10 +653,10 @@ class ScriptLine  {
       return null
     }
 
-    // if so, grab the name and buttons
-    const text = match[1]
-    const bstr = match[3]
-    const tstr = match[5]
+    // if so, grab the name and buttons and operations
+    const text = match[2]
+    const bstr = match[4]
+    const ostr = match[1]
 
     // convert button str into list of names
     const buttons = []
@@ -653,7 +668,7 @@ class ScriptLine  {
       }
     }
     // if we only have braces
-    else if (match[2]) {
+    else if (match[3]) {
       buttons.push("okay")
     }
 
@@ -661,7 +676,7 @@ class ScriptLine  {
     return new ScriptLine(
       text,
       buttons,
-      decodeTags(tstr),
+      decodeOperations(ostr),
     )
   }
 }
@@ -669,18 +684,49 @@ class ScriptLine  {
 ScriptLine.kind = "line"
 
 // -- helpers --
-// decode a tag string "[a,b]" into an obj {a: true, b: true}
-function decodeTags(tstr) {
-  const tags = {}
-  if (!tstr) {
-    return tags
+// decode an operation string "[cont] [a,!b] [set a, b]" into an object like:
+// { cont: bool, get: [fn], set: [fn] }
+function decodeOperations(ostr) {
+  const operations = {}
+  
+  // if we have operations
+  if (ostr == null) {
+    return operations
   }
 
-  for (const name of tstr.split(",")) {
-    tags[name.trim()] = true
+  // then parse each one
+  for (const operation of ostr.match(kOperationPattern).slice(1)) {
+    switch(operation.trim().split()[0]) { // gets the operation type
+      case kSetOperation:
+        operations.set = decodeSetOperation(operation.slice); break;
+      case kContOpration:
+        operations.cont = true; break;
+      default:
+        operations.get = decodeGetOperation(operation); break;
+    }
   }
 
-  return tags
+  return operations
+}
+
+// decode a get operation "a,!b"
+function decodeGetOperation(str) {
+  return str.split(',').map((s) => {
+    const isNot = s[0] === '!'
+    const key = isNot ? s.slice(1) : s
+    return () => d.State[key] == isNot
+  })
+}
+
+// decode a set operation "set a,b"
+function decodeSetOperation(str) {
+  str = str.slice(kSetOperation.length + 1)
+  
+  return str.split(',').map((s) => {
+    return () => {
+      d.State[key.trim()] = true
+    }
+  })
 }
 
 // -- install --
