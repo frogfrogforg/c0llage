@@ -89,7 +89,14 @@ function randomizeLinks() {
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
     if (el.href == null) return
-    el.href = randomizeUrl(el.href)
+
+    // svg hrefs are an object
+    if (typeof el.href === "object") {
+      el.href.baseVal = randomizeUrl(el.href.baseVal)
+    }
+    else {
+      el.href = randomizeUrl(el.href)
+    }
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
@@ -104,14 +111,15 @@ function randomizeLinks() {
 }
 
 // append r=<rand> param, preserving existing query
-function randomizeUrl(str) {
-  if (str == null) {
-    return str
+function randomizeUrl(url) {
+  if (url == null) {
+    return url
   }
-
-  const [path, search] = str.split("?")
+  
+  // append the random value
+  const [path, search] = url.split("?")
   const params = new URLSearchParams(search)
-  params.append("r", Math.random().toString().slice(2))
+  params.set("r", Math.random().toString().slice(2))
 
   return `${path}?${params.toString()}`
 }
