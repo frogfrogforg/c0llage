@@ -17,12 +17,20 @@ class StateConditionalElement extends HTMLParsedElement {
     const conditionsString = this.getAttribute('wants') || this.getAttribute('condition') || ''
     const s = conditionsString.trim().split(' ').filter(i => i)
     let passesAllConditions = true;
-    s.forEach(condition => {
-      passesAllConditions &&= condition[0] === '!'
-                  ? !d.State[condition.slice(1)]
-                  : d.State[condition]
+    s.forEach(rawCondition => {
+      const isNot = rawCondition[0] === '!' 
+      const stateKey = isNot ? rawCondition.slice(1) : rawCondition
+      function passesCondition(rawCondition) {
+        const isNot = rawCondition[0] === '!' 
+        const stateKey = isNot ? rawCondition.slice(1) : rawCondition
+        return isNot
+          ? !d.State[stateKey]
+          : d.State[stateKey]
+      }
 
-      d.State.listen(condition, () => {
+      passesAllConditions &&= passesCondition(rawCondition)
+
+      d.State.listen(stateKey, () => {
         const passesAllConditions = s
                 .reduce((aggregate, condition) => 
                   aggregate && 
