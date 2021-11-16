@@ -1,5 +1,6 @@
 import "/global.js"
 import { kInventory } from "./inventory.js"
+import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
 import { Assistant } from "./assistant/brain.js"
 
@@ -28,6 +29,9 @@ function main() {
   d.addEventListener("click", didClick)
   w.addEventListener("popstate", didPopState)
   w.addEventListener("beforeunload", didRefresh)
+
+  initSparkles($mGame);
+
 
   // run post visit events first time
   didChangeState()
@@ -196,6 +200,11 @@ function didStartVisit() {
 }
 
 function didFinishVisit() {
+  // Add sparkles to hotpsots
+  // (is this the right place to call this?)
+  const hotspots = $mGame.querySelectorAll(".hotspot");
+  addHoverSparklesToElements(hotspots);
+
   // spawn the assistant if possible
   Assistant.spawn()
 }
