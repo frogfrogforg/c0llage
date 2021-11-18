@@ -157,7 +157,11 @@ class ScriptElement extends HTMLParsedElement {
       throw new Error(`nothing to render for hook: ${hook}`)
     }
 
-    m.showDialog(template.innerHTML, cont)
+    m.showDialog(template.innerHTML, () => {
+      if (m.shouldContinueOnClose(hook) && cont != null) {
+        cont()
+      }
+    })
   }
 
   // show a dialog for the line
@@ -688,7 +692,7 @@ ScriptLine.kind = "line"
 // { cont: bool, get: [fn], set: [fn] }
 function decodeOperations(ostr) {
   const operations = {}
-  
+
   // if we have operations
   if (ostr == null) {
     return operations
@@ -721,7 +725,7 @@ function decodeGetOperation(str) {
 // decode a set operation "set a,b"
 function decodeSetOperation(str) {
   str = str.slice(kSetOperation.length + 1)
-  
+
   return str.split(',').map((s) => {
     return () => {
       d.State[key.trim()] = true
