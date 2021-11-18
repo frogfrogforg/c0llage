@@ -25,6 +25,7 @@ const kContOpration = "cont"
 // attr names
 const kAttrs = {
   target: "target",
+  main: "main",
 }
 
 // class names
@@ -34,9 +35,10 @@ const kClass = {
 }
 
 // -- impls --
+// the custom element for a single script(ure)
 class ScriptElement extends HTMLParsedElement {
   // -- props --
-  // script: Script - the script model
+  // god: ScriptGod - this script's god
   // hooks: [string: () => string] - a map of hooks that render custom dialogs
 
   // -- lifetime --
@@ -49,18 +51,124 @@ class ScriptElement extends HTMLParsedElement {
   parsedCallback() {
     const m = this
 
-    // decode script
-    m.script = Script.decode(m.textContent)
+    // find god
+    m.god = ScriptGod.get()
 
-    // show dialogs when clicking the target
-    const $target = m.findTarget()
-    if ($target != null) {
-      $target.addEventListener("click", m.onTargetClick)
-      $target.classList.toggle(kClass.cursor, true)
-    }
+    // show god the scripture
+    m.god.addScriptToHerald(
+      m.targetId,
+      m.scriptId,
+      m.textContent,
+      m.isMain,
+      window
+    )
   }
 
   // -- commands --
+  // add a hook to the script
+  onHook() {
+    // TODO: give god the hook
+  }
+
+  // -- queries --
+  // the id of the target element
+  get scriptId() {
+    return this.id
+  }
+
+  get targetId() {
+    return this.getAttribute(kAttrs.target)
+  }
+
+  get isMain() {
+    return this.hasAttribute(kAttrs.main)
+  }
+}
+
+// the one who knows all script(ure)
+class ScriptGod {
+  // -- module --
+  static get() {
+    const c = window.top
+    if (c.god == null) {
+      c.god = new ScriptGod()
+    }
+
+    return c.god
+  }
+
+  // -- lifetime --
+  constructor() {
+    this.heralds = {}
+  }
+
+  // -- commands --
+  // add script to new or existing herald
+  addScriptToHerald(heraldId, scriptId, content, isMain, window) {
+    const m = this
+
+    // find or create the herald
+    let herald = m.heralds[heraldId]
+    if (herald == null) {
+      herald = new ScriptHerald(heraldId)
+      m.heralds[heraldId] = herald
+    }
+
+    // add the script TODO: use a real key from the el attr
+    const key = "*"
+    const script = Script.decode(content)
+    herald.addScript(scriptId, script, key)
+
+    // bind once we hit the main script
+    if (isMain) {
+      herald.bindToTarget(window)
+    }
+  }
+}
+
+// one who announces the script(ture)
+class ScriptHerald {
+  // -- props --
+  // id: string - the target id
+
+  // -- lifetime --
+  constructor(id) {
+    const m = this
+    m.id = id
+    m.scripts = []
+    m.$window = null
+  }
+
+  // -- commands --
+  // add a new script
+  addScript(id, script, key) {
+    const m = this
+    if (m.scripts[id] == null) {
+      m.scripts[id] = {script, key}
+    }
+  }
+
+  // bind the script to its target
+  bindToTarget($window) {
+    const m = this
+
+    // store the window
+    m.$window = $window
+
+    // find the target
+    const $target = m.findTarget()
+
+    // if we have a target
+    if ($target == null) {
+      console.warn(`couldn't find target ${m.id} for script`)
+      return
+    }
+
+    // show dialog on click
+    $target.addEventListener("click", m.onTargetClick)
+    $target.classList.toggle(kClass.cursor, true)
+  }
+
   // show the next onclick dialog
   showNextDialog() {
     const m = this
@@ -69,21 +177,32 @@ class ScriptElement extends HTMLParsedElement {
     m.closeOpenDialog()
 
     // advance to the next line
-    m.script.advance()
+    const script = m.findBestScript()
+    if (script == null) {
+      return
+    }
 
     // show the dialog w/ the current item
     m.showDialogForItem(
-      m.script.findCurrentItem(),
+      script.findCurrentItem(),
       () => m.showNextDialog(),
     )
+
+    script.advance()
   }
 
   // shows the dialog at section w/ name, item j
   showNamedDialog(name, j) {
     const m = this
 
+    // find the script
+    const script = m.findBestScript()
+    if (script == null) {
+      return
+    }
+
     // get the section index
-    const i = m.script.findIdxByName(name)
+    const i = script.findIdxByName(name)
     if (i == null) {
       return
     }
@@ -106,15 +225,21 @@ class ScriptElement extends HTMLParsedElement {
   showDialogAtPath(i, j) {
     const m = this
 
+    // find the script
+    const script = m.findBestScript()
+    if (script == null) {
+      return
+    }
+
     // resolve the path
-    const path = m.script.findNextPath(i, j)
+    const path = script.findNextPath(i, j)
     if (path == null) {
       return
     }
 
     // show the dialog
     m.showDialogForItem(
-      m.script.findItemByPath(...path),
+      script.findItemByPath(...path),
       () => m.showDialogAtPath(i, j + 1),
     )
   }
@@ -249,13 +374,8 @@ class ScriptElement extends HTMLParsedElement {
 
   // -- queries --
   // the id of this element
-  get id() {
-    return this.targetId
-  }
-
-  // the id of the target element
   get targetId() {
-    return this.getAttribute(kAttrs.target)
+    return this.id
   }
 
   // the id of a spawned dialog
@@ -268,18 +388,45 @@ class ScriptElement extends HTMLParsedElement {
     return this.findById(this.dialogId, window.top)
   }
 
+  // finds the best script for the current situation
+  findBestScript() {
+    const m = this
+
+    const location = window.location // TODO: but has to be smarter
+    const scripts = Object.values(m.scripts)
+
+    const filteredScripts = scripts
+      .filter((s) => s.script.findCurrentItem() != null)
+      .filter((s) => s.key === "*" || location.startsWith(s.key))
+      .sort((s0, s1) => s0.key === "*" ? -1 : s0.key.length - s1.key.length)
+
+    const match = filteredScripts[0]
+    if (match == null) {
+      return null
+    }
+
+    return match.script
+  }
+
   // find the click target, if one exists
   findTarget() {
     return this.findById(this.targetId)
   }
 
   // find an element by id, starting with the closest window by default
-  findById(id, $window = window) {
+  findById(id) {
+    const m = this
+
+    // if there is an id
     if (id == null) {
       return null
     }
 
+    // from the root window
+    let $window = m.$window
     let $target = null
+
+    // search upwards for the target
     do {
       $target = $window.document.getElementById(id)
       $window = $window.parent !== $window ? $window.parent : null
@@ -503,7 +650,7 @@ class ScriptSection {
     m.name = name
     m.operations = operations
     m.lines = []
-    m.i = -1
+    m.i = 0
   }
 
   // -- commands --

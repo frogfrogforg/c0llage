@@ -3,8 +3,6 @@ import { Ledger } from "./ledger.js"
 
 // -- constants --
 const kIdScript = "script"
-const kIdMainDialog = "main-dialog"
-const kScriptHookMain = "main-hook"
 const kScriptHookDebts = "debts-hook"
 const kLedgerDialogName = "ledger"
 
@@ -13,7 +11,6 @@ export class Assistant {
   // -- props --
   // ledger: Ledger - the player's ledger
   // $script: ScriptElement - the script
-  // $dialog: HTMLTemplateLement
 
   // -- lifetime --
   // creates a new assistant
@@ -21,7 +18,6 @@ export class Assistant {
     const m = this
     m.ledger = new Ledger()
     m.$script = document.getElementById(kIdScript)
-    m.$dialog = document.getElementById(kIdMainDialog)
   }
 
   // -- commands --
@@ -34,7 +30,6 @@ export class Assistant {
 
     // listen to events
     m.ledger.onChange(m.onLedgerChanged)
-    m.$script.onHook(kScriptHookMain, m.onMainHook)
     m.$script.onHook(kScriptHookDebts, m.onDebtsHook)
   }
 
@@ -62,10 +57,6 @@ export class Assistant {
   // -- events --
   onLedgerChanged = () => {
     this.showLedgerDialog()
-  }
-
-  onMainHook = () => {
-    return this.$dialog.innerHTML
   }
 
   onDebtsHook = () => {
