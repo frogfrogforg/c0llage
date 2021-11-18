@@ -73,6 +73,7 @@
 #hotspot-map {
     width: 100%;
     height: 100%;
+    position: absolute;
 }
 
 .background {
@@ -103,12 +104,15 @@
     fill:  #0000;/* for svg hotspots */
 }
 
-.hotspot:hover:not(button):not(.noblur) {
+
+/* disabled: trying out sparkles instead */
+.hotspot___disabled:hover:not(button):not(.noblur) {
     background-color:#04000422;
     fill: #04000422; /* for svg hotspots */
     filter: blur(30px);
     transition: all 0.1s ease-in;
 }
+
 .debug {
     border: violet 10px solid !important;
 }
@@ -159,6 +163,23 @@
 /* custom elements */
 s-cript {
   display: none;
+}
+
+/* hotspot hover sparkles */
+#sparkleContainer {
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sparkle {
+    filter: hue-rotate(-50deg);
+    mix-blend-mode: difference;
+    position: absolute;
+    pointer-events: none;
 }
 
 /* virtual cursor */
