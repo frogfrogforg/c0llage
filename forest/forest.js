@@ -13,6 +13,7 @@ let $mGame = null
 
 // -- lifetime --
 function main() {
+  console.log("main");
   /// set props
   mUrl = document.location
 
@@ -29,9 +30,6 @@ function main() {
   d.addEventListener("click", didClick)
   w.addEventListener("popstate", didPopState)
   w.addEventListener("beforeunload", didRefresh)
-
-  initSparkles($mGame);
-
 
   // run post visit events first time
   didChangeState()
@@ -93,7 +91,12 @@ function randomizeLinks() {
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
     if (el.href == null) return
-    el.href = randomizeUrl(el.href)
+    if (typeof el.href === "object") {
+      // Handle SVGAnimatedString
+      el.href.baseVal = randomizeUrl(el.href.baseVal)
+    } else {
+      el.href = randomizeUrl(el.href)
+    }
   })
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
@@ -111,6 +114,11 @@ function randomizeLinks() {
 function randomizeUrl(str) {
   if (str == null) {
     return str
+  }
+
+  // Handle SVGAnimatedString
+  if (typeof str === "object") {
+    str = str.baseVal.toString()
   }
 
   const [path, search] = str.split("?")
@@ -140,6 +148,7 @@ function didChangeState() {
 }
 
 function didRefresh(evt) {
+  console.log("didRefresh");
   evt.preventDefault()
   d.State.save()
   return evt.returnValue = "don't leave gamer"
@@ -202,6 +211,7 @@ function didStartVisit() {
 function didFinishVisit() {
   // Add sparkles to hotpsots
   // (is this the right place to call this?)
+  initSparkles($mGame.querySelector("#main"));
   const hotspots = $mGame.querySelectorAll(".hotspot");
   addHoverSparklesToElements(hotspots);
 
