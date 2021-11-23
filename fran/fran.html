@@ -51,11 +51,55 @@ if you start at 26flowers, and click through, are all the text boxes in reasonab
 
   "Cannot read properties of undefined"
 
+  ok 260flowers always has this bug no matter what
+
+  fuck i should really wait for ty to fix this. i should try to find something else to do i guess
+
 
 later:
 
 turn assistant off in flowers
 disable reset (presentation mode)
+
+<h3>11/16</h3>
+two things to test:
+if you go to /16hyperform, let it go to flowers and then click through, does it work all the way?
+  - this is currently broken because in 27flowers, it brings up the wrong textbox
+if you start at 26flowers, and click through, are all the text boxes in reasonable places?
+  - i guess i could fix this by not having negative values for the textboxes
+
+
+  i'm goign to try to fix (2) now.
+  i wonder what happens if i start from 27flowers?
+  ugh so if i start at 27 flowers it doesn't do anything on first click
+
+  "Cannot read properties of undefined"
+
+  ok 260flowers always has this bug no matter what
+
+  fuck i should really wait for ty to fix this. i should try to find something else to do i guess
+
+  i'll give it one more college try
+
+  so the bug is with the assistant in a neutral template
+
+
+  so we spawn the assistant, and then try to show it, but its internal state is n't set yet because it hasn't run parsedCallback() yet
+
+  o it's a HTMLParsedElement thing
+
+  ok for some reason parsedCallback isn't being called when assistatn is appendChild'd to our inventory HTLM element
+
+  o i think it's because it parses it in the next animationFrame... but we're doing show before it actually happens
+
+  so maybe check if it's already parsed or something
+
+  actually maybe force a DOMContentLoad when you init it
+
+
+  ok to explain to TY
+
+
 
 <h3>11/11</h3>
 <p>ok flowers is still weird</p>

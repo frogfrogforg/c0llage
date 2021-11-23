@@ -125,6 +125,10 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
+    // DEBUG
+    console.log("DEBUG PARSED CALLBACK");
+    console.log(this);
+    console.trace();
     const id = this.getAttribute('id') || makeId(5)
     this.id = id
 
@@ -137,9 +141,6 @@ export class Dumpling extends HTMLParsedElement {
     const originalChildren = [...this.children]
     this.innerHTML = templateHtml
     this.bodyElement = this.querySelector(`#${id}-body`)
-    // DEBUG
-    console.log("DEBUG");
-    console.log(this.bodyElement);
     let bodyContainer = this.bodyElement
 
     if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {

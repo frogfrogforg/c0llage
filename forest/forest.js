@@ -197,6 +197,7 @@ function didStartVisit() {
 
 function didFinishVisit() {
   // spawn the assistant if possible
+  console.log("DEBUG SPAWN");
   Assistant.spawn()
 }
 
