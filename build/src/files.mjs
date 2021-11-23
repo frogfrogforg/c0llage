@@ -26,14 +26,23 @@ export async function build() {
     return !ignored.has(entry)
   }
 
+  let pages = [];
+
   // traverse proj dir
   for await (const [child, entry] of traverse(paths.proj, filter)) {
     log.debug(`- ${entry}`)
-    await transfer(entry, child.isDirectory())
+
+    const paths = await transfer(entry, child.isDirectory());
+    pages = pages.concat(paths);
   }
+
+  // write pages.json
+  fs.writeFile(paths.pagesJs, `export default ${JSON.stringify(pages)}`);
 }
 
 export async function transfer(entry, isDirectory = false) {
+  const pages = []; // list of all forest pages
+
   // 🎵 make ev'ry direct'ry 🎵
   if (isDirectory) {
     await fs.mkdir(path.join(paths.dist, entry), {
@@ -42,13 +51,19 @@ export async function transfer(entry, isDirectory = false) {
   }
   // 🎵 compile ev'ry template 🎵
   else if (entry.endsWith(paths.ext.partial)) {
-    await compile(entry)
+    const pagePath = await compile(entry);
+
+    const relativeToForest = path.relative(paths.forest, pagePath);
+    if (! relativeToForest.startsWith("..")) {
+      pages.push(relativeToForest);
+    }
   }
   // 🎵 copy ev'ry other file 🎵
   else {
     await copy(entry)
   }
   // 🎵 'til you find your dream 🎵
+  return pages;
 }
 
 export async function remove(entry) {
@@ -71,6 +86,7 @@ async function compile(entry) {
   const compiled = await template(partial)
 
   await fs.writeFile(dst, compiled)
+  return dst;
 }
 
 async function copy(entry) {
