@@ -59,11 +59,9 @@ export class Assistant {
     this.showLedgerDialog()
   }
 
-  onDebtsHook = () => {
-    return `
-        here is where you would pay
-    `
-  }
+  onDebtsHook = () => `
+    here is where you would pay
+  `
 
   // -- factories --
   // spawn the assistant when available

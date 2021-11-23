@@ -338,10 +338,21 @@ class ScriptHerald {
 
     const render = m.findHook(scriptId, item.name)
     if (render != null) {
-      m.showDialog(render(cont))
+      m.showDialogForRenderHook(render, cont)
     } else {
       m.showDialogForHtmlHook(item, cont)
     }
+  }
+
+  // show a dialog for the hook in a render fn
+  showDialogForRenderHook(render, cont) {
+    const dialog = `
+      <article class="Dialog">
+        ${render(cont)}
+      </article>
+    `
+
+    this.showDialog(dialog)
   }
 
   // show a dialog for the hook in an html template
