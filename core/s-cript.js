@@ -107,24 +107,36 @@ class ScriptElement extends HTMLParsedElement {
 class ScriptGod {
   // -- module --
   static get() {
-    const c = window.top
-    if (c.god == null) {
-      c.god = new ScriptGod()
+    // find the forest window
+    let $w = window
+
+    // find the top window or one w/ a path like "/forest/3" (for recursive forest)
+    while ($w.parent != $w && $w.location.pathname.split("/").length !== 3) {
+      $w = $w.parent
     }
 
-    return c.god
+    // find or create god
+    if ($w.god == null) {
+      $w.god = new ScriptGod($w)
+    }
+
+    return $w.god
   }
 
   // -- lifetime --
-  constructor() {
-    this.heralds = {}
+  constructor($window) {
+    const m = this
+    m.$window = $window
+    m.heralds = {}
   }
 
   // -- commands --
   // add script to new or existing herald
   addScriptToHerald(id, scriptId, content, isMain, window) {
+    const m = this
+
     // get the herald
-    const herald = this.findOrCreateHerald(id)
+    const herald = m.findOrCreateHerald(id)
 
     // add the script TODO: use a real key from the el attr
     const key = "*"
@@ -165,7 +177,7 @@ class ScriptGod {
 
     // create if necessary
     if (herald == null) {
-      herald = new ScriptHerald(id)
+      herald = new ScriptHerald(id, m.$window)
       m.heralds[id] = herald
     }
 
@@ -179,12 +191,13 @@ class ScriptHerald {
   // id: string - the target id
 
   // -- lifetime --
-  constructor(id) {
+  constructor(id, $godsWindow) {
     const m = this
     m.id = id
     m.scripts = []
     m.hooks = {}
     m.$window = null
+    m.$godsWindow = $godsWindow
   }
 
   // -- commands --
@@ -414,7 +427,7 @@ class ScriptHerald {
     })
 
     // spawn the dumpling TODO: dumpling spawner
-    window.top.document.firstElementChild.appendChild($el)
+    m.$godsWindow.document.firstElementChild.appendChild($el)
   }
 
   // close the open dialog dumpling, if any
@@ -443,14 +456,15 @@ class ScriptHerald {
 
   // find the open dialog dumpling
   findOpenDialog() {
-    return this.findById(this.dialogId, window.top)
+    return this.findById(this.dialogId, this.$window)
   }
 
   // finds the best script for the current situation
   findBestScript() {
     const m = this
 
-    const location = window.location // TODO: but has to be smarter
+    // todo: be smart about location metadata, e.g. location.tags.include("water-level")
+    const location = m.$window.location
     const scripts = Object.values(m.scripts)
 
     const filteredScripts = scripts

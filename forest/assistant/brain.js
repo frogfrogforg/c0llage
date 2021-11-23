@@ -61,9 +61,7 @@ export class Assistant {
 
   onDebtsHook = () => {
     return `
-      <article class="Dialog">
         here is where you would pay
-      </article>
     `
   }
 
