@@ -212,7 +212,7 @@ function didFinishVisit() {
   // Add sparkles to hotpsots
   // (is this the right place to call this?)
   initSparkles($mGame.querySelector("#main"));
-  const hotspots = $mGame.querySelectorAll(".hotspot");
+  const hotspots = $mGame.querySelectorAll(".hotspot:not(nosparkle)");
   addHoverSparklesToElements(hotspots);
 
   // spawn the assistant if possible
