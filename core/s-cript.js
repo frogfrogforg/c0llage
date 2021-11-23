@@ -485,12 +485,16 @@ class Script {
     // from the current path
     const curr = m.findCurrentPath()
     if (curr == null) {
+      console.warn("no current path for dialogue", this)
       return
     }
 
-    // find the next valid path
+    // find the next path
     const next = m.findNextPath(curr[0], curr[1] + 1)
+
+    // if there isn't one, end this script
     if (next == null) {
+      m.i = -1
       return
     }
 
@@ -573,13 +577,18 @@ class Script {
         return null
       }
 
-      // stop unless its a jump
+      // if we have a next item
       const item = section.get(j)
+      if (item == null) {
+        return null
+      }
+
+      // stop here if its not a jump
       if (item.kind !== ScriptJump.kind) {
         break
       }
 
-      // but jump if it is
+      // if it is, go to the next section
       i = m.findIdxByName(item.name)
       j = 0
     }
