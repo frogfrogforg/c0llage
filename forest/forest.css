@@ -106,7 +106,7 @@
 /* add class 'nosparkle' to hotspot to disable sparkles */
 
 
-/* disabled: trying out sparkles instead */
+/* disabled: trying out sparkles instead (see didFinishVisit in forest.js) */
 .hotspot___disabled:hover:not(button):not(.noblur) {
     background-color:#04000422;
     fill: #04000422; /* for svg hotspots */
