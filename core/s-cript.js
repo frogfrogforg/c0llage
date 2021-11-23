@@ -64,6 +64,18 @@ class ScriptElement extends HTMLParsedElement {
   }
 
   // -- commands --
+  // show a dialog for a section name and item index
+  showNamedDialog(name, j) {
+    const m = this
+
+    m.god.showNamedDialogForHerald(
+      m.targetId,
+      m.scriptId,
+      name,
+      j
+    )
+  }
+
   // add a hook to the script
   onHook(name, render) {
     const m = this
@@ -111,11 +123,8 @@ class ScriptGod {
   // -- commands --
   // add script to new or existing herald
   addScriptToHerald(id, scriptId, content, isMain, window) {
-    console.log("add script", id, scriptId)
-    const m = this
-
     // get the herald
-    const herald = m.findOrCreateHerald(id)
+    const herald = this.findOrCreateHerald(id)
 
     // add the script TODO: use a real key from the el attr
     const key = "*"
@@ -130,14 +139,20 @@ class ScriptGod {
 
   // add a hook to an existing herald w/ id
   addHookToHerald(id, scriptId, name, render) {
-    console.log("add hook", id, scriptId)
-    const m = this
-
     // find the herald
-    const herald = m.findOrCreateHerald(id)
+    const herald = this.findOrCreateHerald(id)
 
     // add the hook if it exists
     herald.addHookToScript(scriptId, name, render)
+  }
+
+  // show the named dialog for the section name and item index
+  showNamedDialogForHerald(id, scriptId, name, j) {
+    // get the herald
+    const herald = this.findOrCreateHerald(id)
+
+    // show the dialog
+    herald.showNamedDialogForScript(scriptId, name, j)
   }
 
   // -- queries --
@@ -242,11 +257,11 @@ class ScriptHerald {
   }
 
   // shows the dialog at section w/ name, item j
-  showNamedDialog(name, j) {
+  showNamedDialogForScript(scriptId, name, j) {
     const m = this
 
     // find the script
-    const best = m.findBestScript()
+    const best = m.scripts[scriptId]
     if (best == null) {
       return
     }
