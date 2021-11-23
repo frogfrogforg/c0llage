@@ -73,6 +73,7 @@
 #hotspot-map {
     width: 100%;
     height: 100%;
+    position: absolute;
 }
 
 .background {
@@ -102,13 +103,17 @@
     cursor: pointer;
     fill:  #0000;/* for svg hotspots */
 }
+/* add class 'nosparkle' to hotspot to disable sparkles */
 
-.hotspot:hover:not(button):not(.noblur) {
+
+/* disabled: trying out sparkles instead (see didFinishVisit in forest.js) */
+.hotspot___disabled:hover:not(button):not(.noblur) {
     background-color:#04000422;
     fill: #04000422; /* for svg hotspots */
     filter: blur(30px);
     transition: all 0.1s ease-in;
 }
+
 .debug {
     border: violet 10px solid !important;
 }
@@ -161,6 +166,23 @@ s-cript {
   display: none;
 }
 
+/* hotspot hover sparkles */
+#sparkleContainer {
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sparkle {
+    filter: hue-rotate(-50deg);
+    mix-blend-mode: difference;
+    position: absolute;
+    pointer-events: none;
+}
+
 /* virtual cursor */
 .Cursor {
     position: fixed;
@@ -182,101 +204,101 @@ s-cript {
 
 /* cursors */
 .cursor-inspect {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🔎</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🔎</text></svg>'), auto;
 }
 
 .cursor-talk {
-  cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">💬</text></svg>'), auto;
+  cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">💬</text></svg>'), auto;
 }
 
 .cursor-move {
-  cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🦶</text></svg>'), auto;
+  cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🦶</text></svg>'), auto;
 }
 
 .cursor-haunt {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">👻</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">👻</text></svg>'), auto;
 }
 
 .cursor-salad {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🥗</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🥗</text></svg>'), auto;
 }
 
 .cursor-gift {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🎁</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🎁</text></svg>'), auto;
 }
 
 .cursor-pick-up {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging" transform="rotate(0, 30, 30)">👌</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging" transform="rotate(0, 30, 30)">👌</text></svg>'), auto;
 }
 
 .cursor-cow {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🐄</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🐄</text></svg>'), auto;
 }
 
 .cursor-kiss {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">💋</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">💋</text></svg>'), auto;
 }
 
 .cursor-heart {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">♥️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">♥️</text></svg>'), auto;
 }
 
 .cursor-keyboard {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">⌨️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">⌨️</text></svg>'), auto;
 }
 
 .cursor-coin {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🪙</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🪙</text></svg>'), auto;
 }
 
 .cursor-lotus {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🧘</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🧘</text></svg>'), auto;
 }
 
 .cursor-tree {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🌲</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🌲</text></svg>'), auto;
 }
 
 .cursor-park {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🏞️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🏞️</text></svg>'), auto;
 }
 
 .cursor-stop {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🛑</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🛑</text></svg>'), auto;
 }
 
 .cursor-bus {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🚌</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🚌</text></svg>'), auto;
 }
 
 .cursor-bird {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🐦</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🐦</text></svg>'), auto;
 }
 
 .cursor-shoes {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🥾</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🥾</text></svg>'), auto;
 }
 
 .cursor-photo {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🖼️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🖼️</text></svg>'), auto;
 }
 
 .cursor-spy {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🕵️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🕵️</text></svg>'), auto;
 }
 
 .cursor-swim {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🏊</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🏊</text></svg>'), auto;
 }
 
 .cursor-window {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">🪟</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🪟</text></svg>'), auto;
 }
 
 .cursor-playpause {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">⏯️</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">⏯️</text></svg>'), auto;
 }
 
 .cursor-radio {
-    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" font-size="40" dominant-baseline="hanging">📻</text></svg>'), auto;
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">📻</text></svg>'), auto;
 }
