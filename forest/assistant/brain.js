@@ -63,7 +63,7 @@ export class Assistant {
     return `
       <article class="Dialog">
         here is where you would pay
-      </article
+      </article>
     `
   }
 

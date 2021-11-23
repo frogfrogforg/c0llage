@@ -44,15 +44,14 @@ class ScriptElement extends HTMLParsedElement {
   // -- lifetime --
   constructor() {
     super()
-    this.hooks = []
+
+    // find god
+    this.god = ScriptGod.get()
   }
 
   // init the element
   parsedCallback() {
     const m = this
-
-    // find god
-    m.god = ScriptGod.get()
 
     // show god the scripture
     m.god.addScriptToHerald(
@@ -66,8 +65,15 @@ class ScriptElement extends HTMLParsedElement {
 
   // -- commands --
   // add a hook to the script
-  onHook() {
-    // TODO: give god the hook
+  onHook(name, render) {
+    const m = this
+
+    m.god.addHookToHerald(
+      m.targetId,
+      m.scriptId,
+      name,
+      render
+    )
   }
 
   // -- queries --
@@ -104,15 +110,12 @@ class ScriptGod {
 
   // -- commands --
   // add script to new or existing herald
-  addScriptToHerald(heraldId, scriptId, content, isMain, window) {
+  addScriptToHerald(id, scriptId, content, isMain, window) {
+    console.log("add script", id, scriptId)
     const m = this
 
-    // find or create the herald
-    let herald = m.heralds[heraldId]
-    if (herald == null) {
-      herald = new ScriptHerald(heraldId)
-      m.heralds[heraldId] = herald
-    }
+    // get the herald
+    const herald = m.findOrCreateHerald(id)
 
     // add the script TODO: use a real key from the el attr
     const key = "*"
@@ -123,6 +126,35 @@ class ScriptGod {
     if (isMain) {
       herald.bindToTarget(window)
     }
+  }
+
+  // add a hook to an existing herald w/ id
+  addHookToHerald(id, scriptId, name, render) {
+    console.log("add hook", id, scriptId)
+    const m = this
+
+    // find the herald
+    const herald = m.findOrCreateHerald(id)
+
+    // add the hook if it exists
+    herald.addHookToScript(scriptId, name, render)
+  }
+
+  // -- queries --
+  // find or create a new herald by id
+  findOrCreateHerald(id) {
+    const m = this
+
+    // find the herald
+    let herald = m.heralds[id]
+
+    // create if necessary
+    if (herald == null) {
+      herald = new ScriptHerald(id)
+      m.heralds[id] = herald
+    }
+
+    return herald
   }
 }
 
@@ -136,6 +168,7 @@ class ScriptHerald {
     const m = this
     m.id = id
     m.scripts = []
+    m.hooks = {}
     m.$window = null
   }
 
@@ -144,8 +177,22 @@ class ScriptHerald {
   addScript(id, script, key) {
     const m = this
     if (m.scripts[id] == null) {
-      m.scripts[id] = {script, key}
+      m.scripts[id] = { id, script, key }
     }
+  }
+
+  // adds a new rendering hook for the name
+  addHookToScript(id, name, render) {
+    const m = this
+
+    // find hooks for this script
+    let hooks = m.hooks[id]
+    if (hooks == null) {
+      hooks = m.hooks[id] = []
+    }
+
+    // store the hook
+    hooks[name] = render
   }
 
   // bind the script to its target
@@ -177,13 +224,16 @@ class ScriptHerald {
     m.closeOpenDialog()
 
     // advance to the next line
-    const script = m.findBestScript()
-    if (script == null) {
+    const best = m.findBestScript()
+    if (best == null) {
       return
     }
 
+    const { id: scriptId, script } = best
+
     // show the dialog w/ the current item
     m.showDialogForItem(
+      scriptId,
       script.findCurrentItem(),
       () => m.showNextDialog(),
     )
@@ -196,18 +246,18 @@ class ScriptHerald {
     const m = this
 
     // find the script
-    const script = m.findBestScript()
-    if (script == null) {
+    const best = m.findBestScript()
+    if (best == null) {
       return
     }
 
     // get the section index
-    const i = script.findIdxByName(name)
+    const i = best.script.findIdxByName(name)
     if (i == null) {
       return
     }
 
-    m.showDialogAtPath(i, j)
+    m.showDialogAtPath(best, i, j)
   }
 
   // set the current section by name
@@ -215,21 +265,13 @@ class ScriptHerald {
     this.script.setIdxByName(name)
   }
 
-  // adds a new rendering hook for the name
-  onHook(name, render) {
-    this.hooks[name] = render
-  }
-
   // -- c/helpers
   // show the dialog w/ this path
-  showDialogAtPath(i, j) {
+  showDialogAtPath(best, i, j) {
     const m = this
 
-    // find the script
-    const script = m.findBestScript()
-    if (script == null) {
-      return
-    }
+    // get best parts
+    const { id: scriptId, script } = best
 
     // resolve the path
     const path = script.findNextPath(i, j)
@@ -239,13 +281,14 @@ class ScriptHerald {
 
     // show the dialog
     m.showDialogForItem(
+      scriptId,
       script.findItemByPath(...path),
-      () => m.showDialogAtPath(i, j + 1),
+      () => m.showDialogAtPath(best, i, j + 1),
     )
   }
 
   // shows a dialog for the item
-  showDialogForItem(item, cont) {
+  showDialogForItem(scriptId, item, cont) {
     const m = this
 
     // make sure we have an item
@@ -255,21 +298,21 @@ class ScriptHerald {
 
     // if it's a hook, render the custom html
     if (item.kind === ScriptHook.kind) {
-      m.showDialogForHook(item, cont)
+      m.showDialogForHook(scriptId, item, cont)
     } else {
       m.showDialogForLine(item, cont)
     }
   }
 
   // show a dialog for the hook
-  showDialogForHook(hook, cont) {
+  showDialogForHook(scriptId, item, cont) {
     const m = this
 
-    const render = m.hooks[hook.name]
+    const render = m.findHook(scriptId, item.name)
     if (render != null) {
       m.showDialog(render(cont))
     } else {
-      m.showDialogForHtmlHook(hook, cont)
+      m.showDialogForHtmlHook(item, cont)
     }
   }
 
@@ -405,7 +448,17 @@ class ScriptHerald {
       return null
     }
 
-    return match.script
+    return match
+  }
+
+  // find the hook by script id and name
+  findHook(scriptId, name) {
+    const hooks = this.hooks[scriptId]
+    if (hooks == null) {
+      return null
+    }
+
+    return hooks[name]
   }
 
   // find the click target, if one exists
@@ -743,7 +796,7 @@ class ScriptJump {
 ScriptJump.kind = "jump"
 
 // a hook in a script section
-class ScriptHook  {
+class ScriptHook {
   // -- props --
   // name: string; the line's text
   // operations: [string:any]; a map of operations
