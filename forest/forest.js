@@ -217,6 +217,7 @@ function didFinishVisit() {
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
   console.log(hotspots);
   addHoverSparklesToElements(hotspots);
+  d.Events.raise(d.Events.Forest.Visited)
 
   // spawn the assistant if possible
   Assistant.spawn()

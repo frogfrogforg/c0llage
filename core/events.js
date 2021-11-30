@@ -19,6 +19,9 @@ export const Events = {
   getStateChangeEvent(propertyName) {
     return `state.${propertyName}`
   },
+  Forest: {
+    Visited: "forest.visited",
+  },
   Juice: {
     Appeared: "juice.appeared",
     InBucket: "juice.inbucket",
