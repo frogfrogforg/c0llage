@@ -2,13 +2,13 @@ import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
 // -- constants --
 // matches section headers: "--- [<ops>] <section-name>"
-const kHeaderPattern = /---\s*(\[.*\])?\s*(\w+)\s*/
+const kHeaderPattern = /---\s*(\[.*\])?\s*([\w-_]+)\s*/
 
 // matches hook lines: "*** [<ops>] <hook-name>"
-const kHookPattern = /\*\*\*\s*(\[.*\])?\s*(.*)/
+const kHookPattern = /\*\*\*\s*(\[.*\])?\s*([\w-_]*)\s*/
 
 // matches jump lines: "==> [<ops>] <section-name>"
-const kJumpPattern = /==>\s*(\[.*\])?\s*(\w+)\s*/
+const kJumpPattern = /==>\s*(\[.*\])?\s*([\w-_]+)\s*/
 
 // matches text lines: "[<ops>] <text> {<button-names>}"
 const kLinePattern = /\s*(\[.*\])?\s*([^\{]+)\s*(\{(.*)\})?\s*/
@@ -19,8 +19,14 @@ const kOperationPattern = /\[(.*)\]/
 // the prefix of the set operation
 const kSetOperation = "set"
 
+// the prefix of the once operation
+const kOnceOperation = "once"
+
 // the prefix of the continue operation
 const kContOpration = "cont"
+
+// the section name for on page entry dialog
+const kEnterSectionName = "enter"
 
 // attr names
 const kAttrs = {
@@ -61,18 +67,20 @@ class ScriptElement extends HTMLParsedElement {
       m.isMain,
       window
     )
+
+    // show the on enter dialog, if any
+    m.showNamedDialog(kEnterSectionName)
   }
 
   // -- commands --
   // show a dialog for a section name and item index
-  showNamedDialog(name, j) {
+  showNamedDialog(name) {
     const m = this
 
     m.god.showNamedDialogForHerald(
       m.targetId,
       m.scriptId,
-      name,
-      j
+      name
     )
   }
 
@@ -140,7 +148,7 @@ class ScriptGod {
 
     // add the script TODO: use a real key from the el attr
     const key = "*"
-    const script = Script.decode(content)
+    const script = Script.decode(content, scriptId)
     herald.addScript(scriptId, script, key)
 
     // bind once we hit the main script
@@ -159,12 +167,12 @@ class ScriptGod {
   }
 
   // show the named dialog for the section name and item index
-  showNamedDialogForHerald(id, scriptId, name, j) {
+  showNamedDialogForHerald(id, scriptId, name) {
     // get the herald
     const herald = this.findOrCreateHerald(id)
 
     // show the dialog
-    herald.showNamedDialogForScript(scriptId, name, j)
+    herald.showNamedDialogForScript(scriptId, name)
   }
 
   // -- queries --
@@ -259,18 +267,20 @@ class ScriptHerald {
 
     const { id: scriptId, script } = best
 
-    // show the dialog w/ the current item
+    // get current item and advance
+    const item = script.findCurrentItem()
+    script.advance()
+
+    // show dialog
     m.showDialogForItem(
       scriptId,
-      script.findCurrentItem(),
+      item,
       () => m.showNextDialog(),
     )
-
-    script.advance()
   }
 
   // shows the dialog at section w/ name, item j
-  showNamedDialogForScript(scriptId, name, j) {
+  showNamedDialogForScript(scriptId, name) {
     const m = this
 
     // find the script
@@ -285,7 +295,7 @@ class ScriptHerald {
       return
     }
 
-    m.showDialogAtPath(best, i, j)
+    m.showDialogAtPath(best, i, 0)
   }
 
   // set the current section by name
@@ -307,11 +317,13 @@ class ScriptHerald {
       return
     }
 
+    const [i1, j1] = path
+
     // show the dialog
     m.showDialogForItem(
       scriptId,
-      script.findItemByPath(...path),
-      () => m.showDialogAtPath(best, i, j + 1),
+      script.findItemByPath(i1, j1),
+      () => m.showDialogAtPath(best, i1, j1 + 1),
     )
   }
 
@@ -676,6 +688,16 @@ class Script {
         return null
       }
 
+      // run the item's operations
+      if(item.operations.get && !item.operations.get()) {
+        j++
+        continue
+      }
+
+      if (item.operations.set) {
+        item.operations.set()
+      }
+
       // stop here if its not a jump
       if (item.kind !== ScriptJump.kind) {
         break
@@ -691,7 +713,7 @@ class Script {
 
   // -- encoding --
   // decode the script text
-  static decode(text) {
+  static decode(text, scriptId) {
     // produce a list of sections
     const sections = []
 
@@ -718,22 +740,11 @@ class Script {
       }
       // add a line to the current section
       else if (curr != null) {
-        curr.add(this.decodeItem(line))
+        curr.add(line, scriptId)
       }
     }
 
     return new Script(sections)
-  }
-
-  // decode a script item
-  static decodeItem(line) {
-    if (line.startsWith("==>")) {
-      return ScriptJump.decode(line)
-    }  else if (line.startsWith("***")) {
-      return ScriptHook.decode(line)
-    } else {
-      return ScriptLine.decode(line)
-    }
   }
 }
 
@@ -757,8 +768,8 @@ class ScriptSection {
 
   // -- commands --
   // add a line to this section
-  add(line) {
-    this.lines.push(line)
+  add(line, scriptId) {
+    this.lines.push(this.decodeItem(line, scriptId))
   }
 
   // -- queries --
@@ -791,6 +802,19 @@ class ScriptSection {
       decodeOperations(ostr),
     )
   }
+
+  // decode a script item
+  decodeItem(line, scriptId) {
+    const id = `${scriptId}-${this.name}-${this.lines.length}`
+
+    if (line.startsWith("==>")) {
+      return ScriptJump.decode(line, id)
+    }  else if (line.startsWith("***")) {
+      return ScriptHook.decode(line, id)
+    } else {
+      return ScriptLine.decode(line, id)
+    }
+  }
 }
 
 // a jump command in a script section
@@ -801,8 +825,9 @@ class ScriptJump {
 
   // -- lifetime --
   // create a new jump
-  constructor(name, operations) {
+  constructor(id, name, operations) {
     const m = this
+    m.id = id
     m.name = name
     m.operations = operations
   }
@@ -814,7 +839,7 @@ class ScriptJump {
 
   // -- encoding --
   // try to decode a jump: "==> [<operations>] <section>"
-  static decode(line) {
+  static decode(line, id) {
     // see if the line is a header
     const match = line.match(kJumpPattern)
     if (match == null || match.length < 2) {
@@ -827,8 +852,9 @@ class ScriptJump {
 
     // create the new jump
     return new ScriptJump(
+      id,
       name,
-      decodeOperations(ostr),
+      decodeOperations(ostr, id),
     )
   }
 }
@@ -843,9 +869,11 @@ class ScriptHook {
 
   // -- lifetime --
   // create a new line
-  constructor(name, operations) {
-    this.name = name
-    this.operations = operations
+  constructor(id, name, operations) {
+    const m = this
+    m.id = id
+    m.name = name
+    m.operations = operations
   }
 
   // -- kind --
@@ -855,7 +883,7 @@ class ScriptHook {
 
   // -- encoding --
   // try to decode a line: "<text> {<button>|...}"
-  static decode(line) {
+  static decode(line, id) {
     // see if the line is a header
     const match = line.match(kHookPattern)
     if (match == null || match.length < 2) {
@@ -868,8 +896,9 @@ class ScriptHook {
 
     // create the new line
     return new ScriptHook(
+      id,
       name,
-      decodeOperations(ostr)
+      decodeOperations(ostr, id)
     )
   }
 }
@@ -885,8 +914,9 @@ class ScriptLine  {
 
   // -- lifetime --
   // create a new line
-  constructor(text, buttons, operations) {
+  constructor(id, text, buttons, operations) {
     const m = this
+    m.id = id
     m.text = text
     m.buttons = buttons
     m.operations = operations
@@ -899,7 +929,7 @@ class ScriptLine  {
 
   // -- encoding --
   // try to decode a line: "<text> {<button>|...}"
-  static decode(line) {
+  static decode(line, id) {
     // see if the line is a header
     const match = line.match(kLinePattern)
     if (match == null || match.length < 2) {
@@ -927,9 +957,10 @@ class ScriptLine  {
 
     // create the new line
     return new ScriptLine(
+      id,
       text,
       buttons,
-      decodeOperations(ostr),
+      decodeOperations(ostr, id),
     )
   }
 }
@@ -939,7 +970,7 @@ ScriptLine.kind = "line"
 // -- helpers --
 // decode an operation string "[cont] [a,!b] [set a, b]" into an object like:
 // { cont: bool, get: [fn], set: [fn] }
-function decodeOperations(ostr) {
+function decodeOperations(ostr, id) {
   const operations = {}
 
   // if we have operations
@@ -949,13 +980,22 @@ function decodeOperations(ostr) {
 
   // then parse each one
   for (const operation of ostr.match(kOperationPattern).slice(1)) {
-    switch(operation.trim().split()[0]) { // gets the operation type
+    switch(operation.trim().split(' ')[0]) { // gets the operation type
+      case kOnceOperation:
+        const seenId = `seen-${id}`
+        operations.get = addGetOperation(operations.get, `!${seenId}`)
+        // operations.get()
+        operations.set = addSetOperation(operations.set, seenId)
+        break
       case kSetOperation:
-        operations.set = decodeSetOperation(operation.slice); break;
+        operations.set = decodeSetOperation(operations.set, operation)
+        break
       case kContOpration:
-        operations.cont = true; break;
+        operations.cont = true
+        break
       default:
-        operations.get = decodeGetOperation(operation); break;
+        operations.get = decodeGetOperation(operations.get, operation)
+        break
     }
   }
 
@@ -963,23 +1003,45 @@ function decodeOperations(ostr) {
 }
 
 // decode a get operation "a,!b"
-function decodeGetOperation(str) {
-  return str.split(',').map((s) => {
-    const isNot = s[0] === '!'
-    const key = isNot ? s.slice(1) : s
-    return () => d.State[key] == isNot
-  })
+function decodeGetOperation(oldGet, str) {
+  return addGetOperation(oldGet, ...str.split(","))
+}
+
+// add a get operation for a list of variables
+function addGetOperation(oldGet, ...vars) {
+  return () => {
+    if (oldGet && !oldGet()) {
+      return false
+    }
+
+    for (const v of vars) {
+      const isNot = v[0] === '!'
+      const key = isNot ? v.slice(1) : v
+
+      if (d.State[key] == isNot) {
+        return false
+      }
+    }
+
+    return true
+  }
 }
 
 // decode a set operation "set a,b"
-function decodeSetOperation(str) {
+function decodeSetOperation(oldSet, str) {
   str = str.slice(kSetOperation.length + 1)
+  return addSetOperation(oldSet, ...str.split(","))
+}
 
-  return str.split(',').map((s) => {
-    return () => {
-      d.State[key.trim()] = true
+// add a set operation for a list of variables
+function addSetOperation(oldSet, ...vars) {
+  return () => {
+    oldSet && oldSet()
+
+    for (const v of vars) {
+      d.State[v.trim()] = true
     }
-  })
+  }
 }
 
 // -- install --

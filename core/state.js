@@ -50,7 +50,7 @@ const ProxyState = new Proxy(state, {
   },
   set(target, prop, value) {
     const r = Reflect.set(target, prop, value)
-    if(initialState[prop] == null) {
+    if(initialState[prop] == null && !prop.startsWith('seen')) {
       console.error(`please define state properties on the initialState on core/state.js, property: ${prop}`)
     }
     Events.raise(Events.getStateChangeEvent(prop), value)
