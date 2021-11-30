@@ -90,7 +90,9 @@ function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
+
     if (el.href == null) return
+
     if (typeof el.href === "object") {
       // Handle SVGAnimatedString
       el.href.baseVal = randomizeUrl(el.href.baseVal)
@@ -111,9 +113,9 @@ function randomizeLinks() {
 }
 
 // append r=<rand> param, preserving existing query
-function randomizeUrl(str) {
-  if (str == null) {
-    return str
+function randomizeUrl(url) {
+  if (url == null) {
+    return url
   }
 
   // Handle SVGAnimatedString
@@ -123,7 +125,7 @@ function randomizeUrl(str) {
 
   const [path, search] = str.split("?")
   const params = new URLSearchParams(search)
-  params.append("r", Math.random().toString().slice(2))
+  params.set("r", Math.random().toString().slice(2))
 
   return `${path}?${params.toString()}`
 }
