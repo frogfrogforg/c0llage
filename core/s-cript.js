@@ -260,13 +260,14 @@ class ScriptHerald {
     const { id: scriptId, script } = best
 
     // show the dialog w/ the current item
+    const item = script.findCurrentItem()
+    script.advance()
     m.showDialogForItem(
       scriptId,
-      script.findCurrentItem(),
+      item,
       () => m.showNextDialog(),
     )
 
-    script.advance()
   }
 
   // shows the dialog at section w/ name, item j
@@ -321,6 +322,15 @@ class ScriptHerald {
 
     // make sure we have an item
     if (item == null) {
+      return
+    }
+
+    if (item.operations.set) {
+      item.operations.set()
+    }
+
+    if(item.operations.get && !item.operations.get()) {
+      cont()
       return
     }
 
@@ -949,13 +959,13 @@ function decodeOperations(ostr) {
 
   // then parse each one
   for (const operation of ostr.match(kOperationPattern).slice(1)) {
-    switch(operation.trim().split()[0]) { // gets the operation type
+    switch(operation.trim().split(' ')[0]) { // gets the operation type
       case kSetOperation:
-        operations.set = decodeSetOperation(operation.slice); break;
+        operations.set = decodeSetOperation(operation, operations.set); break;
       case kContOpration:
         operations.cont = true; break;
       default:
-        operations.get = decodeGetOperation(operation); break;
+        operations.get = decodeGetOperation(operation, operations.get); break;
     }
   }
 
@@ -963,23 +973,36 @@ function decodeOperations(ostr) {
 }
 
 // decode a get operation "a,!b"
-function decodeGetOperation(str) {
-  return str.split(',').map((s) => {
-    const isNot = s[0] === '!'
-    const key = isNot ? s.slice(1) : s
-    return () => d.State[key] == isNot
-  })
+function decodeGetOperation(str, oldGet) {
+  return () => {
+    if (oldGet && !oldGet()) {
+      return false
+    }
+
+    for (const s of str.split(',')) {
+      const isNot = s[0] === '!'
+      const key = isNot ? s.slice(1) : s
+
+      if (d.State[key] == isNot) {
+        return false
+      }
+    }
+
+    return true
+  }
 }
 
 // decode a set operation "set a,b"
-function decodeSetOperation(str) {
+function decodeSetOperation(str, oldSet) {
   str = str.slice(kSetOperation.length + 1)
 
-  return str.split(',').map((s) => {
-    return () => {
+  return () => {
+    oldSet && oldSet()
+
+    for (const key of str.split(',')) {
       d.State[key.trim()] = true
     }
-  })
+  }
 }
 
 // -- install --
