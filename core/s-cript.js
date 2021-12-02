@@ -388,11 +388,13 @@ class ScriptHerald {
     const m = this
 
     const html = `
-      <article class="Dialog">
-        <p>${line.text}</p>
+      <article class="Dialog Dialog-${m.id}">
+        <div class="Dialog-header"></div>
+        <p class="Dialog-text">${line.text}</p>
         <div class="Dialog-buttons">
           ${line.buttons.map((b) => `<button class="Dialog-button">${b}</button>`).join("\n")}
         </div>
+        <div class="Dialog-footer"></div>
       </article
     `
 
