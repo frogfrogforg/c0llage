@@ -5,6 +5,12 @@
 
 /* the text inside the box */
 .Dialog-text {
+    margin: 0;
+    background: #efefef;
+    padding: 4px;
+    border: 2px inset #E6E3E0;
+    font:menu;
+    font-size:1em;
 }
 
 /* the space before the text */
@@ -20,7 +26,7 @@
 
 /* the button container */
 .Dialog-buttons {
-    border-top: gray double;
+    /* border-top: gray double; */
     padding-top: 12px;
 }
 
