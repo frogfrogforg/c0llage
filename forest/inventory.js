@@ -13,17 +13,13 @@ let $mEl = document.getElementById("inventory")
 function add(props) {
   const id = getItemId(props)
 
-  console.log("DEBUG ADD " + id);
-  console.trace();
   // don't add duplicate items
   const existingItem = find(id)
   if (existingItem == null) {
-    console.log("DEBUG DOES NOT YET EXIST " + id);
     const newItem = getItemEl(props)
     $mEl.appendChild(newItem)
     return newItem
   } else {
-    console.log("DEBUG ALREADY EXISTS " + id);
     existingItem.show()
     return existingItem
   }

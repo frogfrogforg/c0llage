@@ -1,4 +1,4 @@
-import "/global.js"
+
 import { kInventory } from "./inventory.js"
 import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
@@ -220,7 +220,6 @@ function didFinishVisit() {
   d.Events.raise(d.Events.Forest.Visited)
 
   // spawn the assistant if possible
-  console.log("DEBUG SPAWN");
   Assistant.spawn()
 }
 
