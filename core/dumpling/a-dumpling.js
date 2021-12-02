@@ -421,6 +421,11 @@ export class Dumpling extends HTMLParsedElement {
     ))
 
     // focus iframe if necessary
+    this.focusIframe()
+
+  }
+
+  focusIframe() {
     const iframe = this.findIframe()
     if (iframe != null) {
       iframe.focus()
@@ -527,6 +532,8 @@ export class Dumpling extends HTMLParsedElement {
 
     // clear gesture
     this.gesture = null
+
+    this.focusIframe()
   }
 
   // -- e/drag
@@ -655,10 +662,15 @@ export class Dumpling extends HTMLParsedElement {
       return
     }
 
+    const isFocused = m.style.zIndex == sTopIndexByLayer[m.layer]
     m.classList.toggle(
       kUnfocusedClass,
-      m.style.zIndex != sTopIndexByLayer[m.layer]
+      !isFocused
     )
+
+    if(isFocused) {
+      this.focusIframe()
+    }
   }
 
   // -- queries --

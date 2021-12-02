@@ -2,6 +2,7 @@
     <link rel="stylesheet" href="./forest/forest.css">
     <link rel="stylesheet" href="/core/dumpling/dumpling.css">
     <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+    <script type="module" src="/core/d-iframe.js"></script>
     <style>
         body {
             position: relative;
@@ -53,13 +54,13 @@
             console.log(
                 "ALIDATOR CAT!!!"
             )
-            document.getElementById("alidator").style.display = "none"
-            document.getElementById("salada").style.display = "block"
+            Frames.hide("bitsy-alidator")
+            Frames.show("bitsy-salada")
         })
 
         d.Events.listen('salada.end', () => {
-            document.getElementById("alidator").style.display = "block"
-            document.getElementById("salada").style.display = "none"
+            Frames.show("bitsy-alidator")
+            Frames.hide("bitsy-salada")
         })
 
         d.Events.listen('mario.exitlevel', () => {
@@ -106,31 +107,43 @@
         window.getAllFrameMetadata = getAllFrameMetadata;
         window.getFrameMetadata = getFrameMetadata;
     </script>
+    <style>
+        .dumpling-container {
+            position: absolute;
+            top: 5vmin;
+            width: 90vmin;
+            height: 90vmin;
+            border: double yellow;
+        }
+    </style>
 </head>
 
 <body>
-    <a-dumpling id="bitsy" temperament='phlegmatic'>
-        <iframe id="alidator" src="/Jen/alidator.html"></iframe>
-        <iframe id="salada" style="display: none" src="/mut/salada-gratuita.html"></iframe>
-    </a-dumpling>
-
-    <a-dumpling id="tanooki" temperament='phlegmatic' hidden>
-        <iframe id="tanooki-iframe" src="/games/free-tanooki"></iframe>
-    </a-dumpling>
-
-    <a-dumpling id="buttonthing" temperament='sanguine' width=20 height=10>
-        <button style="width:100%; height:100%; resize:none" id="pressed-me">PRESS ME</button>
-    </a-dumpling>
-
-    <a-dumpling id="bucket" temperament='phlegmatic' hidden width=60 height=50>
-        <iframe src="/games/free-juice/free_juice.html"></iframe>
-    </a-dumpling>
-
-    <a-dumpling id="guttersour" temperament='phlegmatic' hidden>
-        <iframe id="guttersour-iframe" title="guttersour"></iframe>
-    </a-dumpling>
-
     <div class="ForestLayer--overlay">
-        <section id="frames" class="ForestLayer-content"></section>
+        <section id="frames" class="ForestLayer-content">
+            <a-dumpling title="alidator" id="bitsy-alidator" temperament='phlegmatic' w=50 h=50>
+                <d-iframe autoload id="alidator" src="/Jen/alidator.html"></d-iframe>
+            </a-dumpling>
+
+            <a-dumpling hidden title="salada prometida" id="bitsy-salada" temperament='phlegmatic' w=50 h=50>
+                <d-iframe autoload id="salada" src="/mut/salada-gratuita.html"></d-iframe>
+            </a-dumpling>
+
+            <a-dumpling title="free tanooki" id="tanooki" temperament='phlegmatic' hidden>
+                <d-iframe id="tanooki-iframe" src="/games/free-tanooki"></iframe>
+            </a-dumpling>
+
+            <a-dumpling title="a button" id="buttonthing" temperament='sanguine' width=20 height=10>
+                <button style="width:100%; height:100%; resize:none" id="pressed-me">PRESS ME</button>
+            </a-dumpling>
+
+            <a-dumpling title="mind control bucket" id="bucket" temperament='phlegmatic' hidden width=60 height=50>
+                <d-iframe src="/games/free-juice/free_juice.html"></iframe>
+            </a-dumpling>
+
+            <a-dumpling title="!final prize!" id="guttersour" temperament='phlegmatic' hidden>
+                <d-iframe id="guttersour-iframe" title="guttersour"></iframe>
+            </a-dumpling>
+        </section>
     </div>
 </body>
