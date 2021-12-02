@@ -1,0 +1,35 @@
+/* the whole dialog box */
+.Dialog {
+
+}
+
+/* the text inside the box */
+.Dialog-text {
+}
+
+/* the space before the text */
+.Dialog-header {
+
+}
+
+/* the space after the buttons */
+.Dialog-footer {
+
+}
+
+
+/* the button container */
+.Dialog-buttons {
+    border-top: gray double;
+    padding-top: 12px;
+}
+
+/* each dialog button */
+.Dialog-button {
+
+}
+
+/* classes for specific characters */
+.Dialog-assistant {
+    font-family: 'Courier New', Courier, monospace;
+}
