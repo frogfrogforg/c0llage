@@ -37,6 +37,15 @@ function main() {
 }
 
 // -- commands --
+/// navigate to the url
+function navigate(url) {
+  // add history entry
+  history.pushState({}, "", url)
+
+  // visit page
+  visit(url)
+}
+
 /// visit the url and update the game
 async function visit(url) {
   // run pre visit events
@@ -189,11 +198,8 @@ function didClick(evt) {
   // perform an in-page visit instead of the browser default
   evt.preventDefault()
 
-  // add history entry
-  history.pushState({}, "", url)
-
-  // visit page
-  visit(url)
+  // navigate to the page
+  navigate(url)
 }
 
 /// on pop state
@@ -225,7 +231,7 @@ function didFinishVisit() {
 
 // -- exports --
 window.reset = reset
-window.visit = visit
+window.navigate = navigate
 
 // -- bootstrap --
 main()
