@@ -59,7 +59,7 @@
 
     goToBookmark.addEventListener('click', (e) => {
       // window.top.history.pushState({}, "", )
-      window.top.visit(currentBookmark)
+      window.top.navigate(currentBookmark)
       currentBookmark = null
       goToBookmark.classList.toggle('hidden')
       createBookmark.classList.toggle('hidden')
@@ -67,7 +67,7 @@
     })
 
     createBookmark.addEventListener('click', () => {
-      currentBookmark = window.top.location
+      currentBookmark = window.top.location.href
       goToBookmark.classList.toggle('hidden')
       createBookmark.classList.toggle('hidden')
       bookmarkFrame.src = currentBookmark
