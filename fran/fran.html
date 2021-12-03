@@ -38,6 +38,60 @@
 
 now: quick fix flowers
 
+later:
+turn assistant off in flowers
+disable reset (presentation mode)
+<h3>12/3</h3>
+
+<p> dump of notes that i'm too lazy to format nicely:</p>
+
+
+differences:
+framed has a few more scripts loaded (c-picky, stealth, s-cript)
+
+maybe copy it over, and then add a new class in the forest.css that will hide frame stuff?
+
+(will also have to fix the other bug where windows are being carried over or something)
+
+
+
+1 FIX POSITIONING
+start from 26flowers to test!! bug shows up in 260flowers once you click through
+
+mmmmm maybe just an invisible frame to house the dumplings
+so don't just copy over the template, but add a frame for where the dumpling overlay is (with invisible styling)
+is it #game that has the styling? 
+yeah like the <section id='frames' and <section id='inventory' to maybe should be 
+
+          the dumplings pop up in #frames section
+
+          when you start at 260flowers -> uses the neutral.t.hmtl template dumplings go in #frames section
+          when you start at 26flowrs and go to 260flowers -> uses a template that's like
+
+          #game
+          #inventory
+          stealth
+
+          and goes straight in #game
+
+
+          ok so the question is: what happens when you click on the link in 26flowers
+
+          changes url
+          in forest.js downloads the page
+          runs visit()
+
+          2 COPY OVER SCRIPTS
+          but also copy over the scripts
+
+          3 ADD NOTEk
+          also a note in framed that's like IF YOU ADD AN IMPORT TO FRAMED, REMEMBER TO ADD IT TO NEUTRAL TOO
+          frame.t.html: "mm more functionality yum yum thank you daddy"
+          neutral.t.html: "nobody loves me D'X"
+
+          4 GET RID OF DEBUGS
+
+
 start at 26 flowers to test
 
 
@@ -47,9 +101,6 @@ if you go to /16hyperform, let it go to flowers and then click through, does it 
 if you start at 26flowers, and click through, are all the text boxes in reasonable places?
   - i guess i could fix this by not having negative values for the textboxes
 
-later:
-turn assistant off in flowers
-disable reset (presentation mode)
 
 <h3>11/23</h3>
 <p>quick fix flowers so that the frame spacing works either way</p>

@@ -125,10 +125,6 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
-    // DEBUG
-    console.log("DEBUG PARSED CALLBACK");
-    console.log(this);
-    console.trace();
     const id = this.getAttribute('id') || makeId(5)
     this.id = id
 
@@ -378,9 +374,6 @@ export class Dumpling extends HTMLParsedElement {
 
   show() {
     const m = this
-
-    console.log("DEBUG SHOW");
-    console.log(this);
 
     m.setVisible(true)
     m.dispatchEvent(new CustomEvent(
