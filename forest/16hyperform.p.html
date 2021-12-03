@@ -147,7 +147,8 @@
     // the following code makes it so that, once you visit this node,
     // if you idle for long enough (doNothingTimerSeconds), you'll
     // start looking at flowers
-    let doNothingTimerSeconds = 69;
+    // DEBUG
+    //let doNothingTimerSeconds = 69;
     let doNothingTimerSeconds = 1;
     let timer = setTimeout(doNothingTimeout,
         doNothingTimerSeconds * 1000);
@@ -167,9 +168,7 @@
         document.removeEventListener("keypress", resetTimer)
         document.removeEventListener("keyup", resetTimer)
 
-        console.log("um helloooooo");
-
-        visit("26flowers.html")
+        navigate("26flowers.html")
     }
 
     // if you even twitch, set the timer back to 0
