@@ -292,18 +292,26 @@ class ScriptHerald {
     }
 
     // get the section index
+
+    const click = script.findClickPath()
     const i = script.findIdxByName(name)
     const j = 0
     if (i == null) {
+      if (click != null) {
+        const [i1, j1] = click
+        script.flow = kClickSectionName
+        script.i = i1
+        script.sections[i1].i = j1
+      }
       return
     }
 
     // resolve the path
     const path = script.findNextPath(i, j)
     if (path == null) {
-      const click = script.findClickPath()
       if (click != null) {
         const [i1, j1] = click
+        script.flow = kClickSectionName
         script.i = i1
         script.sections[i1].i = j1
       }
@@ -312,6 +320,7 @@ class ScriptHerald {
 
     // update current script position
     const [i1, j1] = path
+    script.flow = name
     script.i = i1
     script.sections[i1].i = j1
 
@@ -587,6 +596,7 @@ class Script {
     const m = this
     m.sections = sections
     m.i = 0
+    m.flow = 'click'
   }
 
   // -- commands --
@@ -607,21 +617,22 @@ class Script {
     // if there isn't one, end this script
     if (next == null) {
       // if this is click, done
-      if(m.sections[curr[0]].name === kClickSectionName) {
+      if(m.flow === kClickSectionName) {
         m.i = -1
         return
       }
 
       // if it's not and there is no click section, also done
-      const click = m.findIdxByName(kClickSectionName)
+      const click = m.findClickPath()
       if (click == null) {
         m.i = -1
         return
       }
 
       // otherwise jump into the click section
-      m.i = click
-      m.sections[click].i = 0
+      m.flow = kClickSectionName
+      m.i = click[0]
+      m.sections[click[0]].i = click[1]
       return
     }
 
