@@ -128,11 +128,11 @@ function randomizeUrl(url) {
   }
 
   // Handle SVGAnimatedString
-  if (typeof str === "object") {
-    str = str.baseVal.toString()
+  if (typeof url === "object") {
+    url = url.baseVal.toString()
   }
 
-  const [path, search] = str.split("?")
+  const [path, search] = url.split("?")
   const params = new URLSearchParams(search)
   params.set("r", Math.random().toString().slice(2))
 
