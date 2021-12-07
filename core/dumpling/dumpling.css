@@ -137,8 +137,6 @@ d-iframe iframe {
 }
 
 .Frame-header-button {
-  /* height: 1.2vmin; */
-  /* width: 1.2vmin; */
   font-size: calc(var(--frame-header-height-param) * 1.9);
   margin-left: calc(var(--frame-header-height-param) * 0.45);
   text-align: center;
@@ -146,8 +144,8 @@ d-iframe iframe {
 
 .Frame-close-button {
   position: relative;
-  width: calc(var(--frame-header-height-param) * 2.1);
-  height: calc(var(--frame-header-height-param) * 2.1);
+  min-width: calc(var(--frame-header-height-param) * 2.1);
+  min-height: calc(var(--frame-header-height-param) * 2.1);
   /* margin-top: 0.1vmin; */
   /* margin-left: var(--frame-padding); */
   background-image: url("./img/window-close.gif");
@@ -230,7 +228,8 @@ d-iframe iframe {
 }
 
 .choleric .Frame-handle{
-  cursor: not-allowed;
+  /*cursor: not-allowed;*/
+  display: none;
 }
 
 @keyframes shake {
