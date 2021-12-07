@@ -2,6 +2,8 @@
 <html lang="en-us">
 
 <head>
+  <script type="module" src="./a-dumpling.js"></script>
+  <link rel="stylesheet" href="./frames.css">
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Unity WebGL Player | guttersour</title>
@@ -20,17 +22,12 @@
     }
 
     .error {
-      position: absolute;
-      display: none;
       color: red;
       text-align: center;
-      top: 120%;
-      left: 50%;
       font-family: monospace;
       font-size: medium;
       font-weight: bolder;
       width: 100%;
-      transform: translate(-50%, -50%)
     }
 
     @animate {}
@@ -61,14 +58,6 @@
       <div id="unity-progress-bar-empty">
         <div id="unity-progress-bar-full"></div>
       </div>
-      <div class='error' id='error'>
-        error!
-        <br>
-        did you read
-        <br>
-        the description???
-        <br>
-      </div>
     </div>
     <div id="unity-footer">
       <div id="unity-webgl-logo"></div>
@@ -80,6 +69,32 @@
     <iframe src="https://archive.org/embed/msdos_Ultimate_DOOM_The_1995" width="960" height="600" frameborder="0"
       webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
   </div>
+  <a-dumpling hidden temperament="phlegmatic" title='error' id='error' h=30 w=30 min-x=40 max-x=60 min-y=40 max-y=60>
+    <div class='error'>
+      <br>
+      <br>
+      error!
+      <br>
+      you should try contacting
+      <br>
+      <button id="visitDumplingDotLove">
+        the game mechanic.
+      </button>
+      <br>
+      (more info in the description)
+      <br>
+    </div>
+  </a-dumpling>
+  <a-dumpling hidden temperament="phlegmatic" title='error' id='error2' h=30 w=30 min-x=40 max-x=60 min-y=40 max-y=60>
+    <div>
+      he can teach you how to fix pretty much anything, if you are
+      <button onclick="window.open('https:\/\/dumpling.love', '_blank');">
+        willing
+      </button>
+    </div>
+  </a-dumpling>
+
+
   <script>
 
     var container = document.querySelector("#unity-container");
@@ -87,6 +102,7 @@
     var loadingBar = document.querySelector("#unity-loading-bar");
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
     var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+
 
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       container.className = "unity-mobile";
@@ -146,14 +162,19 @@
       return 1 - 0.5 * Math.abs(Math.pow(2 - t, pow));
     }
 
+    document.getElementById("visitDumplingDotLove").addEventListener("click", () => {
+      Frames.show('error2')
+    })
 
     gotError = false
     function Animate() {
+
       time++
       progress = Math.min(.8, tween(time / totalTime, 4));
       if (progress >= .8 && !gotError) {
         gotError = true
-        document.getElementById('error').style.display = 'block'
+        // document.getElementById('error').style.display = 'block'
+        window.Frames.show("error")
       } else {
         progressBarFull.style.width = 100 * progress + "%";
         window.requestAnimationFrame(Animate);

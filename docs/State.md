@@ -18,7 +18,7 @@ window.top.d.State
 d.State
 ```
 
-State is a plain js object, and can store whatever you want. However, it's good practice to define the initial values of things in the state, which can be done in the file [global.js](../global.js).
+State is a plain js object, and can store whatever you want. However, it's good practice to define the initial values of things in the state, which can be done in the file [global.js](/global.js).
 
 Currently the initialState is defined as the following:
 ```js
@@ -52,6 +52,7 @@ Current State Information
   - `sawMessyServerNarrative`: set to true when opening the narrative in the messy computer
   - `visitedAlidator`: set to true when getting the sparkling light in alidator
   - `visitedPrometeus`: set to true when talking to the bird in prometheus (salada prometida),
+  - `visitedFranBlog`: set to true on first open of fran's blog
 
 TODO
 ----

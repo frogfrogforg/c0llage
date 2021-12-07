@@ -1,6 +1,6 @@
 <head>
     <script type="module" src="forest.js"></script>
-    <link rel="stylesheet" href="../shared/frames.css">
+    <link rel="stylesheet" href="/core/dumpling/dumpling.css">
     <style>
         body {
             position: relative;
@@ -86,7 +86,7 @@
 
 <body style="width:100%; height:100%">
     <a-dumpling title='alidator.bitsy' temperament='phlegmatic' id="alidator-frame" hidden min-size=60 max-size=80>
-        <d-iframe style="--scaleFactor: 1.0;" id="alidator" src="../../Jen/alidator.html"></d-iframe>
+        <d-iframe style="--scaleFactor: 1.0;" id="alidator" src="/Jen/alidator.html"></d-iframe>
     </a-dumpling>
 
     <a-dumpling title='forest.html' temperament='phlegmatic' id="forest-frame" hidden min-size=60 max-size=80>
@@ -94,7 +94,7 @@
     </a-dumpling>
 
     <a-dumpling title='blog' temperament='phlegmatic' id="main-frame" hidden min-size=60 max-size=80>
-        <d-iframe style="--scaleFactor: 1.0;" id="main" src="../../home.html"></d-iframe>
+        <d-iframe style="--scaleFactor: 1.0;" id="main" src="/home.html"></d-iframe>
     </a-dumpling>
 
     <a-dumpling title='cyberpunk 2077' temperament='choleric' id="narrative" width=35 height=80 hidden>
@@ -132,10 +132,10 @@
     <!-- claribelle is unhidden when she escapes from alidator -->
     <img id="claribelle" src="./images/Claribelle.png" hidden>
 
-    <script type="module" src="../shared/d-iframe.js"></script>
-    <script type="module" src="../shared/a-dumpling.js"></script>
+    <script type="module" src="/core/d-iframe.js"></script>
+    <script type="module" src="/core/dumpling/a-dumpling.js"></script>
     <script type="module">
-        import "../../global.js"
+        import "/global.js"
 
         const tagName = 'pc-icon'
         const iconTemplate = `

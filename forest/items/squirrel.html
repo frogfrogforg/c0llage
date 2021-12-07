@@ -1,0 +1,58 @@
+<head>
+  <style>
+    body {
+      background: url("fransquirrel.gif");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      margin: 0px;
+    }
+    #squirrel-gif {
+      background: url("squirrel.gif");
+      height: 100%;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body onclick="playsound()">
+    <audio id="sq0">
+        <source src="../sound/squirrel/sq_001.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq1">
+        <source src="../sound/squirrel/sq_002.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq2">
+        <source src="../sound/squirrel/sq_004.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sq3">
+        <source src="../sound/squirrel/sq_006.mp3" type="audio/mpeg">
+    </audio>
+    <img id="squirrel-gif" src="squirrel.gif" />
+
+    <script type="module">
+
+      import "/global.js";
+      console.log("visited fran? " + d.State.visitedFranBlog);
+
+      let squirrel_opacity = 1;
+      window.playsound = () => {
+        // play random squirrel noise
+        let s_i = Math.floor(Math.random() * 4);
+        document.getElementById("sq"+s_i).play(); 
+
+
+	// make it a little more transparent every time
+	// (but only if you've seen my blog >:| )
+	if (d.State.visitedFranBLog) {
+	  let squirrel_gif = document.getElementById("squirrel-gif");
+	  squirrel_opacity -= .1;
+	  squirrel_gif.style.opacity = squirrel_opacity;
+	}
+	
+	
+      }
+    </script>
+</body>

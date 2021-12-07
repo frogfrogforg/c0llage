@@ -9,10 +9,10 @@
 <body>
     <img class="background" src="./images/19.png">
 
-    <button class="hotspot centered inspect" onclick="goToOtherSide()"
+    <button class="hotspot centered cursor-inspect" onclick="goToOtherSide()"
         style="left: 95.888%; top: 54.666%; width: 8%; height: 90%"></button>
 
-    <div style="position:absolute;width:auto;top:42%;left:27%;transform:rotate(1deg);"><a class="talk"
+    <div style="position:absolute;width:auto;top:42%;left:27%;transform:rotate(1deg);"><a class="cursor-talk"
             onclick="startWizardConversation()">
             <img src="./images/Wizard.png" width="40%">
     </div>
@@ -55,13 +55,13 @@
     </a-dumpling>
 
     <a-dumpling persistent hidden id="wizardMap" x=70 y=20 width=20 height=30>
-        <d-iframe src="../../sitemap/map.html">
+        <d-iframe src="/sitemap/map.html">
         </d-iframe>
     </a-dumpling>
 </body>
 
 <script type="module">
-    import * as Turbo from "../../lib/@hotwired/turbo@7.0.0-beta.4.js"
+    import * as Turbo from "/lib/@hotwired/turbo@7.0.0-beta.4.js"
     var initiatedConversation = false
     var wizardTimerSeconds = 10
 

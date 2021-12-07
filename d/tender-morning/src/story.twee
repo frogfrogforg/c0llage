@@ -588,7 +588,7 @@
 	<<link "It's warm...">><<replace ".passage-body">><<include "warm">><</replace>><</link>>
 
 :: warm
-	<a href="../../gatherings/forest/21other_shores.html">There's smoke...</a>
+	<a href="/forest/21other_shores.html">There's smoke...</a>
 
 <!-- helpful:) -->
 :: lastloc

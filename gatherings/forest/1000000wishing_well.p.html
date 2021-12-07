@@ -1,0 +1,148 @@
+<body>
+  <!-- credits: https://publicdomainpictures.net/pictures/40000/velka/wooden-wishing-well.jpg-->
+  <img class="background" src="./images/wooden-wishing-well.jpg">
+
+  <a class="hotspot cursor-move" href="./70outhouse.html" style="left: -10%; width: 120%; height: 15%; bottom: -5%;">
+  </a>
+
+  <button id="wishingWell" class="hotspot cursor-coin" onclick="Frames.show('well1')"
+    style="left: 17%; top: 19%; width: 37%; height: 66%;"></button>
+
+  <a-dumpling layer="wishingWell" hidden title='a wishing well' id="well1" x=10 y=65 width=62 height=28>
+    <div>
+      <p>a wishing well! maybe all your dreams will come true!</p>
+      <c-picky condition="!hasQuarters">
+        <p>sadly, it appears that you have no <button class="Dialog-button" onclick="Frames.show('quarterShop')">
+            quarters
+          </button>...</p>
+      </c-picky>
+      <c-picky condition="hasQuarters">
+        <p>thankfully, you have some quarters to spare!</p>
+      </c-picky>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling layer="quarterShop" hidden title='quarter shop' id="quarterShop" x=100 y=00 width=40 height=45>
+    <div>
+      <p>hello stranger! i heard you might need some quarters...</p>
+      <p>lucky for you the parks staff is currently accepting donations in exchange for nice prizes, quartes being one
+        of them. </p>
+      <p><b>the current exchange rate is <span id="exchangeRate">69</span> for four quarters</b></p>
+      <button class="Dialog-button" id="donate">donate now!</button>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling layer="kofiShop" hidden title='quarter shop' id="quarterKofi" x=98 y=05 width=40 height=80>
+    <iframe id='kofiframe' src='https://ko-fi.com/theparksstaff/?hidefeed=true&widget=true&embed=true&preview=true'
+      style='border:none;width:100%;padding:4px;background:#f9f9f9;' height='712' title='theparksstaff'>
+    </iframe>
+  </a-dumpling>
+
+  <a-dumpling layer="quarterShop" hidden title='quarter shop' id="quarterExchange" x=96 y=86 width=40 height=28>
+    <div id="waitingForDonation" style="cursor:progress; width: 100%; height: 100%;">
+      <p>Waiting for donation</p>
+    </div>
+    <div id="gotDonation" style="display: none;">
+      <p>after donating, you may enter the amount donated below in exchange for quarters (remember,
+        1
+        quarter = <span id="exchangeRatePerQuarter">69/4</span> </p>
+      <input type="number" title="how much you paid" id="ammountPaid" value=1 step=1>
+      <button class="Dialog-button" id="exchange">exchange!</button>
+    </div>
+  </a-dumpling>
+</body>
+
+<script type="module">
+  import { kInventory } from "./inventory.js"
+
+  const COIN_TYPES_COUNT = 6
+  const exchangeRate = 1.05
+
+  window.wellDrop = (evt) => {
+    evt.preventDefault();
+    if (evt.dataTransfer.getData("text") == "floppy") {
+      Frames.hide("floppy")
+      document.getElementById("main").classList.toggle("screenshake-loop");
+      // window.location.href="2003-transition1.html"
+      //Turbo.visit("2003-transition1.html")
+    }
+    if (evt.dataTransfer.getData("text") == "quarter") {
+      d.State.quarters -= 1
+      if (d.State.wishes) {
+        d.State.wishes += 1
+      } else {
+        d.State.wishes = 1
+      }
+      // document.getElementById("wishMessage").innerHTML =
+      // d.State.wishes == 0 ? ""
+      kInventory.add({
+        id: "wish" + d.State.wishes,
+        src: "items/wish",
+        attrs: {
+          "no-back": true,
+          "persistent": false,
+          "layer": "quarters",
+          width: 25,
+          height: 60,
+          "min-x": 20,
+          "max-x": 60,
+          "min-y": 40,
+          "max-y": 70,
+        }
+      })
+
+      const dumplingId = evt.dataTransfer.getData("source-dumpling-id")
+      Frames.close(dumplingId)
+    }
+  }
+
+  function main() {
+    document.getElementById('wishingWell').addEventListener('dragover', (e) => e.preventDefault())
+    document.getElementById('wishingWell').addEventListener('drop', wellDrop)
+    document.getElementById('exchangeRate').innerHTML = exchangeRate
+    document.getElementById('exchangeRatePerQuarter').innerHTML = exchangeRate / 4
+
+    document.getElementById('donate').addEventListener('click', () => {
+      // TODO: find out a better time here? open ko-fi in a new tab? check for the iframe src?
+      Frames.hide('quarterShop')
+      Frames.show('quarterExchange')
+      Frames.show('quarterKofi')
+      const donationTimeSeconds = 42.0
+      window.setTimeout(() => {
+        Frames.show('quarterExchange')
+        document.getElementById("waitingForDonation").style.display = "none"
+        document.getElementById("gotDonation").style.display = "block"
+      }, donationTimeSeconds * 1000)
+    })
+    document.getElementById('exchange').addEventListener('click', () => {
+      const value = document.getElementById('ammountPaid').value
+      const numCoins = Math.floor(value / exchangeRate * 4)
+      for (let i = 0; i < numCoins; i++) {
+        // d.State.hasQuarters = true
+        if (d.State.quarters) {
+          d.State.quarters += 1
+        } else {
+          d.State.quarters = 1
+        }
+
+        kInventory.add({
+          id: "quarter" + d.State.quarters,
+          src: "items/quarter",
+          attrs: {
+            "no-back": true,
+            "no-close": true,
+            "persistent": true,
+            "layer": "quarters",
+            width: 20,
+            height: 25,
+            "min-x": 60,
+            "max-x": 110,
+            "min-y": 70,
+            "max-y": 90,
+          }
+        })
+      }
+    })
+  }
+  main()
+</script>

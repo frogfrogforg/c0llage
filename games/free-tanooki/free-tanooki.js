@@ -1,4 +1,4 @@
-import "../../global.js"
+import "/global.js"
 
 //
 //
@@ -10,6 +10,7 @@ import "../../global.js"
 var SCREEN_WIDTH = 256
 var SCREEN_HEIGHT = 240
 var FRAMEBUFFER_SIZE = SCREEN_WIDTH * SCREEN_HEIGHT
+var keyboardActive = false
 
 var canvas_ctx, image
 var framebuffer_u8, framebuffer_u32
@@ -48,15 +49,7 @@ function loadJSON(path, success, error) {
   xhr.send()
 }
 
-// setTimeout(() => {
-//   loadJSON(
-//     'superplsdontsueme3.json',
-//     data => {
-//       console.log('loaded')
-//       // nes.fromJSON(data)
-//     },
-//     err => console.log(err)), 1
-// })
+
 
 function onAnimationFrame() {
   window.requestAnimationFrame(onAnimationFrame)
@@ -91,6 +84,7 @@ function audio_callback(event) {
 let save
 
 function keyboard(callback, event) {
+  if (!keyboardActive) return;
   var player = 1
   switch (event.keyCode) {
     case 38: // UP
@@ -142,6 +136,11 @@ function keyboard(callback, event) {
     //     'afterreload.json')
     //   window.alert('STOP')
     //   break
+    case 53:
+      downloadObjectAsJson(
+      nes.toJSON(),
+      'superplsdontsueme3.json')
+      break;
     case 13: // Return
       callback(player, jsnes.Controller.BUTTON_START); break
     default: break
@@ -174,7 +173,14 @@ function nes_init(canvas_id) {
 function nes_boot(rom_data) {
   nes.loadROM(rom_data)
   window.requestAnimationFrame(onAnimationFrame)
-  start()
+  loadJSON(
+  'superplsdontsueme3.json',
+  data => {
+    console.log('loaded')
+    nes.fromJSON(data)
+  },
+  err => console.log(err))
+  // start()
 }
 
 function nes_load_data(canvas_id, rom_data) {
@@ -204,7 +210,6 @@ function nes_load_url(canvas_id, path) {
 }
 
 function downloadObjectAsJson(exportObj, exportName) {
-  return // TODO: figure a way to properly save a savestate (hope that people fix jsnes)
   var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj))
   var downloadAnchorNode = document.createElement('a')
   downloadAnchorNode.setAttribute('href', dataStr)
@@ -317,8 +322,8 @@ function Update() {
 // Events
 
 // TODO: remove keyboard input?
-// window.top.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
-// window.top.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
+window.top.addEventListener('keydown', (event) => { keyboard(nes.buttonDown, event) })
+window.top.addEventListener('keyup', (event) => { keyboard(nes.buttonUp, event) })
 
 d.Events.listen('pressed-me-down', (event) => {
   nes.buttonDown(1, jsnes.Controller.BUTTON_A)

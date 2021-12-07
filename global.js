@@ -11,6 +11,7 @@ if (root.d == null) {
   const global = {
     Events,
     State,
+    window: root,
   }
 
   // share it between every key

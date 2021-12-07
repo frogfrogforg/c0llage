@@ -1,0 +1,237 @@
+<head>
+
+  <link rel="stylesheet" href="../forest.css">
+  <link rel="stylesheet" href="../cursors.css">
+  <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+  <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+  <script type="module" src="/core/d-iframe.js"></script>
+  <script type="module" src="/global.js"></script>
+  <style>
+    .speedrun-splits {
+      border-spacing: 0;
+    }
+
+    .speedrun-splits td,
+    .speedrun-splits th {
+      border: 1px solid #232323;
+      border-left: none;
+      border-right: none;
+      padding: 8px;
+      border-collapse: separate;
+    }
+
+    .speedrun-splits:nth-child(even) {
+      background-color: #171717;
+    }
+
+    .speedrun-body {
+      font-family: sans-serif;
+      background-color: #0F0F0F;
+      color: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .splitRow.currentSplit {
+      background: rgb(24, 52, 107);
+      background: linear-gradient(0deg, rgba(24, 52, 107, 1) 0%, rgba(48, 109, 231, 1) 100%);
+      text-shadow: 0px 2px black;
+    }
+
+    .speedrun-time {
+      font-size: 60px;
+      font-weight: bold;
+      text-align: right;
+      background: rgb(22, 168, 61);
+      background: linear-gradient(0deg, rgba(22, 168, 61, 1) 0%, rgba(96, 232, 132, 1) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .speedrun-title {
+      font-size: 30px;
+      background: rgb(15, 15, 15);
+      background: linear-gradient(0deg, rgba(15, 15, 15, 1) 0%, rgba(40, 40, 40, 1) 100%);
+    }
+
+    .splitName {
+      padding-left: 20px !important;
+    }
+
+    .splitRef {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .splitTime {
+      text-align: right;
+      /* //display: none; */
+    }
+
+    .splitTime.red {
+      color: red;
+    }
+
+    .splitTime.green {
+      color: #04B42F;
+    }
+  </style>
+</head>
+
+<script>
+  function msToTimeString(ms) {
+    let seconds = Math.floor((ms / 1000) % 60);
+    let minutes = Math.floor(ms / 1000 / 60) % 60;
+    let hours = Math.floor(ms / 1000 / 60 / 60);
+
+    seconds = ('0' + seconds).slice(-2);
+    minutes = ('' + minutes).slice(-2);
+    if (hours <= 0) {
+      return `${minutes}:${seconds}`;
+    } else {
+      hours = ('' + hours).slice(-2);
+      return `${hours}:${minutes}:${seconds}`;
+    }
+  }
+
+  const SPLIT_DEFINITIONS = [
+    // PLS ADD MORE STUFF HERE
+    {
+      title: '🌲 Welcome!',
+      reference: 2000
+    },
+    {
+      title: '🐸 Rude',
+      reference: 320000
+    },
+    {
+      title: '🐦 Flew away',
+      reference: 420000
+    },
+    {
+      title: '🗺️ Friendly wizard',
+      reference: 420000
+    },
+    {
+      title: '️🥗 Found all free salads',
+      reference: 999990
+    },
+    {
+      title: '🚀 Got to the cosmodrome',
+      reference: 10000000
+    },
+    {
+      title: '🎮 One true gamer',
+      reference: 12000000
+    },
+  ]
+
+  const splits = []
+
+  function splitTimeId(i) { return `splitTime${i}` }
+  function splitRowId(i) { return `splitRow${i}` }
+
+  let totalTimer = 0
+  let lastSplitTime = 0
+  let currentSplit = 0
+  const timerDelta = 100
+  window.onload = () => {
+    const splitsTable = document.getElementById('speedrunSplits')
+    for (let i = 0; i < SPLIT_DEFINITIONS.length; i++) {
+      const split = SPLIT_DEFINITIONS[i]
+      console.log(split)
+      const row = document.createElement('tr')
+      row.classList.add('splitRow')
+      row.id = splitRowId(i)
+
+      const columnName = document.createElement('td')
+      columnName.classList.add('splitName')
+      columnName.innerHTML = split.title
+
+      const columnTime = document.createElement('td')
+      columnTime.classList.add('splitTime')
+      columnTime.id = splitTimeId(i)
+
+      const columnRef = document.createElement('td')
+      columnRef.classList.add('splitRef')
+      columnRef.innerHTML = msToTimeString(split.reference)
+
+      row.appendChild(columnName)
+      row.appendChild(columnTime)
+      row.appendChild(columnRef)
+      splitsTable.appendChild(row)
+    }
+
+    let currentSplitTimeElement = document.getElementById(splitTimeId(currentSplit))
+    let currentSplitRowElement = document.getElementById(splitRowId(currentSplit))
+    currentSplitRowElement.classList.toggle('currentSplit')
+
+    const timerHM = document.getElementById('timeStringHM')
+    const timerMS = document.getElementById('timeStringMS')
+    window.startTimer = function () {
+      document.getElementById('startButton').style.display = 'none'
+      document.getElementById('splitButton').style.display = 'block'
+      // todo: maybe restart?
+
+      setInterval(() => {
+        if (currentSplit >= SPLIT_DEFINITIONS.length) return
+        totalTimer += timerDelta
+        const currentSplitTime = totalTimer - lastSplitTime
+        timerHM.innerHTML = msToTimeString(totalTimer)
+        timerMS.innerHTML = totalTimer % 1000 / 100
+
+        const currentSplitRef = SPLIT_DEFINITIONS[currentSplit].reference
+        if (currentSplitTime > currentSplitRef) {
+          console.log('aaaaaaaaaaaa', currentSplitTimeElement)
+          // currentSplitTimeElement.classList.toggle('red', true)
+          const delta = currentSplitTime - currentSplitRef
+          currentSplitTimeElement.innerHTML = `+${msToTimeString(delta)}.${delta % 1000 / 100}`
+
+        }
+      }, timerDelta);
+    }
+
+    // TODO: make this happen on specific events during the game?
+    window.doSplit = function () {
+      const currentSplitTime = totalTimer - lastSplitTime
+      const currentSplitRef = SPLIT_DEFINITIONS[currentSplit].reference
+      lastSplitTime = totalTimer
+
+      currentSplitTimeElement
+      let delta = currentSplitTime - currentSplitRef
+      let sign = ''
+      if (delta >= 0) {
+        sign = '+'
+        currentSplitTimeElement.classList.add('red', true)
+      } else {
+        sign = '-'
+        currentSplitTimeElement.classList.add('green', true)
+      }
+      delta = Math.abs(delta)
+
+      currentSplitTimeElement.innerHTML = `${sign}${msToTimeString(delta)}.${delta % 1000 / 100}`
+
+      currentSplitRowElement.classList.toggle('currentSplit')
+
+      currentSplit++
+      currentSplitTimeElement = document.getElementById(splitTimeId(currentSplit))
+      currentSplitRowElement = document.getElementById(splitRowId(currentSplit))
+      currentSplitRowElement.classList.toggle('currentSplit')
+    }
+  }
+
+
+</script>
+
+<body class='speedrun-body'>
+  <div class='speedrun-title'>
+    Linking Park. Super Spaceport (funny little website run) (100%) (no-florest-skip)
+  </div>
+  <table class='speedrun-splits' id='speedrunSplits'>
+  </table>
+  <div class='speedrun-time'>
+    <span id='timeStringHM'>0:00</span>.<small id='timeStringMS'>0</small>
+  </div>
+  <button id='startButton' onclick='startTimer()'>START</button>
+  <button id='splitButton' style='display: none' onclick='doSplit()'>SPLIT</button>
+</body>

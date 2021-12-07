@@ -1,42 +1,44 @@
 <html>
+
 <head>
     <link rel="stylesheet" href="forest.css">
+    <link rel="stylesheet" href="cursors.css">
     <style>
-        body{
-            color:white;
-            background-color:cornflowerblue;
-            font-size:3vmin;
+        body {
+            color: white;
+            background-color: cornflowerblue;
+            font-size: 3vmin;
         }
 
         .branch p {
-            padding:2vmin;
+            padding: 2vmin;
         }
 
-        .nest{
-            display:flex;
+        .nest {
+            display: flex;
             align-items: center;
             justify-content: center;
-            width:80vmin;
-            height:40vmin;
-            margin:auto;
+            width: 80vmin;
+            height: 40vmin;
+            margin: auto;
         }
 
         .portrait {
-            width:18vmin;
-            height:18vmin;
-            border:6px double #eefdff;
-            margin:1vmin;
+            width: 18vmin;
+            height: 18vmin;
+            border: 6px double #eefdff;
+            margin: 1vmin;
             z-index: 1;
-            transition:all ease-out 50ms;
+            transition: all ease-out 50ms;
         }
 
         .portrait:hover {
-            width:25vmin;
-            height:25vmin;
+            width: 25vmin;
+            height: 25vmin;
             transition: all ease-in 220ms;
             transition-delay: 9ms;
-            border:12px solid #f66b6b;
-            margin:2vmin;
+            border: 12px solid #f66b6b;
+            margin: 2vmin;
         }
 
         img {
@@ -45,19 +47,18 @@
         }
 
         .vanish {
-            display:hidden;
+            display: hidden;
         }
 
-        .big {
-
-        }
-
+        .big {}
     </style>
 </head>
+
 <body>
     <div class="branch" style="background-color:transparent;">
-        <p>Hi. I'm sorry to interrupt, but this is so important. If you were a bird, <b>which bird would you be?</b><br><br>
-        Choose wisely, traveler.<br><br></p>
+        <p>Hi. I'm sorry to interrupt, but this is so important. If you were a bird, <b>which bird would you
+                be?</b><br><br>
+            Choose wisely, traveler.<br><br></p>
 
         <div class="nest">
             <div style="background-color:teal;width:69vmin;height:35vmin;position:absolute;"></div>
@@ -72,9 +73,12 @@
         </div>
     </div>
 
-<!--todo-->
-when you click a bird, alert pops up. asks "are you sure?" if you select yes, the "branch" div is set to display:hidden, & the relevant bird image now takes up the entire window.
+    <b>todo:</b>
+    when you click a bird, alert pops up. asks "are you sure?" if you select yes, the "branch" div is set to
+    display:hidden, & the relevant bird image now takes up the entire window.
 
-all of this will be housed in an unclosable dumpling which appears on one of the first couple forest pages. hopefully this will help teach players that they don't have to close every window & can keep some between pages. 
+    all of this will be housed in an unclosable dumpling which appears on one of the first couple forest pages.
+    hopefully this will help teach players that they don't have to close every window & can keep some between pages.
 </body>
+
 </html>

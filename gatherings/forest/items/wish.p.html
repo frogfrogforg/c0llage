@@ -1,0 +1,33 @@
+<!-- template: item {title: wish} -->
+
+<head>
+  <script type='module'>
+    document.getElementById("wishButton").addEventListener("click", () => {
+      const dumplingId = window.frameElement.getAttribute("dumpling-id")
+      if (dumplingId) {
+        parent.Frames.close(dumplingId)
+      }
+    })
+  </script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .wishText {
+      height: 80%;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="wishBody">
+  <textarea rows=13 class="wishText"
+    placeholder="write your wish here! what if it comes true? you can also just think about it if you want..."
+    type="text"></textarea>
+  <br>
+  <button class="Dialog-button" id="wishButton">wish</button>
+</body>

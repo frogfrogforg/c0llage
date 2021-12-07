@@ -1,8 +1,8 @@
 <head>
   <link rel="stylesheet" href="../forest.css">
-  <script type="module" src="../../shared/a-dumpling.js"></script>
-  <script type="module" src="../../shared/d-iframe.js"></script>
-  <link rel="stylesheet" href="../../shared/frames.css">
+  <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+  <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+  <script type="module" src="/core/d-iframe.js"></script>
   <style>
     html,
     body {
@@ -53,7 +53,7 @@
 </head>
 
 <script type="module">
-  import '../../../global.js'
+  import '/global.js'
   window.clearState = function () {
     if (window.confirm("Are you sure? The park will consume all your leftovers")) {
       d.State.clear();

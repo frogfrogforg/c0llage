@@ -1,0 +1,43 @@
+<script type="module">
+    import { kInventory } from "./inventory.js"
+
+    const boomboxFloor = document.getElementById("boomboxFloor")
+    boomboxFloor.addEventListener("click", () => {
+        d.State.hasBoombox = true
+        const boombox = kInventory.add({
+            id: "the-boombox",
+            src: "items/boombox/boombox",
+            attrs: {
+                "title": "boombox",
+                "no-back": true,
+                "persistent": true,
+                "layer": "boombox",
+                temperament: "phlegmatic",
+                width: 65,
+                height: 40,
+                "min-x": 20,
+                "max-x": 60,
+                "min-y": 40,
+                "max-y": 70,
+            }
+        })
+        boombox.addEventListener("hide-frame", () => d.State.hasBoombox = false)
+        boombox.addEventListener("show-frame", () => d.State.hasBoombox = true)
+    })
+</script>
+
+<body>
+    <img class="background" src="./images/two_skinny_trees.png">
+    <c-picky wants="!hasBoombox">
+        <img class="background" src="./images/rustyboombox.png">
+        <button id="boomboxFloor" class="hotspot cursor-radio"
+            style="left: 53%; top: 57%; width: 22%; height: 16%; display: block;">
+        </button>
+    </c-picky>
+    <!-- <a class="hotspot cursor-move" href="./44squirrel.html" style="left: 0%; top: 90%; width: 100%; height: 30%"></a> -->
+    <a class="hotspot centered cursor-move" href="./41squirrel.html"
+        style="left: 32.888%; top: 39%; width: 25%; height: 30%;"></a>
+    <a class="hotspot centered cursor-move" href="./1.html" style="left: 10%; top: 70%; width: 20%; height: 60%"></a>
+    <a class="hotspot centered cursor-move" href="./12generic.html"
+        style="left: 90%; top: 70%; width: 20%; height: 60%"></a>
+</body>

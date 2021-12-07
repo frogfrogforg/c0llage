@@ -1,0 +1,72 @@
+<head>
+  <link rel="stylesheet" href="../forest.css">
+  <link rel="stylesheet" href="../cursors.css">
+  <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+  <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+  <script type="module" src="/core/d-iframe.js"></script>
+  <style>
+    html,
+    body {
+      position: relative;
+      top: 0;
+      left: 0;
+      margin: 0;
+    }
+
+    .clearbutton {
+      /* color: red; */
+      font-size: 15vmin;
+      /* background-color: darkblue; */
+      box-sizing: border-box;
+      padding: 5px;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clearbutton button {
+      /* color: red; */
+      font-size: 50vmin;
+      width: 100%;
+      border-width: 7px;
+      background-color: #b7a7b7;
+      height: 100%;
+      overflow: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .clearbutton-body {
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .clearbutton-content {}
+  </style>
+</head>
+
+<script type="module">
+  import '/global.js'
+  window.clearState = function () {
+    if (window.confirm("Are you sure? The park will consume all your leftovers")) {
+      d.State.clear();
+      window.top.location.href = "https://frogfrogforg.itch.io/super-cosmodrome"
+    }
+  }
+</script>
+
+<body class='clearbutton-body'>
+  <div class='clearbutton'>
+    <button onclick='clearState()'>
+      <div class='clearbutton-content'>♻️</div>
+    </button>
+  </div>
+</body>
