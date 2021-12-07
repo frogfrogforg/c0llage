@@ -27,6 +27,7 @@ const kContOpration = "cont"
 
 // the section name for on page entry dialog
 const kEnterSectionName = "enter"
+const kClickSectionName = "click"
 
 // attr names
 const kAttrs = {
@@ -147,7 +148,8 @@ class ScriptGod {
     const herald = m.findOrCreateHerald(id)
 
     // add the script TODO: use a real key from the el attr
-    const key = "*"
+    // longer keys are more important
+    const key = isMain ? "*" : window.location.pathname
     const script = Script.decode(content, scriptId)
     herald.addScript(scriptId, script, key)
 
@@ -284,18 +286,37 @@ class ScriptHerald {
     const m = this
 
     // find the script
-    const best = m.scripts[scriptId]
-    if (best == null) {
+    const { script } = m.scripts[scriptId]
+    if (script == null) {
       return
     }
 
     // get the section index
-    const i = best.script.findIdxByName(name)
+    const i = script.findIdxByName(name)
+    const j = 0
     if (i == null) {
       return
     }
 
-    m.showDialogAtPath(best, i, 0)
+    // resolve the path
+    const path = script.findNextPath(i, j)
+    if (path == null) {
+      const click = script.findClickPath()
+      if (click != null) {
+        const [i1, j1] = click
+        script.i = i1
+        script.sections[i1].i = j1
+      }
+      return
+    }
+
+    // update current script position
+    const [i1, j1] = path
+    script.i = i1
+    script.sections[i1].i = j1
+
+    // show the dialog
+    m.showNextDialog()
   }
 
   // set the current section by name
@@ -308,23 +329,6 @@ class ScriptHerald {
   showDialogAtPath(best, i, j) {
     const m = this
 
-    // get best parts
-    const { id: scriptId, script } = best
-
-    // resolve the path
-    const path = script.findNextPath(i, j)
-    if (path == null) {
-      return
-    }
-
-    const [i1, j1] = path
-
-    // show the dialog
-    m.showDialogForItem(
-      scriptId,
-      script.findItemByPath(i1, j1),
-      () => m.showDialogAtPath(best, i1, j1 + 1),
-    )
   }
 
   // shows a dialog for the item
@@ -489,13 +493,14 @@ class ScriptHerald {
     const m = this
 
     // todo: be smart about location metadata, e.g. location.tags.include("water-level")
-    const location = m.$window.location
+    const location = m.$godsWindow.location.pathname
     const scripts = Object.values(m.scripts)
 
     const filteredScripts = scripts
       .filter((s) => s.script.findCurrentItem() != null)
       .filter((s) => s.key === "*" || location.startsWith(s.key))
-      .sort((s0, s1) => s0.key === "*" ? -1 : s0.key.length - s1.key.length)
+      .sort((s0, s1) => s1.key.length - s0.key.length)
+    // longer keys are more important.
 
     const match = filteredScripts[0]
     if (match == null) {
@@ -601,7 +606,22 @@ class Script {
 
     // if there isn't one, end this script
     if (next == null) {
-      m.i = -1
+      // if this is click, done
+      if(m.sections[curr[0]].name === kClickSectionName) {
+        m.i = -1
+        return
+      }
+
+      // if it's not and there is no click section, also done
+      const click = m.findIdxByName(kClickSectionName)
+      if (click == null) {
+        m.i = -1
+        return
+      }
+
+      // otherwise jump into the click section
+      m.i = click
+      m.sections[click].i = 0
       return
     }
 
@@ -711,6 +731,20 @@ class Script {
     }
 
     return [i, j]
+  }
+
+  // find the path of the click section
+  findClickPath() {
+    const m = this
+
+    // if we have a click section
+    const i = m.findIdxByName(kClickSectionName)
+    if (i == null) {
+      return null
+    }
+
+    // return the first item in this path
+    return [i, 0]
   }
 
   // -- encoding --
