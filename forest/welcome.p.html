@@ -29,12 +29,7 @@
 <body>
     <img class="background" src="./images/landing.gif">
 
-    <img
-      id="pointer-bin"
-      class="hotspot noblur"
-      src="./images/pointer_bin.png"
-      style="cursor: grab; top: 79%; left: 27%; width: 20%;"
-    >
+    <img id="pointer-bin" class="hotspot nosparkle" src="./images/pointer_bin.png" style="cursor: grab; top: 79%; left: 27%; width: 20%;">
 
     <div class="welcome"><a class="cursor-shoes" style="color: #2e26c7" href="./intro_bridge.html">please leave your shoes<br> at
             the door</a>
@@ -43,12 +38,9 @@
 
     <a id="stop" class="hotspot" href="#" style="left: 25%; top: 23%; width: 8%; height: 5%;" data-turbo="false"></a>
 
-    <a class="hotspot" href="./55highway_to_the_cosmodrome.html"
-        style="left: 7.188%; top: 17.996%; width: 17%; height: 9%"></a>
+    <a class="hotspot" href="./55highway_to_the_cosmodrome.html" style="left: 7.188%; top: 17.996%; width: 17%; height: 9%"></a>
 
-    <a class="hotspot centered cursor-bird"
-        href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &"
-        target="_blank" rel="noreferrer" style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
+    <a class="hotspot centered cursor-bird" href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &" target="_blank" rel="noreferrer" style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
 
     <a-dumpling id="stop-dialog" temperament="phlegmatic" hidden x=37 y=18 width=16 height=15>
         <div class="Dialog">
@@ -91,48 +83,4 @@
 
     // get or return the cursor
     document.getElementById("pointer-bin").addEventListener("click", kCursor.onToggle)
-</script>
-
-<script type="module">
-    // the following code makes it so that, once you visit this node,
-    // if you idle for long enough (doNothingTimerSeconds), you'll
-    // start looking at flowers
-    import { kInventory } from "./inventory.js"
-    // -- templates --
-    const clearButtonHtml = `
-        <a-dumpling x=5 y=5 w=90 h=90 no-back title='Restart' 'temperament='phlegmatic' persistent>
-            <iframe src='./items/clearbutton.html'></iframe>
-        </a-dumpling>`
-
-    let doNothingTimerSeconds = 140;
-    let timer = setTimeout(doNothingTimeout,
-        doNothingTimerSeconds * 1000);
-
-    function resetTimer() {
-        clearTimeout(timer);
-        timer = setTimeout(doNothingTimeout,
-            doNothingTimerSeconds * 1000);
-    }
-
-    function doNothingTimeout() {
-        // if we don't remove the event listeners, all of these
-        // events will keep triggering the timer
-        document.removeEventListener("mousemove", resetTimer)
-        document.removeEventListener("click", resetTimer)
-        document.removeEventListener("keydown", resetTimer)
-        document.removeEventListener("keypress", resetTimer)
-        document.removeEventListener("keyup", resetTimer)
-
-        kInventory.add({
-            id: "clear-button",
-            html: clearButtonHtml
-        })
-    }
-
-    // if you even twitch, set the timer back to 0
-    document.addEventListener("mousemove", resetTimer)
-    document.addEventListener("click", resetTimer)
-    document.addEventListener("keydown", resetTimer)
-    document.addEventListener("keypress", resetTimer)
-    document.addEventListener("keyup", resetTimer)
 </script>

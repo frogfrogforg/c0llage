@@ -10,15 +10,12 @@
     <div id="squirrel-body" style="display: none;">
         <img id="background" class="background" src="./images/41-squirrel.png">
 
-        <a class="hotspot centered cursor-move" href="./17two_skinny_trees.html"
-            style="left: 74%; top: 88%; width: 50%; height: 23%;"></a>
+        <a class="hotspot centered cursor-move" href="./17two_skinny_trees.html" style="left: 74%; top: 88%; width: 50%; height: 23%;"></a>
 
-        <a class="hotspot cursor-move" href="./70outhouse.html"
-            style="right: 43%; top: 30%; width: 20%; height: 31%;"></a>
+        <a class="hotspot cursor-move" href="./70outhouse.html" style="right: 43%; top: 30%; width: 20%; height: 31%;"></a>
 
-        <a id="squirrel" class="hotspot centered noblur cursor-talk" href="#" onclick="squirrelClick()"
-            style="left: 39%; top: 78%; width: 25%; height: 23%; filter: hue-rotate(250deg) brightness(1.2);;" data-turbo="false">
-        
+        <a id="squirrel" class="hotspot centered nosparkle cursor-talk" href="#" onclick="squirrelClick()" style="left: 39%; top: 78%; width: 25%; height: 23%; filter: hue-rotate(250deg) brightness(1.2);;" data-turbo="false">
+
             <img src="images/squirrel.png" style="width:100%;height:100%">
         </a>
 
@@ -68,6 +65,18 @@
         </a-dumpling>
     </div>
 </body>
+
+<s-cript target="assistant" id="assistant-squirrel">
+    --- enter
+    ==> [once] Oh, this squirrel is a stranger to me
+    
+    --- see-squirrel
+    [cont] Ive never met them before..
+    I thought I knew all the squirrels here.
+
+    --- see-squirrel-again
+    Maybe you should try talking to them. Find out what their deal is..
+</s-cript>
 
 <script type="module">
     let click_i = 0;

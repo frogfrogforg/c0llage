@@ -1,4 +1,4 @@
-import "/global.js"
+
 import { kInventory } from "./inventory.js"
 import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
@@ -37,6 +37,15 @@ function main() {
 }
 
 // -- commands --
+/// navigate to the url
+function navigate(url) {
+  // add history entry
+  history.pushState({}, "", url)
+
+  // visit page
+  visit(url)
+}
+
 /// visit the url and update the game
 async function visit(url) {
   // run pre visit events
@@ -90,7 +99,9 @@ function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
     if (el.getAttribute("disable-randomization") != null) return
+
     if (el.href == null) return
+
     if (typeof el.href === "object") {
       // Handle SVGAnimatedString
       el.href.baseVal = randomizeUrl(el.href.baseVal)
@@ -101,29 +112,31 @@ function randomizeLinks() {
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
   iframes.forEach((el) => {
+    if (el.getAttribute("disable-randomization") != null) return
     el.src = randomizeUrl(el.src)
   })
 
   var dframes = Array.from(document.getElementsByTagName('d-iframe'))
   dframes.forEach((el) => {
+    if (el.getAttribute("disable-randomization") != null) return
     el.setAttribute("src", randomizeUrl(el.getAttribute("src")))
   })
 }
 
 // append r=<rand> param, preserving existing query
-function randomizeUrl(str) {
-  if (str == null) {
-    return str
+function randomizeUrl(url) {
+  if (url == null) {
+    return url
   }
 
   // Handle SVGAnimatedString
-  if (typeof str === "object") {
-    str = str.baseVal.toString()
+  if (typeof url === "object") {
+    url = url.baseVal.toString()
   }
 
-  const [path, search] = str.split("?")
+  const [path, search] = url.split("?")
   const params = new URLSearchParams(search)
-  params.append("r", Math.random().toString().slice(2))
+  params.set("r", Math.random().toString().slice(2))
 
   return `${path}?${params.toString()}`
 }
@@ -187,11 +200,8 @@ function didClick(evt) {
   // perform an in-page visit instead of the browser default
   evt.preventDefault()
 
-  // add history entry
-  history.pushState({}, "", url)
-
-  // visit page
-  visit(url)
+  // navigate to the page
+  navigate(url)
 }
 
 /// on pop state
@@ -212,8 +222,10 @@ function didFinishVisit() {
   // Add sparkles to hotpsots
   // (is this the right place to call this?)
   initSparkles($mGame.querySelector("#main"));
-  const hotspots = $mGame.querySelectorAll(".hotspot");
+  const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
+  console.log(hotspots);
   addHoverSparklesToElements(hotspots);
+  d.Events.raise(d.Events.Forest.Visited)
 
   // spawn the assistant if possible
   Assistant.spawn()
@@ -221,7 +233,7 @@ function didFinishVisit() {
 
 // -- exports --
 window.reset = reset
-window.visit = visit
+window.navigate = navigate
 
 // -- bootstrap --
 main()

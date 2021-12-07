@@ -17,8 +17,6 @@
     img {
       max-width: 50px;
     }
-    
-    *::selection {
       background: rgba(0, 0, 0, .99);
       color: white;
     }
@@ -36,13 +34,142 @@
 <p> maybe in the future, somebody will find this page half-unearthed in the middle of a thriving and forest, and maybe they will read some of it and perhaps they will even glean something useful </p>
 
 
-now: intro - hook up welcome to bridge to other space place holder to fork
+now: intro
 
-i wonder if we want another scene before the bridge
 
-later:
-turn assistant off in flowers
-disable reset (presentation mode)
+<h3>12/3</h3>
+
+<p> dump of notes that i'm too lazy to format nicely:</p>
+
+
+differences:
+framed has a few more scripts loaded (c-picky, stealth, s-cript)
+
+maybe copy it over, and then add a new class in the forest.css that will hide frame stuff?
+
+(will also have to fix the other bug where windows are being carried over or something)
+
+
+
+1 FIX POSITIONING
+start from 26flowers to test!! bug shows up in 260flowers once you click through
+
+mmmmm maybe just an invisible frame to house the dumplings
+so don't just copy over the template, but add a frame for where the dumpling overlay is (with invisible styling)
+is it #game that has the styling? 
+yeah like the <section id='frames' and <section id='inventory' to maybe should be 
+
+          the dumplings pop up in #frames section
+
+          when you start at 260flowers -> uses the neutral.t.hmtl template dumplings go in #frames section
+          when you start at 26flowrs and go to 260flowers -> uses a template that's like
+
+          #game
+          #inventory
+          stealth
+
+          and goes straight in #game
+
+
+          ok so the question is: what happens when you click on the link in 26flowers
+
+          changes url
+          in forest.js downloads the page
+          runs visit()
+
+          2 COPY OVER SCRIPTS
+          but also copy over the scripts
+
+          3 ADD NOTEk
+          also a note in framed that's like IF YOU ADD AN IMPORT TO FRAMED, REMEMBER TO ADD IT TO NEUTRAL TOO
+          frame.t.html: "mm more functionality yum yum thank you daddy"
+          neutral.t.html: "nobody loves me D'X"
+
+          4 GET RID OF DEBUGS
+
+
+start at 26 flowers to test
+
+
+two things to test:
+if you go to /16hyperform, let it go to flowers and then click through, does it work all the way?
+  - this is currently broken because in 27flowers, it brings up the wrong textbox
+if you start at 26flowers, and click through, are all the text boxes in reasonable places?
+  - i guess i could fix this by not having negative values for the textboxes
+
+
+<h3>11/23</h3>
+<p>quick fix flowers so that the frame spacing works either way</p>
+
+<h3>11/16</h3>
+<p>two things to test:</p>
+<p>if you go to /16hyperform, let it go to flowers and then click through, does it work all the way?</p>
+<p>  - this is currently broken because in 27flowers, it brings up the wrong textbox</p>
+<p>if you start at 26flowers, and click through, are all the text boxes in reasonable places?</p>
+<p>  - i guess i could fix this by not having negative values for the textboxes</p>
+<p>  i'm goign to try to fix (2) now.
+</p>
+<p>  i wonder what happens if i start from 27flowers?
+</p>
+<p>  ugh so if i start at 27 flowers it doesn't do anything on first click
+</p>
+<p>  "Cannot read properties of undefined"
+</p>
+<p>  ok 260flowers always has this bug no matter what
+</p>
+<p>  fuck i should really wait for ty to fix this. i should try to find something else to do i guess
+</p>
+<p>
+</p><p>  i'll give it one more college try
+</p><p>
+</p><p>  so the bug is with the assistant in a neutral template
+</p><p>
+</p><p>  so we spawn the assistant, and then try to show it, but its internal state is n't set yet because it hasn't run parsedCallback() yet
+</p><p>
+</p><p>  o it's a HTMLParsedElement thing
+</p><p>
+</p><p>  ok for some reason parsedCallback isn't being called when assistatn is appendChild'd to our inventory HTLM element
+</p><p>
+</p><p>  o i think it's because it parses it in the next animationFrame... but we're doing show before it actually happens
+</p><p>
+</p><p>  so maybe check if it's already parsed or something
+</p><p>
+</p><p>  actually maybe force a DOMContentLoad when you init it
+</p><p>
+</p><p>  ok to explain to TY
+</p></p>
+</p>ok so ty says that yeah that's a pretty nasty situation</p>
+</p>so i think i should make a decision on how to fix it</p>
+</p>let's see</p>
+</p></p>
+</p></p>
+</p></p>
+</p></p>
+</p></p>
+</p></p>
+</p></p>
+
+
+
+<h3>11/11</h3>
+<p>ok flowers is still weird</p>
+<p>when i start from 26flowers (framed), and click through to 27flowers, the windows starts in a broken place (too high up, so the handlebar is unclickable)</p>
+<p>but when i start from 260flowers and click through, the first window in 27flowers is an okay place, but all the old windows stay there. i'm ok with the windows persisting i guess, although its weird that this doesn't happen from 26flowers but does for 260flowers</p>
+<p>i'll just try to debug/fix why it's doing that from 26flowers, that's the eggregious error</p>
+<p>to be fair the x and y positions are set to negative</p>
+<p>i guess for some reason, if it starts in 260flowers, the 0 position is more to the right for some reason? idk</p>
+<p>but also another problem is that the first click of "long drag" doesn't do anything?</p>
+<p>just going to bump the starting position over to be inscreen</p>
+<p>o wait if i start from 27flowers, then its fine?? well same behavior as starting from 260</p>
+<p>ok if i start from 26, it looks like doing x=0,y=0 actually positions it at the top left corner. so that's "correct". but for some reason starting from 260 or 27 fucks with it. which is bad for testing. i shoudl test starting from hyperform anyway</p>
+<p>i stopped for a second to do some trimming. game dev as gardening</p>
+<p>what was i doing. o yeah where is the doNothing timer triggered?</p>
+<p>ok if you start at the hyperform it has the same behavior as starting from 260 which is so weird. bc my theory was that it had to do with starting at framed or neutral</p>
+<p> there's like an invisible frame. but NOT if you start from 26flowers</p>
+<p>ok i'm noticng it uses the neutral layout sometimes, but sometimes it doesn't</p>
+<p>once again, i'm going to shelve this until a later pair-programming date</p>
+<p></p>
+<p></p>
 
 <h3>11/23</h3>
 <p>going to work on this intro</p>
@@ -54,6 +181,10 @@ disable reset (presentation mode)
 <p>lol the problem was a "src" instead of "href" in a link tag. once again its wild what happens when you step away and come back</p>
 <p>yay that somewhat fixes it, but it's still broken in other ways</p>
 <p></p>
+<p>ok so now...</p>
+<p>i'm getting a "chanes you made may not be saved" prompt when i go from 260 to 27 i do not want</p>
+<p>also from 27 to 28 the same thing happens</p>
+<p>and from 28 to the cosmodrome</p>
 
 <h3>11/4</h3>
 <p>o seems like 27flowers.html is broken</p>

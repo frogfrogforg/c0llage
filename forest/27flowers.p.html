@@ -32,9 +32,9 @@
 <body>
     <img class="background" src="./images/27flowers.png">
 
-    <a-dumpling id="words0" x=-20 y=-10 width=80 height=30 bodyClass="stranger-words">
+    <a-dumpling id="words0" x=0 y=0 width=80 height=30 bodyClass="stranger-words">
       <p>out of their sack, they pull out a couple of small objects: a brown cardboard box a few inches tall, and a smaller bright red object.</p>
-      <p>they open the box, take out a cigarette, light it and take a <a href="#" onclick="showWords()" data-turbo="false">long drag</a></p>
+      <p>they open the box, take out a cigarette, light it and take a <a href="#" onclick="showWords()" >long drag</a></p>
       <p> with their free hand, they rub their temples </p>
     </a-dumpling>
 
@@ -46,7 +46,7 @@
 
     <a-dumpling hidden id="words2" x=-10 y=70 width=80 height=30 bodyClass="stranger-words">
       <p>They turn to you.</p>
-      <p>"<a href="#" onclick="showWords()" data-turbo="false">My friend Ricky</a>, she makes music. Hip hop mostly, pretty traditional actually. She's big into sampling, does a lot of nature recording. Anyway, me and her, we're working on this project, it's sort of like an interactive music video."</p>
+      <p>"<a href="#" onclick="showWords()" >My friend Ricky</a>, she makes music. Hip hop mostly, pretty traditional actually. She's big into sampling, does a lot of nature recording. Anyway, me and her, we're working on this project, it's sort of like an interactive music video."</p>
       <p>"We finally got a demo done a couple days ago. We're gonna start showing it around soon."</p>
       <p>"She just needs to send me the new fucking files.</p>
     </a-dumpling>
@@ -59,9 +59,10 @@
 </body>
 
 <script type="module"> 
-  let words_i = 0;
+  let words_i = 1;
 
   window.showWords = function () {
+      console.log("show words!");
       Frames.show('words' + words_i);
 
       if (words_i == 1) {

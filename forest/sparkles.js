@@ -1,5 +1,5 @@
 // Little particle system for cursor sparkles when you hover on a hotspot
-// Styling is in forest.css (see #ZsparkleContainer and .sparkle)
+// Styling is in forest.css (see #sparkleContainer and .sparkle)
 
 
 const updateInterval = 40; // ms
