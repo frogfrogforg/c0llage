@@ -112,11 +112,13 @@ function randomizeLinks() {
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
   iframes.forEach((el) => {
+    if (el.getAttribute("disable-randomization") != null) return
     el.src = randomizeUrl(el.src)
   })
 
   var dframes = Array.from(document.getElementsByTagName('d-iframe'))
   dframes.forEach((el) => {
+    if (el.getAttribute("disable-randomization") != null) return
     el.setAttribute("src", randomizeUrl(el.getAttribute("src")))
   })
 }
