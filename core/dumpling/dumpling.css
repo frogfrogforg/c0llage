@@ -228,7 +228,8 @@ d-iframe iframe {
 }
 
 .choleric .Frame-handle{
-  cursor: not-allowed;
+  /*cursor: not-allowed;*/
+  display: none;
 }
 
 @keyframes shake {
