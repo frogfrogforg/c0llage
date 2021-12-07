@@ -403,10 +403,17 @@ class ScriptHerald {
     const html = `
       <article class="Dialog Dialog-${m.id}">
         <div class="Dialog-header"></div>
-        <p class="Dialog-text">${line.text}</p>
+
+        <p class="Dialog-text">
+          ${line.text}
+        </p>
+
         <div class="Dialog-buttons">
-          ${line.buttons.map((b) => `<button class="Dialog-button">${b}</button>`).join("\n")}
+          ${line.buttons.map((b) => (
+            `<button class="Dialog-button">${b}</button>`
+          )).join("\n")}
         </div>
+
         <div class="Dialog-footer"></div>
       </article
     `
@@ -449,6 +456,7 @@ class ScriptHerald {
       </a-dumpling>
     `
 
+    // show the dumpling
     $el = $el.firstElementChild
 
     // close the dialog on button click
@@ -459,6 +467,10 @@ class ScriptHerald {
     // run any behaivors on dialog hide
     // TODO: importing a-dumpling.js causes no dialog to ever appear
     $el.addEventListener("hide-frame", () => {
+      // destroy the frame
+      $el.remove()
+
+      // continue if necessary
       if (cont != null) {
         cont()
       }
@@ -470,15 +482,10 @@ class ScriptHerald {
 
   // close the open dialog dumpling, if any
   closeOpenDialog() {
-    // find dumpling
-    const $open = this.findOpenDialog()
-    if ($open == null) {
-      return
+    const $dialog = this.findOpenDialog()
+    if ($dialog != null) {
+      $dialog.hide()
     }
-
-    // destroy it
-    $open.close()
-    $open.remove()
   }
 
   // -- queries --

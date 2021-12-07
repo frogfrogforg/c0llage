@@ -35,12 +35,12 @@ export class Assistant {
 
   // shows the dialog for the current ledger state
   showLedgerDialog() {
-    console.error("TODO: oops no ledger")
-    // const m = this
-    // const j = m.indexForLedgerDialog()
-    // if (j != null) {
-    //   m.$script.showNamedDialog(kLedgerDialogName, j)
-    // }
+    const m = this
+    const j = m.indexForLedgerDialog()
+    if (j != null) {
+      console.error("TODO: oops no ledger")
+      // m.$script.showNamedDialog(kLedgerDialogName, j)
+    }
   }
 
   // -- queries --
