@@ -182,3 +182,7 @@ s-cript {
     position: absolute;
     pointer-events: none;
 }
+
+.sparkle::selection {
+    background: transparent;
+}
