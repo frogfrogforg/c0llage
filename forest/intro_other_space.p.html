@@ -34,11 +34,22 @@
         <img src="images/brochure-piece1.png" style="width:100%;height:100%">
     </a>
 
+    <s-cript target="assistant" id="intro-dialog">
+      --- enter
+      hell yeah brother
+
+      --- brochure-pick-up
+      wow you picked up the brochure *becomes wet*
+    </s-cript>
+
     <script type="module">
 
       import {kInventory} from "./inventory.js"
 
       window.pickUpBrochure = function(pieceNum) {
+
+	const dialog = document.getElementById("intro-dialog");
+	console.log(dialog);
 
 	kInventory.add({
 	  id: "brochure-piece",
@@ -46,6 +57,9 @@
 	})
 
 	document.getElementById("brochure-piece" + pieceNum).remove()
+
+	console.log('dodloguo');
+	dialog.showNamedDialog("brochure-pick-up");
 
       }
     </script>
