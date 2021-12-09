@@ -20,15 +20,23 @@
 
     </svg>
 
-    <a id="squirrel" class="hotspot centered nosparkle cursor-pick-up" href="#" onclick="pickUpBrochure()" style="left: 39%; top: 28%; width: 10%; height: 13%;" >
+    <a id="brochure-piece2" class="hotspot centered nosparkle cursor-pick-up" href="#" onclick="pickUpBrochure(2)" style="left: 39%; top: 28%; width: 10%; height: 13%;" >
 
         <img src="images/brochure-piece1.png" style="width:100%;height:100%">
     </a>
 
     <script type="module">
 
-      window.pickUpBrochure = function() {
-	console.log("wow you picked up a brochure!");
+      import {kInventory} from "./inventory.js"
+
+      window.pickUpBrochure = function(pieceNum) {
+
+	kInventory.add({
+	  id: "brochure-piece",
+	  src: "items/brochurepiece",
+	})
+
+	document.getElementById("brochure-piece" + pieceNum).remove()
 
       }
     </script>
