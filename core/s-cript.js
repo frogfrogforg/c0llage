@@ -76,8 +76,6 @@ class ScriptElement extends HTMLParsedElement {
   // -- commands --
   // show a dialog for a section name and item index
   showNamedDialog(name) {
-    // DEBUG
-    console.log("showing named dialogue bro");
     const m = this
 
     m.god.showNamedDialogForHerald(
@@ -237,8 +235,6 @@ class ScriptHerald {
 
   // bind the script to its target
   bindToTarget($window) {
-    // DEBUG
-    console.log("biiiiinding");
     const m = this
 
     // store the window
