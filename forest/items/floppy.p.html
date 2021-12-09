@@ -1,0 +1,38 @@
+<!-- template: item {title: floppy} -->
+
+<html style="height:100%">
+  <head>
+    <script type="module" src="/core/s-cript.js"></script>
+    <script type='module'>
+      window.dragFloppy = (evt) => {
+        evt.dataTransfer.setData("text", "floppy");
+      }
+    </script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #990099;
+        overflow: hidden;
+        margin: 0;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .floppy-itself {
+        cursor: grab;
+        height: 70vmin;
+      }
+    </style>
+  </head>
+
+  <body class="floppyBody">
+    <img class='floppy-itself' draggable="true" onclick="// document.getElementById('assistant-floppy').showNamedDialog('disk-protip')" ondragstart="dragFloppy(event)" src="floppy.png">
+
+    <s-cript target="assistant" id="assistant-floppy">
+      --- disk-protip
+      Whoa, a floppy disk!
+    </s-cript>
+  </body>
+</html>

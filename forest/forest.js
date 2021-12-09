@@ -112,11 +112,13 @@ function randomizeLinks() {
 
   var iframes = Array.from(document.getElementsByTagName('iframe'))
   iframes.forEach((el) => {
+    if (el.getAttribute("disable-randomization") != null) return
     el.src = randomizeUrl(el.src)
   })
 
   var dframes = Array.from(document.getElementsByTagName('d-iframe'))
   dframes.forEach((el) => {
+    if (el.getAttribute("disable-randomization") != null) return
     el.setAttribute("src", randomizeUrl(el.getAttribute("src")))
   })
 }
@@ -128,11 +130,11 @@ function randomizeUrl(url) {
   }
 
   // Handle SVGAnimatedString
-  if (typeof str === "object") {
-    str = str.baseVal.toString()
+  if (typeof url === "object") {
+    url = url.baseVal.toString()
   }
 
-  const [path, search] = str.split("?")
+  const [path, search] = url.split("?")
   const params = new URLSearchParams(search)
   params.set("r", Math.random().toString().slice(2))
 

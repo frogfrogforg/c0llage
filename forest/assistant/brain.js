@@ -38,7 +38,8 @@ export class Assistant {
     const m = this
     const j = m.indexForLedgerDialog()
     if (j != null) {
-      m.$script.showNamedDialog(kLedgerDialogName, j)
+      console.error("TODO: oops no ledger")
+      // m.$script.showNamedDialog(kLedgerDialogName, j)
     }
   }
 

@@ -691,7 +691,7 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- q/iframe --
   findIframe() {
-    return this.findIframeInChildren(this.bodyElement.children)
+    return this.bodyElement ? this.findIframeInChildren(this.bodyElement.children) : null
   }
 
   findIframeInChildren(children) {
