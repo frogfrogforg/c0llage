@@ -255,11 +255,16 @@ class ScriptHerald {
   }
 
   // show the next onclick dialog
-  showNextDialog() {
+  showNextDialog(isClick = false) {
     const m = this
 
-    // close any open dialog
-    m.closeOpenDialog()
+    // don't show dialog if the item is marked continue
+    if(isClick && m.currentItem != null && m.currentItem.operations.cont) {
+      m.closeOpenDialog()
+      return
+    } else {
+      m.closeOpenDialog()
+    }
 
     // advance to the next line
     const best = m.findBestScript()
@@ -271,11 +276,12 @@ class ScriptHerald {
 
     // get current item and advance
     const curr = script.findCurrentPath(false) // also sets state
-
     console.log(`script: ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
 
     const item = script.findItemByPath(...curr)
     script.advance(...curr)
+
+    m.currentItem = item
 
     // show dialog
     m.showDialogForItem(
@@ -586,7 +592,7 @@ class ScriptHerald {
   // -- events --
   // when the target is clicked
   onTargetClick = () => {
-    this.showNextDialog()
+    this.showNextDialog(true)
   }
 
   // when the dialog close button is clicked
