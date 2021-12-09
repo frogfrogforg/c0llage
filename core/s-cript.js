@@ -270,14 +270,21 @@ class ScriptHerald {
     const { id: scriptId, script } = best
 
     // get current item and advance
-    const item = script.findCurrentItem()
-    script.advance()
+    const curr = script.findCurrentPath(false) // also sets state
+
+    console.log(`script: ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
+
+    const item = script.findItemByPath(...curr)
+    script.advance(...curr)
 
     // show dialog
     m.showDialogForItem(
       scriptId,
       item,
-      () => m.showNextDialog(),
+      () => {
+        console.log(`script: ${scriptId} cont [showNextDialog]`)
+        m.showNextDialog()
+      }
     )
   }
 
@@ -298,39 +305,31 @@ class ScriptHerald {
     const j = 0
     if (i == null) {
       if (click != null) {
-        const [i1, j1] = click
+        // const [i1, j1] = script.resolvePath(...click)
         script.flow = kClickSectionName
-        script.i = i1
-        script.sections[i1].i = j1
+        script.setPath(...click)
       }
       return
     }
 
     // resolve the path
-    const path = script.findNextPath(i, j)
+    const path = script.resolvePath(i, j, true)
     if (path == null) {
       if (click != null) {
-        const [i1, j1] = click
+        // const [i1, j1] = script.resolvePath(...click)
         script.flow = kClickSectionName
-        script.i = i1
-        script.sections[i1].i = j1
+        // script.setPath(i1, j1)
+        script.setPath(...click)
       }
       return
     }
 
     // update current script position
-    const [i1, j1] = path
     script.flow = name
-    script.i = i1
-    script.sections[i1].i = j1
+    script.setPath(...path)
 
     // show the dialog
     m.showNextDialog()
-  }
-
-  // set the current section by name
-  setSectionByName(name) {
-    this.script.setIdxByName(name)
   }
 
   // -- c/helpers
@@ -350,10 +349,16 @@ class ScriptHerald {
     }
 
     // if it's a hook, render the custom html
-    if (item.kind === ScriptHook.kind) {
-      m.showDialogForHook(scriptId, item, cont)
-    } else {
-      m.showDialogForLine(item, cont)
+    switch (item.kind) {
+      case ScriptHook.kind:
+        m.showDialogForHook(scriptId, item, cont)
+        break
+      case ScriptLine.kind:
+        m.showDialogForLine(item, cont)
+        break
+      default:
+        console.error("attempting to show dialogue for invalid item", item)
+        break
     }
   }
 
@@ -513,7 +518,7 @@ class ScriptHerald {
     const scripts = Object.values(m.scripts)
 
     const filteredScripts = scripts
-      .filter((s) => s.script.findCurrentItem() != null)
+      .filter((s) => s.script.findCurrentPath() != null)
       .filter((s) => s.key === "*" || location.startsWith(s.key))
       .sort((s0, s1) => s1.key.length - s0.key.length)
     // longer keys are more important.
@@ -599,8 +604,9 @@ class Script {
 
   // -- lifetime --
   // create a new script
-  constructor(sections) {
+  constructor(id, sections) {
     const m = this
+    m.id = id
     m.sections = sections
     m.i = 0
     m.flow = 'click'
@@ -608,60 +614,70 @@ class Script {
 
   // -- commands --
   // advance to the next line
-  advance() {
+  advance(i, j) {
     const m = this
 
-    // from the current path
-    const curr = m.findCurrentPath()
-    if (curr == null) {
-      console.warn("no current path for dialogue", this)
-      return
-    }
-
     // find the next path
-    const next = m.findNextPath(curr[0], curr[1] + 1)
+    m.resolvePath(i, j) // a hacky way to call set for jumps
+    const next = m.resolvePath(i, j + 1)
 
     // if there isn't one, end this script
     if (next == null) {
       // if this is click, done
       if(m.flow === kClickSectionName) {
-        m.i = -1
+        m.setPath(-1)
         return
       }
 
       // if it's not and there is no click section, also done
       const click = m.findClickPath()
       if (click == null) {
-        m.i = -1
+        m.setPath(-1)
         return
       }
 
       // otherwise jump into the click section
       m.flow = kClickSectionName
-      m.i = click[0]
-      m.sections[click[0]].i = click[1]
+      m.setPath(...click)
       return
     }
 
     // update state
-    m.i = next[0]
-    m.sections[m.i].i = next[1]
+    m.setPath(...next)
   }
 
-  // set the current index by name
-  setIdxByName(name) {
-    this.i = this.findIdxByName(name)
+  // sets the path on this script
+  setPath(i, j = null) {
+    const m = this
+
+    // update section index
+    m.i = i
+
+    // update item index if given
+    const s = m.sections[i]
+    if (j != null) {
+      s.i = j
+    }
+
+    console.log(`script: ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
   }
 
   // -- queries --
   // find the current section's current item, if any
-  findCurrentItem() {
-    const section = this.sections[this.i]
+  findCurrentPath(readonly = true) {
+    const m = this
+
+    const section = m.sections[m.i]
     if (section == null) {
       return null
     }
 
-    return section.current
+    const path = m.resolvePath(m.i, section.i, readonly)
+    if (path == null) {
+      return null
+    }
+
+    return path
   }
 
   // find the item at the index path [i, j]
@@ -688,31 +704,8 @@ class Script {
     return null
   }
 
-  // find the current index path [i, j]
-  findCurrentPath() {
-    const m = this
-
-    // get current section idx
-    const i = m.i
-
-    // ensure it exists
-    const section = m.sections[i]
-    if (section == null) {
-      return null
-    }
-
-    // if it has a current item
-    const j = section.i
-    if (j == null) {
-      return null
-    }
-
-    // produce path
-    return [i, j]
-  }
-
   // find the next valid path from a start path, resolving any jumps
-  findNextPath(i, j) {
+  resolvePath(i, j, readonly = false) {
     const m = this
 
     while (true) {
@@ -734,7 +727,7 @@ class Script {
         continue
       }
 
-      if (item.operations.set) {
+      if (!readonly && item.operations.set) {
         item.operations.set()
       }
 
@@ -798,7 +791,7 @@ class Script {
       }
     }
 
-    return new Script(sections)
+    return new Script(scriptId, sections)
   }
 }
 
