@@ -13,6 +13,10 @@
     }
 </style>
 
+<head>
+    <title>8 - messy server transition</title>
+</head>
+
 <body>
     <img class="background" src="./images/forest_construction.jpg">
 
@@ -30,4 +34,18 @@
         <a href="./40chewing.html" class="hotspot cursor-move" style="top: 0; right: 0; width: 20%; height: 20%;" fun-link>
         </a>
     </div>
+
+    <a-dumpling persistent id="bookmark-server" title="bookmark" layer="bookmark" temperament="choleric" width=25 height=25 min-pos=-2 max-pos=7 no-back no-close>
+        <iframe src="./items/bookmark.html"></iframe>
+    </a-dumpling>
+
+    <s-cript id="messy-server-transition-assistant" target="assistant">
+        --- enter
+        [cont] [once] Is that a bookmark? I haven't used those in a long long time
+        [once] Those were really useful on the day before tabs.
+
+        --- click
+        [cont] I used to come here to touch the leaves, it has a really nice texture.
+        The leaves here are so slippery that some people even call them gliders...
+    </s-cript>
 </body>
