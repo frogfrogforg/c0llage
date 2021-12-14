@@ -20,6 +20,8 @@ function main() {
   // capture elements
   $mGame = document.getElementById("game")
 
+  setTitle("welcome")
+
   // inventory (persistent windows) loading and saving
   kInventory.loadFromState();
   addOnBeforeSaveStateListener(kInventory.saveToState)
@@ -61,6 +63,10 @@ async function visit(url) {
   // render the element
   const $el = document.createElement("html")
   $el.innerHTML = text
+
+  // update the title
+  const title = $el.querySelector('title')
+  setTitle(title && title.innerText)
 
   // extract the game
   const $next = $el.querySelector("#game")
@@ -216,6 +222,11 @@ function didPopState() {
 
 function didStartVisit() {
   d.State.referrer = mUrl.pathname
+}
+
+function setTitle(title) {
+  const defaultTitle = mUrl.pathname.slice(8, -5).replaceAll("_" , " ")
+  document.title = title || defaultTitle
 }
 
 function didFinishVisit() {
