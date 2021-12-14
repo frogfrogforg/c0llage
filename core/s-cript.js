@@ -576,7 +576,7 @@ class ScriptHerald {
 
   // find the title of the dialog given the target
   findTitle($target) {
-    const name = $target.title || $target.ownerDocument.title
+    const name = $target.id || $target.title || $target.ownerDocument.title
     if (!name) {
       return ""
     }

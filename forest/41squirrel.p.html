@@ -7,17 +7,19 @@
 </head>
 
 <body>
-    <div id="squirrel-body" style="display: none;">
+    <div id="squirrel-body">
         <img id="background" class="background" src="./images/41-squirrel.png">
 
         <a class="hotspot centered cursor-move" href="./17two_skinny_trees.html" style="left: 74%; top: 88%; width: 50%; height: 23%;"></a>
 
         <a class="hotspot cursor-move" href="./70outhouse.html" style="right: 43%; top: 30%; width: 20%; height: 31%;"></a>
 
-        <a id="squirrel" class="hotspot centered nosparkle cursor-talk" href="#" onclick="squirrelClick()" style="left: 39%; top: 78%; width: 25%; height: 23%; filter: hue-rotate(250deg) brightness(1.2);;" data-turbo="false">
+        <c-picky wants="!pickedUpSquirrel">
+            <a id="squirrel" class="hotspot centered nosparkle cursor-talk" href="#" style="left: 39%; top: 78%; width: 25%; height: 23%; filter: hue-rotate(250deg) brightness(1.2);;" data-turbo="false">
 
-            <img src="images/squirrel.png" style="width:100%;height:100%">
-        </a>
+                <img src="images/squirrel.png" style="width:100%;height:100%">
+            </a>
+        </c-picky>
 
         <audio id="sq0">
             <source src="./sound/squirrel/sq_001.mp3" type="audio/mpeg">
@@ -60,11 +62,29 @@
             </span>
         </a-dumpling>
 
-        <a-dumpling persistent hidden id="pet_squirrel">
+        <a-dumpling persistent hidden title="squirrel" id="pet_squirrel">
             <d-iframe src='./items/squirrel.html'></d-iframe>
         </a-dumpling>
     </div>
 </body>
+
+<s-cript target="squirrel" id="squirrel-main" main>
+    --- click
+    ==> [once] first-conversation
+    [cont] after you dropped me I just came back here... can you take me with again? {ok | sure...}
+    *** pick-squirrel
+
+
+    --- first-conversation
+    [cont] these days i stay the heck away from Cyberspace...
+    [cont] it's not the same since the <span class='cosmodrome'>Cosmodrome</span>...
+    [cont] too many g*d damn wizards around
+    [cont] and wizard apologists...
+    [cont] but g*sh it's lonely out here...
+    [cont] it's so different out here to how it used to be. it used to be a real frolic... now all my friends are jacked in 12 hours a day in some netcafe or else they're working for the wizards at the <span class='cosmodrome'>Cosmodrome</span>
+    [cont] please don't leave me here alone... won't you please take me with you? {ok | sure...}
+    *** pick-squirrel
+</s-cript>
 
 <s-cript target="assistant" id="assistant-squirrel">
     --- enter
@@ -85,44 +105,33 @@
 <script type="module">
     let click_i = 0;
 
-    window.squirrelClick = function () {
+
+    const $squirrelScript = document.getElementById("squirrel-main")
+    const dPetSquirrel = document.getElementById('pet_squirrel')
+    $squirrelScript.onHook("pick-squirrel", function () {
+        d.State.pickedUpSquirrel = true;
+        dPetSquirrel.show()
+        return "thank you"
+    })
+
+    dPetSquirrel.addEventListener("hide-frame", () => d.State.pickedUpSquirrel = false)
+    dPetSquirrel.addEventListener("show-frame", () => d.State.pickedUpSquirrel = true)
+
+    const $squirrel = document.getElementById("squirrel")
+    $squirrel.addEventListener("click", function () {
         // play random squirrel noise
         let s_i = Math.floor(Math.random() * 4);
         document.getElementById("sq" + s_i).play();
 
         if (click_i < 5) {
-            Frames.show('dialog' + (click_i + 1));
             if (click_i == 4) {
                 // replace talk icon with pickup icon
                 let sq = document.getElementById("squirrel");
                 sq.classList.toggle("cursor-move");
                 sq.classList.toggle("cursor-pick-up");
             }
-        } else {
-            // 6th click, pick up squirrel
-            d.State.pickedUpSquirrel = true;
-            Frames.show('pet_squirrel');
-            setNoSquirrel();
         }
 
         click_i++;
-    }
-
-    window.setNoSquirrel = function () {
-        document.getElementById("background").src = "./images/41-no-squirrel.png";
-        // remove squirrel hotspot
-        document.getElementById("squirrel").remove();
-    }
-
-    function main() {
-        console.log("LOAD BODY");
-        let body = document.getElementById("squirrel-body");
-        if (d.State.pickedUpSquirrel) {
-            setNoSquirrel();
-        }
-        // Hide the whole page until we check the pickedUpSquirrel state:
-        body.style.display = "block";
-    }
-
-    main();
+    })
 </script>
