@@ -18,21 +18,21 @@ class StateConditionalElement extends HTMLParsedElement {
     const s = conditionsString.trim().split(' ').filter(i => i)
     let passesAllConditions = true;
     s.forEach(rawCondition => {
-      const isNot = rawCondition[0] === '!' 
+      const isNot = rawCondition[0] === '!'
       const stateKey = isNot ? rawCondition.slice(1) : rawCondition
 
       function passesCondition(rawCondition) {
-        const isNot = rawCondition[0] === '!' 
+        const isNot = rawCondition[0] === '!'
         const stateKey = isNot ? rawCondition.slice(1) : rawCondition
-        return isNot == d.State[stateKey]
+        return isNot != d.State[stateKey]
       }
 
       passesAllConditions &&= passesCondition(rawCondition)
 
       d.State.listen(stateKey, () => {
         const passesAllConditions = s
-                .reduce((aggregate, rawCondition) => 
-                  aggregate && 
+                .reduce((aggregate, rawCondition) =>
+                  aggregate &&
                   passesCondition(rawCondition), true)
               this.setChildrenVisibility(passesAllConditions)
             })
