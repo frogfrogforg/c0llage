@@ -1,0 +1,212 @@
+<head>
+    <script type="module" src="forest.js"></script>
+    <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+    <style>
+        body {
+            position: relative;
+            background-color: blue;
+            overflow: hidden;
+        }
+
+        .icons {
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 2%;
+            left: 3%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding: 3%;
+
+        }
+
+        .icon {
+            cursor: pointer;
+            width: 6%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 9% 9% 0;
+            padding: 0.5% 1% 0.3% 1%;
+
+            font-family: monospace;
+            font-size: 2vw;
+            text-align: center;
+            border: 0.05em rgba(0, 0, 0, 0) solid;
+        }
+
+        .icon:hover {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-hidden {
+            display: none;
+        }
+
+        .icon-opened {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-opened img {
+            filter: invert(1);
+        }
+
+        .icon img {
+            image-rendering: pixelated;
+            width: 90%;
+            /* width: 2%; */
+            /* height: 2%; */
+        }
+
+        .icon-text {
+            color: white;
+            margin-top: 8%;
+        }
+
+        iframe {
+            border: 0;
+            --scaleFactor: 0.6;
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor)) !important;
+            height: calc(100%/var(--scaleFactor)) !important;
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left
+        }
+
+        #claribelle {
+            position: absolute;
+            left: 60px;
+            top: 69px;
+            transform: scale(.125);
+        }
+    </style>
+</head>
+
+<body style="width:100%; height:100%">
+    <a-dumpling title="novena" id="novena" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/4102318?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="be happy luv ur rock" id="be-happy-luv-ur-rock" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/3769345?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="best friends" id="best-friends" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/1836771?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="hubol got emotionally poisoned in iowa" id="hubol-got-emotionally-poisoned-in-iowa" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/3202565?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="please talk to me" id="please-talk-to-me" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/2245007?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="and i made sure to hold your head sideways" id="and-i-made-sure-to-hold-your-head-sideways" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/365701?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+    <a-dumpling temperament="sanguine" title="ending it" id="ending-it" w="69" h="69" hidden>
+        <d-iframe style="--scale-factor: 2.0;" src="https://kpopp.io/games/ending-it.html"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="rain/reign" id="rain-reign" w="69" h="69" hidden>
+        <d-iframe style="--scale-factor: 1.0;" src="https://gardenrobot.itch.io/rain-reign"></d-iframe>
+    </a-dumpling>
+    <a-dumpling title="fruitflesh" id="fruitflesh" w="69" h="69" hidden>
+        <d-iframe src="https://itch.io/embed-upload/5118257?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    </a-dumpling>
+
+
+    <div id=" icons" class="icons">
+        <!--If you want to add more icons that open frames just copy the structure below: target is the a-dumpling's id you want the icon to open, and src is a link to the image for the icon -->
+        <pc-icon target="fruitflesh" name="fruitflesh" src="./images/icons/love/fruitflesh.jpg"></pc-icon>
+        <pc-icon target="rain-reign" name="rain/reign" src="./images/icons/love/rain.png"></pc-icon>
+        <pc-icon target="ending-it" name="ending it" src="./images/icons/love/endingit.png"></pc-icon>
+        <pc-icon target="and-i-made-sure-to-hold-your-head-sideways" name="and i made sure to hold your head sideways" src="./images/icons/love/headhold.png"></pc-icon>
+        <pc-icon target="please-talk-to-me" name="please talk to me" src="./images/icons/love/pleasetalk.png"></pc-icon>
+        <pc-icon target="hubol-got-emotionally-poisoned-in-iowa" name="hubol got emotionally poisoned in iowa" src="./images/icons/love/hubol.png"></pc-icon>
+        <pc-icon target="best-friends" name="best friends" src="./images/icons/love/bestfriends.png"></pc-icon>
+
+        <pc-icon target="be-happy-luv-ur-rock" name="be happy luv ur rock" src="./images/icons/love/petrock.png"></pc-icon>
+
+        <pc-icon target="novena" name="novena" src="./images/icons/love/novena.png"></pc-icon>
+
+
+    </div>
+
+
+    <script type="module" src="/core/d-iframe.js"></script>
+    <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+    <script type="module">
+        import "/global.js"
+
+        const tagName = 'pc-icon'
+        const iconTemplate = `
+        <div id="$id" class="icon">
+            <img src="$src">
+            <div class='icon-text'>$name</div>
+        </div>
+        `
+
+        function openFrame(targetFrame, icon) {
+            targetFrame.show()
+        }
+
+        function closeFrame(targetFrame, icon) {
+            targetFrame.hide()
+        }
+
+        function initializeIcons() {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
+                const id = `${target}-icon`
+                element.outerHTML = iconTemplate
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+                    .replaceAll('$name', name)
+
+                const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i)
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+
+                    d.State.listen(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
+
+                ['hide-frame', 'show-frame'].forEach((eventName) => {
+                    targetFrame.addEventListener(eventName, (e) => {
+                        icon.classList.toggle('icon-opened', targetFrame.visible)
+                    })
+                })
+
+                icon.onclick = () => {
+                    targetFrame.toggle();
+                }
+            }
+        }
+
+        function main() {
+            initializeIcons()
+        }
+
+        main()
+
+
+    </script>
+</body>
