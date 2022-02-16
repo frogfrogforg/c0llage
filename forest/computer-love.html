@@ -67,7 +67,7 @@
 
         iframe {
             border: 0;
-            --scaleFactor: 0.6;
+            /* --scaleFactor: 0.6; */
             /*scale iframe content by this factor (probably breaks on older browsers)*/
             width: calc(100%/var(--scaleFactor)) !important;
             height: calc(100%/var(--scaleFactor)) !important;
@@ -100,17 +100,18 @@
     <a-dumpling title="please talk to me" id="please-talk-to-me" w="69" h="69" hidden>
         <d-iframe src="https://itch.io/embed-upload/2245007?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
     </a-dumpling>
-    <a-dumpling title="and i made sure to hold your head sideways" id="and-i-made-sure-to-hold-your-head-sideways" w="69" h="69" hidden>
-        <d-iframe src="https://itch.io/embed-upload/365701?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+    <a-dumpling title="and i made sure to hold your head sideways" id="and-i-made-sure-to-hold-your-head-sideways" w="69" h="84" hidden>
+        <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/365701?color=FFFFFF" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
     </a-dumpling>
     <a-dumpling temperament="sanguine" title="ending it" id="ending-it" w="69" h="69" hidden>
-        <d-iframe style="--scale-factor: 2.0;" src="https://kpopp.io/games/ending-it.html"></d-iframe>
+        <d-iframe style="--scaleFactor: 2.0;" src="https://kpopp.io/games/ending-it.html"></d-iframe>
+	<!-- color: 4E4850 -->
     </a-dumpling>
     <a-dumpling title="rain/reign" id="rain-reign" w="69" h="69" hidden>
-        <d-iframe src="https://itch.io/embed-upload/5270802?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        <d-iframe style="--scaleFactor: 0.8;" src="https://itch.io/embed-upload/5270802?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
     </a-dumpling>
     <a-dumpling title="fruitflesh" id="fruitflesh" w="69" h="69" hidden>
-        <d-iframe src="https://itch.io/embed-upload/5118257?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        <d-iframe style="--scaleFactor: 1.5;" src="https://itch.io/embed-upload/5118257?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
     </a-dumpling>
 
 
