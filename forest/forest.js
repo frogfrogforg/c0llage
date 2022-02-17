@@ -158,7 +158,10 @@ function reset() {
 function shouldStartVisit(url) {
   // if the paths aren't the same (a hashchange may trigger popstate, but
   // we don't want to re-render)
-  return mUrl.pathname !== url.pathname
+  return (
+    mUrl.origin === url.origin &&
+    mUrl.pathname !== url.pathname
+  )
 }
 
 // -- events --
