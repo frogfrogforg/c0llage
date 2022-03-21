@@ -68,7 +68,6 @@
 
         .npc {
           position: absolute;
-          width: 48px;
           height: 48px;
           image-rendering: pixelated;
           background: none;
@@ -124,6 +123,12 @@
         <a-dumpling no-back temperament="choleric" title="rain/reign by Jude Pinto" id="every-grocery-store" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
             <d-iframe style="--scaleFactor: 0.8;" src="https://itch.io/embed-upload/5270802?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
         </a-dumpling>
+
+        <a-dumpling no-back temperament="choleric" title="Brock Wants To Fight by Nilson Carroll" id="brock-wants-to-fight" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 0.8;" src="stolen-goods/www/" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+
         <a-dumpling layer="explanation" no-close no-back temperament="choleric" title="games where you walk around and talk to people" id="what" x="60" y="10" w="60" h="21">
             <p>
             this is a selection of short and beautiful <a target="_blank" rel=”noreferrer noopener” href="https://www.wonderville.nyc/events/love-me-play-me-2-17">games where you walk and around and talk to people </a></p>
@@ -164,6 +169,9 @@
     <img class="npc" style="top: 800px; left: 800px;"
          target="text-me"
          src="images/walk-talk/josie.png" />
+    <img class="npc" style="top: 500px; left: 1100px;"
+         target="brock-wants-to-fight"
+         src="images/walk-talk/nilson.png" />
 
 
 
@@ -401,7 +409,7 @@ function updatePlayer(meElm) {
     elm.style.top = y + "px";
   }
 
-
+      let timeLastActive = Date.now();
         let last_tick = Date.now();
       let delta_time = 0;
       let tick_num = 0;
@@ -410,6 +418,17 @@ function updatePlayer(meElm) {
         delta_time= Date.now() - last_tick;
         last_tick = Date.now();
         tick_num++;
+
+
+        // exhibition mode inspired by lee
+        if (Date.now() - timeLastActive > 1000*69) {
+          // reset player
+          timeLastActive = Date.now();
+          me.x = 300 + Math.random() * 600;
+          me.y = 200 + Math.random() * 300;
+          meElm.style.left = me.x + "px";
+          meElm.style.top = me.y + "px";
+        }
 
         updatePlayer(meElm);
 
@@ -442,6 +461,7 @@ function updatePlayer(meElm) {
 
                  // start input
             window.addEventListener("mousedown", e => {
+              timeLastActive = Date.now();
               
               // LEFT MOUSE BUTTON
               if (e.button == 0) {
@@ -454,6 +474,7 @@ function updatePlayer(meElm) {
             });
 
             window.addEventListener("mouseup", e => {
+              timeLastActive = Date.now();
 
               // LEFT MOUSE BUTTON
               if (e.button == 0) {
@@ -465,9 +486,11 @@ function updatePlayer(meElm) {
             });
 
             window.addEventListener("mousemove", e => {
+              timeLastActive = Date.now();
             });
 
             window.addEventListener("keyup", e => {
+              timeLastActive = Date.now();
             switch(e.code) {
               case "KeyS":
                   case "ArrowDown":
@@ -488,6 +511,7 @@ function updatePlayer(meElm) {
             }
             });
             window.addEventListener("keydown", e => {
+              timeLastActive = Date.now();
 
             switch(e.code) {
               case "KeyS":
@@ -514,10 +538,29 @@ function updatePlayer(meElm) {
                     const target = npc.attributes.target.value
                     const targetFrame = document.getElementById(target);
                     targetFrame.toggle();
+
+                    // bandaid bug where player would just keep walking
+                    pressedKeys.right = false;
+                    pressedKeys.down = false;
+                    pressedKeys.left = false;
+                    pressedKeys.up = false
+
+                    targetFrame.focus();
+                    //window.top.focus()
                   }
                 }
                 break;
             }
+
+            });
+
+            window.addEventListener("blur", e => {
+              // bandaid bug where player would just keep walking
+              pressedKeys.right = false;
+              pressedKeys.down = false;
+              pressedKeys.left = false;
+              pressedKeys.up = false
+              
 
             });
 
