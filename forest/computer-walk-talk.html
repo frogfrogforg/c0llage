@@ -117,11 +117,11 @@
 <body style="width:100%; height:100%">
 
     <div class="dumpling-container">
-        <a-dumpling no-back temperament="choleric" title="ending it by Karina Popp" id="ending-it" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+        <a-dumpling no-back temperament="choleric" title="ending it by Karina Popp" id="out-of-bounds" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
             <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/1427963?color=4E4850" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
             <!-- color: 4E4850 -->
         </a-dumpling>
-        <a-dumpling no-back temperament="choleric" title="rain/reign by Jude Pinto" id="rain-reign" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+        <a-dumpling no-back temperament="choleric" title="rain/reign by Jude Pinto" id="every-grocery-store" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
             <d-iframe style="--scaleFactor: 0.8;" src="https://itch.io/embed-upload/5270802?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
         </a-dumpling>
         <a-dumpling layer="explanation" no-close no-back temperament="choleric" title="games where you walk around and talk to people" id="what" x="60" y="10" w="60" h="21">
@@ -155,8 +155,17 @@
 
     
     <img id="protag" src="images/walk-talk/player-facing-down.png" />
-    <img class="npc" style="top: 400px; left: 500px;"
+    <img class="npc" style="top: 200px; left: 200px;"
+         target="out-of-bounds"
          src="images/walk-talk/annie.png" />
+    <img class="npc" style="top: 600px; left: 300px;"
+         target="every-grocery-store"
+         src="images/walk-talk/carl.png" />
+    <img class="npc" style="top: 800px; left: 800px;"
+         target="text-me"
+         src="images/walk-talk/josie.png" />
+
+
 
     <script type="module" src="/core/d-iframe.js"></script>
     <script type="module" src="/core/dumpling/a-dumpling.js"></script>
@@ -189,6 +198,52 @@
                 const name = element.getAttribute('name') || target
                 const id = `${target}-icon`
                 element.outerHTML = iconTemplate
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+                    .replaceAll('$name', name)
+
+                const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i)
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+
+                    d.State.listen(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
+
+                // ['hide-frame', 'show-frame'].forEach((eventName) => {
+                //     targetFrame.addEventListener(eventName, (e) => {
+                //         icon.classList.toggle('icon-opened', targetFrame.visible)
+                //     })
+                // })
+
+                icon.onclick = () => {
+                    targetFrame.toggle();
+                }
+            }
+        }
+
+        function initializeNPCs() {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
+                const id = `${target}-icon`
                     .replaceAll('$id', id)
                     .replaceAll('$src', src)
                     .replaceAll('$name', name)
@@ -371,7 +426,6 @@ function updatePlayer(meElm) {
           const npcRect = npc.getBoundingClientRect();
           const distsq = distSquared(playerRect.x, playerRect.y,
                                      npcRect.x, npcRect.y);
-          console.log(distsq);
 
           const threshold = 8000;
 
@@ -382,9 +436,9 @@ function updatePlayer(meElm) {
         let npcs = [];
 
         function main() {
-            //initializeIcons()
 
             npcs = document.getElementsByClassName("npc");
+            //initializeNPCs()
 
                  // start input
             window.addEventListener("mousedown", e => {
@@ -456,9 +510,10 @@ function updatePlayer(meElm) {
               case "Enter":
               case "Space":
                 for (const npc of npcs) {
-                  console.log(nearEnough(meElm, npc));
-                  if (nearEnough(meElm, npc){
-                    
+                  if (nearEnough(meElm, npc)) {
+                    const target = npc.attributes.target.value
+                    const targetFrame = document.getElementById(target);
+                    targetFrame.toggle();
                   }
                 }
                 break;
