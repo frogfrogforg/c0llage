@@ -80,6 +80,17 @@
             transform-origin: top left
         }
 
+        #protag {
+          position: absolute;
+          width: 48px;
+          height: 48px;
+          image-rendering: pixelated;
+          background: none;
+
+          transform: translate(-50%, -50%);
+
+        }
+
         #claribelle {
             position: absolute;
             left: 60px;
@@ -139,6 +150,9 @@
 
     </div>
 
+    
+    <img id="protag" src="images/walk-talk/player-facing-down.png" />
+
 
     <script type="module" src="/core/d-iframe.js"></script>
     <script type="module" src="/core/dumpling/a-dumpling.js"></script>
@@ -196,11 +210,11 @@
 
                 icon.classList.toggle('icon-hidden', !passesAllConditions);
 
-                ['hide-frame', 'show-frame'].forEach((eventName) => {
-                    targetFrame.addEventListener(eventName, (e) => {
-                        icon.classList.toggle('icon-opened', targetFrame.visible)
-                    })
-                })
+                // ['hide-frame', 'show-frame'].forEach((eventName) => {
+                //     targetFrame.addEventListener(eventName, (e) => {
+                //         icon.classList.toggle('icon-opened', targetFrame.visible)
+                //     })
+                // })
 
                 icon.onclick = () => {
                     targetFrame.toggle();
@@ -208,11 +222,257 @@
             }
         }
 
+        const meElm = document.getElementById("protag");
+          let me = {
+            x: 0, 
+            y: 0,
+            dir: "down"
+          };
+          me.x = 300 + Math.random() * 600;
+          me.y = 200 + Math.random() * 300;
+          meElm.style.left = me.x + "px";
+          meElm.style.top = me.y + "px";
+
+          let meSpeed = .1;
+  let meKeyVelocity = {x : 0, y: 0};
+  let pressedKeys = {
+      up: false,
+      down: false,
+      left: false,
+      right: false
+  }
+
+function updatePlayer(meElm) {
+    let velocity = {x : 0, y: 0};
+
+    // grab input
+    if (pressedKeys.right) {
+        velocity.x += meSpeed * delta_time;
+    }
+    if (pressedKeys.left) {
+        velocity.x -= meSpeed * delta_time;
+    }
+    if (pressedKeys.up) {
+        velocity.y -= meSpeed * delta_time;
+    }
+    if (pressedKeys.down) {
+        velocity.y += meSpeed * delta_time;
+    }
+
+    // move player on screen
+    me.x = me.x + velocity.x;
+    me.y = me.y + velocity.y
+
+    meElm.style.left= `${me.x}px`;
+    meElm.style.top= `${me.y}px`;
+
+    // animate
+    // we're standing still
+    if (Math.abs(velocity.x) + Math.abs(velocity.y) < 0.01) {
+      switch(me.dir) {
+        case "down":
+      meElm.src = "images/walk-talk/player-facing-down.png";
+          break;
+        case "up":
+      meElm.src = "images/walk-talk/player-facing-up.png";
+          break;
+        case "left":
+      meElm.src = "images/walk-talk/player-facing-left.png";
+          break;
+        case "right":
+      meElm.src = "images/walk-talk/player-facing-left.png";
+      meElm.style.transform = "translate(-50%, -50%) scaleX(-1)";
+          break;
+      }
+      
+    // moving more vertical than horizontal
+    } else if (Math.abs(velocity.y) > Math.abs(velocity.x)) {
+      if (velocity.y > 0) {
+    me.dir = "down";
+
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-down.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-down.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%)";
+      } else { // velocity.y < 0
+    me.dir = "up";
+
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-up.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-up.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%)";
+      }
+    }
+
+    // moving more horizontal than vertical
+    else {
+
+      if (velocity.x > 0) {
+    me.dir = "right";
+
+        // animate
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-left.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-left.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%) scaleX(-1)";
+      } else { // velocity.x < 0
+    me.dir = "left";
+
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-left.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-left.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%)";
+      }
+    }
+
+
+  }
+
+
+  function updateScreenPos(elm, x, y) {
+    elm.style.left = x + "px";
+    elm.style.top = y + "px";
+  }
+
+
+        let last_tick = Date.now();
+      let delta_time = 0;
+      let tick_num = 0;
+      function tick() {
+
+        delta_time= Date.now() - last_tick;
+        last_tick = Date.now();
+        tick_num++;
+
+        updatePlayer(meElm);
+
+
+        window.requestAnimationFrame(tick);
+      }
+
         function main() {
-            initializeIcons()
+            //initializeIcons()
+
+                 // start input
+            window.addEventListener("mousedown", e => {
+              
+              // LEFT MOUSE BUTTON
+              if (e.button == 0) {
+              }
+
+              // RIGHT MOUSE BUTTON
+              if (e.button == 2) {
+              }
+
+            });
+
+            window.addEventListener("mouseup", e => {
+
+              // LEFT MOUSE BUTTON
+              if (e.button == 0) {
+              }
+
+              if (e.button == 2) {
+              }
+
+            });
+
+            window.addEventListener("mousemove", e => {
+            });
+
+            window.addEventListener("keyup", e => {
+            switch(e.code) {
+              case "KeyS":
+                  case "ArrowDown":
+                pressedKeys.down = false;
+                    break;
+                  case "KeyW":
+                  case "ArrowUp":
+                pressedKeys.up = false;
+                    break;
+                  case "KeyA":
+                  case "ArrowLeft":
+                pressedKeys.left = false;
+                    break;
+                  case "KeyD":
+                  case "ArrowRight":
+                pressedKeys.right = false;
+                    break;
+            }
+            });
+            window.addEventListener("keydown", e => {
+
+            switch(e.code) {
+              case "KeyS":
+                  case "ArrowDown":
+                pressedKeys.down = true;
+                    break;
+                  case "KeyW":
+                  case "ArrowUp":
+                pressedKeys.up = true;
+                    break;
+                  case "KeyA":
+                  case "ArrowLeft":
+                pressedKeys.left = true;
+                    break;
+                  case "KeyD":
+                  case "ArrowRight":
+                pressedKeys.right = true;
+                    break;
+                  case "Space":
+
+                let vx = 0;
+                let vy = 0;
+
+                switch(me.dir) {
+                      case "down":
+                vy = 1;
+                        break;
+                      case "up":
+                vy = -1;
+                        break;
+                      case "left":
+                vx = -1;
+                        break;
+                      case "right":
+                vx = 1;
+                        break;
+                    }
+                
+
+                let orb = new Orb();
+
+                orb.x = me.x;
+                orb.y = me.y;
+                orb.vx = vx;
+                orb.vy = vy;
+
+                orbs.push(orb);
+
+                
+                    break;
+            }
+
+            });
+
+
+
+            window.requestAnimationFrame(tick);
+
         }
 
         main()
+
+
+
 
 
     </script>
