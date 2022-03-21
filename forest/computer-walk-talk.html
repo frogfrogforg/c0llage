@@ -67,7 +67,12 @@
         }
 
         .npc {
-
+          position: absolute;
+          width: 48px;
+          height: 48px;
+          image-rendering: pixelated;
+          background: none;
+          transform: translate(-50%, -50%);
         }
 
         iframe {
@@ -86,9 +91,7 @@
           height: 48px;
           image-rendering: pixelated;
           background: none;
-
           transform: translate(-50%, -50%);
-
         }
 
         #claribelle {
@@ -152,7 +155,8 @@
 
     
     <img id="protag" src="images/walk-talk/player-facing-down.png" />
-
+    <img class="npc" style="top: 400px; left: 500px;"
+         src="images/walk-talk/annie.png" />
 
     <script type="module" src="/core/d-iframe.js"></script>
     <script type="module" src="/core/dumpling/a-dumpling.js"></script>
@@ -358,8 +362,29 @@ function updatePlayer(meElm) {
         window.requestAnimationFrame(tick);
       }
 
+        function distSquared(x1, y1, x2, y2) {
+            return Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
+        }
+
+        function nearEnough(player, npc) {
+          const playerRect = player.getBoundingClientRect();
+          const npcRect = npc.getBoundingClientRect();
+          const distsq = distSquared(playerRect.x, playerRect.y,
+                                     npcRect.x, npcRect.y);
+          console.log(distsq);
+
+          const threshold = 8000;
+
+          return distsq < threshold;
+        }
+
+
+        let npcs = [];
+
         function main() {
             //initializeIcons()
+
+            npcs = document.getElementsByClassName("npc");
 
                  // start input
             window.addEventListener("mousedown", e => {
@@ -412,53 +437,31 @@ function updatePlayer(meElm) {
 
             switch(e.code) {
               case "KeyS":
-                  case "ArrowDown":
+              case "ArrowDown":
                 pressedKeys.down = true;
-                    break;
-                  case "KeyW":
-                  case "ArrowUp":
+                break;
+              case "KeyW":
+              case "ArrowUp":
                 pressedKeys.up = true;
-                    break;
-                  case "KeyA":
-                  case "ArrowLeft":
+                break;
+              case "KeyA":
+              case "ArrowLeft":
                 pressedKeys.left = true;
-                    break;
-                  case "KeyD":
-                  case "ArrowRight":
+                break;
+              case "KeyD":
+              case "ArrowRight":
                 pressedKeys.right = true;
-                    break;
-                  case "Space":
-
-                let vx = 0;
-                let vy = 0;
-
-                switch(me.dir) {
-                      case "down":
-                vy = 1;
-                        break;
-                      case "up":
-                vy = -1;
-                        break;
-                      case "left":
-                vx = -1;
-                        break;
-                      case "right":
-                vx = 1;
-                        break;
-                    }
-                
-
-                let orb = new Orb();
-
-                orb.x = me.x;
-                orb.y = me.y;
-                orb.vx = vx;
-                orb.vy = vy;
-
-                orbs.push(orb);
-
-                
-                    break;
+                break;
+              case "KeyE":
+              case "Enter":
+              case "Space":
+                for (const npc of npcs) {
+                  console.log(nearEnough(meElm, npc));
+                  if (nearEnough(meElm, npc){
+                    
+                  }
+                }
+                break;
             }
 
             });
