@@ -116,16 +116,26 @@
 <body style="width:100%; height:100%">
 
     <div class="dumpling-container">
-        <a-dumpling no-back temperament="choleric" title="ending it by Karina Popp" id="out-of-bounds" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
-            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/1427963?color=4E4850" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
-            <!-- color: 4E4850 -->
-        </a-dumpling>
-        <a-dumpling no-back temperament="choleric" title="rain/reign by Jude Pinto" id="every-grocery-store" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
-            <d-iframe style="--scaleFactor: 0.8;" src="https://itch.io/embed-upload/5270802?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        <a-dumpling no-back temperament="choleric" title="out of bounds by Annie Zhang" id="out-of-bounds" w="63" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/3159617?color=eddcc3" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
         </a-dumpling>
 
-        <a-dumpling no-back temperament="choleric" title="Brock Wants To Fight by Nilson Carroll" id="brock-wants-to-fight" w="122" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+        <a-dumpling no-back temperament="choleric" title="EVERY GROCERY STORE by Carl Burton" id="every-grocery-store" w="63" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/4550039?color=ffb805" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+        <a-dumpling no-back temperament="choleric" title="text me when you get home by Josie Brechner" id="text-me" w="89" h="96" min-x="0" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/1797510?color=de8ca6" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+
+        <a-dumpling no-back temperament="choleric" title="Brock Wants To Fight by Nilson Carroll" id="brock-wants-to-fight" w="88" h="69" min-x="-40" max-x="40" min-y="-4" max-y="10" hidden>
             <d-iframe style="--scaleFactor: 0.8;" src="stolen-goods/www/" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+
+        <a-dumpling no-back temperament="choleric" title="flaming/million by Nilson Carroll" id="flaming-million" w="130" h="105" min-x="0" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/3152701?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
         </a-dumpling>
 
 
@@ -431,6 +441,7 @@ function updatePlayer(meElm) {
           me.y = 200 + Math.random() * 300;
           meElm.style.left = me.x + "px";
           meElm.style.top = me.y + "px";
+
         }
 
         updatePlayer(meElm);
@@ -536,6 +547,7 @@ function updatePlayer(meElm) {
               case "KeyE":
               case "Enter":
               case "Space":
+
                 for (const npc of npcs) {
                   if (nearEnough(meElm, npc)) {
                     const target = npc.attributes.target.value
