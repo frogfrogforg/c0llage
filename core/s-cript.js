@@ -343,12 +343,13 @@ class ScriptHerald {
         script.flow = kClickSectionName
         script.setPath(...click)
       }
+
       return
     }
 
     // update current script position
     script.flow = name
-    script.setPath(...path)
+    script.advance(i, -1)
 
     // show the dialog
     m.showNextDialog()
