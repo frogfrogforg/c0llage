@@ -201,13 +201,13 @@ class ScriptHerald {
   // id: string - the target id
 
   // -- lifetime --
-  constructor(id, $godsWindow) {
+  constructor(id, $godWindow) {
     const m = this
     m.id = id
     m.scripts = []
     m.hooks = {}
     m.$window = null
-    m.$godsWindow = $godsWindow
+    m.$godWindow = $godWindow
   }
 
   // -- commands --
@@ -305,16 +305,16 @@ class ScriptHerald {
     }
 
     // get the section index
-
     const click = script.findClickPath()
     const i = script.findIdxByName(name)
     const j = 0
+
     if (i == null) {
       if (click != null) {
-        // const [i1, j1] = script.resolvePath(...click)
         script.flow = kClickSectionName
         script.setPath(...click)
       }
+
       return
     }
 
@@ -322,9 +322,7 @@ class ScriptHerald {
     const path = script.resolvePath(i, j, true)
     if (path == null) {
       if (click != null) {
-        // const [i1, j1] = script.resolvePath(...click)
         script.flow = kClickSectionName
-        // script.setPath(i1, j1)
         script.setPath(...click)
       }
       return
@@ -339,13 +337,7 @@ class ScriptHerald {
   }
 
   // -- c/helpers
-  // show the dialog w/ this path
-  showDialogAtPath(best, i, j) {
-    const m = this
-
-  }
-
-  // shows a dialog for the item
+  // shows a dialog howor the item
   showDialogForItem(scriptId, item, cont) {
     const m = this
 
@@ -357,14 +349,11 @@ class ScriptHerald {
     // if it's a hook, render the custom html
     switch (item.kind) {
       case ScriptHook.kind:
-        m.showDialogForHook(scriptId, item, cont)
-        break
+        m.showDialogForHook(scriptId, item, cont); break
       case ScriptLine.kind:
-        m.showDialogForLine(item, cont)
-        break
+        m.showDialogForLine(item, cont); break
       default:
-        console.error("attempting to show dialogue for invalid item", item)
-        break
+        console.error("attempting to show dialogue for invalid item", item); break
     }
   }
 
@@ -488,7 +477,7 @@ class ScriptHerald {
     })
 
     // spawn the dumpling TODO: dumpling spawner
-    m.$godsWindow.document.firstElementChild.appendChild($el)
+    m.$godWindow.document.firstElementChild.appendChild($el)
   }
 
   // close the open dialog dumpling, if any
@@ -520,16 +509,15 @@ class ScriptHerald {
     const m = this
 
     // todo: be smart about location metadata, e.g. location.tags.include("water-level")
-    const location = m.$godsWindow.location.pathname
-    const scripts = Object.values(m.scripts)
+    const path = m.$godWindow.location.pathname
+    const all = Object.values(m.scripts)
 
-    const filteredScripts = scripts
+    const filtered = all
       .filter((s) => s.script.findCurrentPath() != null)
-      .filter((s) => s.key === "*" || location.startsWith(s.key))
-      .sort((s0, s1) => s1.key.length - s0.key.length)
-    // longer keys are more important.
+      .filter((s) => s.key === "*" || path.startsWith(s.key))
+      .sort((s0, s1) => s1.key.length - s0.key.length) // longer keys are more important.
 
-    const match = filteredScripts[0]
+    const match = filtered[0]
     if (match == null) {
       return null
     }
@@ -562,7 +550,7 @@ class ScriptHerald {
     }
 
     // from the root window
-    let $window = m.$window
+    let $window = m.$window || m.$godWindow
     let $target = null
 
     // search upwards for the target

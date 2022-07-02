@@ -67,7 +67,8 @@ export class Assistant {
   // -- factories --
   // spawn the assistant when available
   static spawn() {
-    if (document.location.pathname.endsWith("welcome")) {
+    const path = document.location.pathname
+    if (path.endsWith("welcome")) {
       return
     }
 
