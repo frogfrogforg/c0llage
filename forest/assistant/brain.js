@@ -2,7 +2,7 @@ import { kInventory } from "../inventory.js"
 import { Ledger } from "./ledger.js"
 
 // -- constants --
-const kIdScript = "script"
+const kIdScript = "assistant-main"
 const kScriptHookDebts = "debts-hook"
 // const kLedgerDialogName = "ledger"
 
