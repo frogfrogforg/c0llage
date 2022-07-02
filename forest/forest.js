@@ -13,13 +13,11 @@ let $mGame = null
 
 // -- lifetime --
 function main() {
-  console.log("main");
   /// set props
   mUrl = document.location
 
   // capture elements
   $mGame = document.getElementById("game")
-
   setTitle("welcome")
 
   // inventory (persistent windows) loading and saving
@@ -104,12 +102,16 @@ async function visit(url) {
 function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
-    if (el.getAttribute("disable-randomization") != null) return
+    if (el.getAttribute("disable-randomization") != null) {
+      return
+    }
 
-    if (el.href == null) return
+    if (el.href == null) {
+      return
+    }
 
+    // handle SVGAnimatedString
     if (typeof el.href === "object") {
-      // Handle SVGAnimatedString
       el.href.baseVal = randomizeUrl(el.href.baseVal)
     } else {
       el.href = randomizeUrl(el.href)
@@ -233,12 +235,12 @@ function setTitle(title) {
 }
 
 function didFinishVisit() {
-  // Add sparkles to hotpsots
-  // (is this the right place to call this?)
+  // add sparkles to hotpsots (is this the right place to call this?)
   initSparkles($mGame.querySelector("#main"));
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
-  console.log(hotspots);
   addHoverSparklesToElements(hotspots);
+
+  // track visit
   d.Events.raise(d.Events.Forest.Visited)
 
   // spawn the assistant if possible
