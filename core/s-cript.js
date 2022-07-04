@@ -27,6 +27,8 @@ const kContOpration = "cont"
 
 // the section name for on page entry dialog
 const kEnterSectionName = "enter"
+
+// the section name for on click dialog
 const kClickSectionName = "click"
 
 // attr names
@@ -59,6 +61,12 @@ class ScriptElement extends HTMLParsedElement {
   // init the element
   parsedCallback() {
     const m = this
+
+    // if no id, we'll try to inferred one
+    if (!m.id) {
+      m.id = `${m.targetId}-${document.location.pathname.slice(1).replaceAll("/", "-")}`
+      console.debug(`[script] s-cript inferred id="${m.id}"`)
+    }
 
     // show god the scripture
     m.god.addScriptToHerald(
@@ -98,15 +106,17 @@ class ScriptElement extends HTMLParsedElement {
   }
 
   // -- queries --
-  // the id of the target element
+  // the id of the script
   get scriptId() {
     return this.id
   }
 
+  // the id of the target element (herald)
   get targetId() {
     return this.getAttribute(kAttrs.target)
   }
 
+  // if this is the main script for the page
   get isMain() {
     return this.hasAttribute(kAttrs.main)
   }
@@ -147,11 +157,16 @@ class ScriptGod {
     // get the herald
     const herald = m.findOrCreateHerald(id)
 
-    // add the script TODO: use a real key from the el attr
-    // longer keys are more important
-    const key = isMain ? "*" : window.location.pathname
-    const script = Script.decode(content, scriptId)
-    herald.addScript(scriptId, script, key)
+    // add the script if necessary
+    if (!herald.hasScript(scriptId)) {
+      // longer keys are more important
+      // TODO: use a real key from the el attr
+      const key = isMain ? "*" : window.location.pathname
+      const script = Script.decode(content, scriptId)
+      herald.addScript(scriptId, script, key)
+    } else {
+      console.debug(`[script] herald ${id} ignoring duplicate script w/ id ${scriptId}`)
+    }
 
     // bind once we hit the main script
     if (isMain) {
@@ -201,21 +216,24 @@ class ScriptHerald {
   // id: string - the target id
 
   // -- lifetime --
-  constructor(id, $godsWindow) {
+  constructor(id, $godWindow) {
     const m = this
     m.id = id
     m.scripts = []
     m.hooks = {}
     m.$window = null
-    m.$godsWindow = $godsWindow
+    m.$godWindow = $godWindow
   }
 
   // -- commands --
   // add a new script
   addScript(id, script, key) {
     const m = this
-    if (m.scripts[id] == null) {
+
+    if (!m.hasScript(id)) {
       m.scripts[id] = { id, script, key }
+    } else {
+      console.warn(`[script] herald ${m.id} already had script w/ id ${id}!`)
     }
   }
 
@@ -276,7 +294,7 @@ class ScriptHerald {
 
     // get current item and advance
     const curr = script.findCurrentPath(false) // also sets state
-    console.log(`script: ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
+    console.log(`[script] ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
 
     const item = script.findItemByPath(...curr)
     script.advance(...curr)
@@ -288,7 +306,7 @@ class ScriptHerald {
       scriptId,
       item,
       () => {
-        console.log(`script: ${scriptId} cont [showNextDialog]`)
+        console.log(`[script] ${scriptId} cont [showNextDialog]`)
         m.showNextDialog()
       }
     )
@@ -305,16 +323,16 @@ class ScriptHerald {
     }
 
     // get the section index
-
     const click = script.findClickPath()
     const i = script.findIdxByName(name)
     const j = 0
+
     if (i == null) {
       if (click != null) {
-        // const [i1, j1] = script.resolvePath(...click)
         script.flow = kClickSectionName
         script.setPath(...click)
       }
+
       return
     }
 
@@ -322,30 +340,23 @@ class ScriptHerald {
     const path = script.resolvePath(i, j, true)
     if (path == null) {
       if (click != null) {
-        // const [i1, j1] = script.resolvePath(...click)
         script.flow = kClickSectionName
-        // script.setPath(i1, j1)
         script.setPath(...click)
       }
+
       return
     }
 
     // update current script position
     script.flow = name
-    script.setPath(...path)
+    script.advance(i, -1)
 
     // show the dialog
     m.showNextDialog()
   }
 
   // -- c/helpers
-  // show the dialog w/ this path
-  showDialogAtPath(best, i, j) {
-    const m = this
-
-  }
-
-  // shows a dialog for the item
+  // shows a dialog howor the item
   showDialogForItem(scriptId, item, cont) {
     const m = this
 
@@ -357,14 +368,11 @@ class ScriptHerald {
     // if it's a hook, render the custom html
     switch (item.kind) {
       case ScriptHook.kind:
-        m.showDialogForHook(scriptId, item, cont)
-        break
+        m.showDialogForHook(scriptId, item, cont); break
       case ScriptLine.kind:
-        m.showDialogForLine(item, cont)
-        break
+        m.showDialogForLine(item, cont); break
       default:
-        console.error("attempting to show dialogue for invalid item", item)
-        break
+        console.error("attempting to show dialogue for invalid item", item); break
     }
   }
 
@@ -488,7 +496,7 @@ class ScriptHerald {
     })
 
     // spawn the dumpling TODO: dumpling spawner
-    m.$godsWindow.document.firstElementChild.appendChild($el)
+    m.$godWindow.document.firstElementChild.appendChild($el)
   }
 
   // close the open dialog dumpling, if any
@@ -510,6 +518,11 @@ class ScriptHerald {
     return `${this.id}-dialog`
   }
 
+  // if the herald has a script for this id
+  hasScript(id) {
+    return this.scripts[id] != null
+  }
+
   // find the open dialog dumpling
   findOpenDialog() {
     return this.findById(this.dialogId, this.$window)
@@ -520,16 +533,15 @@ class ScriptHerald {
     const m = this
 
     // todo: be smart about location metadata, e.g. location.tags.include("water-level")
-    const location = m.$godsWindow.location.pathname
-    const scripts = Object.values(m.scripts)
+    const path = m.$godWindow.location.pathname
+    const all = Object.values(m.scripts)
 
-    const filteredScripts = scripts
+    const filtered = all
       .filter((s) => s.script.findCurrentPath() != null)
-      .filter((s) => s.key === "*" || location.startsWith(s.key))
-      .sort((s0, s1) => s1.key.length - s0.key.length)
-    // longer keys are more important.
+      .filter((s) => s.key === "*" || path.startsWith(s.key))
+      .sort((s0, s1) => s1.key.length - s0.key.length) // longer keys are more important.
 
-    const match = filteredScripts[0]
+    const match = filtered[0]
     if (match == null) {
       return null
     }
@@ -562,7 +574,7 @@ class ScriptHerald {
     }
 
     // from the root window
-    let $window = m.$window
+    let $window = m.$window || m.$godWindow
     let $target = null
 
     // search upwards for the target
@@ -665,7 +677,7 @@ class Script {
       s.i = j
     }
 
-    console.log(`script: ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
+    console.log(`[script] ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
   }
 
   // -- queries --
@@ -1022,7 +1034,7 @@ ScriptLine.kind = "line"
 
 // -- helpers --
 // decode an operation string "[cont] [a,!b] [set a, b]" into an object like:
-// { cont: bool, get: [fn], set: [fn] }
+//   { cont: bool, get: [fn], set: [fn] }
 function decodeOperations(ostr, id) {
   const operations = {}
 
@@ -1033,11 +1045,10 @@ function decodeOperations(ostr, id) {
 
   // then parse each one
   for (const operation of ostr.match(kOperationPattern).slice(1)) {
-    switch(operation.trim().split(' ')[0]) { // gets the operation type
+    switch (operation.trim().split(" ")[0]) { // gets the operation type
       case kOnceOperation:
         const seenId = `seen-${id}`
         operations.get = addGetOperation(operations.get, `!${seenId}`)
-        // operations.get()
         operations.set = addSetOperation(operations.set, seenId)
         break
       case kSetOperation:
@@ -1057,7 +1068,10 @@ function decodeOperations(ostr, id) {
 
 // decode a get operation "a,!b"
 function decodeGetOperation(oldGet, str) {
-  return addGetOperation(oldGet, ...str.split(","))
+  return addGetOperation(
+    oldGet,
+    ...str.split(",")
+  )
 }
 
 // add a get operation for a list of variables
@@ -1068,10 +1082,18 @@ function addGetOperation(oldGet, ...vars) {
     }
 
     for (const v of vars) {
-      const isNot = v[0] === '!'
-      const key = isNot ? v.slice(1) : v
+      // key on the var
+      let key = v
 
-      if (d.State[key] == isNot) {
+      // if negated, remove "!" from key
+      const isNot = v[0] === "!"
+      if (isNot) {
+        key = key.slice(1)
+      }
+
+      // if current state matches flag, (??? what does this do)
+      const state = d.State[key]
+      if (state == isNot) {
         return false
       }
     }
@@ -1083,7 +1105,11 @@ function addGetOperation(oldGet, ...vars) {
 // decode a set operation "set a,b"
 function decodeSetOperation(oldSet, str) {
   str = str.slice(kSetOperation.length + 1)
-  return addSetOperation(oldSet, ...str.split(","))
+
+  return addSetOperation(
+    oldSet,
+    ...str.split(",")
+  )
 }
 
 // add a set operation for a list of variables
