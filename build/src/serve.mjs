@@ -4,7 +4,7 @@ import { paths } from "./paths.mjs"
 import { log } from "./log.mjs"
 
 // -- constants --
-const kPort = 8888
+const kPort = 420
 
 // -- commands --
 export function serve() {
