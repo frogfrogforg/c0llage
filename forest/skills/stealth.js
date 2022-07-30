@@ -1,5 +1,7 @@
-document.body.onload = () => {
-  const stealth = document.getElementById('stealthSVG');
+const stealth = document.getElementById('stealthSVG');
+if(stealth) {
+
+  const k_StealthKey = 16 // left shift
 
   let isStealthing = false
   window.openStealth = () => {
@@ -10,6 +12,7 @@ document.body.onload = () => {
     stealth.contentDocument.getElementById('stealth-open-left').beginElement()
     stealth.contentDocument.getElementById('stealth-open-right').beginElement()
   }
+
   window.closeStealth = () => {
     if (isStealthing) return
     d.State.stealthy = true
@@ -29,14 +32,15 @@ document.body.onload = () => {
 
   let timeout
   document.addEventListener('keydown', (event) => {
-    if (event.keyCode === 16) { // left shift
+    if (event.keyCode === k_StealthKey) { // left shift
       stealth.style.visibility = 'visible'
       closeStealth();
       clearTimeout(timeout)
     }
   });
+
   document.addEventListener('keyup', (event) => {
-    if (event.keyCode === 16) {
+    if (event.keyCode === k_StealthKey) {
       openStealth();
       timeout = setTimeout(() => {
         if (!isStealthing) {
@@ -45,4 +49,6 @@ document.body.onload = () => {
       }, 3000)
     }
   });
+} else {
+  console.log("no stealth at", window.location, "not running skill")
 }

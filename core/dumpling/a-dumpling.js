@@ -416,6 +416,13 @@ export class Dumpling extends HTMLParsedElement {
 
   }
 
+  blurIframe() {
+    const iframe = this.findIframe()
+    if (iframe != null) {
+      iframe.blur()
+    }
+  }
+
   focusIframe() {
     const iframe = this.findIframe()
     if (iframe != null) {
@@ -511,6 +518,10 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   onMouseUp = () => {
+    if (this.gesture == null) {
+      return
+    }
+
     // re-enable mouse events on iframes
     const iframes = document.querySelectorAll('iframe')
     for (const iframe of Array.from(iframes)) {
@@ -661,6 +672,8 @@ export class Dumpling extends HTMLParsedElement {
 
     if(isFocused) {
       this.focusIframe()
+    } else {
+      this.blurIframe()
     }
   }
 

@@ -2,6 +2,10 @@ import { kInventory } from "./inventory.js"
 import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
 
+// skills
+import "./skills/stealth.js"
+import "./skills/claribelle.js"
+
 // -- props --
 /// the current location
 let mUrl = null
@@ -37,6 +41,10 @@ function main() {
 // -- commands --
 /// navigate to the url
 function navigate(url) {
+  if(!(url instanceof URL)) {
+    url = new URL(url, `${window.origin}/forest`)
+  }
+
   // add history entry
   history.pushState({}, "", url)
 
@@ -228,7 +236,7 @@ function didStartVisit() {
   d.Events.raise(d.Events.Forest.BeforeVisit)
 
   // store current url as referrer
-  d.State.referrer = mUrl.pathname
+  d.State.referrer = mUrl && mUrl.pathname || "nowhere"
 }
 
 function setTitle(title) {
@@ -252,8 +260,13 @@ function didFinishVisit() {
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
   addHoverSparklesToElements(hotspots);
 
+  // store location
+  // TODO: should this be set alongside d.State.referrer?
+  const location = mUrl.pathname.replace(/\.html.*/, "")
+  d.State.location = location
+
   // track visit
-  d.Events.raise(d.Events.Forest.AfterVisit)
+  d.Events.raise(d.Events.Forest.AfterVisit, location)
 }
 
 // -- exports --

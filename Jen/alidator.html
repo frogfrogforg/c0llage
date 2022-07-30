@@ -9594,28 +9594,33 @@ CHAR 9835
 				const y = player().y;
 
 				// pop out on the left
+				const dx =
+					curPlayerDirection == Direction.Right ? +1
+					: curPlayerDirection == Direction.Left ? -1
+					: 0;
+
+				const dy =
+					curPlayerDirection == Direction.Down ? +1
+					: curPlayerDirection == Direction.Up ? -1
+					: 0;
 				if(!claribelle_gone) {
 					if (curPlayerDirection == Direction.Left) {
 						if ((x == 0 && y == 12) || (x == 0 && y == 13)) {
-							d.Events.raise('alidator.exitleft');
+							d.Events.raise('alidator.exit', {x, y, dx, dy})
+							claribelle_gone = true
 						}
 					}
 
 					// pop out on the right
 					if (curPlayerDirection == Direction.Right) {
 						if ((x == 15 && y == 12) || (x == 15 && y == 13)) {
-							d.Events.raise('alidator.exitright');
+							d.Events.raise('alidator.exit', {x, y, dx, dy})
+							claribelle_gone = true
 						}
 					}
 				}
 
 			});
-
-			d.Events.listen('computer.claribelleescape', () => {
-				claribelle_gone = true;
-			});
-
-
 		}(window));
 
 

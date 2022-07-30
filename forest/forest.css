@@ -1,4 +1,12 @@
 /* body */
+
+.Claribelle {
+    position: absolute;
+    width: 6.25%;
+    height: 6.25%;
+    visibility: hidden;
+}
+
 .Forest {
     overflow:visible;
     width: 100%;
