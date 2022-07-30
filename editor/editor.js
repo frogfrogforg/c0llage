@@ -13,7 +13,7 @@ console.log(pages);
 
 var summerHtmlImageMapCreator = (function() {
     'use strict';
-    
+
     /* Utilities */
     var utils = {
         /**
@@ -49,14 +49,14 @@ var summerHtmlImageMapCreator = (function() {
         pathBasename : function(path) {
             return path.split('/').reverse()[0];
         },
-        
+
         /**
          * Returns correct coordinates (incl. offsets)
          *
          * @param x {number} - x-coordinate
          * @param y {number} - y-coordinate
          * @returns {Object} - object with recalculated coordinates, e.g. {x: 100, y: 200}
-         */ 
+         */
         getRightCoords : function(x, y) {
             // 1000 is the magic number equal to the side length of the svg viewbox
             return {
@@ -64,7 +64,7 @@ var summerHtmlImageMapCreator = (function() {
                 y : (y - app.getOffset('y'))*(1000/app.getOffset('h'))
             };
         },
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
@@ -72,27 +72,27 @@ var summerHtmlImageMapCreator = (function() {
         id : function (str) {
             return document.getElementById(str);
         },
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
          */
         hide : function(node) {
             node.style.display = 'none';
-            
+
             return this;
         },
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
          */
         show : function(node) {
             node.style.display = 'block';
-            
+
             return this;
         },
-        
+
         /**
          * Escape < and > (for code output)
          *
@@ -102,7 +102,7 @@ var summerHtmlImageMapCreator = (function() {
         encode : function(str) {
             return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br />').replace(/ /g, '&nbsp;');
         },
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
@@ -112,7 +112,7 @@ var summerHtmlImageMapCreator = (function() {
                 func(arr[i], i);
             }
         },
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
@@ -122,18 +122,18 @@ var summerHtmlImageMapCreator = (function() {
                 func(arr[i], i);
             }
         },
-        
+
         /**
          * Display debug info to some block
          */
         debug : (function() {
             var output = document.getElementById('debug');
-            
+
             return function() {
                 output.innerHTML = [].join.call(arguments, ' ');
             };
         })(),
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
@@ -141,10 +141,10 @@ var summerHtmlImageMapCreator = (function() {
         stopEvent : function(e) {
             e.stopPropagation();
             e.preventDefault();
-            
+
             return this;
         },
-        
+
         /**
          * TODO: will use same method of app.js
          * @deprecated
@@ -160,10 +160,10 @@ var summerHtmlImageMapCreator = (function() {
 
             return target;
         },
-        
+
         inherits : (function() {
             var F = function() {};
-            
+
             return function(Child, Parent) {
                 F.prototype = Parent.prototype;
                 Child.prototype = new F();
@@ -234,7 +234,7 @@ var summerHtmlImageMapCreator = (function() {
         /* Display cursor coordinates info */
         var cursor_position_info = (function() {
             var coords_info = utils.id('coords');
-            
+
             return {
                 set : function(coords) {
                     coords_info.innerHTML = 'x: ' + coords.x + ', ' + 'y: ' + coords.y;
@@ -244,7 +244,7 @@ var summerHtmlImageMapCreator = (function() {
                 }
             };
         })();
-        
+
         domElements.container.addEventListener('mousemove', function(e){
             cursor_position_info.set(utils.getRightCoords(e.pageX, e.pageY));
         }, false);
@@ -259,19 +259,19 @@ var summerHtmlImageMapCreator = (function() {
                 if (e.target.parentNode.tagName === 'g') {
                     info.unload();
                     state.selectedArea = e.target.parentNode.obj;
-                    
+
                     app.deselectAll();
                     state.selectedArea.select();
                     state.selectedArea.editingStartPoint = utils.getRightCoords(e.pageX, e.pageY);
-    
+
                     if (e.target.classList.contains('helper')) {
                         var helper = e.target;
                         state.editType = helper.action;
-    
+
                         if (helper.n >= 0) { // if typeof selected_area == polygon
                             state.selectedArea.selected_point = helper.n;
                         }
-                        
+
                         app.addEvent(app.domElements.container,
                                      'mousemove',
                                      state.selectedArea.onProcessEditing.bind(state.selectedArea))
@@ -280,7 +280,7 @@ var summerHtmlImageMapCreator = (function() {
                                      state.selectedArea.onStopEditing.bind(state.selectedArea));
                     } else if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon') {
                         state.editType = 'move';
-                        
+
                         app.addEvent(app.domElements.container,
                                      'mousemove',
                                      state.selectedArea.onProcessEditing.bind(state.selectedArea))
@@ -294,23 +294,23 @@ var summerHtmlImageMapCreator = (function() {
                 }
             }
         }
-        
+
         domElements.container.addEventListener('mousedown', onSvgMousedown, false);
-        
+
         /* Add click event for svg */
         function onSvgClick(e) {
             if (state.appMode === 'drawing' && !state.isDraw && state.currentType) {
                 code.hide();
                 app.setIsDraw(true);
-                
+
                 state.newArea = Area.CONSTRUCTORS[state.currentType].createAndStartDrawing(
                     utils.getRightCoords(e.pageX, e.pageY)
                 );
             }
         }
-    
+
         domElements.container.addEventListener('click', onSvgClick, false);
-        
+
         /* Add dblclick event for svg */
         function onAreaDblClick(e) {
             if (state.appMode === 'editing') {
@@ -320,21 +320,21 @@ var summerHtmlImageMapCreator = (function() {
                 }
             }
         }
-        
+
         domElements.container.addEventListener('dblclick', onAreaDblClick, false);
-        
-         
+
+
         /* Add keydown event for document */
         function onDocumentKeyDown(e) {
             var ctrlDown = e.ctrlKey || e.metaKey; // PC || Mac
-            
+
             switch (e.keyCode) {
                 case KEYS.F1:
                     help.show();
                     e.preventDefault();
-                    
+
                     break;
-                
+
                 case KEYS.ESC:
                     help.hide();
                     if (state.isDraw) {
@@ -346,80 +346,80 @@ var summerHtmlImageMapCreator = (function() {
                         state.selectedArea.redraw();
                         app.removeAllEvents();
                     }
-                    
+
                     break;
-                
+
                 case KEYS.TOP:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         state.selectedArea.move(0, -1);
                         e.preventDefault();
                     }
-                    
+
                     break;
-                
+
                 case KEYS.BOTTOM:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         state.selectedArea.move(0, 1);
                         e.preventDefault();
                     }
                     break;
-                
-                case KEYS.LEFT: 
+
+                case KEYS.LEFT:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         state.selectedArea.move(-1, 0);
                         e.preventDefault();
                     }
-                    
+
                     break;
-                
+
                 case KEYS.RIGHT:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         state.selectedArea.move(1, 0);
                         e.preventDefault();
                     }
-                    
+
                     break;
-                
+
                 case KEYS.DELETE:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         app.removeObject(state.selectedArea);
                         state.selectedArea = null;
                         info.unload();
                     }
-                    
+
                     break;
-                
+
                 case KEYS.I:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         var coordsForAttributesForm = state.selectedArea.getCoordsForDisplayingInfo();
-                            
+
                         info.load(
-                            state.selectedArea, 
-                            coordsForAttributesForm.x + app.getOffset('x'), 
+                            state.selectedArea,
+                            coordsForAttributesForm.x + app.getOffset('x'),
                             coordsForAttributesForm.y + app.getOffset('y')
                         );
                     }
-                    
+
                     break;
-                
+
                 case KEYS.S:
                     if (ctrlDown) {
                         app.saveInLocalStorage();
                     }
-    
+
                     break;
-                
+
                 case KEYS.D:
                     if (state.appMode === 'editing' && state.selectedArea) {
                         state.selectedArea = Area.copy(state.selectedArea);
                     }
-                
+
                     break;
             }
         }
-        
+
         document.addEventListener('keydown', onDocumentKeyDown, false);
-        
+
         // Will moved from the main module
         var areasIO = {
             toJSON : function() {
@@ -427,34 +427,34 @@ var summerHtmlImageMapCreator = (function() {
                     areas : [],
                     img : state.image.src
                 };
-    
+
                 utils.foreach(state.areas, function(x) {
                     obj.areas.push(x.toJSON());
                 });
-                
+
                 return JSON.stringify(obj);
             },
             fromJSON : function(str) {
                 var obj = JSON.parse(str);
-                
+
                 app.loadImage(obj.img);
-                
+
                 utils.foreach(obj.areas, function(areaParams) {
                     Area.fromJSON(areaParams);
-                });    
+                });
             }
         };
-        
+
         // Will moved from the main module
         var localStorageWrapper = (function() {
             var KEY_NAME = 'SummerHTMLImageMapCreator';
-            
+
             return {
                 save : function() {
                     var result = areasIO.toJSON();
                     window.localStorage.setItem(KEY_NAME, result);
                     console.info('Editor ' + result + ' saved');
-                
+
                     alert('Saved');
                 },
                 restore : function() {
@@ -462,7 +462,7 @@ var summerHtmlImageMapCreator = (function() {
                 }
             };
         })();
-        
+
         return {
             domElements : domElements,
             saveInLocalStorage : localStorageWrapper.save,
@@ -498,7 +498,7 @@ var summerHtmlImageMapCreator = (function() {
                 let img = document.querySelector("#background-img");
                 img.setAttribute('href', url);
                 state.image.src = url;
-                
+
                 img.onload = function() {
                     //get_image.hideLoadIndicator().hide();
                     app.show()
@@ -514,7 +514,7 @@ var summerHtmlImageMapCreator = (function() {
                 // domElements.map = document.createElement('map');
                 // domElements.map.setAttribute('name', 'map');
                 // domElements.container.appendChild(domElements.map);
-                
+
                 return function() {
                     // info.unload();
                     // app.setShape(null);
@@ -669,11 +669,11 @@ var summerHtmlImageMapCreator = (function() {
                     svg_code += '    <svg id="hotspot-map"\n'
                     svg_code += '         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"\n'
                     svg_code += '         viewBox="0 0 1000 1000" >\n';
-                    
+
                     // (assume image is in images/ directory)
-                    svg_code += '        <image preserveAspectRatio="none" id="background-img" xlink:href="' + state.image.filename + '"></image>\n'
+                    svg_code += '        <image preserveAspectRatio="none" id="background-img" href="' + state.image.filename + '"></image>\n'
                     utils.foreachReverse(state.areas, function(x) {
-                        svg_code += '        ' + '<a title="'+x._attributes.title+'" class="'+x._attributes.class+'" xlink:href="' + x._attributes.href + '">\n'
+                        svg_code += '        ' + '<a title="'+x._attributes.title+'" class="'+x._attributes.class+'" href="' + x._attributes.href + '">\n'
                         svg_code += '            ' + x.toSVGElementString() + '\n';
                         svg_code += '        ' + '</a>\n'
                     });
@@ -694,10 +694,10 @@ var summerHtmlImageMapCreator = (function() {
                         return '0 objects';
                     }
                     svg_code += utils.encode('<svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000" >\n')
-                    
-                    svg_code += utils.encode('    ' + '<image xlink:href="' + state.image.filename + '"></image>\n')
+
+                    svg_code += utils.encode('    ' + '<image href="' + state.image.filename + '"></image>\n')
                     utils.foreachReverse(state.areas, function(x) {
-                        svg_code += '    ' + utils.encode('<a xlink:href="' + x._attributes.href + '">\n')
+                        svg_code += '    ' + utils.encode('<a href="' + x._attributes.href + '">\n')
                         svg_code += '        ' + utils.encode(x.toSVGElementString() + '\n');
                         svg_code += '    ' + utils.encode('</a>\n')
                     });
@@ -712,11 +712,11 @@ var summerHtmlImageMapCreator = (function() {
             }
         };
     })();
-    
-    
+
+
     /**
      * The constructor for dom events (for simple deleting of event)
-     * 
+     *
      * @constructor
      * @param {DOMElement} target - DOM-element
      * @param {String} eventType - e.g. 'click' or 'mousemove'
@@ -726,10 +726,10 @@ var summerHtmlImageMapCreator = (function() {
         this.target = target;
         this.eventType = eventType;
         this.func = func;
-        
+
         target.addEventListener(eventType, func, false);
     }
-    
+
     /**
      * Remove this event listener from target
      */
@@ -741,7 +741,7 @@ var summerHtmlImageMapCreator = (function() {
     /**
      * The constructor of helpers points
      * Helper is small svg-rectangle with some actions
-     * 
+     *
      * @constructor
      * @param node {DOMElement} - a node for inserting helper
      * @param x {number} - x-coordinate of helper
@@ -750,19 +750,19 @@ var summerHtmlImageMapCreator = (function() {
      */
     function Helper(node, x, y, action) {
         this._el = document.createElementNS(Area.SVG_NS, 'rect');
-        
+
         this._el.classList.add(Helper.CLASS_NAME);
         this._el.setAttribute('height', Helper.SIZE);
         this._el.setAttribute('width', Helper.SIZE);
         this._el.setAttribute('x', x + Helper.OFFSET);
         this._el.setAttribute('y', y + Helper.OFFSET);
-        
+
         node.appendChild(this._el);
-        
+
         this._el.action = action; // TODO: move 'action' from dom el to data-attr
         this._el.classList.add(Helper.ACTIONS_TO_CURSORS[action]);
     }
-    
+
     Helper.SIZE = 5;
     Helper.OFFSET = -Math.ceil(Helper.SIZE / 2);
     Helper.CLASS_NAME = 'helper';
@@ -781,7 +781,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Set coordinates for this helper
-     * 
+     *
      * @param x {number} - x-coordinate
      * @param y {number} - y-coordinate
      * @returns {Helper}
@@ -789,23 +789,23 @@ var summerHtmlImageMapCreator = (function() {
     Helper.prototype.setCoords = function(x, y) {
         this._el.setAttribute('x', x + Helper.OFFSET);
         this._el.setAttribute('y', y + Helper.OFFSET);
-        
+
         return this;
     };
-    
+
     /**
      * Set id of this helper in list of parent's helpers
-     * 
-     * @param id {number} 
+     *
+     * @param id {number}
      * @returns {Helper}
      */
     Helper.prototype.setId = function(id) {
         // TODO: move n-field from DOM-element to data-attribute
         this._el.n = id;
-        
+
         return this;
     };
-    
+
     /**
      * The abstract constructor for area
      *
@@ -819,9 +819,9 @@ var summerHtmlImageMapCreator = (function() {
         if (this.constructor === Area) {
             throw new Error('This is abstract class');
         }
-        
+
         this._type = type;
-        
+
         /**
          * @namespace
          * @property href {string} - href-attribute of area
@@ -831,29 +831,29 @@ var summerHtmlImageMapCreator = (function() {
         this._attributes = {
             href : '',
             title : '',
-            class : 'hotspot'    
+            class : 'hotspot'
         };
         if (attributes) {
             this.setInfoAttributes(attributes);
         }
-        
+
         this._coords = coords;
-        
+
         // the g-element, it contains this area and helpers elements
         this._groupEl = document.createElementNS(Area.SVG_NS, 'g');
         app.addNodeToSvg(this._groupEl);
-        
+
         // TODO: remove this field from DOM-element
         // Link to parent object
         this._groupEl.obj = this;
-        
+
         // svg-dom-element of area
-        this._el = null; 
-        
+        this._el = null;
+
         // Object with all helpers of area
         this._helpers = {};
-        
-        // Add this new area to list of all areas 
+
+        // Add this new area to list of all areas
         app.addObject(this);
     }
     Area.SVG_NS = 'http://www.w3.org/2000/svg'; // TODO: move to main editor constructor
@@ -884,48 +884,48 @@ var summerHtmlImageMapCreator = (function() {
         polygon : 'polygon'
     };
     Area.ATTRIBUTES_NAMES = ['HREF', 'ALT', 'TITLE'];
-    
+
     /**
-     * This method should be implemented for child-classes 
-     * 
+     * This method should be implemented for child-classes
+     *
      * @throws {AbstractMethodCall}
      */
     Area.prototype.ABSTRACT_METHOD = function() {
         throw new Error('This is abstract method');
     };
-    
+
     /**
-     * All these methods are abstract 
-     * 
+     * All these methods are abstract
+     *
      * @throws {AbstractMethodCall}
      */
     Area.prototype.setSVGCoords =
-    Area.prototype.setCoords = 
-    Area.prototype.dynamicDraw = 
-    Area.prototype.onProcessDrawing = 
-    Area.prototype.onStopDrawing = 
-    Area.prototype.edit = 
-    Area.prototype.dynamicEdit = 
-    Area.prototype.onProcessEditing = 
-    Area.prototype.onStopEditing = 
-    Area.prototype.toString = 
+    Area.prototype.setCoords =
+    Area.prototype.dynamicDraw =
+    Area.prototype.onProcessDrawing =
+    Area.prototype.onStopDrawing =
+    Area.prototype.edit =
+    Area.prototype.dynamicEdit =
+    Area.prototype.onProcessEditing =
+    Area.prototype.onStopEditing =
+    Area.prototype.toString =
     Area.prototype.toHTMLMapElementString =
     Area.prototype.toSVGElementString =
-    Area.prototype.getCoordsForDisplayingInfo = 
+    Area.prototype.getCoordsForDisplayingInfo =
     Area.prototype.ABSTRACT_METHOD;
-    
+
     /**
      * Redraw this area with own or custom coordinates
-     * 
+     *
      * @param coords {Object} [coords=undefined]
      * @returns {Area} - this area
      */
     Area.prototype.redraw = function(coords) {
         this.setSVGCoords(coords ? coords : this._coords);
-        
+
         return this;
     };
-    
+
     /**
      * Remove this area from DOM-tree
      */
@@ -934,63 +934,63 @@ var summerHtmlImageMapCreator = (function() {
     };
 
     /**
-     * Move this area by dx, dy 
-     * 
+     * Move this area by dx, dy
+     *
      * @returns {Area} - this area
      */
     Area.prototype.move = function(dx, dy) {
         this.setCoords(this.edit('move', dx, dy)).redraw();
         return this;
     };
-    
+
     /**
      * Add class name for selected areas to this area
-     * 
+     *
      * @returns {Area} - this area
      */
     Area.prototype.select = function() {
         this._el.classList.add(Area.CLASS_NAMES.SELECTED);
         console.info(this.toString() + ' is selected now');
-        
+
         return this;
     };
-    
+
     /**
      * Remove class name for selected areas from this area
-     * 
+     *
      * @returns {Area} - this area
      */
     Area.prototype.deselect = function() {
         this._el.classList.remove(Area.CLASS_NAMES.SELECTED);
-        
+
         return this;
     };
-    
+
     /**
      * Set style of element with href attribute for this area
-     * 
+     *
      * @returns {Area} - this area
      */
     Area.prototype.setStyleOfElementWithHref = function() {
         this._el.classList.add(Area.CLASS_NAMES.WITH_HREF);
-        
+
         return this;
     };
-    
+
     /**
      * Unset style of element with href attribute for this area
-     * 
+     *
      * @returns {Area} - this area
      */
     Area.prototype.unsetStyleOfElementWithHref = function() {
         this._el.classList.remove(Area.CLASS_NAMES.WITH_HREF);
-        
+
         return this;
     };
-    
+
     /**
      * Set attributes (href, alt and title) for this area
-     * 
+     *
      * @param attributes {Object} - Object with attributes for area
      */
     Area.prototype.setInfoAttributes = function(attributes) {
@@ -999,17 +999,17 @@ var summerHtmlImageMapCreator = (function() {
         // this._attributes.alt = attributes.alt;
         // this._attributes.title = attributes.title;
     };
-    
+
     /**
      * Returns json-representation of this area
-     * 
+     *
      * @returns {Object}
      */
     Area.prototype.toJSON = function() {
         /**
          * @namespace
          * @property type {string} - type of this area (e.g. 'rectangle', 'circle')
-         * @property coords {Object} - coordinates of this area (e.g. 'x', 'width') 
+         * @property coords {Object} - coordinates of this area (e.g. 'x', 'width')
          * @property attributes {Object} - attributes of this area (e.g. 'href', 'title')
          */
         return {
@@ -1018,38 +1018,38 @@ var summerHtmlImageMapCreator = (function() {
             attributes : this._attributes
         };
     };
-    
+
     /**
      * Returns new area object created with params from json-object
-     * 
+     *
      * @static
      * @param params {Object} - params of area, incl. type, coords and attributes
      * @returns {Rectangle|Circle|Polygon}
      */
     Area.fromJSON = function(params) {
         var AreaConstructor = Area.CONSTRUCTORS[params.type];
-        
+
         if (!AreaConstructor) {
             throw new Error('This area type is not valid');
         }
-        
+
         if (!AreaConstructor.testCoords(params.coords)) {
             throw new Error('This coords is not valid for ' + params.type);
         }
-        
+
         app.setIsDraw(true);
-        
+
         var area = new AreaConstructor(params.coords, params.attributes);
-        
+
         app.setIsDraw(false)
            .resetNewArea();
-        
+
         return area;
     };
 
     /**
      * Creates new areas from html-string with <svg> and <rect> hotspots
-     * 
+     *
      * @param htmlStr {string}
      * @returns {Array} - array with areas
      */
@@ -1080,34 +1080,34 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Creates new areas from html-string with <area /> elements
-     * 
+     *
      * @param htmlStr {string}
      * @returns {Array} - array with areas
      */
     Area.createAreasFromHTMLOfMap_Old = function(htmlStr) {
         if (!htmlStr) {
             return false;
-        } 
+        }
 
         while (true) {
             var findedResult = Area.REGEXP.AREA.exec(htmlStr); // <area shape="$1" coords="$2" ... />
             if (!findedResult) {
                 break;
-            }    
+            }
 
             var htmlAreaFinded = findedResult[0], // <area shape="..." coords="..." ... />
                 type = findedResult[1], // $1
                 coords = findedResult[2].split(Area.REGEXP.DELIMETER), // $2
-                attributes = {}; 
-            
+                attributes = {};
+
             Area.ATTRIBUTES_NAMES.forEach(function(item, i) {
                 var result = Area.REGEXP[item].exec(htmlAreaFinded);
 
                 if (result) {
                     attributes[name] = result[1];
-                }    
+                }
             });
-            
+
             coords = coords.map(function(item) {
                 return Number(item);
             });
@@ -1127,7 +1127,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns copy of original area, selected and moved by (10,10) from it
-     * 
+     *
      * @param originalArea {Area}
      * @returns {Area} - a copy of original area
      */
@@ -1139,7 +1139,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * The constructor for rectangles
-     * 
+     *
      * (x, y) -----
      * |          | height
      * ------------
@@ -1148,11 +1148,11 @@ var summerHtmlImageMapCreator = (function() {
      * @constructor
      * @param coords {Object} - object with parameters of new area (x, y, width, height)
      *                          if some parameter is undefined, it will set 0
-     * @param attributes {Object} [attributes=undefined] - attributes for area (e.g. href, title) 
+     * @param attributes {Object} [attributes=undefined] - attributes for area (e.g. href, title)
      */
     function Rectangle(coords, attributes) {
         Area.call(this, 'rectangle', coords, attributes);
-        
+
         /**
          * @namespace
          * @property {number} x - Distance from the left edge of the image to the left side of the rectangle
@@ -1161,18 +1161,18 @@ var summerHtmlImageMapCreator = (function() {
          * @property {number} height - Height of rectangle
          */
         this._coords = {
-            x : coords.x || 0, 
+            x : coords.x || 0,
             y : coords.y || 0,
-            width : coords.width || 0, 
+            width : coords.width || 0,
             height : coords.height || 0
         };
-    
+
         this._el = document.createElementNS(Area.SVG_NS, 'rect');
         this._groupEl.appendChild(this._el);
-        
+
         var x = coords.x - this._coords.width / 2,
             y = coords.y - this._coords.height / 2;
-        
+
         this._helpers = {
             center : new Helper(this._groupEl, x, y, 'move'),
             top : new Helper(this._groupEl, x, y, 'editTop'),
@@ -1184,20 +1184,20 @@ var summerHtmlImageMapCreator = (function() {
             bottomLeft : new Helper(this._groupEl, x, y, 'editBottomLeft'),
             bottomRight : new Helper(this._groupEl, x, y, 'editBottomRight')
         };
-        
+
         this.redraw();
     }
     utils.inherits(Rectangle, Area);
-    
+
     /**
      * Set attributes for svg-elements of area by new parameters
-     * 
+     *
      * -----top------
      * |            |
      * ---center_y---
      * |            |
      * ----bottom----
-     * 
+     *
      * @param coords {Object} - Object with coords of this area (x, y, width, height)
      * @returns {Rectangle} - this rectangle
      */
@@ -1206,14 +1206,14 @@ var summerHtmlImageMapCreator = (function() {
         this._el.setAttribute('y', coords.y);
         this._el.setAttribute('width', coords.width);
         this._el.setAttribute('height', coords.height);
-        
+
         var top = coords.y,
             center_y = coords.y + coords.height / 2,
             bottom = coords.y + coords.height,
             left = coords.x,
             center_x = coords.x + coords.width / 2,
             right = coords.x + coords.width;
-    
+
         this._helpers.center.setCoords(center_x, center_y);
         this._helpers.top.setCoords(center_x, top);
         this._helpers.bottom.setCoords(center_x, bottom);
@@ -1223,13 +1223,13 @@ var summerHtmlImageMapCreator = (function() {
         this._helpers.topRight.setCoords(right, top);
         this._helpers.bottomLeft.setCoords(left, bottom);
         this._helpers.bottomRight.setCoords(right, bottom);
-        
+
         return this;
     };
-    
+
     /**
      * Set coords for this area
-     * 
+     *
      * @param coords {coords}
      * @returns {Rectangle} - this rectangle
      */
@@ -1238,13 +1238,13 @@ var summerHtmlImageMapCreator = (function() {
         this._coords.y = coords.y;
         this._coords.width = coords.width;
         this._coords.height = coords.height;
-        
+
         return this;
     };
-    
+
     /**
      * Calculates new coordinates in process of drawing
-     * 
+     *
      * @param x {number} - x-coordinate of cursor
      * @param y {number} - y-coordinate of cursor
      * @param isSquare {boolean}
@@ -1257,100 +1257,100 @@ var summerHtmlImageMapCreator = (function() {
             width : x - this._coords.x,
             height: y - this._coords.y
         };
-        
+
         if (isSquare) {
             newCoords = Rectangle.getSquareCoords(newCoords);
         }
-        
+
         newCoords = Rectangle.getNormalizedCoords(newCoords);
-        
+
         this.redraw(newCoords);
-        
+
         return newCoords;
     };
-    
+
     /**
      * Handler for drawing process (by mousemove)
-     * It includes only redrawing area by new coords 
+     * It includes only redrawing area by new coords
      * (this coords doesn't save as own area coords)
-     * 
+     *
      * @params e {MouseEvent} - mousemove event
      */
     Rectangle.prototype.onProcessDrawing = function(e) {
         var coords = utils.getRightCoords(e.pageX, e.pageY);
-            
+
         this.dynamicDraw(coords.x, coords.y, e.shiftKey);
     };
-    
+
     /**
      * Handler for drawing stoping (by second click on drawing canvas)
-     * It includes redrawing area by new coords 
+     * It includes redrawing area by new coords
      * and saving this coords as own area coords
-     * 
+     *
      * @params e {MouseEvent} - click event
      */
     Rectangle.prototype.onStopDrawing = function(e) {
         var coords = utils.getRightCoords(e.pageX, e.pageY);
-        
+
         this.setCoords(this.dynamicDraw(coords.x, coords.y, e.shiftKey)).deselect();
-        
+
         app.removeAllEvents()
            .setIsDraw(false)
            .resetNewArea();
     };
-    
+
     /**
      * Changes area parameters by editing type and offsets
-     * 
+     *
      * @param {string} editingType - A type of editing (e.g. 'move')
-     * @returns {Object} - Object with changed parameters of area 
+     * @returns {Object} - Object with changed parameters of area
      */
     Rectangle.prototype.edit = function(editingType, dx, dy) {
         var tempParams = Object.create(this._coords);
-        
+
         switch (editingType) {
             case 'move':
                 tempParams.x += dx;
                 tempParams.y += dy;
                 break;
-            
+
             case 'editLeft':
-                tempParams.x += dx; 
+                tempParams.x += dx;
                 tempParams.width -= dx;
                 break;
-            
+
             case 'editRight':
                 tempParams.width += dx;
                 break;
-            
+
             case 'editTop':
                 tempParams.y += dy;
                 tempParams.height -= dy;
                 break;
-            
+
             case 'editBottom':
                 tempParams.height += dy;
                 break;
-               
+
             case 'editTopLeft':
                 tempParams.x += dx;
                 tempParams.y += dy;
                 tempParams.width -= dx;
                 tempParams.height -= dy;
                 break;
-                
+
             case 'editTopRight':
                 tempParams.y += dy;
                 tempParams.width += dx;
                 tempParams.height -= dy;
                 break;
-            
+
             case 'editBottomLeft':
                 tempParams.x += dx;
                 tempParams.width -= dx;
                 tempParams.height += dy;
                 break;
-            
+
             case 'editBottomRight':
                 tempParams.width += dx;
                 tempParams.height += dy;
@@ -1359,31 +1359,31 @@ var summerHtmlImageMapCreator = (function() {
 
         return tempParams;
     };
-    
+
     /**
      * Calculates new coordinates in process of editing
-     * 
-     * @param coords {Object} - area coords 
+     *
+     * @param coords {Object} - area coords
      * @param saveProportions {boolean}
      * @returns {Object} - new coordinates of area
      */
     Rectangle.prototype.dynamicEdit = function(coords, saveProportions) {
         coords = Rectangle.getNormalizedCoords(coords);
-        
+
         if (saveProportions) {
             coords = Rectangle.getSavedProportionsCoords(coords);
         }
-        
+
         this.redraw(coords);
-        
+
         return coords;
     };
-    
+
     /**
      * Handler for editing process (by mousemove)
-     * It includes only redrawing area by new coords 
+     * It includes only redrawing area by new coords
      * (this coords doesn't save as own area coords)
-     * 
+     *
      * @params e {MouseEvent} - mousemove event
      */
     Rectangle.prototype.onProcessEditing = function(e) {
@@ -1398,12 +1398,12 @@ var summerHtmlImageMapCreator = (function() {
             e.shiftKey
         );
     };
-    
+
     /**
      * Handler for editing stoping (by mouseup)
-     * It includes redrawing area by new coords 
+     * It includes redrawing area by new coords
      * and saving this coords as own area coords
-     * 
+     *
      * @params e {MouseEvent} - mouseup event
      */
     Rectangle.prototype.onStopEditing = function(e) {
@@ -1413,25 +1413,25 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns string-representation of this rectangle
-     * 
+     *
      * @returns {string}
      */
     Rectangle.prototype.toString = function() {
-        return 'Rectangle {x: '+ this._coords.x + 
-               ', y: ' + this._coords.y + 
-               ', width: ' + this._coords.width + 
+        return 'Rectangle {x: '+ this._coords.x +
+               ', y: ' + this._coords.y +
+               ', width: ' + this._coords.width +
                ', height: ' + this._coords.height + '}';
     }
-    
+
     /**
      * Returns html-string of area html element with params of this rectangle
-     * 
+     *
      * @returns {string}
      */
     Rectangle.prototype.toHTMLMapElementString = function() {
         var x2 = this._coords.x + this._coords.width,
             y2 = this._coords.y + this._coords.height;
-            
+
         return '<area shape="rect" coords="' // TODO: use template engine
             + this._coords.x + ', '
             + this._coords.y + ', '
@@ -1446,7 +1446,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns svg-string of area svg element with params of this rectangle
-     * 
+     *
      * @returns {string}
      */
     Rectangle.prototype.toSVGElementString = function() {
@@ -1461,7 +1461,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns coords for area attributes form
-     * 
+     *
      * @returns {Object} - object width coordinates of point
      */
     Rectangle.prototype.getCoordsForDisplayingInfo = function() {
@@ -1470,7 +1470,7 @@ var summerHtmlImageMapCreator = (function() {
             y : this._coords.y
         };
     };
-    
+
     /**
      * Returns true if coords is valid for rectangles and false otherwise
      *
@@ -1481,7 +1481,7 @@ var summerHtmlImageMapCreator = (function() {
     Rectangle.testCoords = function(coords) {
         return (coords.x !== undefined) && (coords.y !== undefined) && (coords.width !== undefined) && (coords.height !== undefined);
     };
-    
+
     /**
      * Returns true if html coords array is valid for rectangles and false otherwise
      *
@@ -1495,12 +1495,12 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Return rectangle coords object from html array
-     * 
+     *
      * @param htmlCoordsArray {Array}
      * @returns {Object}
      */
     Rectangle.getCoordsFromHTMLArray = function(htmlCoordsArray) {
-        if (!Rectangle.testHTMLCoords(htmlCoordsArray)) {    
+        if (!Rectangle.testHTMLCoords(htmlCoordsArray)) {
             throw new Error('This html-coordinates is not valid for rectangle');
         }
 
@@ -1518,12 +1518,12 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns circle coords object from svg <rect> element
-     * 
+     *
      * @param svgEl {...}
      * @returns {Object}
      */
     Rectangle.getCoordsFromSvgElement = function(svgEl) {
-        if (!Rectangle.testSvgEl(svgEl)) {    
+        if (!Rectangle.testSvgEl(svgEl)) {
             throw new Error('This svg element is not valid for rectangle');
         }
 
@@ -1537,9 +1537,9 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Fixes coords if width or/and height are negative
-     * 
+     *
      * @static
-     * @param coords {Object} - Coordinates of this area 
+     * @param coords {Object} - Coordinates of this area
      * @returns {Object} - Normalized coordinates of area
      */
     Rectangle.getNormalizedCoords = function(coords) {
@@ -1547,59 +1547,59 @@ var summerHtmlImageMapCreator = (function() {
             coords.x += coords.width;
             coords.width = Math.abs(coords.width);
         }
-        
+
         if (coords.height < 0) {
             coords.y += coords.height;
             coords.height = Math.abs(coords.height);
         }
-        
+
         return coords;
     };
-    
+
     /**
      * Returns coords with equivivalent width and height
-     * 
+     *
      * @static
-     * @param coords {Object} - Coordinates of this area 
+     * @param coords {Object} - Coordinates of this area
      * @returns {Object} - Coordinates of area with equivivalent width and height
      */
     Rectangle.getSquareCoords = function(coords) {
         var width = Math.abs(coords.width),
             height = Math.abs(coords.height);
-        
+
         if (width > height) {
             coords.width = coords.width > 0 ? height : -height;
         } else {
             coords.height = coords.height > 0 ? width : -width;
         }
-        
+
         return coords;
     };
-    
+
     /**
      * Returns coords with saved proportions of original area
-     * 
+     *
      * @static
-     * @param coords {Object} - Coordinates of this area 
+     * @param coords {Object} - Coordinates of this area
      * @param originalCoords {Object} - Coordinates of the original area
      * @returns {Object} - Coordinates of area with saved proportions of original area
      */
     Rectangle.getSavedProportionsCoords = function(coords, originalCoords) {
         var originalProportions = coords.width / coords.height,
             currentProportions = originalCoords.width / originalCoords.height;
-        
+
         if (currentProportions > originalProportions) {
             coords.width = Math.round(coords.height * originalProportions);
         } else {
             coords.height = Math.round(coords.width / originalProportions);
         }
-        
+
         return coords;
     };
-    
+
     /**
      * Creates new rectangle and adds drawing handlers for DOM-elements
-     * 
+     *
      * @static
      * @param firstPointCoords {Object}
      * @returns {Rectangle}
@@ -1611,13 +1611,13 @@ var summerHtmlImageMapCreator = (function() {
             width: 0,
             height: 0
         });
-        
+
         app.addEvent(app.domElements.container, 'mousemove', newArea.onProcessDrawing.bind(newArea))
            .addEvent(app.domElements.container, 'click', newArea.onStopDrawing.bind(newArea));
-           
+
         return newArea;
     };
-    
+
 
     /**
      * The constructor for circles
@@ -1631,11 +1631,11 @@ var summerHtmlImageMapCreator = (function() {
      * @constructor
      * @param coords {Object} - object with parameters of new area (cx, cy, radius)
      *                          if some parameter is undefined, it will set 0
-     * @param attributes {Object} [attributes=undefined] - attributes for area (e.g. href, title) 
+     * @param attributes {Object} [attributes=undefined] - attributes for area (e.g. href, title)
      */
     function Circle(coords, attributes) {
         Area.call(this, 'circle', coords, attributes);
-        
+
         /**
          * @namespace
          * @property {number} cx - Distance from the left edge of the image to the center of the circle
@@ -1645,12 +1645,12 @@ var summerHtmlImageMapCreator = (function() {
         this._coords = {
             cx : coords.cx || 0,
             cy : coords.cy || 0,
-            radius : coords.radius || 0 
+            radius : coords.radius || 0
         };
-        
+
         this._el = document.createElementNS(Area.SVG_NS, 'circle');
         this._groupEl.appendChild(this._el);
-    
+
         this.helpers = {
             center : new Helper(this._groupEl, coords.cx, coords.cy, 'move'),
             top : new Helper(this._groupEl, coords.cx, coords.cy, 'editTop'),
@@ -1658,14 +1658,14 @@ var summerHtmlImageMapCreator = (function() {
             left : new Helper(this._groupEl, coords.cx, coords.cy, 'editLeft'),
             right : new Helper(this._groupEl, coords.cx, coords.cy, 'editRight')
         };
-    
+
         this.redraw();
     }
     utils.inherits(Circle, Area);
-    
+
     /**
      * Set attributes for svg-elements of area by new parameters
-     * 
+     *
      * @param coords {Object} - Object with coords of this area (cx, cy, radius)
      * @returns {Circle} - this area
      */
@@ -1673,19 +1673,19 @@ var summerHtmlImageMapCreator = (function() {
         this._el.setAttribute('cx', coords.cx);
         this._el.setAttribute('cy', coords.cy);
         this._el.setAttribute('r', coords.radius);
-    
+
         this.helpers.center.setCoords(coords.cx, coords.cy);
         this.helpers.top.setCoords(coords.cx, coords.cy - coords.radius);
         this.helpers.right.setCoords(coords.cx + coords.radius, coords.cy);
         this.helpers.bottom.setCoords(coords.cx, coords.cy + coords.radius);
         this.helpers.left.setCoords(coords.cx - coords.radius, coords.cy);
-        
+
         return this;
     };
-    
+
     /**
      * Set coords for this area
-     * 
+     *
      * @param coords {Object} - coordinates for thia area
      * @returns {Circle} - this area
      */
@@ -1693,15 +1693,15 @@ var summerHtmlImageMapCreator = (function() {
         this._coords.cx = coords.cx;
         this._coords.cy = coords.cy;
         this._coords.radius = coords.radius;
-        
+
         return this;
     };
-    
+
     /**
      * Calculates new coordinates in process of drawing
-     * (for circle normalizeCoords() don't needed because 
+     * (for circle normalizeCoords() don't needed because
      * radius are always positive)
-     * 
+     *
      * @param x {number} - x-coordinate
      * @param y {number} - y-coordinate
      * @returns {Object} - calculated coordinates
@@ -1720,96 +1720,96 @@ var summerHtmlImageMapCreator = (function() {
             };
 
         this.redraw(newCoords);
-        
+
         return newCoords;
     };
-    
+
     /**
      * Handler for drawing process (by mousemove)
-     * It includes only redrawing area by new coords 
+     * It includes only redrawing area by new coords
      * (this coords doesn't save as own area coords)
-     * 
+     *
      * @params e {MouseEvent} - mousemove event
      */
     Circle.prototype.onProcessDrawing = function(e) {
         var coords = utils.getRightCoords(e.pageX, e.pageY);
-        
+
         this.dynamicDraw(coords.x, coords.y);
     };
-    
+
     /**
      * Handler for drawing stoping (by second click)
-     * It includes redrawing area by new coords 
+     * It includes redrawing area by new coords
      * and saving this coords as own area coords
-     * 
+     *
      * @params e {MouseEvent} - click event
      */
     Circle.prototype.onStopDrawing = function(e) {
         var coords = utils.getRightCoords(e.pageX, e.pageY);
-        
+
         this.setCoords(this.dynamicDraw(coords.x, coords.y)).deselect();
-    
+
         app.removeAllEvents()
            .setIsDraw(false)
            .resetNewArea();
     };
-    
+
     /**
      * Changes area parameters by editing type and offsets
-     * 
+     *
      * @param {string} editingType - A type of editing
-     * @returns {Object} - Object with changed parameters of area 
+     * @returns {Object} - Object with changed parameters of area
      */
     Circle.prototype.edit = function(editingType, dx, dy) {
         var tempParams = Object.create(this._coords);
-        
+
         switch (editingType) {
             case 'move':
                 tempParams.cx += dx;
                 tempParams.cy += dy;
                 break;
-                
+
             case 'editTop':
                 tempParams.radius -= dy;
                 break;
-            
+
             case 'editBottom':
                 tempParams.radius += dy;
                 break;
-            
+
             case 'editLeft':
                 tempParams.radius -= dx;
                 break;
-            
+
             case 'editRight':
                 tempParams.radius += dx;
                 break;
         }
-        
+
         return tempParams;
     };
-    
+
     /**
      * Calculates new coordinates in process of editing
-     * 
-     * @param tempCoords {Object} - area coords 
+     *
+     * @param tempCoords {Object} - area coords
      * @returns {Object} - calculated coordinates
      */
     Circle.prototype.dynamicEdit = function(tempCoords) {
         if (tempCoords.radius < 0) {
             tempCoords.radius = Math.abs(tempCoords.radius);
         }
-        
+
         this.setSVGCoords(tempCoords);
-        
+
         return tempCoords;
     };
-    
+
     /**
      * Handler for editing process (by mousemove)
-     * It includes only redrawing area by new coords 
+     * It includes only redrawing area by new coords
      * (this coords doesn't save as own area coords)
-     * 
+     *
      * @params e {MouseEvent} - mousemove event
      */
     Circle.prototype.onProcessEditing = function(e) {
@@ -1824,25 +1824,25 @@ var summerHtmlImageMapCreator = (function() {
             )
         );
     };
-    
+
     /**
      * Handler for editing stoping (by mouseup)
-     * It includes redrawing area by new coords 
+     * It includes redrawing area by new coords
      * and saving this coords as own area coords
-     * 
+     *
      * @params e {MouseEvent} - mouseup event
      */
     Circle.prototype.onStopEditing = function(e) {
         var editType = app.getEditType();
-        
+
         this.setCoords(this.onProcessEditing(e));
-        
+
         app.removeAllEvents();
     };
-    
+
     /**
      * Returns string-representation of circle
-     * 
+     *
      * @returns {string}
      */
     Circle.prototype.toString = function() {
@@ -1850,10 +1850,10 @@ var summerHtmlImageMapCreator = (function() {
                 ', cy: ' + this._coords.cy +
                 ', radius: ' + this._coords.radius + '}';
     }
-    
+
     /**
      * Returns html-string of area html element with params of this circle
-     * 
+     *
      * @returns {string}
      */
     Circle.prototype.toHTMLMapElementString = function() {
@@ -1870,7 +1870,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns svg-string of area svg element with params of this circle
-     * 
+     *
      * @returns {string}
      */
     Circle.prototype.toSVGElementString = function() {
@@ -1883,7 +1883,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns coords for area attributes form
-     * 
+     *
      * @returns {Object} - coordinates of point
      */
     Circle.prototype.getCoordsForDisplayingInfo = function() {
@@ -1892,7 +1892,7 @@ var summerHtmlImageMapCreator = (function() {
             y : this._coords.cy
         };
     };
-    
+
     /**
      * Returns true if coords is valid for circles and false otherwise
      *
@@ -1917,12 +1917,12 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns circle coords object from html array
-     * 
+     *
      * @param htmlCoordsArray {Array}
      * @returns {Object}
      */
     Circle.getCoordsFromHTMLArray = function(htmlCoordsArray) {
-        if (!Circle.testHTMLCoords(htmlCoordsArray)) {    
+        if (!Circle.testHTMLCoords(htmlCoordsArray)) {
             throw new Error('This html-coordinates is not valid for circle');
         }
 
@@ -1939,12 +1939,12 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns circle coords object from svg <circle> element
-     * 
+     *
      * @param svgEl {...}
      * @returns {Object}
      */
     Circle.getCoordsFromSvgElement = function(svgEl) {
-        if (!Circle.testSvgEl(svgEl)) {    
+        if (!Circle.testSvgEl(svgEl)) {
             throw new Error('This svg element is not valid for circle');
         }
 
@@ -1954,12 +1954,12 @@ var summerHtmlImageMapCreator = (function() {
             radius : svgEl.r.baseVal.value
         };
     };
-    
+
     /**
      * Creates new circle and adds drawing handlers for DOM-elements
      *
      * @static
-     * @param firstPointCoords {Object} 
+     * @param firstPointCoords {Object}
      * @returns {Circle}
      */
     Circle.createAndStartDrawing = function(firstPointCoords) {
@@ -1968,20 +1968,20 @@ var summerHtmlImageMapCreator = (function() {
             cy : firstPointCoords.y,
             radius : 0
         });
-        
+
         app.addEvent(app.domElements.container, 'mousemove', newArea.onProcessDrawing.bind(newArea))
            .addEvent(app.domElements.container, 'click', newArea.onStopDrawing.bind(newArea));
-           
+
         return newArea;
     };
 
     /**
      * The constructor for polygons
-     *  
-     *        {x0, y0}  
+     *
+     *        {x0, y0}
      *           /\
      *          /  \
-     *         /    \   
+     *         /    \
      * {x1, y1} ----- {x2, y2}
      *
      * @constructor
@@ -1992,7 +1992,7 @@ var summerHtmlImageMapCreator = (function() {
      */
     function Polygon(coords, attributes) {
         Area.call(this, 'polygon', coords, attributes);
-        
+
         /**
          * @namespace
          * @property {Array} points - Array with coordinates of polygon points
@@ -2001,34 +2001,34 @@ var summerHtmlImageMapCreator = (function() {
             points : coords.points || [{x: 0, y: 0}],
             isOpened : coords.isOpened || false
         };
-        
+
         this._el = document.createElementNS(
-            Area.SVG_NS, 
+            Area.SVG_NS,
             this._coords.isOpened ? 'polyline' : 'polygon'
         );
         this._groupEl.appendChild(this._el);
 
-        this._helpers = { 
+        this._helpers = {
             points : []
         };
 
         for (var i = 0, c = this._coords.points.length; i < c; i++) {
             this._helpers.points.push(
                 (new Helper(
-                    this._groupEl, 
-                    this._coords.points[i].x, 
-                    this._coords.points[i].y, 
+                    this._groupEl,
+                    this._coords.points[i].x,
+                    this._coords.points[i].y,
                     'movePoint')
                 ).setId(i)
             );
         }
-        
+
         this._selectedPoint = -1;
-        
+
         this.redraw();
     }
     utils.inherits(Polygon, Area);
-    
+
     /**
      * Closes path of the polygon (replaces polyline with polygon)
      */
@@ -2040,10 +2040,10 @@ var summerHtmlImageMapCreator = (function() {
         this._coords.isOpened = false;
         this.redraw().deselect();
     };
-    
+
     /**
      * Set attributes for svg-elements of area by new parameters
-     * 
+     *
      * @param coords {Object} - Object with coords of this area, with field 'points'
      * @returns {Polygon} - this area
      */
@@ -2051,30 +2051,30 @@ var summerHtmlImageMapCreator = (function() {
         var polygonPointsAttrValue = coords.points.reduce(function(previousValue, currentItem) {
             return previousValue + currentItem.x + ' ' + currentItem.y + ' ';
         }, '');
-        
+
         this._el.setAttribute('points', polygonPointsAttrValue);
         utils.foreach(this._helpers.points, function(helper, i) {
             helper.setCoords(coords.points[i].x, coords.points[i].y);
         });
-        
+
         return this;
     };
-    
+
     /**
      * Set coords for this area
-     * 
+     *
      * @param coords {coords}
      * @returns {Polygon} - this area
      */
     Polygon.prototype.setCoords = function(coords) {
         this._coords.points = coords.points;
-    
+
         return this;
     };
-    
+
     /**
      * Adds new point to polygon (and new helper too)
-     * 
+     *
      * @param x {number} - x-coordinate of new point
      * @param y {number} - y-coordinate of new point
      * @returns {Polygon} - this area
@@ -2089,17 +2089,17 @@ var summerHtmlImageMapCreator = (function() {
 
         this._helpers.points.push(helper);
         this._coords.points.push({
-            x : x, 
+            x : x,
             y : y
         });
         this.redraw();
-        
+
         return this;
     };
-    
+
     /**
      * Calculates new coordinates in process of drawing
-     * 
+     *
      * @param x {number}
      * @param y {number}
      * @param isRightAngle {boolean}
@@ -2109,7 +2109,7 @@ var summerHtmlImageMapCreator = (function() {
         var temp_coords = {
             points: [].concat(this._coords.points)
         };
-    
+
         if (isRightAngle) {
             var rightPointCoords = Polygon.getRightAngleLineLastPointCoords(
                 this._coords, {x: x, y: y}
@@ -2117,32 +2117,32 @@ var summerHtmlImageMapCreator = (function() {
             x = rightPointCoords.x;
             y = rightPointCoords.y;
         }
-        
+
         temp_coords.points.push({x : x, y : y});
-    
+
         this.redraw(temp_coords);
-        
+
         return temp_coords;
     };
-    
+
     /**
      * Handler for drawing process (by mousemove)
-     * It includes only redrawing area by new coords 
+     * It includes only redrawing area by new coords
      * (this coordinates doesn't save as own area coords)
-     * 
+     *
      * @params e {MouseEvent} - mousemove event
      */
     Polygon.prototype.onProcessDrawing = function(e) {
         var coords = utils.getRightCoords(e.pageX, e.pageY);
-            
+
         this.dynamicDraw(coords.x, coords.y, e.shiftKey);
     };
-    
+
     /**
      * Handler for polygon pointer adding (by click on drawing canvas)
-     * It includes redrawing area with this new point 
+     * It includes redrawing area with this new point
      * and saving this point to list of polygon points
-     * 
+     *
      * @params e {MouseEvent} - click event
      */
     Polygon.prototype.onAddPointDrawing = function(e) {
@@ -2151,22 +2151,22 @@ var summerHtmlImageMapCreator = (function() {
         if (e.shiftKey) {
             newPointCoords = Polygon.getRightAngleLineLastPointCoords(this._coords, newPointCoords);
         }
-        
+
         this.addPoint(newPointCoords.x, newPointCoords.y);
     };
-    
+
     /**
      * Handler for drawing stoping (by click on first helper or press ENTER key)
-     * It includes redrawing area by new coords, closing this polygon 
+     * It includes redrawing area by new coords, closing this polygon
      * and saving this coords as own area coords
-     * 
+     *
      * @params e {KeyboardEvent|MouseEvent} - click or keydown event
      */
     Polygon.prototype.onStopDrawing = function(e) {
         if (e.type == 'click' || (e.type == 'keydown' && e.keyCode == 13)) {
             if (Polygon.testCoords(this._coords)) {
                 this.close();
-                
+
                 app.removeAllEvents()
                    .setIsDraw(false)
                    .resetNewArea();
@@ -2177,13 +2177,13 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Changes area parameters by editing type and offsets
-     * 
+     *
      * @param {string} editingType - A type of editing
-     * @returns {Object} - Object with changed parameters of area 
+     * @returns {Object} - Object with changed parameters of area
      */
     Polygon.prototype.edit = function(editingType, dx, dy) {
         var tempParams = Object.create(this._coords);
-        
+
         switch (editingType) {
             case 'move':
                 for (var i = 0, c = tempParams.points.length; i < c; i++) {
@@ -2191,7 +2191,7 @@ var summerHtmlImageMapCreator = (function() {
                     tempParams.points[i].y += dy;
                 }
                 break;
-            
+
             case 'movePoint':
                 tempParams.points[this.selected_point].x += dx;
                 tempParams.points[this.selected_point].y += dy;
@@ -2200,12 +2200,12 @@ var summerHtmlImageMapCreator = (function() {
 
         return tempParams;
     };
-    
+
     /**
      * Handler for editing process (by mousemove)
      * It includes only redrawing area by new coords
      * (this coords doesn't save as area coords)
-     * 
+     *
      * @params e {MouseEvent} - mousemove event
      */
     Polygon.prototype.onProcessEditing = function(e) {
@@ -2214,60 +2214,60 @@ var summerHtmlImageMapCreator = (function() {
         var coords = utils.getRightCoords(e.pageX, e.pageY);
         this.redraw(
             this.edit(
-                editType, 
-                coords.x - this.editingStartPoint.x, 
+                editType,
+                coords.x - this.editingStartPoint.x,
                 coords.y - this.editingStartPoint.y
             )
         );
 
         this.editingStartPoint = coords;
     };
-    
+
     /**
      * Handler for editing stoping (by mouseup on drawing canvas)
      * It includes redrawing area by new coords and saving this new coords
      * as own area coords
-     * 
+     *
      * @params e {MouseEvent} - click or keydown event
      */
     Polygon.prototype.onStopEditing = function(e) {
         var editType = app.getEditType();
-    
+
         var coords = utils.getRightCoords(e.pageX, e.pageY);
 
         this.setCoords(
             this.edit(
-                editType, 
-                coords.x - this.editingStartPoint.x, 
+                editType,
+                coords.x - this.editingStartPoint.x,
                 coords.y - this.editingStartPoint.y
             )
         ).redraw();
-    
+
         app.removeAllEvents();
     };
-    
+
     /**
      * Returns string-representation of polygon
-     * 
+     *
      * @returns {string}
      */
     Polygon.prototype.toString = function() {
-        return 'Polygon {points: ['+ 
+        return 'Polygon {points: ['+
                this._coords.points.map(function(item) {
                    return '[' + item.x + ', ' + item.y + ']'
                }).join(', ') + ']}';
     }
-    
+
     /**
      * Returns html-string of area html element with params of this polygon
-     * 
+     *
      * @returns {string}
      */
     Polygon.prototype.toHTMLMapElementString = function() {
         var str = this._coords.points.map(function(item) {
             return item.x + ', ' + item.y;
         }).join(', ');
-        
+
         return '<area shape="poly" coords="'
             + str
             + '"'
@@ -2279,7 +2279,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns svg-string of area svg element with params of this polygon
-     * 
+     *
      * @returns {string}
      */
     Polygon.prototype.toSVGElementString = function() {
@@ -2293,7 +2293,7 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns coords for area attributes form
-     * 
+     *
      * @returns {Object} - coordinates of point
      */
     Polygon.prototype.getCoordsForDisplayingInfo = function() {
@@ -2302,7 +2302,7 @@ var summerHtmlImageMapCreator = (function() {
             y : this._coords.points[0].y
         };
     };
-    
+
     /**
      * Returns true if coords is valid for polygons and false otherwise
      *
@@ -2327,12 +2327,12 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns polygon coords object from html array
-     * 
+     *
      * @param htmlCoordsArray {Array}
      * @returns {Object} - object with calculated points
      */
     Polygon.getCoordsFromHTMLArray = function(htmlCoordsArray) {
-        if (!Polygon.testHTMLCoords(htmlCoordsArray)) {    
+        if (!Polygon.testHTMLCoords(htmlCoordsArray)) {
             throw new Error('This html-coordinates is not valid for polygon');
         }
 
@@ -2356,12 +2356,12 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns polygon coords object from svg <polygon> element
-     * 
+     *
      * @param svgEl {...}
      * @returns {Object}
      */
     Polygon.getCoordsFromSvgElement = function(svgEl) {
-        if (!Polygon.testSvgEl(svgEl)) {    
+        if (!Polygon.testSvgEl(svgEl)) {
             throw new Error('This svg element is not valid for polygon');
         }
 
@@ -2377,13 +2377,13 @@ var summerHtmlImageMapCreator = (function() {
 
     /**
      * Returns coords of new point with right angle (or 45 deg) for last line
-     * This method recalculates coordinates of new point for 
+     * This method recalculates coordinates of new point for
      * last line with (0 | 45 | 90 | 135 | 180 | 225 | 270 | 315) deg
      * For example,
      * for (0 < deg < 23) -> 0 deg
      * for (23 < deg < 67) -> 45 deg
      * for (67 < deg < 90) -> 90 deg etc.
-     * 
+     *
      *         0
      *    315\ | /45
      *        \|/
@@ -2391,7 +2391,7 @@ var summerHtmlImageMapCreator = (function() {
      *        /|\
      *    225/ | \135
      *        180
-     * 
+     *
      * @static
      * @param originalCoords {Object} - Coordinates of this area (without new point)
      * @param newPointCoords {Object} - Coordinates of new point
@@ -2409,14 +2409,14 @@ var summerHtmlImageMapCreator = (function() {
             tan = dy / dx,
             x = newPointCoords.x,
             y = newPointCoords.y;
-            
+
         if (dx > 0 && dy > 0) {
             if (tan > TANGENS.DEG_67) {
                 x = lastPoint.x;
             } else if (tan < TANGENS.DEG_22) {
                 y = lastPoint.y;
             } else {
-                Math.abs(dx) > Math.abs(dy) ? 
+                Math.abs(dx) > Math.abs(dy) ?
                     (x = lastPoint.x + dy) : (y = lastPoint.y - dx);
             }
         } else if (dx < 0 && dy > 0) {
@@ -2434,7 +2434,7 @@ var summerHtmlImageMapCreator = (function() {
             } else if (tan < TANGENS.DEG_22) {
                 y = lastPoint.y;
             } else {
-                Math.abs(dx) > Math.abs(dy) ? 
+                Math.abs(dx) > Math.abs(dy) ?
                     (x = lastPoint.x + dy) : (y = lastPoint.y - dx);
             }
         } else if (dx > 0 && dy < 0) {
@@ -2443,17 +2443,17 @@ var summerHtmlImageMapCreator = (function() {
             } else if (tan > -TANGENS.DEG_22) {
                 y = lastPoint.y;
             } else {
-                Math.abs(dx) > Math.abs(dy) ? 
+                Math.abs(dx) > Math.abs(dy) ?
                     (x = lastPoint.x - dy) : (y = lastPoint.y + dx);
             }
         }
-        
+
         return {
             x : x,
             y : y
         };
     };
-    
+
     /**
      * Creates new polygon and add drawing handlers for DOM-elements
      *
@@ -2466,12 +2466,12 @@ var summerHtmlImageMapCreator = (function() {
             points : [firstPointCoords],
             isOpened : true
         });
-        
+
         app.addEvent(app.domElements.container, 'mousemove', newArea.onProcessDrawing.bind(newArea))
            .addEvent(app.domElements.container, 'click', newArea.onAddPointDrawing.bind(newArea))
            .addEvent(document, 'keydown', newArea.onStopDrawing.bind(newArea))
            .addEvent(newArea._helpers.points[0]._el, 'click', newArea.onStopDrawing.bind(newArea));
-           
+
         return newArea;
     };
 
@@ -2481,21 +2481,21 @@ var summerHtmlImageMapCreator = (function() {
         var block = utils.id('help'),
             overlay = utils.id('overlay'),
             close_button = block.querySelector('.close_button');
-            
+
         function hide() {
             utils.hide(block);
             utils.hide(overlay);
         }
-        
+
         function show() {
             utils.show(block);
             utils.show(overlay);
         }
-            
+
         overlay.addEventListener('click', hide, false);
-            
+
         close_button.addEventListener('click', hide, false);
-            
+
         return {
             show : show,
             hide : hide
@@ -2507,12 +2507,12 @@ var summerHtmlImageMapCreator = (function() {
         var block = utils.id('code'),
             content = utils.id('code_content'),
             close_button = block.querySelector('.close_button');
-            
+
         close_button.addEventListener('click', function(e) {
             utils.hide(block);
             e.preventDefault();
         }, false);
-            
+
         return {
             print: function() {
                 content.innerHTML = app.getHTMLCode(true);
@@ -2529,12 +2529,12 @@ var summerHtmlImageMapCreator = (function() {
         var block = utils.id('code'),
             content = utils.id('code_content'),
             close_button = block.querySelector('.close_button');
-            
+
         close_button.addEventListener('click', function(e) {
             utils.hide(block);
             e.preventDefault();
         }, false);
-            
+
         return {
             print: function() {
                 let savedHtmlDoc = app.getSavedHtmlDoc();
@@ -2556,7 +2556,7 @@ var summerHtmlImageMapCreator = (function() {
             }
         };
     })();
-    
+
 
     /* Edit selected area info */
     var info = (function() {
@@ -2574,82 +2574,82 @@ var summerHtmlImageMapCreator = (function() {
             y,
             temp_x,
             temp_y;
-        
+
         function changedReset() {
             form.classList.remove('changed');
             utils.foreach(sections, function(x) {
                 x.classList.remove('changed');
             });
         }
-        
+
         function save(e) {
             obj.setInfoAttributes({
                 href : href_attr.value,
                 title : title_attr.value,
                 class : class_attr.value,
             });
-            
+
             obj[obj.href ? 'setStyleOfElementWithHref' : 'unsetStyleOfElementWithHref']();
-            
+
             changedReset();
             unload();
-                
+
             e.preventDefault();
         }
-        
+
         function unload() {
             obj = null;
             changedReset();
             utils.hide(form);
         }
-        
+
         function setCoords(x, y) {
             form.style.left = (x + 5) + 'px';
             form.style.top = (y + 5) + 'px';
         }
-        
+
         function moveEditBlock(e) {
             setCoords(x + e.pageX - temp_x, y + e.pageY - temp_y);
         }
-        
+
         function stopMoveEditBlock(e) {
             x = x + e.pageX - temp_x;
             y = y + e.pageY - temp_y;
             setCoords(x, y);
-            
+
             app.removeAllEvents();
         }
-        
+
         function change() {
             form.classList.add('changed');
             this.parentNode.classList.add('changed');
         }
-        
+
         save_button.addEventListener('click', save, false);
-        
+
         href_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
         title_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
         class_attr.addEventListener('keydown', function(e) { e.stopPropagation(); }, false);
 
         // Populate autocomplete options from pages.js
         pages.forEach(page => href_attr_list.appendChild( new Option('', page)))
-        
+
         href_attr.addEventListener('change', change, false);
         title_attr.addEventListener('change', change, false);
         class_attr.addEventListener('change', change, false);
-        
+
         close_button.addEventListener('click', unload, false);
-        
+
         header.addEventListener('mousedown', function(e) {
             temp_x = e.pageX,
             temp_y = e.pageY;
-            
+
             app.addEvent(document, 'mousemove', moveEditBlock);
             app.addEvent(header, 'mouseup', stopMoveEditBlock);
-            
+
             e.preventDefault();
         }, false);
-        
+
         return {
             load : function(object, new_x, new_y) {
                 obj = object;
@@ -2694,13 +2694,13 @@ var summerHtmlImageMapCreator = (function() {
             code_input = utils.id('code_input'),
             load_button = utils.id('load_code_button'),
             close_button = form.querySelector('.close_button');
-        
+
         // unused, just for reference:
         function load_Old(e) {
             if (Area.createAreasFromHTMLOfMap_Old(code_input.value)) {
                 hide();
             }
-                
+
             e.preventDefault();
         }
 
@@ -2708,19 +2708,19 @@ var summerHtmlImageMapCreator = (function() {
             let htmlStr = code_input.value;
             if (htmlStr) {
                 loadFromHtml(htmlStr);
-            } 
+            }
 
             e.preventDefault();
         }
-        
+
         function hide() {
             utils.hide(form);
         }
-        
+
         load_button.addEventListener('click', load, false);
-        
+
         close_button.addEventListener('click', hide, false);
-        
+
         return {
             show : function() {
                 code_input.value = '';
@@ -2739,13 +2739,13 @@ var summerHtmlImageMapCreator = (function() {
     //         button = utils.id('button'),
     //         filename = null,
     //         last_changed = null;
-            
+
     //     // Drag'n'drop - the first way to loading an image
     //     var drag_n_drop = (function() {
     //         var dropzone = utils.id('dropzone'),
     //             dropzone_clear_button = dropzone.querySelector('.clear_button'),
     //             sm_img = utils.id('sm_img');
-            
+
     //         function testFile(type) {
     //             switch (type) {
     //                 case 'image/jpeg':
@@ -2755,26 +2755,26 @@ var summerHtmlImageMapCreator = (function() {
     //             }
     //             return false;
     //         }
-            
+
     //         dropzone.addEventListener('dragover', function(e){
     //             utils.stopEvent(e);
     //         }, false);
-            
+
     //         dropzone.addEventListener('dragleave', function(e){
     //             utils.stopEvent(e);
     //         }, false);
-    
+
     //         dropzone.addEventListener('drop', function(e){
     //             utils.stopEvent(e);
-    
+
     //             var reader = new FileReader(),
     //                 file = e.dataTransfer.files[0];
-                
+
     //             if (testFile(file.type)) {
     //                 dropzone.classList.remove('error');
-                    
+
     //                 reader.readAsDataURL(file);
-                    
+
     //                 reader.onload = function(e) {
     //                     sm_img.src = e.target.result;
     //                     sm_img.style.display = 'inline-block';
@@ -2786,22 +2786,22 @@ var summerHtmlImageMapCreator = (function() {
     //                 clearDropzone();
     //                 dropzone.classList.add('error');
     //             }
-    
+
     //         }, false);
-    
+
     //         function clearDropzone() {
     //             sm_img.src = '';
-                
+
     //             utils.hide(sm_img)
     //                  .hide(dropzone_clear_button);
-                     
+
     //             dropzone.classList.remove('error');
-                     
+
     //             last_changed = url_input;
     //         }
-            
+
     //         dropzone_clear_button.addEventListener('click', clearDropzone, false);
-    
+
     //         return {
     //             clear : clearDropzone,
     //             init : function() {
@@ -2818,17 +2818,17 @@ var summerHtmlImageMapCreator = (function() {
     //             }
     //         };
     //     })();
-        
+
     //     /* Set a url - the second way to loading an image */
     //     var url_input = (function() {
     //         var url = utils.id('url'),
     //             url_clear_button = url.parentNode.querySelector('.clear_button');
-            
+
     //         function testUrl(str) {
     //             var url_str = str.trim(),
     //                 temp_array = url_str.split('.'),
     //                 ext;
-    
+
     //             if(temp_array.length > 1) {
     //                 ext = temp_array[temp_array.length-1].toLowerCase();
     //                 switch (ext) {
@@ -2839,10 +2839,10 @@ var summerHtmlImageMapCreator = (function() {
     //                         return true;
     //                 }
     //             }
-                
+
     //             return false;
     //         }
-            
+
     //         function onUrlChange() {
     //             setTimeout(function(){
     //                 if(url.value.length) {
@@ -2854,20 +2854,20 @@ var summerHtmlImageMapCreator = (function() {
     //                 }
     //             }, 0);
     //         }
-            
+
     //         url.addEventListener('keypress', onUrlChange, false);
     //         url.addEventListener('change', onUrlChange, false);
     //         url.addEventListener('paste', onUrlChange, false);
-            
+
     //         function clearUrl() {
     //             url.value = '';
     //             utils.hide(url_clear_button);
     //             url.classList.remove('error');
     //             last_changed = url_input;
     //         }
-            
+
     //         url_clear_button.addEventListener('click', clearUrl, false);
-    
+
     //         return {
     //             clear : clearUrl,
     //             init : function() {
@@ -2886,13 +2886,13 @@ var summerHtmlImageMapCreator = (function() {
     //             getImage : function() {
     //                 var tmp_arr = url.value.split('/');
     //                     filename = tmp_arr[tmp_arr.length - 1];
-                        
+
     //                 return url.value.trim();
     //             }
     //         };
     //     })();
-        
-        
+
+
     //     /* Block init */
     //     function init() {
     //         utils.hide(loading_indicator);
@@ -2900,14 +2900,14 @@ var summerHtmlImageMapCreator = (function() {
     //         url_input.init();
     //     }
     //     init();
-        
+
     //     /* Block clear */
     //     function clear() {
     //         drag_n_drop.clear();
     //         url_input.clear();
     //         last_changed = null;
     //     }
-        
+
     //     /* Selected image loading */
     //     function onButtonClick(e) {
     //         if (last_changed === url_input && url_input.test()) {
@@ -2915,51 +2915,51 @@ var summerHtmlImageMapCreator = (function() {
     //         } else if (last_changed === drag_n_drop && drag_n_drop.test()) {
     //             app.loadImage(drag_n_drop.getImage()).setFilename(filename);
     //         }
-            
+
     //         e.preventDefault();
     //     }
-        
+
     //     button.addEventListener('click', onButtonClick, false);
-        
+
     //     close_button.addEventListener('click', hide, false);
-        
+
     //     function show() {
     //         clear();
     //         utils.show(block);
     //     }
-        
+
     //     function hide() {
     //         utils.hide(block);
     //     }
-        
+
     //     /* Returned object */
     //     return {
     //         show : function() {
     //             app.hide();
     //             show();
-                
+
     //             return this;
     //         },
     //         hide : function() {
     //             app.show();
     //             hide();
-                
+
     //             return this;
     //         },
     //         showLoadIndicator : function() {
     //             utils.show(loading_indicator);
-                
+
     //             return this;
     //         },
     //         hideLoadIndicator : function() {
     //             utils.hide(loading_indicator);
-                
+
     //             return this;
     //         }
     //     };
     // })();
-    // get_image.show();   
-    utils.show(utils.id('get_image_wrapper')); 
+    // get_image.show();
+    utils.show(utils.id('get_image_wrapper'));
 
     var imageFileInput = utils.id("image-filename");
     imageFileInput.addEventListener("change", handleImageFilename, false);
@@ -2996,33 +2996,33 @@ var summerHtmlImageMapCreator = (function() {
             preview = utils.id('preview'),
             new_image = utils.id('new_image'),
             show_help = utils.id('show_help');
-        
+
         function deselectAll() {
             utils.foreach(all, function(x) {
                 x.classList.remove(Area.CLASS_NAMES.SELECTED);
             });
         }
-        
+
         function selectOne(button) {
             deselectAll();
             button.classList.add(Area.CLASS_NAMES.SELECTED);
         }
-        
+
         function onSaveButtonClick(e) {
             // Save in localStorage
             app.saveInLocalStorage();
-            
+
             e.preventDefault();
         }
-        
+
         function onLoadButtonClick(e) {
             // Load from localStorage
             app.clear()
                .loadFromLocalStorage();
-            
+
             e.preventDefault();
         }
-        
+
         function onShapeButtonClick(e) {
             // shape = rect || circle || polygon
             app.setMode('drawing')
@@ -3032,10 +3032,10 @@ var summerHtmlImageMapCreator = (function() {
                .hidePreview();
             info.unload();
             selectOne(this);
-            
+
             e.preventDefault();
         }
-        
+
         function onClearButtonClick(e) {
             // Clear all
             if (confirm('Clear all?')) {
@@ -3046,22 +3046,22 @@ var summerHtmlImageMapCreator = (function() {
                     .hidePreview();
                 deselectAll();
             }
-            
+
             e.preventDefault();
         }
-        
+
         function onFromHtmlButtonClick(e) {
             // Load areas from html
             from_html_form.show();
-            
+
             e.preventDefault();
         }
-        
+
         function onToHtmlButtonClick(e) {
             // Generate html code only
             info.unload();
             code.print();
-            
+
             e.preventDefault();
         }
 
@@ -3069,10 +3069,10 @@ var summerHtmlImageMapCreator = (function() {
             // Generate svg code only
             info.unload();
             svg_code.print();
-            
+
             e.preventDefault();
         }
-        
+
         function onPreviewButtonClick(e) {
             if (app.getMode() === 'preview') {
                 app.setMode(null)
@@ -3085,10 +3085,10 @@ var summerHtmlImageMapCreator = (function() {
                    .preview();
                 selectOne(this);
             }
-            
+
             e.preventDefault();
         }
-        
+
         function onEditButtonClick(e) {
             if (app.getMode() === 'editing') {
                 app.setMode(null)
@@ -3105,7 +3105,7 @@ var summerHtmlImageMapCreator = (function() {
             app.hidePreview();
             e.preventDefault();
         }
-        
+
         function onNewImageButtonClick(e) {
             // New image - clear all and back to loading image screen
             if(confirm('Discard all changes?')) {
@@ -3118,17 +3118,17 @@ var summerHtmlImageMapCreator = (function() {
                    .hidePreview();
                 deselectAll();
                 get_image.show();
-            } 
-            
+            }
+
             e.preventDefault();
         }
-        
+
         function onShowHelpButtonClick(e) {
             help.show();
-            
+
             e.preventDefault();
         }
-        
+
         // save.addEventListener('click', onSaveButtonClick, false);
         // load.addEventListener('click', onLoadButtonClick, false);
         rectangle.addEventListener('click', onShapeButtonClick, false);

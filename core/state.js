@@ -4,6 +4,8 @@ import { Events } from "./events.js"
 
 // decode state
 const initialState = {
+  referrer: "nowhere", // the location we came from
+  location: "nowhere", // our current location
   sawMessyServerNarrative: false,
   visitedAlidator: false,
   visitedPrometeus: false,
@@ -19,6 +21,8 @@ const initialState = {
   visitedFranBlog: false,
   hasBoombox: false,
   pickedUpSquirrel: false,
+  claribelleLocation: "alidator",
+  claribelle: {x: 0, y: 0, location: "alidator"},
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

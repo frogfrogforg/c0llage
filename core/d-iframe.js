@@ -148,6 +148,12 @@ class DeferredIframeElement extends HTMLParsedElement {
     }
   }
 
+  blur() {
+    if (this._iframe != null) {
+      this._iframe.blur()
+    }
+  }
+
   addEventListener(...args) {
     const m = this
 

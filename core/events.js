@@ -36,8 +36,7 @@ export const Events = {
   Alidator: {
     Cat: "alidator.cat",
     Tea: "alidator.tea",
-    ExitLeft: "alidator.exitleft",
-    ExitRight: "alidator.exitright",
+    Exit: "alidator.exit", // value: x, y (position); dx, dy (direction)
   },
   Salada: {
     Bucket: "salada.bucket",
@@ -47,7 +46,7 @@ export const Events = {
     ExitLevel: "mario.exitlevel",
   },
   Computer: {
-    ClaribelleEscape: "computer.claribelleescape",
+    ClaribelleEscape: "computer.claribelleescape", // value: x, y (position)
   },
   Transit: {
     Interact: "transit.interact",
