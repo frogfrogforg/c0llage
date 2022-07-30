@@ -61,7 +61,7 @@ async function visit(url) {
   $el.innerHTML = text
 
   // update the title
-  const title = $el.querySelector('title')
+  const title = $el.querySelector("title")
   setTitle(title && title.innerText)
 
   // extract the game
@@ -228,8 +228,18 @@ function didStartVisit() {
 }
 
 function setTitle(title) {
-  const defaultTitle = mUrl.pathname.slice(8, -5).replaceAll("_" , " ")
-  document.title = title || defaultTitle
+  if (title == null || title === "") {
+    // format the url as a title
+    title = mUrl.pathname.slice(8, -5).replaceAll("_", " ")
+
+    // if it has a text title, remove the numbers
+    const match = title.match(/\D/)
+    if (match != null) {
+      title = title.slice(match.index)
+    }
+  }
+
+  document.title = title
 }
 
 function didFinishVisit() {

@@ -177,7 +177,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
-    if (!this.hasAttribute('no-close')) {
+    if (!this.hasAttribute("no-close")) {
       closeButton.addEventListener("click", this.onClose)
     } else {
       closeButton.style.display = 'none'
