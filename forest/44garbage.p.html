@@ -1,0 +1,47 @@
+<body>
+    <svg id="hotspot-map"
+         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewBox="0 0 1000 1000" >
+        <image preserveAspectRatio="none" id="background-img" xlink:href="images/44garbage.jpg"></image>
+        <a title="13microwave" class="hotspot" xlink:href="13microwave.html">
+            <polygon points="440.09458043582725, 122.0152171484603 408.5654164643053, 282.7341859730451 528.1134965229927, 318.15795869356583 614.161839861938, 250.59039220812812 534.0252147676531, 149.56704037553197"/>
+        </a>
+        <a title="12generic" class="hotspot" xlink:href="12generic.html">
+            <rect x=3.9411454964402424 y=936.1059939293162 width=984.6295165273209 height=61.00760857423029 />
+        </a>
+        <a title="garbage" class="hotspot" xlink:href='javascript:void(0)' onclick="Frames.show('garbage')">
+            <polygon points="457.82973516980843, 501.836780207377 295.58591223301835, 510.3647254919468 245.66473594477526, 659.275770076358 487.3883263931102, 724.8753491884335 638.4655704233196, 616.636043653509 568.8386666528752, 514.956696029792 568.8386666528752, 514.956696029792 568.1818090701352, 514.956696029792"/>
+        </a>
+    </svg>
+    <a-dumpling hidden x=6 y=46 width=35 height=25 id="garbage" title="free stuff">
+        <div>
+            <span>there's a bunch of free stuff here!</span>
+            <ul>
+                <li>Round Stuff</li>
+                <li><a href='javascript:void(0);' onclick='Frames.show("handheld")'>Rectangular Stuff</a></li>
+                <li>Triangula Stuff</li>
+            </ul>
+        </div>
+    </a-dumpling>
+
+    <a-dumpling persistent hidden id="handheld" y=40 width=40 height=60 title="a handheld">
+        <img style="position: absolute; top: 0; left: 0;" src="items/handheld/handheld.png">
+        <img style="position: absolute; top: 0; left: 0; cursor: pointer;" onclick="document.getElementById('assistant-garbage').showNamedDialog('handheld')" src="items/handheld/handheld-screen.png">
+    </a-dumpling>
+
+
+    <s-cript target="assistant" id="assistant-garbage">
+        --- enter
+            [once] oh no, who would leave all this trash here...
+            ==> click
+
+        --- click
+            i wonder if there's anything useful in there
+            ==> click
+
+        --- handheld
+            [cont] does it still work??? {i hope so}
+            i miss playing videogames {me too...}
+            ==> click
+    </s-cript>
+</body>

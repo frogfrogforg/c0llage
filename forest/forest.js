@@ -13,12 +13,12 @@ let $mGame = null
 
 // -- lifetime --
 function main() {
-  console.log("main");
   /// set props
   mUrl = document.location
 
   // capture elements
   $mGame = document.getElementById("game")
+  setTitle("welcome")
 
   // inventory (persistent windows) loading and saving
   kInventory.loadFromState();
@@ -62,6 +62,10 @@ async function visit(url) {
   const $el = document.createElement("html")
   $el.innerHTML = text
 
+  // update the title
+  const title = $el.querySelector('title')
+  setTitle(title && title.innerText)
+
   // extract the game
   const $next = $el.querySelector("#game")
 
@@ -98,12 +102,16 @@ async function visit(url) {
 function randomizeLinks() {
   var links = Array.from(document.getElementsByClassName('hotspot'))
   links.forEach((el) => {
-    if (el.getAttribute("disable-randomization") != null) return
+    if (el.getAttribute("disable-randomization") != null) {
+      return
+    }
 
-    if (el.href == null) return
+    if (el.href == null) {
+      return
+    }
 
+    // handle SVGAnimatedString
     if (typeof el.href === "object") {
-      // Handle SVGAnimatedString
       el.href.baseVal = randomizeUrl(el.href.baseVal)
     } else {
       el.href = randomizeUrl(el.href)
@@ -152,7 +160,10 @@ function reset() {
 function shouldStartVisit(url) {
   // if the paths aren't the same (a hashchange may trigger popstate, but
   // we don't want to re-render)
-  return mUrl.pathname !== url.pathname
+  return (
+    mUrl.origin === url.origin &&
+    mUrl.pathname !== url.pathname
+  )
 }
 
 // -- events --
@@ -218,13 +229,18 @@ function didStartVisit() {
   d.State.referrer = mUrl.pathname
 }
 
+function setTitle(title) {
+  const defaultTitle = mUrl.pathname.slice(8, -5).replaceAll("_" , " ")
+  document.title = title || defaultTitle
+}
+
 function didFinishVisit() {
-  // Add sparkles to hotpsots
-  // (is this the right place to call this?)
+  // add sparkles to hotpsots (is this the right place to call this?)
   initSparkles($mGame.querySelector("#main"));
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
-  console.log(hotspots);
   addHoverSparklesToElements(hotspots);
+
+  // track visit
   d.Events.raise(d.Events.Forest.Visited)
 
   // spawn the assistant if possible

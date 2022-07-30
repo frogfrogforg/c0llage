@@ -1,0 +1,615 @@
+<head>
+    <script type="module" src="forest.js"></script>
+    <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+    <style>
+        body {
+            position: relative;
+            background-image: url("./images/walk-talk/bg-walk-talk.png");
+            background-position: 50% 50%;
+            overflow: hidden;
+        }
+
+        .icons {
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 2%;
+            left: 3%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding: 3%;
+        }
+
+        .icon {
+            cursor: pointer;
+            width: 4%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 9% 4% 0;
+            padding: 0.5% 1% 0.3% 1%;
+
+            font-family: monospace;
+            font-size: 1vw;
+            text-align: center;
+            border: 0.05em rgba(0, 0, 0, 0) solid;
+        }
+
+        .icon:hover {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-hidden {
+            display: none;
+        }
+
+        .icon-opened {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-opened img {
+            filter: invert(1);
+        }
+
+        .icon img {
+            image-rendering: pixelated;
+            width: 90%;
+            /* width: 2%; */
+            /* height: 2%; */
+        }
+
+        .icon-text {
+            color: white;
+            margin-top: 8%;
+        }
+
+        .npc {
+          position: absolute;
+          height: 48px;
+          image-rendering: pixelated;
+          background: none;
+          transform: translate(-50%, -50%);
+        }
+
+        iframe {
+            border: 0;
+            /* --scaleFactor: 0.6; */
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor)) !important;
+            height: calc(100%/var(--scaleFactor)) !important;
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left
+        }
+
+        #protag {
+          position: absolute;
+          width: 48px;
+          height: 48px;
+          image-rendering: pixelated;
+          background: none;
+          transform: translate(-50%, -50%);
+        }
+
+        #claribelle {
+            position: absolute;
+            left: 60px;
+            top: 69px;
+            transform: scale(.125);
+        }
+
+        .dumpling-container {
+            position: fixed;
+            top: 5vmin;
+            left: 55vmin;
+            width: 90vmin;
+            height: 90vmin;
+            z-index: 10;
+            pointer-events: none;
+	    color: blue;
+        }
+    </style>
+</head>
+
+
+<body style="width:100%; height:100%">
+
+    <div class="dumpling-container">
+        <a-dumpling no-back temperament="choleric" title="out of bounds by Annie Zhang" id="out-of-bounds" w="63" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/3159617?color=eddcc3" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+        <a-dumpling no-back temperament="choleric" title="EVERY GROCERY STORE by Carl Burton" id="every-grocery-store" w="63" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/4550039?color=ffb805" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+        <a-dumpling no-back temperament="choleric" title="text me when you get home by Josie Brechner" id="text-me" w="89" h="96" min-x="0" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/1797510?color=de8ca6" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+
+        <a-dumpling no-back temperament="choleric" title="Brock Wants To Fight by Nilson Carroll" id="brock-wants-to-fight" w="88" h="69" min-x="-40" max-x="40" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 0.8;" src="stolen-goods/www/" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+
+        <a-dumpling no-back temperament="choleric" title="flaming/million by Nilson Carroll" id="flaming-million" w="130" h="105" min-x="0" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.2;" src="https://itch.io/embed-upload/3152701?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+
+
+        <a-dumpling layer="explanation" no-close no-back temperament="choleric" title="games where you walk around and talk to people" id="what" x="0" y="90" w="70" h="200">
+            <p>
+            this is a selection of short and beautiful web<a target="_blank" rel=”noreferrer noopener” href="https://www.wonderville.nyc/events/love-me-play-me-2-17">games where you walk and around and talk to people </a></p>
+	    
+	    <p>Thank you for coming tonight.</p>
+	    <br/>
+	    <br/>
+	    <br>
+	    <br>
+	    <p></p>
+	    <p>I love games where you walk around and talk to people. To me, this is the highest form of video game. If tomorrow, there was a terrible space-time ripping event that magically erased all games that aren't games-where-you-walk-around-and-talk-to-people, I would not be too sad. It is a good thing that I don't have this power.</p>
+
+	    <p>"Games where you walk around and talk to people" is as much a misnomer as "video game." It's those games where there's a small guy and you used the D-pad to walk your guy around and you press A when you're near enough to other small guys, and then some text pops on screen. Maybe a better name is "JRPG." But that's not quite right either - JRPGs have all these extra things like fighting monsters or moving through menus that take away from what make these games enjoyable: the walking and the talking.</p>
+
+	    <p>That the games tonight are formally <i>subversive</i> is only historical happenstance. For decades, game developers have thought that a game where "all you do" is walk around and talk to people would be too boring, not a true game. "Where's the <i>gameplay</i>," they would say? "What's the point? Why not just write a book or a play instead?"</p>
+
+	    <p>Now, we alllllll know better. In the late aughts, RPG Maker made it easier to create experimental story games, leading to big pioneers of the form, Yume Nikki and To the Moon, and a community of RPG makers that is still thriving and growing today. It is deeply unfortunate, however, that many RPG Maker games still cling to <i>gameplay</i>, and combat and menus are expected in this culture.<p>
+
+	    <p>But five years ago, the release of Adam LeDoux's bitsy made it even easier and more enjoyable to make "games where you walk around and talk to people and be somewhere." Itch.io was and continues to be inundated with small, poetic, personal, lovely bitsy games, much of which consist of walking around and talking to people. bitsy is the best thing to happen to video games and is where the title of this show takes it's name. Soon there will be no more gameplay, only walking and talking!</p>
+
+	    <p>Walkingaroundandtalkingtopeoplegames are a wonderful form. There's something inherently nostalgic about them. They remind the player about playing the classic JRPGs (Pokémon, Final Fantasy, Earthbound...). And they fulfill at least my childhood dream of playing with dolls and then sharing those little stories i made up in my head with other people</p>
+
+	    <p>The nice thing about gathering a bunch of games that act in a similar way is that you can compare them. If between drinking and talking with friends you somehow have enough brain space to think about the games, one thing you can think about is how the different elements of the form vary: the walking, the movement, the choice of avatar, the nature of the text... or jsut play games idk</p>
+	    <p></p>
+            <p style="text-align: right;">
+                - fran
+            </p>
+        </a-dumpling>
+    </div>
+
+    <div id=" icons" class="icons">
+        <!--If you want to add more icons that open frames just copy the structure below: target is the a-dumpling's id you want the icon to open, and src is a link to the image for the icon -->
+        <pc-icon target="fruitflesh" name="fruitflesh" src="./images/icons/love/fruitflesh.jpg"></pc-icon>
+        <pc-icon target="rain-reign" name="rain/reign" src="./images/icons/love/rain.png"></pc-icon>
+        <pc-icon target="ending-it" name="ending it" src="./images/icons/love/endingit.png"></pc-icon>
+        <pc-icon target="and-i-made-sure-to-hold-your-head-sideways" name="and i made sure to hold your head sideways" src="./images/icons/love/headhold.png"></pc-icon>
+        <pc-icon target="please-talk-to-me" name="please talk to me" src="./images/icons/love/pleasetalk.png"></pc-icon>
+        <pc-icon target="hubol-got-emotionally-poisoned-in-iowa" name="hubol got emotionally poisoned in iowa" src="./images/icons/love/hubol.png"></pc-icon>
+        <pc-icon target="best-friends" name="best friends" src="./images/icons/love/bestfriends.png"></pc-icon>
+
+        <pc-icon target="be-happy-luv-ur-rock" name="be happy luv ur rock" src="./images/icons/love/petrock.png"></pc-icon>
+
+        <pc-icon target="novena" name="novena" src="./images/icons/love/novena.png"></pc-icon>
+        <pc-icon target="lin" name="the mountain and the ant" src="./images/icons/love/lin.png"></pc-icon>
+
+
+    </div>
+
+    
+    <img id="protag" src="images/walk-talk/player-facing-down.png" />
+    <img class="npc" style="top: 200px; left: 200px;"
+         target="out-of-bounds"
+         src="images/walk-talk/annie.png" />
+    <img class="npc" style="top: 600px; left: 300px;"
+         target="every-grocery-store"
+         src="images/walk-talk/carl.png" />
+    <img class="npc" style="top: 100px; left: 800px;"
+         target="text-me"
+         src="images/walk-talk/josie.png" />
+    <img class="npc" style="top: 500px; left: 1100px;"
+         target="brock-wants-to-fight"
+         src="images/walk-talk/nilson.png" />
+    <img class="npc" style="top: 200px; left: 1200px;"
+         target="flaming-million"
+         src="images/walk-talk/flaming-million-avi.png" />
+
+
+
+    <script type="module" src="/core/d-iframe.js"></script>
+    <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+    <script type="module">
+        import "/global.js"
+
+        const tagName = 'pc-icon'
+        const iconTemplate = `
+        <div id="$id" class="icon">
+            <img src="$src">
+            <div class='icon-text'>$name</div>
+        </div>
+        `
+
+        function openFrame(targetFrame, icon) {
+            targetFrame.show()
+        }
+
+        function closeFrame(targetFrame, icon) {
+            targetFrame.hide()
+        }
+
+        function initializeIcons() {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
+                const id = `${target}-icon`
+                element.outerHTML = iconTemplate
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+                    .replaceAll('$name', name)
+
+                const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i)
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+
+                    d.State.listen(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
+
+                // ['hide-frame', 'show-frame'].forEach((eventName) => {
+                //     targetFrame.addEventListener(eventName, (e) => {
+                //         icon.classList.toggle('icon-opened', targetFrame.visible)
+                //     })
+                // })
+
+                icon.onclick = () => {
+                    targetFrame.toggle();
+                }
+            }
+        }
+
+        function initializeNPCs() {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
+                const id = `${target}-icon`
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+                    .replaceAll('$name', name)
+
+                const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i)
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+
+                    d.State.listen(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
+
+                // ['hide-frame', 'show-frame'].forEach((eventName) => {
+                //     targetFrame.addEventListener(eventName, (e) => {
+                //         icon.classList.toggle('icon-opened', targetFrame.visible)
+                //     })
+                // })
+
+                icon.onclick = () => {
+                    targetFrame.toggle();
+                }
+            }
+        }
+
+        const meElm = document.getElementById("protag");
+          let me = {
+            x: 0, 
+            y: 0,
+            dir: "down"
+          };
+          me.x = 300 + Math.random() * 600;
+          me.y = 200 + Math.random() * 300;
+          meElm.style.left = me.x + "px";
+          meElm.style.top = me.y + "px";
+
+          let meSpeed = .1;
+  let meKeyVelocity = {x : 0, y: 0};
+  let pressedKeys = {
+      up: false,
+      down: false,
+      left: false,
+      right: false
+  }
+
+function updatePlayer(meElm) {
+    let velocity = {x : 0, y: 0};
+
+    // grab input
+    if (pressedKeys.right) {
+        velocity.x += meSpeed * delta_time;
+    }
+    if (pressedKeys.left) {
+        velocity.x -= meSpeed * delta_time;
+    }
+    if (pressedKeys.up) {
+        velocity.y -= meSpeed * delta_time;
+    }
+    if (pressedKeys.down) {
+        velocity.y += meSpeed * delta_time;
+    }
+
+    // move player on screen
+    me.x = me.x + velocity.x;
+    me.y = me.y + velocity.y
+
+    meElm.style.left= `${me.x}px`;
+    meElm.style.top= `${me.y}px`;
+
+    // animate
+    // we're standing still
+    if (Math.abs(velocity.x) + Math.abs(velocity.y) < 0.01) {
+      switch(me.dir) {
+        case "down":
+      meElm.src = "images/walk-talk/player-facing-down.png";
+          break;
+        case "up":
+      meElm.src = "images/walk-talk/player-facing-up.png";
+          break;
+        case "left":
+      meElm.src = "images/walk-talk/player-facing-left.png";
+          break;
+        case "right":
+      meElm.src = "images/walk-talk/player-facing-left.png";
+      meElm.style.transform = "translate(-50%, -50%) scaleX(-1)";
+          break;
+      }
+      
+    // moving more vertical than horizontal
+    } else if (Math.abs(velocity.y) > Math.abs(velocity.x)) {
+      if (velocity.y > 0) {
+    me.dir = "down";
+
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-down.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-down.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%)";
+      } else { // velocity.y < 0
+    me.dir = "up";
+
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-up.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-up.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%)";
+      }
+    }
+
+    // moving more horizontal than vertical
+    else {
+
+      if (velocity.x > 0) {
+    me.dir = "right";
+
+        // animate
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-left.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-left.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%) scaleX(-1)";
+      } else { // velocity.x < 0
+    me.dir = "left";
+
+        if ((Date.now() % 300) > 150) {
+          meElm.src = "images/walk-talk/player-walking-left.png";
+        } else {
+          meElm.src = "images/walk-talk/player-facing-left.png";
+        }
+        meElm.style.transform = "translate(-50%, -50%)";
+      }
+    }
+
+
+  }
+
+
+  function updateScreenPos(elm, x, y) {
+    elm.style.left = x + "px";
+    elm.style.top = y + "px";
+  }
+
+      let timeLastActive = Date.now();
+        let last_tick = Date.now();
+      let delta_time = 0;
+      let tick_num = 0;
+      function tick() {
+
+        delta_time= Date.now() - last_tick;
+        last_tick = Date.now();
+        tick_num++;
+
+
+        // exhibition mode inspired by lee
+        if (Date.now() - timeLastActive > 1000*69) {
+          // reset player
+          timeLastActive = Date.now();
+          me.x = 300 + Math.random() * 600;
+          me.y = 200 + Math.random() * 300;
+          meElm.style.left = me.x + "px";
+          meElm.style.top = me.y + "px";
+
+        }
+
+        updatePlayer(meElm);
+
+
+        window.requestAnimationFrame(tick);
+      }
+
+        function distSquared(x1, y1, x2, y2) {
+            return Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
+        }
+
+        function nearEnough(player, npc) {
+          const playerRect = player.getBoundingClientRect();
+          const npcRect = npc.getBoundingClientRect();
+          const distsq = distSquared(playerRect.x, playerRect.y,
+                                     npcRect.x, npcRect.y);
+
+          const threshold = 8000;
+
+          return distsq < threshold;
+        }
+
+
+        let npcs = [];
+
+        function main() {
+
+            npcs = document.getElementsByClassName("npc");
+            //initializeNPCs()
+
+                 // start input
+            window.addEventListener("mousedown", e => {
+              timeLastActive = Date.now();
+              
+              // LEFT MOUSE BUTTON
+              if (e.button == 0) {
+              }
+
+              // RIGHT MOUSE BUTTON
+              if (e.button == 2) {
+              }
+
+            });
+
+            window.addEventListener("mouseup", e => {
+              timeLastActive = Date.now();
+
+              // LEFT MOUSE BUTTON
+              if (e.button == 0) {
+              }
+
+              if (e.button == 2) {
+              }
+
+            });
+
+            window.addEventListener("mousemove", e => {
+              timeLastActive = Date.now();
+            });
+
+            window.addEventListener("keyup", e => {
+              timeLastActive = Date.now();
+            switch(e.code) {
+              case "KeyS":
+                  case "ArrowDown":
+                pressedKeys.down = false;
+                    break;
+                  case "KeyW":
+                  case "ArrowUp":
+                pressedKeys.up = false;
+                    break;
+                  case "KeyA":
+                  case "ArrowLeft":
+                pressedKeys.left = false;
+                    break;
+                  case "KeyD":
+                  case "ArrowRight":
+                pressedKeys.right = false;
+                    break;
+            }
+            });
+            window.addEventListener("keydown", e => {
+              timeLastActive = Date.now();
+
+            switch(e.code) {
+              case "KeyS":
+              case "ArrowDown":
+                pressedKeys.down = true;
+                break;
+              case "KeyW":
+              case "ArrowUp":
+                pressedKeys.up = true;
+                break;
+              case "KeyA":
+              case "ArrowLeft":
+                pressedKeys.left = true;
+                break;
+              case "KeyD":
+              case "ArrowRight":
+                pressedKeys.right = true;
+                break;
+              case "KeyE":
+              case "Enter":
+              case "Space":
+
+                for (const npc of npcs) {
+                  if (nearEnough(meElm, npc)) {
+                    const target = npc.attributes.target.value
+                    const targetFrame = document.getElementById(target);
+                    targetFrame.toggle();
+
+                    // bandaid bug where player would just keep walking
+                    pressedKeys.right = false;
+                    pressedKeys.down = false;
+                    pressedKeys.left = false;
+                    pressedKeys.up = false
+
+                    targetFrame.focus();
+                    //window.top.focus()
+                  }
+                }
+                break;
+            }
+
+            });
+
+            window.addEventListener("blur", e => {
+              // bandaid bug where player would just keep walking
+              pressedKeys.right = false;
+              pressedKeys.down = false;
+              pressedKeys.left = false;
+              pressedKeys.up = false
+              
+
+            });
+
+
+
+            window.requestAnimationFrame(tick);
+
+        }
+
+        main()
+
+
+
+
+
+    </script>
+</body>

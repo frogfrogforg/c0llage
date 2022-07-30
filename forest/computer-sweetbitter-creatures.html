@@ -1,0 +1,223 @@
+<head>
+    <script type="module" src="forest.js"></script>
+    <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+    <style>
+        body {
+            position: relative;
+            background-image: url("./images/sweetbitter/poster.png");
+            background-position: 30% 70%;
+            background-size: 110%;
+            overflow: hidden;
+        }
+
+        .icons {
+            position: absolute;
+            /* This is becoming a very common pattern */
+            top: 2%;
+            left: 3%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding: 3%;
+        }
+
+        .icon {
+            cursor: pointer;
+            width: 4%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 9% 4% 0;
+            padding: 0.5% 1% 0.3% 1%;
+
+            font-family: monospace;
+            font-size: 1vw;
+            text-align: center;
+            border: 0.05em rgba(0, 0, 0, 0) solid;
+        }
+
+        .icon:hover {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-hidden {
+            display: none;
+        }
+
+        .icon-opened {
+            background: rgba(244, 251, 255, 0.2);
+            border: 0.05em rgb(244, 251, 255, 0.4) solid;
+        }
+
+        .icon-opened img {
+            filter: invert(1);
+        }
+
+        .icon img {
+            image-rendering: pixelated;
+            width: 90%;
+            /* width: 2%; */
+            /* height: 2%; */
+        }
+
+        .icon-text {
+            color: white;
+            margin-top: 8%;
+        }
+
+        iframe {
+            border: 0;
+            /* --scaleFactor: 0.6; */
+            /*scale iframe content by this factor (probably breaks on older browsers)*/
+            width: calc(100%/var(--scaleFactor)) !important;
+            height: calc(100%/var(--scaleFactor)) !important;
+            transform: scale(var(--scaleFactor));
+            transform-origin: top left
+        }
+
+        #claribelle {
+            position: absolute;
+            left: 60px;
+            top: 69px;
+            transform: scale(.125);
+        }
+
+        .dumpling-container {
+            position: fixed;
+            top: 5vmin;
+            left: 55vmin;
+            width: 90vmin;
+            height: 90vmin;
+            z-index: 10;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+
+<body style="width:100%; height:100%">
+
+    <div class="dumpling-container">
+        <a-dumpling no-back temperament="choleric" title="Flirting by Josie Brechner" id="flirting" w="65" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1;" src="https://itch.io/embed-upload/1265719?color=8f7cc3" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+        <a-dumpling no-back temperament="choleric" title="fruitflesh by d.h." id="fruitflesh" w="69" h="69" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1.5;" src="https://itch.io/embed-upload/5118257?color=190D26" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+        <a-dumpling no-back temperament="choleric" title="The Raven Queen by Jude Pinto" id="ravenqueen" w="100" h="84" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: 1;" src="https://itch.io/embed-upload/3040039?color=000000" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+        <a-dumpling no-back temperament="choleric" title="marmalade: a love story by orin dee" id="marmalade" w="110" h="100" min-x="-10" max-x="10" min-y="-4" max-y="10" hidden>
+            <d-iframe style="--scaleFactor: .9;" src="https://itch.io/embed-upload/2616091?color=e6c612" allowfullscreen="" width="1280" height="740" frameborder="0"></d-iframe>
+        </a-dumpling>
+        <a-dumpling layer="love" no-close no-back title="a love letter" id="love-letter" x="-30" y="90" w="40" h="100">
+            <div>
+                <div style="padding: 5px;">
+                    <span style="display:inline-block; width: 3em;">from: </span> <input type="text" lines>
+                </div>
+                <div style="padding: 5px;">
+                    <span style="display:inline-block; width: 3em;">to:</span> <input type="text" lines>
+                </div>
+                <div>
+                    <textarea style="width: 100%; height:100%;"></textarea>
+                </div>
+            </div>
+        </a-dumpling>
+        <a-dumpling layer="explanation" no-close no-back temperament="choleric" title="what is this??" id="what" x="112" y="80" w="30" h="21">
+            <p>
+                this is a selection of short and beautiful sapphic webgames. curated for <a target="_blank" rel=”noreferrer noopener” href="https://www.wonderville.nyc/events/love-me-play-me-2-17">"sweetbitter creatures"</a> @ <a target="_blank" rel=”noreferrer noopener” href="https://www.wonderville.nyc/">wonderville</a>
+            </p>
+            <p>
+              please enjoy at your pleasure :)
+            </p>
+        </a-dumpling>
+    </div>
+
+    <div id=" icons" class="icons">
+        <!--If you want to add more icons that open frames just copy the structure below: target is the a-dumpling's id you want the icon to open, and src is a link to the image for the icon -->
+        <pc-icon target="fruitflesh" name="fruitflesh" src="./images/sweetbitter/fruitflesh.jpg"></pc-icon>
+        <pc-icon target="ravenqueen" name="raven queen" src="./images/sweetbitter/ravenqueen.png"></pc-icon>
+        <pc-icon target="flirting" name="flirting" src="./images/sweetbitter/flirting.png"></pc-icon>
+        <pc-icon target="marmalade" name="marmalade: a love story" src="./images/sweetbitter/marmalade.png"></pc-icon>
+    </div>
+
+
+    <script type="module" src="/core/d-iframe.js"></script>
+    <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+    <script type="module">
+        import "/global.js"
+
+        const tagName = 'pc-icon'
+        const iconTemplate = `
+        <div id="$id" class="icon">
+            <img src="$src">
+            <div class='icon-text'>$name</div>
+        </div>
+        `
+
+        function openFrame(targetFrame, icon) {
+            targetFrame.show()
+        }
+
+        function closeFrame(targetFrame, icon) {
+            targetFrame.hide()
+        }
+
+        function initializeIcons() {
+            document.createElement(tagName)
+            const tagInstances = document.getElementsByTagName(tagName)
+            while (tagInstances.length > 0) {
+                let element = tagInstances[0]
+                const target = element.attributes.target.value
+                const src = element.attributes.src.value
+                const name = element.getAttribute('name') || target
+                const id = `${target}-icon`
+                element.outerHTML = iconTemplate
+                    .replaceAll('$id', id)
+                    .replaceAll('$src', src)
+                    .replaceAll('$name', name)
+
+                const icon = document.getElementById(id);
+
+                const targetFrame = document.getElementById(target);
+
+                // TODO: move global flags to core?
+                const conditionsString = element.getAttribute('condition') || ''
+                const s = conditionsString.trim().split(' ').filter(i => i)
+                let passesAllConditions = true;
+                s.forEach(condition => {
+                    passesAllConditions &&= d.State[condition]
+
+
+                    d.State.listen(condition, () => {
+                        const passesAllConditions = s
+                            .reduce((aggregate, condition) => aggregate && d.State[condition], true)
+                        icon.classList.toggle('icon-hidden', !passesAllConditions)
+                    })
+                });
+
+                icon.classList.toggle('icon-hidden', !passesAllConditions);
+
+                ['hide-frame', 'show-frame'].forEach((eventName) => {
+                    targetFrame.addEventListener(eventName, (e) => {
+                        icon.classList.toggle('icon-opened', targetFrame.visible)
+                    })
+                })
+
+                icon.onclick = () => {
+                    targetFrame.toggle();
+                }
+            }
+        }
+
+        function main() {
+            initializeIcons()
+        }
+
+        main()
+
+
+    </script>
+</body>

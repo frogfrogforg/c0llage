@@ -12,7 +12,7 @@ export const Events = {
   },
   raise(name, value) {
     raised.add(name)
-    console.log(`Raising event: ${name} with ${value}`)
+    console.debug(`[events] raise ${name} with ${value}`)
     root.dispatchEvent(new CustomEvent(name, { detail: value || false }))
   },
   // -- constants --
