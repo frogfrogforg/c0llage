@@ -95,7 +95,7 @@ function getHighwayId(path = document.location.pathname) {
   }
 
   // match the url
-  const matches = path.match(/(\d+)highway_to_the_cosmodrome/)
+  const matches = path.match(/(\d+)highway_to_the_cosmod/)
 
   // if we can't find a page number, not a highway page
   const id = matches && matches[1]
@@ -108,7 +108,7 @@ function getHighwayId(path = document.location.pathname) {
 }
 
 function getHighwayUrl(i) {
-  return `./${i}highway_to_the_cosmodrome.html`
+  return `./${i}highway_to_the_cosmod.html`
 }
 
 // -- bootstrap --

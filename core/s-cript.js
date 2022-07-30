@@ -35,6 +35,7 @@ const kClickSectionName = "click"
 const kAttrs = {
   target: "target",
   main: "main",
+  hideTitle: "hide-dialog-title"
 }
 
 // class names
@@ -64,7 +65,12 @@ class ScriptElement extends HTMLParsedElement {
 
     // if no id, we'll try to inferred one
     if (!m.id) {
-      m.id = `${m.targetId}-${document.location.pathname.slice(1).replaceAll("/", "-")}`
+      if (m.isMain) {
+        m.id = `${m.targetId}-main`
+      } else {
+        m.id = `${m.targetId}-${document.location.pathname.slice(1).replaceAll("/", "-")}`
+      }
+
       console.debug(`[script] s-cript inferred id="${m.id}"`)
     }
 
@@ -151,7 +157,7 @@ class ScriptGod {
 
   // -- commands --
   // add script to new or existing herald
-  addScriptToHerald(id, scriptId, content, isMain, window) {
+  addScriptToHerald(id, scriptId, textContent, isMain, window) {
     const m = this
 
     // get the herald
@@ -162,7 +168,7 @@ class ScriptGod {
       // longer keys are more important
       // TODO: use a real key from the el attr
       const key = isMain ? "*" : window.location.pathname
-      const script = Script.decode(content, scriptId)
+      const script = Script.decode(scriptId, textContent)
       herald.addScript(scriptId, script, key)
     } else {
       console.debug(`[script] herald ${id} ignoring duplicate script w/ id ${scriptId}`)
@@ -263,7 +269,7 @@ class ScriptHerald {
 
     // if we have a target
     if ($target == null) {
-      console.warn(`couldn't find target ${m.id} for script`)
+      console.warn(`[script] couldn't find target ${m.id} for script`)
       return
     }
 
@@ -294,7 +300,7 @@ class ScriptHerald {
 
     // get current item and advance
     const curr = script.findCurrentPath(false) // also sets state
-    console.log(`[script] ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
+    console.debug(`[script] ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
 
     const item = script.findItemByPath(...curr)
     script.advance(...curr)
@@ -306,7 +312,7 @@ class ScriptHerald {
       scriptId,
       item,
       () => {
-        console.log(`[script] ${scriptId} cont [showNextDialog]`)
+        console.debug(`[script] ${scriptId} cont [showNextDialog]`)
         m.showNextDialog()
       }
     )
@@ -372,7 +378,7 @@ class ScriptHerald {
       case ScriptLine.kind:
         m.showDialogForLine(item, cont); break
       default:
-        console.error("attempting to show dialogue for invalid item", item); break
+        console.error("[script] attempting to show dialog for invalid item", item); break
     }
   }
 
@@ -588,6 +594,10 @@ class ScriptHerald {
 
   // find the title of the dialog given the target
   findTitle($target) {
+    if ($target.hasAttribute(kAttrs.hideTitle)) {
+      return ""
+    }
+
     const name = $target.id || $target.title || $target.ownerDocument.title
     if (!name) {
       return ""
@@ -677,7 +687,7 @@ class Script {
       s.i = j
     }
 
-    console.log(`[script] ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
+    console.debug(`[script] ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
   }
 
   // -- queries --
@@ -778,7 +788,7 @@ class Script {
 
   // -- encoding --
   // decode the script text
-  static decode(text, scriptId) {
+  static decode(scriptId, text) {
     // produce a list of sections
     const sections = []
 

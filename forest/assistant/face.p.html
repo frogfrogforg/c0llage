@@ -1,29 +1,20 @@
 <!-- template: item {title: assistant} -->
-
 <head>
   <script src="/core/s-cript.js" type="module"></script>
 </head>
 
 <body id="assistant">
-  <img class="Face" src="assistant.png" style="bottom:0;position:absolute;">
+  <img
+    class="Face"
+    src="assistant.png"
+  >
 
-  <template id="main-hook">
-    <article class="Dialog">
-      <p>yes, come to me any time</p>
-
-      <div class="Dialog-buttons">
-        <button class="Dialog-button">thank you</button>
-      </div>
-    </article>
-  </template>
-
-  <s-cript id="assistant-main" target="assistant" main>
+  <s-cript target="assistant" main>
     --- intro
     how are you? {no complaints :)}
     ==> main
 
     --- main
-    <!-- *** main-hook -->
     yes, come to me any time {o.k.}
     ==> main
 
@@ -50,6 +41,8 @@
 
   /* styles */
   .Face {
+    position: absolute;
+    bottom: 0;
     width: 100%;
   }
 </style>

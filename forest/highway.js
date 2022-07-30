@@ -8,8 +8,16 @@ const kHighwaySteps = 420
 
 // -- templates --
 const kTransitHtml = `
-  <a-dumpling persistent temperament="phlegmatic" y=40 width=20 height=20>
-    <d-iframe src="./items/transit.html" autoload>
+  <a-dumpling
+    persistent
+    y=40
+    w=20 h=20
+    temperament="phlegmatic"
+  >
+    <d-iframe
+      src="./items/transit.html"
+      autoload
+    >
   </a-dumpling>
 `
 
@@ -18,16 +26,11 @@ const kTransitHtml = `
 function main() {
   reset(State.referrer)
 
-  kInventory.add({
-    id: kTransitId,
-    html: kTransitHtml
-  })
-
-  document.addEventListener("turbo:render", () => {
+  d.Events.listen(d.Events.Forest.Visited, () => {
     let id = getHighwayId()
 
     if (id != null) {
-      traverse(id)
+      move(id)
     } else {
       reset()
     }
@@ -35,26 +38,24 @@ function main() {
 }
 
 // -- commands --
-function traverse(id) {
+function move(id) {
   const step = State.highwayStep || 0
 
   // if we haven't reached the goal, move. otherwise, redirect to the exit
   if (step < kHighwaySteps) {
-    move(id, step)
+    advance(id, step)
   } else {
     exit()
   }
 }
 
-function move(id, step) {
+function advance(id, step) {
   // if we reached step 3, add the transit vehicle
   if (step == 2) {
-    const transit = kInventory.get(kTransitId)
-
-    if (transit != null) {
-      transit.querySelector("iframe").contentWindow.interrupt()
-      transit.bringToTop()
-    }
+    kInventory.add({
+      id:   kTransitId,
+      html: kTransitHtml
+    })
   }
 
   // randomize the next link
@@ -95,7 +96,7 @@ function getHighwayId(path = document.location.pathname) {
   }
 
   // match the url
-  const matches = path.match(/(\d+)highway_to_the_cosmodrome/)
+  const matches = path.match(/(\d+)highway_to_the_cosmod/)
 
   // if we can't find a page number, not a highway page
   const id = matches && matches[1]
@@ -108,7 +109,7 @@ function getHighwayId(path = document.location.pathname) {
 }
 
 function getHighwayUrl(i) {
-  return `./${i}highway_to_the_cosmodrome.html`
+  return `./${i}highway_to_the_cosmod.html`
 }
 
 // -- bootstrap --

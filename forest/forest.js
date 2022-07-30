@@ -1,8 +1,6 @@
-
 import { kInventory } from "./inventory.js"
 import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
-import { Assistant } from "./assistant/brain.js"
 
 // -- props --
 /// the current location
@@ -242,9 +240,6 @@ function didFinishVisit() {
 
   // track visit
   d.Events.raise(d.Events.Forest.Visited)
-
-  // spawn the assistant if possible
-  Assistant.spawn()
 }
 
 // -- exports --
