@@ -1,5 +1,7 @@
 :root {
-  --frame-header-height-param: .8vmin;
+  --frame-scale: 0.8vmin;
+  --frame-1px: min(0.13vmin, 1px);
+  --frame-2px: min(0.27vmin, 2px);
   --frame-padding: 0.4vmin;
 }
 
@@ -22,21 +24,21 @@ d-iframe iframe {
   pointer-events: none;
 }
 
-.Frame-Visible {
+.is-visible {
   display: block;
 }
 
-.Frame-Unfocused {
+.is-unfocused {
   filter: blur(2px);
   opacity: 0.5;
 }
 
-.Frame-Dragging {
+.is-dragging {
   animation: shake 1s alternate infinite;
   box-shadow: black 1vmin 1vmin;
 }
 
-.Frame-Scaling {
+.is-scaling {
 }
 
 .sanguine {
@@ -51,9 +53,9 @@ d-iframe iframe {
 .melancholic {
 }
 
-.Frame-Unfocused .Frame-body,
-.Frame-Dragging .Frame-body,
-.Frame-Scaling .Frame-body {
+.is-unfocused .Frame-body,
+.is-dragging .Frame-body,
+.is-scaling .Frame-body {
   pointer-events: none;
 }
 
@@ -84,50 +86,85 @@ d-iframe iframe {
 }
 
 .Frame-header {
-  margin: calc(var(--frame-header-height-param) * 0.2);
-  margin-bottom: calc(var(--frame-header-height-param) * 0.5);
-  background-color: #dadada;
-  min-height: calc(var(--frame-header-height-param) * 1.0);
-  user-select: none;
   display: flex;
   align-items: center;
   position: relative;
-  border: calc(var(--frame-header-height-param) * 0.1) solid #dadada;
   overflow: hidden;
+  height: calc(var(--frame-scale) * 2.5);
+  min-height: calc(var(--frame-scale) * 1.0);
+  padding: var(--frame-padding);
+  padding-bottom: 0;
+  margin-bottom: calc(var(--frame-scale) * 0.3);
+  border: calc(var(--frame-scale) * 0.1) solid #dadada;
+  background-color: #dadada;
+  user-select: none;
   z-index: 1;
-  height: calc(var(--frame-header-height-param) * 2.5);
 }
 
-.Frame-Dragging .Frame-header-blank{
-  cursor: grabbing;
+.Frame-header > * + * {
+  margin-left: calc(var(--frame-scale) * 0.45);
 }
 
-.Frame-header-blank {
-  flex-grow: 1;
-  background-image: url("./img/window-head.png");
-  background-repeat: round;
-  /* background-size: cover; */
-  margin-left: calc(var(--frame-header-height-param) * 0.2);
-  cursor: grab;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.Frame-headerButton {
+  font-size: calc(var(--frame-scale) * 1.9);
+  text-align: center;
 }
 
-.Frame-header-back {
+.Frame-headerButton:hover {
+  cursor: pointer;
+  filter: invert(30%) brightness(120%) sepia(100%) hue-rotate(242deg) saturate(400%) /* magenta tint */
+}
+
+.Frame-backButton {
   font-weight: bolder;
 }
 
-.Frame-header-maximize {
+.Frame-maximizeButton {
   box-sizing: border-box;
-  width:calc(var(--frame-header-height-param) * 2.1);
-  height:calc(var(--frame-header-height-param) * 2.1);
-  border: calc(var(--frame-header-height-param) * 0.20) solid black;
+  width: calc(var(--frame-scale) * 2.1);
+  height: calc(var(--frame-scale) * 2.1);
+  border: calc(var(--frame-scale) * 0.20) solid black;
 }
 
-.Frame-header-temperament {
-  font-size: calc(var(--frame-header-height-param) * 1.8);
+.Frame-temperament {
+  font-size: calc(var(--frame-scale) * 1.8);
+}
+
+/* -- title -- */
+/* note: in order for text truncation to work, all flex items must */
+/* have `overflow: hidden` or `min-width: 0`. otherwise, flex will try */
+/* to make them fit their contents (the default, min-width: auto) */
+.Frame-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.Frame.is-dragging .Frame-title {
+  cursor: grabbing;
+}
+
+.Frame-title::before, .Frame-title::after {
+  content: "";
+  background: repeating-linear-gradient(black, black var(--frame-1px), transparent var(--frame-1px), transparent var(--frame-2px));
+  flex: 1;
+  height: 100%;
+  min-width: calc(var(--frame-scale * 1.8));
+}
+
+.Frame-titleText {
+  height: calc(var(--frame-scale) * 2.5);
+  margin-left: 0.5vmin;
+  margin-right: 0.5vmin;
+  font-size: calc(var(--frame-scale) * 1.9);
+  font-family: monospace;
+  background-color: #dadada;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .frame-header-image {
@@ -136,27 +173,13 @@ d-iframe iframe {
   display: inline-flex;
 }
 
-.Frame-header-button {
-  font-size: calc(var(--frame-header-height-param) * 1.9);
-  margin-left: calc(var(--frame-header-height-param) * 0.45);
-  text-align: center;
-}
-
-.Frame-close-button {
+.Frame-closeButton {
   position: relative;
-  min-width: calc(var(--frame-header-height-param) * 2.1);
-  min-height: calc(var(--frame-header-height-param) * 2.1);
-  /* margin-top: 0.1vmin; */
-  /* margin-left: var(--frame-padding); */
+  min-width: calc(var(--frame-scale) * 2.1);
+  min-height: calc(var(--frame-scale) * 2.1);
   background-image: url("./img/window-close.gif");
   background-repeat: no-repeat;
   background-size: contain;
-}
-
-.Frame-header-button:hover {
-  cursor:pointer;
-  /*background-color: magenta*/
-  filter: invert(30%) brightness(120%) sepia(100%) hue-rotate(242deg) saturate(400%) /* magenta tint */
 }
 
 .Frame-body {
@@ -198,37 +221,19 @@ d-iframe iframe {
   max-height: 15px;
   right: min(0.64vmin, var(--frame-padding));
   bottom: min(0.64vmin, var(--frame-padding));
-  margin-right: 1px;
-  margin-bottom: 1px;
+  margin-right: var(--frame-1px);
+  margin-bottom: var(--frame-1px);
   background-image: url("./img/window-res.gif");
   background-repeat: no-repeat;
   background-size: cover;
   cursor: nwse-resize;
 }
 
-.Frame-Scaling .Frame-handle{
+.Frame.is-scaling .Frame-handle {
   cursor: grabbing;
 }
 
-/* https://www.westerndevs.com/css/Using-Overflow-Ellipsis-in-Inline-Flex/ */
-.Frame-header-title-container {
-  white-space: nowrap;
-  max-width: 60%;
-  pointer-events: none;
-}
-
-.Frame-header-title {
-  display: inline-flex;
-  align-items: center;
-  font-family: monospace;
-  height: calc(var(--frame-header-height-param) * 2.5);
-  padding-left: 1vmin;
-  padding-right: 1vmin;
-  background-color: #dadada;
-}
-
-.choleric .Frame-handle{
-  /*cursor: not-allowed;*/
+.Frame.choleric .Frame-handle {
   display: none;
 }
 

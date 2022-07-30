@@ -39,12 +39,12 @@ const hiddenClassName = 'Frame-Hidden'
 const frameTemplate = `<article id="$id" class="Frame">
   <div class="Frame-content">
     <div class="Frame-header">
-          <div class="Frame-header-button" id="$id-close">
+          <div class="Frame-headerButton" id="$id-close">
             <img src="/core/dumpling/img/window-close.gif" style="width:100%;height:100%;">
  </div>
-       <div class="Frame-header-button" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
-       <div class="Frame-header-button" id="$id-feelings"> ? </div>
-      <div class="Frame-header-blank">
+       <div class="Frame-headerButton" id="$id-max" style="width:12px;height:13px;border:1px solid black;"></div>
+       <div class="Frame-headerButton" id="$id-feelings"> ? </div>
+      <div class="Frame-title">
       </div>
     </div>
       <div id="$id-body" class="Frame-body">
@@ -289,7 +289,7 @@ function onMouseDown(evt) {
 
   // determine operation
   const classes = target.classList
-  if (classes.contains('Frame-header-blank')) {
+  if (classes.contains('Frame-title')) {
     op = Ops.Move
   } else if (classes.contains('Frame-handle')) {
     op = Ops.Scale

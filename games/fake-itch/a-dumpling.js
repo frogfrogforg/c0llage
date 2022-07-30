@@ -26,14 +26,12 @@ function staticize(...names) {
 const frameTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
-      <div class="Frame-close-button Frame-header-button" id="$id-close"></div>
-      <div class="Frame-header-maximize Frame-header-button" id="$id-max"></div>
-      <div class="Frame-header-back Frame-header-button"> ☚ </div>
-      <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
-      <div class="Frame-header-blank">
-        <div class="Frame-header-title-container">
-          <div class="Frame-header-title" id="$id-title"></div>
-        </div>
+      <div class="Frame-closeButton Frame-headerButton" id="$id-close"></div>
+      <div class="Frame-maximizeButton Frame-headerButton" id="$id-max"></div>
+      <div class="Frame-backButton Frame-headerButton"> ☚ </div>
+      <div class="Frame-temperament Frame-headerButton" id="$id-feelings"> ? </div>
+      <div class="Frame-title">
+        <div class="Frame-titleText" id="$id-title"></div>
       </div>
     </div>
     <div id="$id-body" class="Frame-body"></div>
@@ -43,10 +41,10 @@ const frameTemplate = `
 
 // -- constants --
 // -- c/style
-const kVisibleClass = 'Frame-Visible'
-const kDraggingClass = 'Frame-Dragging'
-const kScalingClass = 'Frame-Scaling'
-const kUnfocusedClass = 'Frame-Unfocused'
+const kVisibleClass = 'is-visible'
+const kDraggingClass = 'is-dragging'
+const kScalingClass = 'is-scaling'
+const kUnfocusedClass = 'is-unfocused'
 
 // -- c/focus
 // the default focus layer
@@ -198,7 +196,7 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // back button
-    const backButton = this.querySelector(`.Frame-header-back`)
+    const backButton = this.querySelector(`.Frame-backButton`)
     if (!this.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
@@ -437,7 +435,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // determine gesture, if any
     const classes = evt.target.classList
-    if (classes.contains('Frame-header-blank')) {
+    if (classes.contains('Frame-title')) {
       this.gesture = { type: Ops.Move }
     } else if (classes.contains('Frame-handle')) {
       this.gesture = { type: Ops.Scale }
