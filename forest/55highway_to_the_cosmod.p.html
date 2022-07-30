@@ -10,22 +10,25 @@
 
   <s-cript id="assistant-highway" target="assistant">
     --- enter
-    I love to go for a drive!!
-    [cont] You may need your keys though..
+    ==> [once] intro
+
+    --- intro
+    [cont] I love to go for a drive!! {nice|you drive?}
+    You may need your keys though.. {for what?}
     ==> click
 
-    --- enter
-    Gosh isn't walking tiring? Wouldn't you like to get your keys?
+    --- click
+    Gosh isn't walking tiring? Wouldn't you like to get your keys? {yes.}
     ==> click
 
-    --- three-without-keys
+    --- has-walked-far
     I'm getting tired just looking at you!
     [cont] We'll never get there at this rate..
-    ==> three-without-keys
+    ==> has-walked-far
 
-    --- have-keys
+    --- has-keys
     Yes!! Put your keys in the car and we'll go for a drive!
-    ==> have-keys
+    ==> has-keys
   </s-cript>
 </body>
 

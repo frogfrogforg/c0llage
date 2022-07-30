@@ -19,6 +19,8 @@ const initialState = {
   visitedFranBlog: false,
   hasBoombox: false,
   pickedUpSquirrel: false,
+  highwayStep: 0,
+  foundKeys: false,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

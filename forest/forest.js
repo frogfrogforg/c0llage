@@ -224,6 +224,10 @@ function didPopState() {
 }
 
 function didStartVisit() {
+  // track visit
+  d.Events.raise(d.Events.Forest.BeforeVisit)
+
+  // store current url as referrer
   d.State.referrer = mUrl.pathname
 }
 
@@ -249,7 +253,7 @@ function didFinishVisit() {
   addHoverSparklesToElements(hotspots);
 
   // track visit
-  d.Events.raise(d.Events.Forest.Visited)
+  d.Events.raise(d.Events.Forest.AfterVisit)
 }
 
 // -- exports --
