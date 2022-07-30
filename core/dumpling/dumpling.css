@@ -103,7 +103,14 @@ d-iframe iframe {
   filter: invert(30%) brightness(120%) sepia(100%) hue-rotate(242deg) saturate(400%) /* magenta tint */
 }
 
-/* -- h/left */
+/* -- h/buttons */
+.Frame-closeButton {
+  position: relative;
+  min-width: calc(var(--frame-scale) * 2.1);
+  min-height: calc(var(--frame-scale) * 2.1);
+  background: url("./img/window-close.gif") center/contain no-repeat;
+}
+
 .Frame-backButton {
   font-weight: bolder;
 }
