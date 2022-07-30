@@ -13,7 +13,7 @@
         <a title="" class="hotspot cursor-move" xlink:href="1">
             <rect x="550.6805419921875" width="177.95751953125" height="300.17808532714844" y="300.118"></rect>
         </a>
-        <a title="" class="hotspot cursor-inspect" xlink:href="stump_at_first_sight">
+        <a title="" class="hotspot cursor-inspect" xlink:href="intro_stump_at_first_sight">
             <rect y="613.0000610351562" width="76.1030044555664" height="68.98433685302734" x="459.826"></rect>
         </a>
 
@@ -37,7 +37,7 @@
 
     <s-cript target="assistant" id="intro-dialog" main>
       --- brochure-pick-up
-      wow you picked up the brochure uwu *becomes wet*
+      wow you picked up the brochure uwu
     </s-cript>
 
     <script type="module">
@@ -46,18 +46,18 @@
 
       window.pickUpBrochure = function(pieceNum) {
 
-	const dialog = document.getElementById("intro-dialog");
-	console.log(dialog);
+	      const dialog = document.getElementById("intro-dialog");
+	      console.log(dialog);
 
-	kInventory.add({
-	  id: "brochure-piece",
-	  src: "items/brochurepiece",
-	})
+	      kInventory.add({
+	        id: "brochure-piece",
+	        src: "items/brochurepiece",
+	      })
 
-	document.getElementById("brochure-piece" + pieceNum).remove()
+	      document.getElementById("brochure-piece" + pieceNum).remove()
 
-	console.log('dodloguo');
-	dialog.showNamedDialog("brochure-pick-up");
+	      console.log('dodloguo');
+	      dialog.showNamedDialog("brochure-pick-up");
 
       }
     </script>
