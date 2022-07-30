@@ -1,23 +1,24 @@
-<!-- template: item {title: brochurepiece} -->
+<!-- template: item {title: brochurepiece1} -->
 
 <head>
   <style>
     body {
-      background: url("../images/brochure-piece1.png");
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-      margin: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-    #squirrel-gif {
-      background: url("squirrel.gif");
-      height: 100%;
-      width: 100%;
-      cursor: pointer;
+
+    img {
+      height: 70vmin;
+    }
+
+    .brochure-itself {
+      cursor: grab;
     }
   </style>
 </head>
 
 <body>
+  <img id='brochure-itself' class='brochure-itself' draggable="true" src="../images/brochure-piece1.png">
 </body>
