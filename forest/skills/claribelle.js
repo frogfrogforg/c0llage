@@ -127,6 +127,7 @@ function update_claribelle(collide = false) {
           if(href.includes("javascript:void")) continue
 
           let url = new URL(href, location.href)
+          // TODO: animate exit?
           d.State.claribelleLocation = url.pathname.replace(/\.html.*/, "")
           window.navigate(url)
         }

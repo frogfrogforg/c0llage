@@ -22,8 +22,8 @@
             <ul>
                 <li><a href='javascript:void(0);' onclick='Frames.show("hyperbox")'>Hyper Box</a></li>
                 <li><a href='javascript:void(0);' onclick='Frames.show("compass")'>Round Box</a></li>
-                <li><a href='javascript:void(0);' onclick='Frames.show("floppy")'>Rectangular Box</a></li>
-                <li><a>Triangular Box</a></li>
+                <li><a href='javascript:void(0);' onclick='Frames.show("floppy")'>Square Box</a></li>
+                <li><a href='javascript:void(0);' id="skate-box">Skate Shaped Box</a></li>
             </ul>
         </div>
     </a-dumpling>
@@ -33,11 +33,15 @@
     </a-dumpling>
 
     <a-dumpling persistent hidden id="hyperbox" y=40 width=20 height=15>
-        <d-iframe src='./items/hyperbox.html'></d-iframe>
+        <d-iframe src='./items/skate.png'></d-iframe>
     </a-dumpling>
 
     <a-dumpling temperament="phlegmatic" persistent no-close no-back hidden id="floppy" y=40 width=20 height=15>
         <d-iframe src='./items/floppy.html'></d-iframe>
+    </a-dumpling>
+
+    <a-dumpling temperament="phlegmatic" persistent no-close no-back hidden id="skate" y=40 width=24 height=16>
+        <img style="width: 100%; height: 100%"src="./items/skateboard.png" />
     </a-dumpling>
 
     <a-dumpling width=17 height=25>
@@ -63,4 +67,12 @@
         --- click
         I love Christmas presents!
     </s-cript>
+
 </body>
+<script type="module">
+    const $skateBox = document.getElementById("skate-box")
+    $skateBox.addEventListener("click", () => {
+        Frames.show("skate")
+        d.State.hasSkate = true
+    })
+</script>
