@@ -930,7 +930,7 @@ class ScriptSection {
     // create the new secction
     return new ScriptSection(
       name,
-      decodeOperations(ostr),
+      decodeOperations(ostr)
     )
   }
 
@@ -985,7 +985,7 @@ class ScriptJump {
     return new ScriptJump(
       id,
       name,
-      decodeOperations(ostr, id),
+      decodeOperations(ostr, id)
     )
   }
 }
@@ -1091,7 +1091,7 @@ class ScriptLine  {
       id,
       text,
       buttons,
-      decodeOperations(ostr, id),
+      decodeOperations(ostr, id)
     )
   }
 }
@@ -1099,6 +1099,17 @@ class ScriptLine  {
 ScriptLine.kind = "line"
 
 // -- helpers --
+const kGetOps = {
+  Is: 0,
+  Not: 1,
+  Eq: 2,
+  Neq: 3,
+  Lt: 4,
+  Lte: 5,
+  Gt: 6,
+  Gte: 7,
+}
+
 // decode an operation string "[cont] [a,!b] [set a, b]" into an object like:
 //   { cont: bool, get: [fn], set: [fn] }
 function decodeOperations(ostr, id) {
@@ -1132,7 +1143,7 @@ function decodeOperations(ostr, id) {
   return operations
 }
 
-// decode a get operation "a,!b"
+// decode a get operation "a,!b,c>=3"
 function decodeGetOperation(oldGet, str) {
   return addGetOperation(
     oldGet,
@@ -1140,26 +1151,123 @@ function decodeGetOperation(oldGet, str) {
   )
 }
 
-// add a get operation for a list of variables
-function addGetOperation(oldGet, ...vars) {
+// add a get operation for a list of queries
+function addGetOperation(oldGet, ...queryStrings) {
+  // parse the queries from text
+  const queries = []
+
+  // for each text
+  for (let s of queryStrings) {
+    // trim the query string
+    s = s.trim()
+
+    // default to "is" operation
+    let q = {
+      opr: kGetOps.Is,
+      key: s,
+      val: true,
+    }
+
+    // parse prefix operations
+    if (s[0] === "!") {
+      q = {
+        opr: kGetOps.Not,
+        key: s.slice(1),
+        val: false
+      }
+    }
+    // parse infix operations
+    else {
+      // find index of operator
+      let j = -1
+
+      for (let i = 0; i < s.length; i++) {
+        const ch = s[i]
+
+        switch (ch) {
+        case "!":
+        case "=":
+        case "<":
+        case ">":
+          j = i;
+          break;
+        }
+
+        if (j >= 0) {
+          break;
+        }
+      }
+
+      // if found...
+      if (j !== -1) {
+        // parse the key
+        q.key = s.slice(0, j)
+
+        // parse the op
+        const isNextEq = s[j + 1] === "="
+        switch (s[j]) {
+        case "=":
+          q.opr = isNextEq ? kGetOps.Eq : kGetOps.Is; break;
+        case "!":
+          q.opr = isNextEq ? kGetOps.Neq : kGetOps.Is; break;
+        case "<":
+          q.opr = isNextEq ? kGetOps.Lte : kGetOps.Lt; break;
+        case ">":
+          q.opr = isNextEq ? kGetOps.Gte : kGetOps.Gt; break;
+        }
+
+        // parse the val
+        switch (q.opr) {
+        case kGetOps.Eq:
+        case kGetOps.Neq:
+        case kGetOps.Lte:
+        case kGetOps.Gte:
+          q.val = Number.parseFloat(s.slice(j + 2)); break;
+        case kGetOps.Lt:
+        case kGetOps.Gt:
+          q.val = Number.parseFloat(s.slice(j + 1)); break;
+        }
+      }
+    }
+
+    // add the query
+    queries.push(q)
+  }
+
+  // produce the operation fn
   return () => {
     if (oldGet && !oldGet()) {
       return false
     }
 
-    for (const v of vars) {
-      // key on the var
-      let key = v
-
-      // if negated, remove "!" from key
-      const isNot = v[0] === "!"
-      if (isNot) {
-        key = key.slice(1)
+    for (const q of queries) {
+      // get the current value
+      let curr = d.State[q.key]
+      if (curr == null) {
+        curr = false
       }
 
-      // if current state matches flag, (??? what does this do)
-      const state = d.State[key]
-      if (state == isNot) {
+      // try the query
+      let r = true
+      switch (q.opr) {
+      case kGetOps.Is:
+      case kGetOps.Not:
+      case kGetOps.Eq:
+        r = curr == q.val; break
+      case kGetOps.Neq:
+        r = curr != q.val; break
+      case kGetOps.Lte:
+        r = curr <= q.val; break
+      case kGetOps.Gte:
+        r = curr >= q.val; break
+      case kGetOps.Lt:
+        r = curr < q.val; break
+      case kGetOps.Gt:
+        r = curr > q.val; break
+      }
+
+      // if any fail, this fails
+      if (!r) {
         return false
       }
     }
