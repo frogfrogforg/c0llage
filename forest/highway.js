@@ -3,25 +3,10 @@ import { kInventory } from "./inventory.js"
 
 // -- constants --
 const kLinkId = "highway-link"
-const kTransitId = "public-transit"
 const kHighwaySteps = 420
 
 // -- templates --
-const kTransitHtml = `
-  <a-dumpling
-    y=40
-    w=20 h=20
-    temperament="phlegmatic"
-    persistent
-    no-back
-    no-close
-  >
-    <d-iframe
-      src="./items/transit.html"
-      autoload
-    >
-  </a-dumpling>
-`
+
 
 // -- lifetime --
 // drives each highway page
@@ -55,8 +40,15 @@ function advance(id, step) {
   // if we reached step 3, add the transit vehicle
   if (step == 2) {
     kInventory.add({
-      id:   kTransitId,
-      html: kTransitHtml
+      item: "transit",
+      attrs: {
+        "y": 40,
+        "w": 20,
+        "h": 20,
+        "temperament": "phlegmatic",
+        "no-back": true,
+        "no-close": true,
+      }
     })
   }
 

@@ -1,34 +1,4 @@
-<head>
-  <meta charset="UTF-8">
-
-  <!-- caching -->
-  <meta name="turbo-cache-control" content="no-cache">
-
-  <!-- title -->
-  <title>a narrative thing</title>
-
-  <!-- scrapers -->
-  <meta property="og:title" content="c0llage">
-  <meta property="og:type" content="FROGCUBE">
-  <meta property="og:url" content="https://frogforgforg.github.io/c0llage">
-  <meta property="og:image" content="https://frogfrogforg.github.io/c0llage/images/aligator.png">
-  <meta property="og:description" content="In 1884, meridian time personnel met
-in Washington to change Forg time.
-First words said was that only 1 day
-could be used on Forg to not change
-the 1 day marshmallow">
-
-  <!-- styling -->
-  <link rel="stylesheet" href="/forest/forest.css">
-  <link rel="stylesheet" href="/forest/cursors.css">
-  <script type="module" src="/core/dumpling/dumpling.css"></script>
-
-  <!-- scripts -->
-  <script type="module" src="/global.js"> </script>
-  <script type="module" src="/core/dumpling/a-dumpling.js"></script>
-  <script type="module" src="/core/d-iframe.js"></script>
-</head>
-
+<!-- template: neutral {title: a narrative thing}  -->
 
 <body style="background-color:#fb8d74;">
   <h1>Narrative Ideas!!</h1>
@@ -179,70 +149,78 @@ the 1 day marshmallow">
   <p>
     You now have the choice between six doors.
   </p>
+
   <p>
     <a class='better-link' href="javascript:void(0);" onclick="Frames.show('door3')">
       Door 1 ->
     </a>
   </p>
+
   <p>
     <a class='better-link' href="javascript:void(0);" onclick="Frames.show('door1')">
       Door 2 ->
     </a>
   </p>
+
   <p>
     <a class='better-link' href="javascript:void(0);" onclick="Frames.show('door2')">
       Door 3 ->
     </a>
   </p>
+
   <p>
     <a class='better-link' href="javascript:void(0);" onclick="Frames.show('door5')">
       Door 4 ->
     </a>
   </p>
+
   <p>
     <a class='better-link' href="javascript:void(0);" onclick="Frames.show('door4')">
       Door 5 ->
     </a>
   </p>
 
-  <a-dumpling temperament='phlegmatic' hidden id='door1'>
-    <div class='doorframe'>
-      <img class='door' src='/forest/images/doors/door1.jpg'>
-      <button class='cursor-inspect' style="background: none; border: none; position: relative; width: 43%; height: 12%; left:30%; top:-15%" onclick="gotKeys()">
-      </button>
+  <a-dumpling id="door1" temperament="phlegmatic" hidden>
+    <div class="Door">
+      <img
+        class="Door-plank"
+        src='/forest/images/doors/door1.jpg'
+      >
 
+      <button
+        class="Door-mat cursor-inspect"
+        onclick="gotKeys()"
+      ></button>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="door2" temperament="phlegmatic" hidden>
+    <div class="Door">
+      <img class="Door-plank" src='/forest/images/doors/door2.jpg'>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="door3" temperament="phlegmatic" hidden>
+    <div class="Door">
+      <img class="Door-plank" src='/forest/images/doors/door3.jpg'>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="door4" temperament="phlegmatic" hidden>
+    <div class="Door">
+      <img class="Door-plank" src='/forest/images/doors/door4.jpg'>
+    </div>
+  </a-dumpling>
+
+  <a-dumpling id="door5" temperament="phlegmatic" hidden>
+    <div class="Door">
+      <img class="Door-plank" src='/forest/images/doors/door5.jpg'>
     </div>
   </a-dumpling>
 
   <a-dumpling temperament='phlegmatic' hidden id='keys' width=30 height=30>
     <div>
-      <span id='foundKeys'>
-      </span>
-    </div>
-  </a-dumpling>
-
-  <a-dumpling temperament='phlegmatic' hidden id='door2'>
-    <div class='doorframe'>
-      <img class='door' src='/forest/images/doors/door2.jpg'>
-    </div>
-  </a-dumpling>
-
-  <a-dumpling temperament='phlegmatic' hidden id='door3'>
-    <div class='doorframe'>
-      <img class='door' src='/forest/images/doors/door3.jpg'>
-    </div>
-  </a-dumpling>
-
-  <a-dumpling temperament='phlegmatic' hidden id='door4'>
-    <div class='doorframe'>
-      <img class='door' src='/forest/images/doors/door4.jpg'>
-
-    </div>
-  </a-dumpling>
-
-  <a-dumpling temperament='phlegmatic' hidden id='door5'>
-    <div class='doorframe'>
-      <img class='door' src='/forest/images/doors/door5.jpg'>
+      <span id='foundKeys'></span>
     </div>
   </a-dumpling>
 
@@ -254,25 +232,58 @@ the 1 day marshmallow">
   <div class="ForestLayer--overlay">
     <section id="inventory" class="ForestLayer-content"></section>
   </div>
-
-  <script>
-    window.gotKeys = function () {
-      d.State.foundKeys = true;
-      const carText = document.getElementById('foundKeys')
-      Frames.show('keys')
-      if (d.State.foundVehicle) {
-        carText.innerHTML = 'You found the keys to your car! Of course you let them here...'
-      } else {
-        carText.innerHTML = 'You found a some vehicle keys under the rug...'
-      }
-    }
-  </script>
-  <style>
-    .doorframe {}
-
-    .door {
-      height: 100%;
-      width: 100%;
-    }
-  </style>
 </body>
+
+<script type="module">
+  import { kInventory } from "../forest/inventory.js"
+
+  window.gotKeys = function () {
+    Frames.show("keys")
+
+    const carText = document.getElementById("foundKeys")
+    if (d.State.foundVehicle) {
+      carText.innerHTML = "You found the keys to your car! Your car! Of course you left them here..."
+    } else {
+      carText.innerHTML = "You found a key under the rug..."
+    }
+
+    // spawn the keys
+    d.State.foundKeys = true
+
+    // TODO: replace the state change w/ this
+    // kInventory.add({
+    //   item: "keys",
+    //   attrs: {
+    //     "x": 91,
+    //     "y": 7,
+    //     "w": 25,
+    //     "h": 30,
+    //     "temperament": "choleric",
+    //     "no-back": true,
+    //     "no-close": true,
+    //   }
+    // })
+  }
+</script>
+
+<style>
+  .Door {
+    position: relative;
+  }
+
+  .Door-plank {
+    height: 100%;
+    width: 100%;
+  }
+
+  .Door-mat {
+    appearance: none;
+    position: absolute;
+    width: 50%;
+    height: 12%;
+    left: 29%;
+    bottom: 3%;
+    border: none;
+    background: none;
+  }
+</style>

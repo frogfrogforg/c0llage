@@ -1,15 +1,19 @@
 import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
-window.Frames = {
-  ...staticize('show', 'open'),
-  ...staticize('hide', 'close'),
-  ...staticize('toggle'),
-  ...staticize('bringToTop'),
-  ...staticize('addEventListener', "listen"),
-}
+window.Frames = staticize(
+  "show",
+  "open",
+  "hide",
+  "close",
+  "toggle",
+  "bringToTop",
+  "addEventListener",
+  "listen" ,
+)
 
 function staticize(...names) {
   const methodName = names[0]
+
   function action(id, ...args) {
     const el = document.getElementById(id)
     return el[methodName](...args)
@@ -23,13 +27,13 @@ function staticize(...names) {
   return actions
 }
 
-const frameTemplate = `
+const kTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
       <div class="Frame-closeButton Frame-headerButton" id="$id-close"></div>
       <div class="Frame-maximizeButton Frame-headerButton" id="$id-max"></div>
-      <div class="Frame-backButton Frame-headerButton"> ☚ </div>
-      <div class="Frame-temperament Frame-headerButton" id="$id-feelings"> ? </div>
+      <div class="Frame-backButton Frame-headerButton">☚</div>
+      <div class="Frame-temperament Frame-headerButton" id="$id-feelings">?</div>
       <div class="Frame-title">
         <div class="Frame-titleText" id="$id-title"></div>
       </div>
@@ -128,7 +132,7 @@ export class Dumpling extends HTMLParsedElement {
 
     this.setVisible(!this.hasAttribute('hidden'))
 
-    const templateHtml = frameTemplate.replaceAll('$id', id)
+    const templateHtml = kTemplate.replaceAll('$id', id)
 
     // move original children of <a-dumpling> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)

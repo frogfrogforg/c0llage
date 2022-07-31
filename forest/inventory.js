@@ -9,20 +9,25 @@ let $mEl = document.getElementById("inventory")
 //
 // { id: "assistant", src: "./items/assistant" }
 // { id: "tbranch",  html: "<img src="tbranch.png">" }
+// { item: "keys", attrs: { ... } }
 // { el: document.getElementById("squirrel") }
 function add(props) {
   const id = getItemId(props)
 
-  // don't add duplicate items
-  const existingItem = find(id)
-  if (existingItem == null) {
-    const newItem = getItemEl(props)
-    $mEl.appendChild(newItem)
-    return newItem
-  } else {
-    existingItem.show()
-    return existingItem
+  // find current item
+  let item = find(id)
+
+  // if it's present, show it
+  if (item != null) {
+    item.show()
   }
+  // if missing, create it
+  else {
+    item = getItemEl({ id, ...props })
+    $mEl.appendChild(item)
+  }
+
+  return item
 }
 
 // remove all the elements from the inventory
@@ -89,18 +94,24 @@ function find(id) {
 }
 
 // get the id from an item props
-function getItemId({ id, el: $item }) {
-  return id || ($item && $item.id)
+function getItemId({ id, item: name, el: $el }) {
+  return id || name || ($el && $el.id)
 }
 
 // get the html element from the item props
 function getItemEl({
   id,
+  item: name,
   el: $item,
   html,
   src,
   attrs
 }) {
+  // if we have an item name, infer the path
+  if (name != null) {
+    src = `./items/${name}/${name}.html`
+  }
+
   // if we have a src path, make a new dumpling
   if (src != null) {
     // add id and persistent flag
