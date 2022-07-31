@@ -306,6 +306,11 @@ class ScriptHerald {
   showNextDialog(isClick = false) {
     const m = this
 
+    // we need a target to do anything
+    if (!m.hasTarget()) {
+      return
+    }
+
     // don't show dialog if the item is marked continue
     if(isClick && m.currentItem != null && m.currentItem.operations.cont) {
       m.closeOpenDialog()
@@ -343,6 +348,11 @@ class ScriptHerald {
   /// shows the dialog at section w/ name, item j
   showNamedDialogForScript(scriptId, name) {
     const m = this
+
+    // we need a target to do anything
+    if (!m.hasTarget()) {
+      return
+    }
 
     // find the script
     const script = m.scripts[scriptId]
@@ -383,6 +393,7 @@ class ScriptHerald {
     m.showNextDialog()
   }
 
+  // -- c/d/helpers
   /// shows a dialog for the item
   showDialogForItem(scriptId, item, cont) {
     const m = this
@@ -559,6 +570,10 @@ class ScriptHerald {
   // if the herald has a script for this id
   hasScript(id) {
     return this.scripts[id] != null
+  }
+
+  hasTarget() {
+    return this.findTarget(this.targetId) != null
   }
 
   // find the open dialog dumpling
@@ -1160,6 +1175,11 @@ function addGetOperation(oldGet, ...queryStrings) {
   for (let s of queryStrings) {
     // trim the query string
     s = s.trim()
+
+    // ignore leading "+"
+    if (s[0] === "+") {
+      s = s.slice(1)
+    }
 
     // default to "is" operation
     let q = {

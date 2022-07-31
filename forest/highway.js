@@ -9,10 +9,12 @@ const kHighwaySteps = 420
 // -- templates --
 const kTransitHtml = `
   <a-dumpling
-    persistent
     y=40
     w=20 h=20
     temperament="phlegmatic"
+    persistent
+    no-back
+    no-close
   >
     <d-iframe
       src="./items/transit.html"
