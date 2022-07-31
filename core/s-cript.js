@@ -14,7 +14,7 @@ const kJumpPattern = /==>\s*(\[.*\])?\s*([\w-_]+)\s*/
 const kLinePattern = /\s*(\[.*\])?\s*([^\{]+)\s*(\{(.*)\})?\s*/
 
 // matches operations: "[cont]" "[set a]", "[a,!b]"
-const kOperationPattern = /\[(.*)\]/
+const kOperationPattern = /\[([^\[\]]*)\]/g
 
 // the prefix of the set operation
 const kSetOperation = "set"
@@ -387,7 +387,7 @@ class ScriptHerald {
 
     // update current script position
     script.flow = name
-    script.advance(i, -1)
+    script.setPath(i, 0, true) // read only (don't call sets)
 
     // show the dialog
     m.showNextDialog()
@@ -608,6 +608,7 @@ class ScriptHerald {
       // or contain one of the active keys
       else {
         for (const key of m.activeKeys) {
+          // this should probably be checked before anything else
           if (key.includes(script.key)) {
             addMatch(script)
           }
@@ -703,7 +704,7 @@ class Script {
     m.id = id
     m.sections = sections
     m.key = key
-    m.i = 0
+    m.i = null
     m.flow = kClickSectionName
   }
 
@@ -713,8 +714,11 @@ class Script {
     const m = this
 
     // find the next path
-    m.resolvePath(i, j) // a hacky way to call set for jumps
-    const next = m.resolvePath(i, j + 1)
+    // just go to j+1 if its there, let the jumps resolve later
+    let next = null
+    if(m.sections[i].get(j+1)) {
+      next = [i, j+1]
+    }
 
     // if there isn't one, end this script
     if (next == null) {
@@ -761,6 +765,9 @@ class Script {
   // find the current section's current item, if any
   findCurrentPath(readonly = true) {
     const m = this
+    if(m.i === null) {
+     return null
+    }
 
     const section = m.sections[m.i]
     if (section == null) {
@@ -1136,7 +1143,9 @@ function decodeOperations(ostr, id) {
   }
 
   // then parse each one
-  for (const operation of ostr.match(kOperationPattern).slice(1)) {
+  const rawOps = ostr.matchAll(kOperationPattern)
+  for (const rawOp of rawOps) {
+    const operation = rawOp[1]
     switch (operation.trim().split(" ")[0]) { // gets the operation type
       case kOnceOperation:
         const seenId = `seen-${id}`
@@ -1271,7 +1280,9 @@ function addGetOperation(oldGet, ...queryStrings) {
       let r = true
       switch (q.opr) {
       case kGetOps.Is:
+        r = curr == true; break
       case kGetOps.Not:
+        r = curr == false; break
       case kGetOps.Eq:
         r = curr == q.val; break
       case kGetOps.Neq:
