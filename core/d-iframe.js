@@ -82,22 +82,27 @@ class DeferredIframeElement extends HTMLParsedElement {
   loadUrl(url) {
     const m = this
 
-    // if no url, clear
+    // update src if changed
+    const isChange = m.src !== url
+    if (isChange) {
+      m.setAttribute(kAttrs.src, url)
+      return
+    }
+
+    // if no url, just clear
     if (!url) {
-      m.destroyIframe()
-      return
+      if (isChange) {
+        m.destroyIframe()
+        console.debug(`[dframe] unload`)
+      }
     }
-
-    // if it matches the current url, do nothing
-    if (m._iframe != null && m.src === url) {
-      return
+    else {
+      if (isChange || m._iframe == null) {
+        m.destroyIframe()
+        m.createIframe(url)
+        console.debug(`[dframe] load url: ${url}`)
+      }
     }
-
-    m.setAttribute(kAttrs.src, url)
-    m.destroyIframe()
-    m.createIframe(url)
-
-    console.debug(`[dframe] load url: ${url}`)
   }
 
   // -- c/helpers

@@ -1,119 +1,210 @@
 import { State } from "/core/state.js"
+import { Dumpling } from "/core/dumpling/a-dumpling.js"
 
-// -- props --
-let $mEl = document.getElementById("inventory")
-
-// -- commands --
-// add an item into the inventory. must have some way to get its id and
-// html element. here are some options:
-//
-// { id: "assistant", src: "./items/assistant" }
-// { id: "tbranch",  html: "<img src="tbranch.png">" }
-// { item: "keys", attrs: { ... } }
-// { el: document.getElementById("squirrel") }
-function add(props) {
-  const id = getItemId(props)
-
-  // find current item
-  let item = find(id)
-
-  // if it's present, show it
-  if (item != null) {
-    item.show()
-  }
-  // if missing, create it
-  else {
-    item = getItemEl({ id, ...props })
-    $mEl.appendChild(item)
-  }
-
-  return item
+// -- constants --
+const k = {
+  id:  {
+    // of the inventory el
+    inventory: "inventory",
+  },
+  paths: {
+    base: "/forest/items",
+  },
+  attrs: {
+    // attrs to ignore when building records
+    ignored: new Set([
+      "id",
+    ])
+  },
 }
 
-// remove all the elements from the inventory
-function clear() {
-  for (const $el of Array.from($mEl.children)) {
-    $el.remove()
+// -- scoping --
+function single($w) {
+  $w.services ||= {}
+
+  let single = $w.services.inventory
+  if (single == null) {
+    $w.services.inventory = single = new Inventory($w === $w.top)
   }
+
+  return single
 }
 
-// Load inventory from the State (localStorage-backed)
-function loadFromState() {
-  const record = State.inventory
-  if (!record) {
-    return
+// -- class --
+// a page-persistent inventory bound to a particular el
+export class Inventory {
+  // -- module --
+  // get the current window's inventory
+  static get() {
+    return single(window)
   }
 
-  for (const entry of record) {
-    add(entry)
+  // get the top window's inventory
+  static top() {
+    return single(window.top)
   }
-}
 
-// Save inventory to the State (localStorage-backed)
-function saveToState() {
-  const record = []
+  // -- props --
+  // $el: Element - the inventory container
+  // records: {[string]: Record} - the inventory's serialized state
 
-  // for every visible dumpling
-  for (const child of Array.from($mEl.children)) {
-    if (child.tagName !== "A-DUMPLING" || !child.visible) {
-      continue
+  // -- lifetime --
+  constructor(isTop) {
+    const m = this
+
+    // find element
+    m.$el = document.getElementById(k.id.inventory)
+
+    // only the top inventory manages state
+    if (isTop) {
+      m.records = {}
     }
 
-    // TODO: use a-dumpling.iframe property once that is being set correctly
-    let iframe = child.querySelector("iframe")
+    // bind events
+    const observer = new MutationObserver((mutations, _) => {
+      for (const mutation of mutations) {
+        if (mutation.type === "childList") {
+          for (const $el of mutation.addedNodes) {
+            m.addByMutation($el)
+          }
+
+          for (const $el of mutation.removedNodes) {
+            m.deleteByMutation($el)
+          }
+        }
+      }
+    })
+
+    observer.observe(m.$el, { childList: true })
+  }
+
+  // -- commands --
+  /// add an item with id, src, and attrs
+  add(record, isMutation = false) {
+    const m = this
+    const id = record.id
+
+    // if not top, add record and spawn if new
+    if (!m.isTop) {
+      m.top.add(record)
+
+      if (!isMutation) {
+        m.spawn(record)
+      }
+    }
+    // if top, only add & spawn if not present
+    else {
+      const isPresent = m.records[id] != null
+
+      // add or update record
+      m.records[id] = record
+
+      // only spawn new records
+      if (!isMutation && !isPresent) {
+        m.spawn(record)
+      }
+
+      if (!isPresent) {
+        console.debug(`[invtry] added record ${id}`)
+      }
+    }
+  }
+
+  /// add an item with name & attrs
+  addNamed(name, attrs) {
+    const m = this
+
+    m.add({
+      id: name,
+      src: `${k.paths.base}/${name}/${name}.html`,
+      attrs
+    })
+  }
+
+  /// add a dom mutation
+  addByMutation($el) {
+    const m = this
+
+    // if not a visible dumpling, don't add
+    if (!($el instanceof Dumpling)) {
+      return
+    }
+
+    // invisible dumplings should not be added to the inventory element
+    // TODO: currently a race between Dumpling.parsedCallback and MutationObserver
+    if (!$el.visible) {
+      console.error("[invtry] hidden dumplings should not be added to the inventory!")
+      return
+    }
+
+    // find iframe
+    const iframe = $el.findIframe()
 
     // don't save dumplings w/o src
-    // TODO: is it possible to restore these easily? good idea to write the html
-    // into storage?
     const src = iframe && iframe.src
     if (src == null) {
-      continue
+      return
     }
 
     // create attrs obj from child
     const attrs = {}
-    for (const name of child.getAttributeNames()) {
-      attrs[name] = child.getAttribute(name)
+    for (const name of $el.getAttributeNames()) {
+      if (!k.attrs.ignored.has(name)) {
+        attrs[name] = $el.getAttribute(name)
+      }
     }
 
-    // add dumpling to the inventory
-    record.push({
-      id: child.id,
+    // add record to inventory
+    const record = {
+      id: $el.id,
       src,
       attrs,
-    })
+    }
+
+    m.add(record, true)
   }
 
-  State.inventory = record;
-}
+  // delete the record with the id
+  delete(id, isMutation = false) {
+    const m = this
 
-// -- queries --
-// find an existing item with the id
-function find(id) {
-  return $mEl.querySelector(`#${id}`)
-}
+    // if not top, pass message
+    if (!m.isTop) {
+      m.top.deleteRecord(id)
+    }
+    // if top, delete the record if it exists
+    else if (id in m.records) {
+      // remove record
+      delete m.records[id]
+      console.debug(`[invtry] removed record ${id}`)
+    }
 
-// get the id from an item props
-function getItemId({ id, item: name, el: $el }) {
-  return id || name || ($el && $el.id)
-}
-
-// get the html element from the item props
-function getItemEl({
-  id,
-  item: name,
-  el: $item,
-  html,
-  src,
-  attrs
-}) {
-  // if we have an item name, infer the path
-  if (name != null) {
-    src = `./items/${name}/${name}.html`
+    // despawn the element
+    if (!isMutation) {
+      m.despawn(id)
+    }
   }
 
-  // if we have a src path, make a new dumpling
-  if (src != null) {
+  deleteByMutation($el) {
+    const m = this
+
+    // if not a visible dumpling, don't remove
+    if (!($el instanceof Dumpling)) {
+      return
+    }
+
+    m.delete($el.id)
+  }
+
+  // -- c/spawn
+  // spawn item element
+  spawn({
+    id,
+    src,
+    attrs,
+  }) {
+    const m = this
+
     // add id and persistent flag
     attrs = {
       ...attrs,
@@ -127,34 +218,94 @@ function getItemEl({
       .join(" ")
 
     // template the html
-    html = `
+    const html = `
       <a-dumpling ${attrs}>
-        <d-iframe dumpling-id="${id}" src="${src}" autoload>
+        <d-iframe
+          src="${src}"
+          dumpling-id="${id}"
+          autoload
+        >
       </a-dumpling>
     `
+    // build el
+    let $el = document.createElement("div")
+    $el.innerHTML = html
+    $el = $el.firstElementChild
+    $el.id = id
+
+    // spawn it
+    m.$el.appendChild($el)
   }
 
-  // if we have an html string, create an html element
-  if (html != null) {
-    $item = document.createElement("div")
-    $item.innerHTML = html
-    $item = $item.firstElementChild
-    $item.id = id
+  // remove item element
+  despawn(id) {
+    const m = this
+    const $el = m.$el.querySelector(`#${id}`)
+    if ($el != null) {
+      $el.remove()
+    }
   }
 
-  // warn if we couldn't find anything to add
-  if ($item == null) {
-    console.error("tried to add item but it had no element!")
+  // -- c/clear
+  // remove all items from the inventory
+  clear() {
+    const m = this
+
+    for (const $el of Array.from(m.$el.children)) {
+      $el.remove()
+    }
+
+    if (m.records != null) {
+      m.records = {}
+    }
   }
 
-  return $item
-}
+  // -- c/serialization
+  // load inventory from persistent storage
+  load() {
+    const m = this
 
-// -- exports --
-export const kInventory = {
-  add,
-  find,
-  clear,
-  loadFromState,
-  saveToState
+    // if top, add & spawn all records from state
+    if (m.isTop) {
+      const records = State.inventory
+      for (const record of records || []) {
+        m.add(record)
+      }
+    }
+    // otherwise, spawn all of the top records
+    else {
+      for (const record of m.top.records) {
+        m.spawn(record)
+      }
+    }
+  }
+
+  // save inventory to persistent storage
+  save() {
+    const m = this
+
+    // only save if top
+    if (!m.isTop) {
+      return
+    }
+
+    // update all records
+    for (const $el of Array.from(m.$el.children)) {
+      m.addByMutation($el)
+    }
+
+    // save all the current records
+    State.inventory = Object.values(m.records)
+  }
+
+  // -- queries --
+  // the top window's inventory
+  get top() {
+    return Inventory.top()
+  }
+
+  // if this is the top window's inventory
+  get isTop() {
+    return this.records != null
+  }
 }

@@ -80,5 +80,3 @@ export const addOnBeforeSaveStateListener = (listener) => {
   }
   onBeforeSaveStateListeners.push(listener);
 }
-
-

@@ -1,12 +1,12 @@
 import { State } from "/core/state.js"
-import { kInventory } from "./inventory.js"
+import { Inventory } from "./inventory.js"
 
 // -- constants --
 const kLinkId = "highway-link"
 const kHighwaySteps = 420
 
-// -- templates --
-
+// -- deps --
+const mInventory = Inventory.get()
 
 // -- lifetime --
 // drives each highway page
@@ -39,16 +39,13 @@ function move(id) {
 function advance(id, step) {
   // if we reached step 3, add the transit vehicle
   if (step == 2) {
-    kInventory.add({
-      item: "transit",
-      attrs: {
-        "y": 40,
-        "w": 20,
-        "h": 20,
-        "temperament": "phlegmatic",
-        "no-back": true,
-        "no-close": true,
-      }
+    mInventory.addNamed("transit", {
+      "y": 40,
+      "w": 20,
+      "h": 20,
+      "temperament": "phlegmatic",
+      "no-back": true,
+      "no-close": true,
     })
   }
 

@@ -1,10 +1,11 @@
 <script type="module">
-    import { kInventory } from "./inventory.js"
+    import { Inventory } from "./inventory.js"
 
+    const inventory = Inventory.get()
     const boomboxFloor = document.getElementById("boomboxFloor")
     boomboxFloor.addEventListener("click", () => {
         d.State.hasBoombox = true
-        const boombox = kInventory.add({
+        const boombox = inventory.add({
             id: "the-boombox",
             src: "items/boombox/boombox",
             attrs: {

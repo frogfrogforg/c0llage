@@ -1,10 +1,13 @@
-import { kInventory } from "./inventory.js"
+import { Inventory } from "./inventory.js"
 import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
 
 // skills
 import "./skills/stealth.js"
 import "./skills/claribelle.js"
+
+// -- deps --
+const mInventory = Inventory.get()
 
 // -- props --
 /// the current location
@@ -23,8 +26,8 @@ function main() {
   setTitle("welcome")
 
   // inventory (persistent windows) loading and saving
-  kInventory.loadFromState();
-  addOnBeforeSaveStateListener(kInventory.saveToState)
+  mInventory.load()
+  addOnBeforeSaveStateListener(() => { mInventory.save() })
 
   // bind events
   const d = document
@@ -157,7 +160,7 @@ function randomizeUrl(url) {
 
 // reset everything
 function reset() {
-  kInventory.clear()
+  mInventory.clear()
   d.State.clear()
 }
 
@@ -178,7 +181,6 @@ function didChangeState() {
 }
 
 function didRefresh(evt) {
-  console.log("didRefresh");
   evt.preventDefault()
   d.State.save()
   return evt.returnValue = "don't leave gamer"

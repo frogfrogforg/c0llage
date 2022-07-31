@@ -29,14 +29,19 @@
     </div>
   </a-dumpling>
 
-  <a-dumpling id="quiet-leaf" temperament="choleric" no-close hidden x=110 y=38>
+  <a-dumpling
+    id="quiet-leaf"
+    x=110 y=38
+    temperament="choleric"
+    hidden
+    permanent
+    no-close
+  >
     <img src="./images/quiet-leaf.png">
   </a-dumpling>
 </body>
 
 <script type="module">
-  import { kInventory } from "./inventory.js"
-
   // -- props --
   let mStep = 0
 
@@ -71,9 +76,7 @@
   }
 
   function loot() {
-    kInventory.add({ el: $mItem })
     $mItem.show()
-
     d.State.didGetLeaf = true
     complete()
   }

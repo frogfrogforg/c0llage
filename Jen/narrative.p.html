@@ -235,8 +235,12 @@
 </body>
 
 <script type="module">
-  import { kInventory } from "../forest/inventory.js"
+  import { Inventory } from "/forest/inventory.js"
 
+  // -- deps --
+  const mInventory = Inventory.get()
+
+  // -- events --
   window.gotKeys = function () {
     Frames.show("keys")
 
@@ -248,21 +252,15 @@
     }
 
     // spawn the keys
-    d.State.foundKeys = true
-
-    // TODO: replace the state change w/ this
-    // kInventory.add({
-    //   item: "keys",
-    //   attrs: {
-    //     "x": 91,
-    //     "y": 7,
-    //     "w": 25,
-    //     "h": 30,
-    //     "temperament": "choleric",
-    //     "no-back": true,
-    //     "no-close": true,
-    //   }
-    // })
+    mInventory.addNamed("keys", {
+      "x": 91,
+      "y": 7,
+      "w": 25,
+      "h": 30,
+      "temperament": "choleric",
+      "no-back": true,
+      "no-close": true,
+    })
   }
 </script>
 
