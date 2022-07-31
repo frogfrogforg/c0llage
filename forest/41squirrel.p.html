@@ -67,7 +67,7 @@
     </div>
 </body>
 
-<s-cript target="squirrel">
+<s-cript target="squirrel" id="squirrel-main" main>
     --- click
     ==> [once] first-conversation
     [cont] after you dropped me I just came back here... can you take me with again? {ok | sure...}
@@ -84,7 +84,7 @@
     *** pick-squirrel
 </s-cript>
 
-<s-cript target="assistant">
+<s-cript target="assistant" >
     --- enter
     [once] Oh, this squirrel is a stranger to me
 
@@ -102,7 +102,6 @@
 
 <script type="module">
     let click_i = 0;
-
 
     const $squirrelScript = document.getElementById("squirrel-main")
     const dPetSquirrel = document.getElementById('pet_squirrel')

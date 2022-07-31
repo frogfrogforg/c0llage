@@ -26,6 +26,8 @@ const initialState = {
   foundKeys: false,
   claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",
+  hasSkate: false,
+  knowsSkate: false,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

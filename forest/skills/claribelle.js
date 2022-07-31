@@ -2,8 +2,8 @@ const $claribelle = document.getElementById('free-claribelle')
 if($claribelle) {
   console.log("spawining claribelle")
 // claribelle stuff position
-var claribelle_x = 8
-var claribelle_y = 8
+
+let collisions = new Set()
 
 // make claribelle always move on a 16x16 grid
 const k_claribelle_move_incr = 100.0/16
@@ -91,23 +91,51 @@ function update_claribelle(collide = false) {
   var cx = rect.x + rect.width/2
   var cy = rect.y + rect.height/2
 
-  if(!collide) return
 
+  let collisionsNow = new Set()
   for(let hotspot of hotspots) {
     // TODO: use the polygon information instead of bounding rect
     const box = hotspot.getBoundingClientRect()
 
     if(cx > box.left && cx < box.right && cy > box.top && cy < box.bottom) {
-      // TODO: maybe standardize hotsposts so this can be simpler
-      if(hotspot.onclick) {
-        hotspot.onclick()
-      }
-      if(hotspot.pathname) {
-        d.State.claribelleLocation = hotspot.pathname.replace(/\.html.*/, "")
-        window.navigate(new URL(hotspot.href))
+      // store collisions/overlaps
+      collisionsNow.add(hotspot)
+
+      // if we dont want collision callbacks to execute
+      if(!collide) continue
+
+      // this is a new collision (on enter)
+      if(!collisions.has(hotspot)) {
+        // TODO: maybe standardize hotsposts so this can be simpler
+        if(hotspot.onclick) {
+          hotspot.onclick()
+        } else if(hotspot.click) {
+          hotspot.click()
+        }
+
+        var clickEvent = new PointerEvent("click", { claribelle: true });
+        hotspot.dispatchEvent(clickEvent);
+
+        if(hotspot.href) {
+          // handle SVGAnimatedString
+          let href = hotspot.href
+          if (typeof href === "object") {
+            href = href.baseVal.toString()
+          }
+
+          if(href === "#") continue
+          if(href.includes("javascript:void")) continue
+
+          let url = new URL(href, location.href)
+          // TODO: animate exit?
+          d.State.claribelleLocation = url.pathname.replace(/\.html.*/, "")
+          window.navigate(url)
+        }
       }
     }
   }
+
+  collisions = collisionsNow
 }
 
 } else {

@@ -1,0 +1,65 @@
+<!-- credit: https://www.reddit.com/r/AbandonedPorn/comments/8jyt3v/abandoned_skatepark_in_malaysian_forest_1539_x_888/?utm_source=ifttt -->
+<body>
+    <svg id="hotspot-map"
+         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewBox="0 0 1000 1000" >
+        <image preserveAspectRatio="none" id="background-img" href="images/720skateramp.jpg"></image>
+        <a title="microwave" class="hotspot cursor-move" href="13microwave.html">
+            <rect x=-73.22175849087387 y=918.1012144070036 width=1125.784536797185 height=123.89149910321782 />
+        </a>
+    </svg>
+    <c-picky wants='knowsSkate'>
+        <div id="ramp" class="cursor-skate" style="position: absolute; top: 69%; left: 23%; width: 50%; height: 13%; display: block;">
+        </div>
+    </c-picky>
+    <c-picky wants='!knowsSkate'>
+        <div id="ramp-talk" class="cursor-talk" onclick="document.getElementById('assistant-skate').showNamedDialog('ramp')" style="position: absolute; top: 69%; left: 23%; width: 50%; height: 13%; display: block;">
+        </div>
+    </c-picky>
+    <audio id="skate-fall">
+    <audio id="skate-fall">
+        <source src="./items/skate-fall.mp4" type="audio/mpeg">
+    </audio>
+    <audio id="skate-soundtrack">
+        <source src="./items/skate-soundtrack.mp3" type="audio/mpeg">
+    </audio>
+
+    <s-cript target="assistant" id="assistant-skate">
+        --- ramp
+        ==> [!hasSkate] no-skate
+        [cont] [once] I see you found a board! Let me teach you how to do this, its pretty simple actually {sure!}
+        [cont] Click and hold on the base of the ramp to start skating. If at any moment you feel like you would fall, release! you don't want to get hurt... {sure...|omg, i've never thought i would be able to skateboard using only my imagination!}
+        [cont] [set knowsSkate] are you ready?? {hell yeah!}
+        Remember to make some skate sounds! {scrrrrrr|fpllllttlp|plooplpr}
+
+        --- no-skate
+        [once] Hmmm, it seems like you don't have a skateboard, you need a skateboard to skate.
+        Have you looked around for a spare skateboard yet?
+
+        --- enter
+        [cont] [once] I forgot this ramp was here.
+        ==> ramp
+
+        --- click
+        ==> ramp
+    </s-cript>
+</body>
+
+<script type="module">
+    const $ramp = document.getElementById("ramp")
+    const $fall = document.getElementById("skate-fall")
+    const $soundtrack = document.getElementById("skate-soundtrack")
+    $ramp.addEventListener("pointerdown", () => {
+        // TODO: make the skateboard follow the cursor instead of the cursor
+        document.body.classList.toggle("cursor-skate", true)
+        document.addEventListener("pointerup", DropSkate)
+        $soundtrack.play()
+    })
+
+    function DropSkate() {
+        $fall.play()
+        $soundtrack.pause()
+        document.body.classList.toggle("cursor-skate", false)
+        document.removeEventListener("pointerup", DropSkate)
+    }
+</script>

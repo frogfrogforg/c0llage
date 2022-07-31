@@ -42,7 +42,7 @@ function main() {
 /// navigate to the url
 function navigate(url) {
   if(!(url instanceof URL)) {
-    url = new URL(url, `${window.origin}/forest`)
+    url = new URL(url, `${window.origin}/forest/`)
   }
 
   // add history entry
