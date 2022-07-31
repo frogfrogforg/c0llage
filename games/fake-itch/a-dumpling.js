@@ -1,15 +1,19 @@
-import { HTMLParsedElement } from "./html-parsed-element@0.4.0.js"
+import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
-window.Frames = {
-  ...staticize('show', 'open'),
-  ...staticize('hide', 'close'),
-  ...staticize('toggle'),
-  ...staticize('bringToTop'),
-  ...staticize('addEventListener', "listen"),
-}
+window.Frames = staticize(
+  "show",
+  "open",
+  "hide",
+  "close",
+  "toggle",
+  "bringToTop",
+  "addEventListener",
+  "listen" ,
+)
 
 function staticize(...names) {
   const methodName = names[0]
+
   function action(id, ...args) {
     const el = document.getElementById(id)
     return el[methodName](...args)
@@ -23,13 +27,13 @@ function staticize(...names) {
   return actions
 }
 
-const frameTemplate = `
+const kTemplate = `
   <div class="Frame-content">
     <div class="Frame-header">
       <div class="Frame-closeButton Frame-headerButton" id="$id-close"></div>
       <div class="Frame-maximizeButton Frame-headerButton" id="$id-max"></div>
-      <div class="Frame-backButton Frame-headerButton"> ☚ </div>
-      <div class="Frame-temperament Frame-headerButton" id="$id-feelings"> ? </div>
+      <div class="Frame-backButton Frame-headerButton">☚</div>
+      <div class="Frame-temperament Frame-headerButton" id="$id-feelings">?</div>
       <div class="Frame-title">
         <div class="Frame-titleText" id="$id-title"></div>
       </div>
@@ -40,6 +44,19 @@ const frameTemplate = `
 `
 
 // -- constants --
+const k = {
+  id: {
+    transient: "frames",
+    permanent: "inventory",
+  },
+  attr: {
+    permanent: [
+      "permanent",
+      "persistent",
+    ],
+  },
+}
+
 // -- c/style
 const kVisibleClass = 'is-visible'
 const kDraggingClass = 'is-dragging'
@@ -123,12 +140,22 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
-    const id = this.getAttribute('id') || makeId(5)
-    this.id = id
+    const m = this
 
-    this.setVisible(!this.hasAttribute('hidden'))
+    // set id
+    const id = m.id = m.getAttribute('id') || makeId(5)
 
-    const templateHtml = frameTemplate.replaceAll('$id', id)
+    // set visibility
+    m.setVisible(!this.hasAttribute("hidden"))
+
+    // move to the correct parent, abandoning if removed
+    const isDuplicate = m.addToParent()
+    if (isDuplicate) {
+      return
+    }
+
+    // build template
+    const templateHtml = kTemplate.replaceAll('$id', id)
 
     // move original children of <a-dumpling> to be children of the body element
     // (don't use innerhtml to do this, in case those elements had some important hidden state)
@@ -177,7 +204,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // Close button
     const closeButton = this.querySelector(`#${id}-close`)
-    if (!this.hasAttribute('no-close')) {
+    if (!this.hasAttribute("no-close")) {
       closeButton.addEventListener("click", this.onClose)
     } else {
       closeButton.style.display = 'none'
@@ -210,39 +237,12 @@ export class Dumpling extends HTMLParsedElement {
     } else {
       backButton.style.display = 'none'
     }
-    //#endregion
 
-    //#region focus logic
-    this.bringToTop()
-    //#endregion
-
-    // move to the correct container if necessary
-    let pid = "frames"
-    if (this.hasAttribute("permanent") || this.hasAttribute("persistent")) {
-      pid = "inventory"
-    }
-
-    if (this.parentElement.id !== pid) {
-      const parent = document.getElementById(pid)
-
-      // parent can be null on computer right now; anywhere that doesn't use
-      // the template
-      if (parent != null) {
-        // there is a copy already, remove
-        // maybe we might want non unique permanent frames?
-        // TODO: does this miss a case where the el was already added to the correct
-        // parent? (e.g. this.parentElement.id === pid)
-        if (pid === "inventory" && parent.querySelector(`#${this.id}`) != null) {
-          this.remove()
-          return
-        }
-
-        parent.appendChild(this)
-      }
-    }
+    // focus on create
+    m.bringToTop()
 
     // register events
-    this.initEvents()
+    m.initEvents()
   }
 
   onClose = () => {
@@ -263,62 +263,74 @@ export class Dumpling extends HTMLParsedElement {
       return null
     }
 
-    let width = fallbackAttributes('width', 'w')
-    if (width == null) {
-      const minSize = parseFloat(fallbackAttributes(
-        'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
-        || FrameRng.MinSize
-      const maxSize = parseFloat(fallbackAttributes(
-        'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
-        || FrameRng.MaxSize
-      width = (minSize + Math.random() * (maxSize - minSize))
+    let width = 0
+    if (this.style.width === "") {
+      width = fallbackAttributes('width', 'w')
+      if (width == null) {
+        const minSize = parseFloat(fallbackAttributes(
+          'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
+          || FrameRng.MinSize
+        const maxSize = parseFloat(fallbackAttributes(
+          'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
+          || FrameRng.MaxSize
+        width = (minSize + Math.random() * (maxSize - minSize))
+      }
+
+      this.style.width = width + '%'
     }
 
-    this.style.width = width + '%'
+    let height = 0
+    if (this.style.height === "") {
+      height = fallbackAttributes('height', 'h')
+      if (height == null) {
+        const minSize = parseFloat(fallbackAttributes(
+          'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
+          || FrameRng.MinSize
+        const maxSize = parseFloat(fallbackAttributes(
+          'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
+          || FrameRng.MaxSize
+        height = (minSize + Math.random() * (maxSize - minSize))
+      }
 
-    let height = fallbackAttributes('height', 'h')
-    if (height == null) {
-      const minSize = parseFloat(fallbackAttributes(
-        'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
-        || FrameRng.MinSize
-      const maxSize = parseFloat(fallbackAttributes(
-        'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
-        || FrameRng.MaxSize
-      height = (minSize + Math.random() * (maxSize - minSize))
+      this.style.height = height + '%'
     }
-    this.style.height = height + '%'
 
     // TODO: maybe have some aspect ratio attribute so that can be specified instead of both width and height
+    if (this.style.left === "") {
+      let x = 0
+      if (this.attributes.x) {
+        x = this.attributes.x.value
+      } else {
+        const xMin = parseFloat(fallbackAttributes(
+          'x-min', 'min-x', 'pos-min', 'min-pos'))
+          || FrameRng.margin
+        const xMax = parseFloat(fallbackAttributes(
+          'x-max', 'max-x', 'pos-max', 'max-pos'))
+          || (100 - FrameRng.margin - width)
+        x =
+          xMin + Math.random() * (xMax - xMin)
+      }
 
-    let x = 0
-    if (this.attributes.x) {
-      x = this.attributes.x.value
-    } else {
-      const xMin = parseFloat(fallbackAttributes(
-        'x-min', 'min-x', 'pos-min', 'min-pos'))
-        || FrameRng.margin
-      const xMax = parseFloat(fallbackAttributes(
-        'x-max', 'max-x', 'pos-max', 'max-pos'))
-        || (100 - FrameRng.margin - width)
-      x =
-        xMin + Math.random() * (xMax - xMin)
+      this.style.left = x + '%'
     }
-    this.style.left = x + '%'
 
-    let y = 0
-    if (this.attributes.y) {
-      y = this.attributes.y.value
-    } else {
-      const yMin = parseFloat(fallbackAttributes(
-        'y-min', 'min-y', 'pos-min', 'min-pos'))
-        || FrameRng.margin
-      const yMax = parseFloat(fallbackAttributes(
-        'y-max', 'max-y', 'pos-max', 'max-pos'))
-        || (100 - FrameRng.margin - height)
-      y =
-        yMin + Math.random() * (yMax - yMin)
+    if (this.style.top === "") {
+      let y = 0
+      if (this.attributes.y) {
+        y = this.attributes.y.value
+      } else {
+        const yMin = parseFloat(fallbackAttributes(
+          'y-min', 'min-y', 'pos-min', 'min-pos'))
+          || FrameRng.margin
+        const yMax = parseFloat(fallbackAttributes(
+          'y-max', 'max-y', 'pos-max', 'max-pos'))
+          || (100 - FrameRng.margin - height)
+        y =
+          yMin + Math.random() * (yMax - yMin)
+      }
+
+      this.style.top = y + '%'
     }
-    this.style.top = y + '%'
   }
 
   initEvents() {
@@ -363,28 +375,41 @@ export class Dumpling extends HTMLParsedElement {
   hide() {
     const m = this
 
-    m.setVisible(false)
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.HideEvent,
-      { detail: m },
-    ))
+    // hide if visible
+    if (m.visible) {
+      m.setVisible(false)
+      m.addToParent()
+
+      m.dispatchEvent(new CustomEvent(
+        Dumpling.HideEvent,
+        { detail: m },
+      ))
+
+    }
   }
 
   show() {
     const m = this
 
-    m.setVisible(true)
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.ShowEvent,
-      { detail: m },
-    ))
+    // show if hidden
+    if (!m.visible) {
+      m.setVisible(true)
+      m.addToParent()
 
+      m.dispatchEvent(new CustomEvent(
+        Dumpling.ShowEvent,
+        { detail: m },
+      ))
+    }
+
+    // TODO: bring to top anyways?
     m.bringToTop()
   }
 
   setVisible(isVisible) {
-    this.visible = isVisible
-    this.classList.toggle(kVisibleClass, isVisible)
+    const m = this
+    m.visible = isVisible
+    m.classList.toggle(kVisibleClass, isVisible)
   }
 
   bringToTop() {
@@ -412,10 +437,60 @@ export class Dumpling extends HTMLParsedElement {
     ))
 
     // focus iframe if necessary
+    this.focusIframe()
+
+  }
+
+  blurIframe() {
+    const iframe = this.findIframe()
+    if (iframe != null) {
+      iframe.blur()
+    }
+  }
+
+  focusIframe() {
     const iframe = this.findIframe()
     if (iframe != null) {
       iframe.focus()
     }
+  }
+
+  // move to the correct parent, or remove if duplicate; returns true if removed
+  addToParent() {
+    const m = this
+
+    let isDuplicate = false
+
+    // move to permanent once visible, if tagged
+    let pid = k.id.transient
+    if (m.visible && m.hasAttributeWithAliases(k.attr.permanent)) {
+      pid = k.id.permanent
+    }
+
+    // if parent doens't match, move the element
+    if (m.parentElement.id !== pid) {
+      const parent = document.getElementById(pid)
+
+      // parent can be null on computer right now; anywhere that doesn't use
+      // the template
+      if (parent != null) {
+        // there is a copy already, remove
+        // maybe we might want non unique permanent frames?
+        // TODO: does this miss a case where the el was already added to the correct
+        // parent? (e.g. this.parentElement.id === pid)
+        // NOTE: only one element on the page should ever have an id; using querySelector
+        // to check for an id in a subtree is not a great idea. we should make sure that
+        // duplicated dumplings dont have ids.
+        if (pid === k.id.permanent && parent.querySelector(`#${m.id}`) != null) {
+          m.remove()
+          isDuplicate = true
+        } else {
+          parent.appendChild(m)
+        }
+      }
+    }
+
+    return isDuplicate
   }
 
   open = this.show
@@ -506,6 +581,10 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   onMouseUp = () => {
+    if (this.gesture == null) {
+      return
+    }
+
     // re-enable mouse events on iframes
     const iframes = document.querySelectorAll('iframe')
     for (const iframe of Array.from(iframes)) {
@@ -518,10 +597,15 @@ export class Dumpling extends HTMLParsedElement {
 
     // clear gesture
     this.gesture = null
+
+    this.focusIframe()
   }
 
   // -- e/drag
   onDrag(mx, my) {
+    const m = this
+
+    // get initial pos
     const p0 = this.gesture.initialPosition
     const m0 = this.gesture.initialMousePosition
 
@@ -530,8 +614,8 @@ export class Dumpling extends HTMLParsedElement {
     const dy = my - m0.y
 
     // apply it to the initial position
-    this.style.left = `${p0.x + dx}px`
-    this.style.top = `${p0.y + dy}px`
+    m.style.left = `${p0.x + dx}px`
+    m.style.top = `${p0.y + dy}px`
   }
 
   onScaleStart(dr) {
@@ -646,10 +730,17 @@ export class Dumpling extends HTMLParsedElement {
       return
     }
 
+    const isFocused = m.style.zIndex == sTopIndexByLayer[m.layer]
     m.classList.toggle(
       kUnfocusedClass,
-      m.style.zIndex != sTopIndexByLayer[m.layer]
+      !isFocused
     )
+
+    if(isFocused) {
+      this.focusIframe()
+    } else {
+      this.blurIframe()
+    }
   }
 
   // -- queries --
@@ -677,7 +768,7 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- q/iframe --
   findIframe() {
-    return this.findIframeInChildren(this.bodyElement.children)
+    return this.bodyElement ? this.findIframeInChildren(this.bodyElement.children) : null
   }
 
   findIframeInChildren(children) {
@@ -734,6 +825,35 @@ export class Dumpling extends HTMLParsedElement {
         resolve(iframe.contentDocument.title)
       })
     })
+  }
+
+  // check for any attribute from a list of aliases
+  hasAttributeWithAliases(names) {
+    const m = this
+
+    for (const name of names) {
+      if (m.hasAttribute(name)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  // get first value for an attribute with a list of aliases
+  getAttributeWithAliases(names) {
+    const m = this
+
+    for (const name of names) {
+      const val = m.getAttribute(name)
+
+      // TODO: how to handle empty strings here (currently, ignoring them)
+      if (val) {
+        return val
+      }
+    }
+
+    return null
   }
 }
 
