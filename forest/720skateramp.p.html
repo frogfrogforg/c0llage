@@ -12,6 +12,11 @@
         <div id="ramp" class="cursor-skate" style="position: absolute; top: 69%; left: 23%; width: 50%; height: 13%; display: block;">
         </div>
     </c-picky>
+    <c-picky wants='!knowsSkate'>
+        <div id="ramp-talk" class="cursor-talk" onclick="document.getElementById('assistant-skate').showNamedDialog('ramp')" style="position: absolute; top: 69%; left: 23%; width: 50%; height: 13%; display: block;">
+        </div>
+    </c-picky>
+    <audio id="skate-fall">
     <audio id="skate-fall">
         <source src="./items/skate-fall.mp4" type="audio/mpeg">
     </audio>
@@ -19,7 +24,7 @@
         <source src="./items/skate-soundtrack.mp3" type="audio/mpeg">
     </audio>
 
-    <s-cript target="assistant">
+    <s-cript target="assistant" id="assistant-skate">
         --- ramp
         ==> [!hasSkate] no-skate
         [cont] [once] I see you found a board! Let me teach you how to do this, its pretty simple actually {sure!}
@@ -33,6 +38,7 @@
 
         --- enter
         [cont] [once] I forgot this ramp was here.
+        ==> ramp
 
         --- click
         ==> ramp
