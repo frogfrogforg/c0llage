@@ -9,10 +9,12 @@ const kHighwaySteps = 420
 // -- templates --
 const kTransitHtml = `
   <a-dumpling
-    persistent
     y=40
     w=20 h=20
     temperament="phlegmatic"
+    persistent
+    no-back
+    no-close
   >
     <d-iframe
       src="./items/transit.html"
@@ -26,7 +28,7 @@ const kTransitHtml = `
 function main() {
   reset(State.referrer)
 
-  d.Events.listen(d.Events.Forest.Visited, () => {
+  d.Events.listen(d.Events.Forest.AfterVisit, () => {
     let id = getHighwayId()
 
     if (id != null) {
@@ -75,7 +77,7 @@ function getSpeed() {
 }
 
 function exit() {
-  setUrl("./418exit_to_the_cosmodrome.html")
+  setUrl("./418exit_to_the_cosmodr.html")
 }
 
 function reset(path = document.location.pathname) {

@@ -21,8 +21,11 @@ const initialState = {
   visitedFranBlog: false,
   hasBoombox: false,
   pickedUpSquirrel: false,
+  highwayStep: 0,
+  foundVehicle: false,
+  foundKeys: false,
+  claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",
-  claribelle: {x: 0, y: 0, location: "alidator"},
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

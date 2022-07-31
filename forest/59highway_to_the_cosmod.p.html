@@ -8,20 +8,43 @@
     style="left: 21%; top: 43.996%; width: 79%; height: 56%;"
   ></a>
 
-    <s-cript target="assistant" id="assistant-highway">
-      --- enter-without-keys
-      Gosh isn't walking tiring? Wouldn't you like to get your keys?
-      ==> click
+  <s-cript id="assistant-highway" target="assistant">
+    --- enter
+    ==> [once] intro
+    ==> [highwayStep>=69] walked-lot
+    ==> [highwayStep>=4] walked-bit
 
-      --- three-without-keys
-      I'm getting tired just looking at you!
-      [cont] We'll never get there at this rate..
-      ==> three-without-keys
+    --- intro
+    [cont] I love to go for a drive!! {nice|you drive?}
+    You may need your keys though.. {for what?}
+    ==> click
 
-      --- have-keys
-      Yes!! Put your keys in the car and we'll go for a drive!
-      ==> have-keys
-    </s-cript>
+    --- walked-bit
+    ==> [once] walked-bit-once
+
+    --- walked-bit-once
+    [cont] I'm getting tired just looking at you! {yes,}
+    [cont] We'll never get there at this rate.. {yes!}
+    ==> click
+
+    --- walked-lot
+    ==> [once] walked-lot-once
+
+    --- walked-lot-once
+    [cont] You're pretty committed to this, huh. {...}
+    I think we're still ways away. {hmm...}
+    ==> click
+
+    --- click
+    [!foundVehicle] Gosh isn't walking tiring? Wouldn't you like to get your keys? {maybe?}
+    [+foundVehicle,highwayStep<=68] Gosh isn't walking tiring? Wouldn't you like to get your keys? {yes.}
+    [+foundVehicle,highwayStep>=69] Don't you want those keys? {mmm...}
+    ==> click
+
+    --- has-keys
+    Yes!! Put your keys in the car and we'll go for a drive!
+    ==> has-keys
+  </s-cript>
 </body>
 
 <script type="module" src="./highway.js"></script>

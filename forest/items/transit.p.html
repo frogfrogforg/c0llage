@@ -1,4 +1,5 @@
 <!-- template: item {title: furthur} -->
+
 <head>
   <script src="/core/s-cript.js" type="module"></script>
 </head>
@@ -11,49 +12,17 @@
 
   <s-cript target="transit" main no-title>
     --- click
-    you can't remember where you put your keys {what}
+    you can't remember where you put your keys {is this mine?}
     ==> click
   </s-cript>
 </body>
 
 <script type="module">
-  // import '/global.js'
-
-  // let didInterrupt = false
-  function interrupt() {
-    // if (didInterrupt) {
-    //   return
-    // }
-
-    // interact()
-    // didInterrupt = true
+  function main() {
+    d.State.foundVehicle = true
   }
 
-  // function interact() {
-  //   // TODO: generalize this -- all frames go in frame automatically unless
-  //   // made permanent? and can but but directly into the body then
-  //   const doc = window.parent.document
-  //   const $frames = doc.getElementById("frames")
-
-  //   let $dialog
-  //   $dialog = document.createElement("div")
-  //   $dialog.innerHTML = kDialogHtml
-  //     .replace('{message}',
-  //       d.State.foundKeys ?
-  //         kDialogueWithKeys :
-  //         kDialogueNoKeys)
-
-  //   $dialog = $dialog.firstElementChild
-  //   $frames.appendChild($dialog)
-
-  //   d.State.foundVehicle = true
-  // }
-
-  Object.assign(window, {
-    interrupt
-  })
-
-  // document.addEventListener("click", interact)
+  main()
 </script>
 
 <style>
@@ -64,6 +33,7 @@
 
   body {
     margin: 0;
+    overflow: hidden;
   }
 
   #transit {

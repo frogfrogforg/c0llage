@@ -232,6 +232,10 @@ function didPopState() {
 }
 
 function didStartVisit() {
+  // track visit
+  d.Events.raise(d.Events.Forest.BeforeVisit)
+
+  // store current url as referrer
   d.State.referrer = mUrl && mUrl.pathname || "nowhere"
 }
 
@@ -256,11 +260,13 @@ function didFinishVisit() {
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
   addHoverSparklesToElements(hotspots);
 
+  // store location
+  // TODO: should this be set alongside d.State.referrer?
   const location = mUrl.pathname.replace(/\.html.*/, "")
+  d.State.location = location
 
   // track visit
-  d.Events.raise(d.Events.Forest.Visited, location)
-  d.State.location = location
+  d.Events.raise(d.Events.Forest.AfterVisit, location)
 }
 
 // -- exports --

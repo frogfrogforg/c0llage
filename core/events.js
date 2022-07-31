@@ -26,7 +26,8 @@ export const Events = {
     return `state.${propertyName}`
   },
   Forest: {
-    Visited: "forest.visited",
+    BeforeVisit: "forest.before-visit",
+    AfterVisit: "forest.after-visit",
   },
   Juice: {
     Appeared: "juice.appeared",
