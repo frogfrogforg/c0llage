@@ -2,7 +2,9 @@
   --frame-scale: 0.8vmin;
   --frame-1px: min(0.13vmin, 1px);
   --frame-2px: min(0.27vmin, 2px);
-  --frame-padding: 0.4vmin;
+  --frame-header: min(1.8vmin, 20px); /* scale * 1.44 */
+  --frame-padding: min(0.4vmin, 4px); /* scale * 0.5 */
+  --frame-fontSize: 1.2vmin; /* scale * 1.5 */
 }
 
 a-dumpling {
@@ -45,7 +47,7 @@ d-iframe iframe {
   color: black;
   display: flex;
   flex-flow: column;
-  border: 1px solid black;
+  border: var(--frame-1px) solid black;
   box-shadow: 1px 1px 2px #696969;
   height: 100%;
   width: 100%;
@@ -78,24 +80,20 @@ d-iframe iframe {
   align-items: center;
   position: relative;
   overflow: hidden;
-  height: calc(var(--frame-scale) * 2.5);
+  height: var(--frame-header);
   min-height: calc(var(--frame-scale) * 1.0);
   padding: var(--frame-padding);
-  padding-bottom: 0;
-  margin-bottom: calc(var(--frame-scale) * 0.3);
+  padding-bottom: calc(var(--frame-padding) * 0.75);
   border: calc(var(--frame-scale) * 0.1) solid #dadada;
   background-color: #dadada;
   user-select: none;
   z-index: 1;
 }
 
-.Frame-header > * + * {
-  margin-left: calc(var(--frame-scale) * 0.45);
-}
-
 .Frame-headerButton {
-  font-size: calc(var(--frame-scale) * 1.9);
+  font-size: calc(var(--frame-header) * 0.95);
   text-align: center;
+  margin-right: calc(var(--frame-scale) * 0.45);
 }
 
 .Frame-headerButton:hover {
@@ -103,7 +101,14 @@ d-iframe iframe {
   filter: invert(30%) brightness(120%) sepia(100%) hue-rotate(242deg) saturate(400%) /* magenta tint */
 }
 
-/* -- h/left */
+/* -- h/buttons */
+.Frame-closeButton {
+  position: relative;
+  min-width: calc(var(--frame-scale) * 2.1);
+  min-height: calc(var(--frame-scale) * 2.1);
+  background: url("./img/window-close.gif") center/contain no-repeat;
+}
+
 .Frame-backButton {
   font-weight: bolder;
 }
@@ -116,7 +121,7 @@ d-iframe iframe {
 }
 
 .Frame-temperament {
-  font-size: calc(var(--frame-scale) * 1.8);
+  font-size: calc(var(--frame-header) * 0.72);
 }
 
 /* -- h/title */
@@ -145,22 +150,16 @@ d-iframe iframe {
 }
 
 .Frame-titleText {
-  height: calc(var(--frame-scale) * 2.5);
+  height: 110%;
   margin-left: 0.5vmin;
   margin-right: 0.5vmin;
-  font-size: calc(var(--frame-scale) * 1.9);
+  font-size: var(--frame-fontSize);
   font-family: monospace;
   background-color: #dadada;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   pointer-events: none;
-}
-
-.frame-header-image {
-  position: absolute;
-  width: 100%;
-  display: inline-flex;
 }
 
 /* -- body -- */
@@ -182,7 +181,7 @@ d-iframe iframe {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  border: 1px solid black;
+  border: var(--frame-1px) solid black;
   display: flex;
   justify-content: center;
   min-height: 0;

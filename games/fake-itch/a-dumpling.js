@@ -27,41 +27,75 @@ function staticize(...names) {
   return actions
 }
 
-const kTemplate = `
-  <div class="Frame-content">
-    <div class="Frame-header">
-      <div class="Frame-closeButton Frame-headerButton" id="$id-close"></div>
-      <div class="Frame-maximizeButton Frame-headerButton" id="$id-max"></div>
-      <div class="Frame-backButton Frame-headerButton">☚</div>
-      <div class="Frame-temperament Frame-headerButton" id="$id-feelings">?</div>
-      <div class="Frame-title">
-        <div class="Frame-titleText" id="$id-title"></div>
-      </div>
-    </div>
-    <div id="$id-body" class="Frame-body"></div>
-    <div class="Frame-handle"></div>
-  </div>
-`
-
 // -- constants --
 const k = {
   id: {
     transient: "frames",
     permanent: "inventory",
   },
+  class: {
+    root: "Frame",
+    content: "Frame-content",
+    body: "Frame-body",
+    header: "Frame-header",
+    headerButton: "Frame-headerButton",
+    close: "Frame-closeButton",
+    maximize: "Frame-maximizeButton",
+    back: "Frame-backButton",
+    temperament: "Frame-temperament",
+    handle: "Frame-handle",
+    title: "Frame-title",
+    titleText: "Frame-titleText",
+    shim: "Frame-shim",
+    is: {
+      visible: "is-visible",
+      dragging: "is-dragging",
+      scaling: "is-scaling",
+      unfocused: "is-unfocused",
+    },
+  },
   attr: {
+    title: "title",
     permanent: [
       "permanent",
       "persistent",
     ],
+    bodyClass: "bodyClass",
   },
+  tag: {
+    iframe: new Set([
+      "IFRAME",
+      "D-IFRAME",
+    ]),
+    wrapper: new Set([
+      "IFRAME",
+      "D-IFRAME",
+      "P-ARTIAL",
+    ]),
+  }
 }
 
-// -- c/style
-const kVisibleClass = 'is-visible'
-const kDraggingClass = 'is-dragging'
-const kScalingClass = 'is-scaling'
-const kUnfocusedClass = 'is-unfocused'
+// -- template --
+const cx = (...classes) =>
+  `class="${classes.join(" ")}"`
+
+const kTemplate = `
+  <div ${cx(k.class.content)}">
+    <div ${cx(k.class.header)}>
+      <div ${cx(k.class.close, k.class.headerButton)} id="$id-close"></div>
+      <div ${cx(k.class.maximize, k.class.headerButton)} id="$id-max"></div>
+      <div ${cx(k.class.back, k.class.headerButton)}>☚</div>
+      <div ${cx(k.class.temperament, k.class.headerButton)} id="$id-feelings">?</div>
+
+      <div ${cx(k.class.title)}>
+        <div ${cx(k.class.titleText)} id="$id-title"></div>
+      </div>
+    </div>
+
+    <div ${cx(k.class.body)} id="$id-body"></div>
+    <div ${cx(k.class.handle)}></div>
+  </div>
+`
 
 // -- c/focus
 // the default focus layer
@@ -154,42 +188,58 @@ export class Dumpling extends HTMLParsedElement {
       return
     }
 
-    // build template
-    const templateHtml = kTemplate.replaceAll('$id', id)
+    // set class
+    m.classList.add(k.class.root)
 
-    // move original children of <a-dumpling> to be children of the body element
-    // (don't use innerhtml to do this, in case those elements had some important hidden state)
-    const originalChildren = [...this.children]
-    this.innerHTML = templateHtml
-    this.bodyElement = this.querySelector(`#${id}-body`)
-    let bodyContainer = this.bodyElement
+    // capture original children of <a-dumpling> before rendering the template,
+    // because it will clear them
+    const children = Array.from(m.children)
 
-    if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
-      bodyContainer = document.createElement('div')
-      bodyContainer.classList.toggle("Frame-shim")
-      this.bodyElement.appendChild(bodyContainer)
+    // render template
+    // TODO: shouldn't need to add ids to every element, query based on class
+    const template = kTemplate.replaceAll("$id", id)
+    m.innerHTML = template
+
+    // set body element
+    m.$body = m.querySelector(`.${k.class.body}`)
+    if (m.$body == null) {
+      console.error(`[dmplng] a-dumpling ${id} has no body!`)
     }
 
-    for (const childNode of originalChildren) {
-      bodyContainer.appendChild(childNode)
+    // add custom body class
+    if (m.hasAttribute(k.attr.bodyClass)) {
+      m.$body.classList.add(m.getAttribute(k.attr.bodyClass))
     }
 
-    this.classList.add('Frame')
+    // move children
+    if (children.length != 0) {
+      // pick inner element to move children to
+      let $inner = m.$body
 
-    if (this.hasAttribute('bodyClass')) {
-      this.bodyElement.classList.add(this.getAttribute('bodyClass'))
+      // if there are a bunch of elements, e.g. p tags, or a not-known
+      // wrapper element, add children to a shim
+      if (children.length > 1 || !k.tag.wrapper.has(children[0].nodeName)) {
+        $inner = document.createElement("div")
+        $inner.classList.toggle(k.class.shim)
+        m.$body.appendChild($inner)
+      }
+
+      // move children to the inner element (don't use innerHTML to do this, in case those
+      // elements had important in-memory state)
+      for (const $child of children)  {
+        $inner.appendChild($child)
+      }
     }
 
-    this.initStyleFromAttributes()
+    // apply initial style
+    m.initStyleFromAttributes()
 
-    //#region Header Button Functionality
-
-    // title
-    this.findTitle().then((title) => {
-      this.title = title
+    // set title
+    m.findTitle().then((title) => {
+      m.title = title
     })
 
-    // Temperament Stuff
+    // temperament Stuff
     this.temperament = this.getAttribute('temperament') || DefaultTemperament
     this.classList.toggle(this.temperament, true)
     const temperamentData = TemperamentData[this.temperament]
@@ -202,7 +252,7 @@ export class Dumpling extends HTMLParsedElement {
       window.alert(temperamentData.alert)
     }
 
-    // Close button
+    // close button
     const closeButton = this.querySelector(`#${id}-close`)
     if (!this.hasAttribute("no-close")) {
       closeButton.addEventListener("click", this.onClose)
@@ -210,7 +260,7 @@ export class Dumpling extends HTMLParsedElement {
       closeButton.style.display = 'none'
     }
 
-    // Maximize button
+    // maximize button
     const iframe = this.findIframe()
     const maximizeButton = this.querySelector(`#${id}-max`)
 
@@ -409,7 +459,7 @@ export class Dumpling extends HTMLParsedElement {
   setVisible(isVisible) {
     const m = this
     m.visible = isVisible
-    m.classList.toggle(kVisibleClass, isVisible)
+    m.classList.toggle(k.class.is.visible, isVisible)
   }
 
   bringToTop() {
@@ -523,9 +573,9 @@ export class Dumpling extends HTMLParsedElement {
     // apply op style
     switch (this.gesture.type) {
       case Ops.Move:
-        this.classList.toggle(kDraggingClass, true); break
+        this.classList.toggle(k.class.is.dragging, true); break
       case Ops.Scale:
-        this.classList.toggle(kScalingClass, true); break
+        this.classList.toggle(k.class.is.scaling, true); break
     }
 
     // disable collisions with iframes
@@ -592,8 +642,8 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // reset gesture style
-    this.classList.toggle(kDraggingClass, false)
-    this.classList.toggle(kScalingClass, false)
+    this.classList.toggle(k.class.is.dragging, false)
+    this.classList.toggle(k.class.is.scaling, false)
 
     // clear gesture
     this.gesture = null
@@ -732,7 +782,7 @@ export class Dumpling extends HTMLParsedElement {
 
     const isFocused = m.style.zIndex == sTopIndexByLayer[m.layer]
     m.classList.toggle(
-      kUnfocusedClass,
+      k.class.is.unfocused,
       !isFocused
     )
 
@@ -766,22 +816,23 @@ export class Dumpling extends HTMLParsedElement {
     return child
   }
 
+  // -- q/inner
+  // find the single content element
+  findInner() {
+    return this.$body != null ? this.$body.children[0] : null
+  }
+
   // -- q/iframe --
   findIframe() {
-    return this.bodyElement ? this.findIframeInChildren(this.bodyElement.children) : null
+    return this.asIframe(this.findInner())
   }
 
-  findIframeInChildren(children) {
-    const child = children[0]
-    switch (child && child.nodeName) {
-      case "IFRAME":
-      case "D-IFRAME":
-        return child
-      default:
-        return null
-    }
+  // safe-cast the element to an iframe
+  asIframe($child) {
+    return k.tag.iframe.has($child && $child.nodeName) ? $child : null
   }
 
+  // -- title --
   _title = null
 
   get title() {
@@ -800,31 +851,47 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
+  // find the title from many different possible sources
   findTitle() {
+    const m = this
+
     // use attr if available
-    const title = this.getAttribute("title")
+    const title = m.getAttribute(k.attr.title)
     if (title != null) {
       return Promise.resolve(title)
     }
 
-    // if we have a nested iframe
-    const iframe = this.findIframe()
-    if (iframe == null) {
+    // if we have an inner element
+    const $inner = m.findInner()
+    if ($inner == null) {
       return Promise.resolve(null)
     }
 
-    // use its title
-    const doc = iframe.contentDocument
-    if (doc != null) {
-      return Promise.resolve(doc.title)
+    // let's use some duck-typing to find its title
+    // if it has a content document property, it's an iframe-like
+    const doc = $inner.contentDocument
+    if (doc !== undefined) {
+      // if it's present, use its title
+      if (doc != null) {
+        return Promise.resolve(doc.title)
+      }
+
+      // otherwise, wait for it to load
+      // TODO: this probably doesn't do the right thing when the iframe changes page
+      return new Promise((resolve) => {
+        $inner.addEventListener("load", () => {
+          resolve($inner.contentDocument.title)
+        })
+      })
     }
 
-    // or wait for it (this probably doesn't do the right thing when the iframe changes page)
-    return new Promise((resolve) => {
-      iframe.addEventListener("load", () => {
-        resolve(iframe.contentDocument.title)
-      })
-    })
+    // otherwise, use its title
+    const innerTitle = $inner.title
+    if (innerTitle instanceof Promise) {
+      return innerTitle
+    }
+
+    return Promise.resolve(innerTitle)
   }
 
   // check for any attribute from a list of aliases
@@ -857,4 +924,4 @@ export class Dumpling extends HTMLParsedElement {
   }
 }
 
-customElements.define('a-dumpling', Dumpling)
+customElements.define("a-dumpling", Dumpling)

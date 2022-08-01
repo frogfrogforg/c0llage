@@ -1,152 +1,169 @@
 /* body */
 
 .Claribelle {
-    position: absolute;
-    width: 6.25%;
-    height: 6.25%;
-    visibility: hidden;
+  position: absolute;
+  width: 6.25%;
+  height: 6.25%;
+  visibility: hidden;
 }
 
 .Forest {
-    overflow:visible;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: blue;
+  overflow: visible;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: blue;
 
-    /* allow virtual cursor */
-    --is-cursor-target: true;
+  /* allow virtual cursor */
+  --is-cursor-target: true;
 }
 
 /* layer */
-.ForestLayer, .ForestLayer--framed, .ForestLayer--overlay, .ForestLayer--scroll {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.ForestLayer,
+.ForestLayer--framed,
+.ForestLayer--overlay,
+.ForestLayer--scroll {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .ForestLayer-content {
-    position: relative;
-    height: 80vmin;
-    width: 80vmin;
+  position: relative;
+  height: 80vmin;
+  width: 80vmin;
 }
 
 /* layer/shared */
-.ForestLayer--framed, .ForestLayer--overlay {
-    display: flex;
-    overflow: hidden;
-    justify-content: center;
-    align-items: center;
+.ForestLayer--framed,
+.ForestLayer--overlay {
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
 }
 
 /* layer/framed */
 .ForestLayer--framed {
-    background: rgb(227,247,247);
-    background: linear-gradient(180deg, rgba(226,247,247,1) 0%, rgba(207,191,181,1) 100%);
+  background: rgb(227, 247, 247);
+  background: linear-gradient(180deg, rgba(226, 247, 247, 1) 0%, rgba(207, 191, 181, 1) 100%);
 }
 
 .broider-4 {
-    /* from https://maxbittker.github.io/broider/ */
-    /* pls change/add more =) */
-    border-image:  url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 /  3vmin / 0 round;
-    border-width:  3vmin;
-    border-style:  solid;
-    /* If custom png, the second parameter is 1/3 of the full png size */
-    /* (make the png a multiple of 3 size) */
-    /* the third parameter has to be the same as border-width */
-    /* border-image:  url("./images/border.png") 50 /  4.5vmin / 0 round; */
-    /* border-width:  4.5vmin; */
-    /* border-style:  solid; */
+  /* from https://maxbittker.github.io/broider/ */
+  /* pls change/add more =) */
+  border-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 / 3vmin / 0 round;
+  border-width: 3vmin;
+  border-style: solid;
+  /* If custom png, the second parameter is 1/3 of the full png size */
+  /* (make the png a multiple of 3 size) */
+  /* the third parameter has to be the same as border-width */
+  /* border-image:  url("./images/border.png") 50 /  4.5vmin / 0 round; */
+  /* border-width:  4.5vmin; */
+  /* border-style:  solid; */
 }
 
 /* layer/overlay */
 .ForestLayer--overlay {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 /* layer/scroll */
 .ForestLayer--scroll {
-    overflow: scroll;
+  overflow: scroll;
 }
 
 /* others */
 .centered {
-    transform-origin: 20% 40%; /* WHAAA? */
-    transform: translate(-50%, -50%);
+  transform-origin: 20% 40%;
+  /* WHAAA? */
+  transform: translate(-50%, -50%);
 }
 
 #hotspot-map {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 
 .background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* background image crated by new editor */
 #background-img {
-    width:  100%;
-    height:  100%;
+  width: 100%;
+  height: 100%;
 }
 
 .background svg {
-    width:  100%;
+  width: 100%;
 }
+
 .hotspot {
-    position: absolute;
-    display: block;
-    background: transparent;
-    border: none !important;
-    transition: all .8s ease-out;
-    outline: none;
-    cursor: pointer;
-    fill:  #0000;/* for svg hotspots */
+  position: absolute;
+  display: block;
+  background: transparent;
+  border: none !important;
+  transition: all .8s ease-out;
+  outline: none;
+  cursor: pointer;
+  fill: #0000;
+  /* for svg hotspots */
 }
+
 /* add class 'nosparkle' to hotspot to disable sparkles */
 
 
 /* disabled: trying out sparkles instead (see didFinishVisit in forest.js) */
 .hotspot___disabled:hover:not(button):not(.noblur) {
-    background-color:#04000422;
-    fill: #04000422; /* for svg hotspots */
-    filter: blur(30px);
-    transition: all 0.1s ease-in;
+  background-color: #04000422;
+  fill: #04000422;
+  /* for svg hotspots */
+  filter: blur(30px);
+  transition: all 0.1s ease-in;
 }
 
 .debug {
-    border: violet 10px solid !important;
+  border: violet 10px solid !important;
 }
 
 .cosmodrome {
-    color:coral;
+  color: coral;
 }
 
 /* effects */
 .screenshake-oneshot {
-    animation: screenshake 0.1s;
-    transition-timing-function: linear;
-    animation-iteration-count: 10;
+  animation: screenshake 0.1s;
+  transition-timing-function: linear;
+  animation-iteration-count: 10;
 }
 
 .screenshake-loop {
-    animation: screenshake 0.1s;
-    transition-timing-function: linear;
-    animation-iteration-count: infinite;
+  animation: screenshake 0.1s;
+  transition-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 @keyframes screenshake {
-   0% { transform: translateY(0%); }
-   50% { transform: translateX(1%); }
-   100% { transform: translateX(0%); }
+  0% {
+    transform: translateY(0%);
+  }
+
+  50% {
+    transform: translateX(1%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
 }
 
 .stealthIcon {
@@ -170,6 +187,12 @@
 }
 
 /* custom elements */
+p-artial {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 s-cript {
   display: none;
 }
@@ -185,12 +208,12 @@ s-cript {
 }
 
 .sparkle {
-    filter: hue-rotate(-50deg);
-    mix-blend-mode: difference;
-    position: absolute;
-    pointer-events: none;
+  filter: hue-rotate(-50deg);
+  mix-blend-mode: difference;
+  position: absolute;
+  pointer-events: none;
 }
 
 .sparkle::selection {
-    background: transparent;
+  background: transparent;
 }

@@ -41,8 +41,7 @@ function advance(id, step) {
   if (step == 2) {
     mInventory.addNamed("transit", {
       "y": 40,
-      "w": 20,
-      "h": 20,
+      "w": 20, "h": 20,
       "temperament": "phlegmatic",
       "no-back": true,
       "no-close": true,

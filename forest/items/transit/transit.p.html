@@ -1,16 +1,14 @@
-<!-- template: item {title: furthur} -->
+<!-- template: item {title: ourv} -->
 
-<head>
-  <script src="/core/s-cript.js" type="module"></script>
-</head>
-
-<body id="transit" hide-dialog-title>
+<body>
   <img
+    id="transit-target"
     class="Transit"
-    src="./transit.png"
+    src="/forest/items/transit/transit.png"
+    hide-dialog-title
   >
 
-  <s-cript target="transit" main no-title>
+  <s-cript target="transit-target" main>
     --- click
     you can't remember where you put your keys {is this mine?}
     ==> click
@@ -26,21 +24,10 @@
 </script>
 
 <style>
-  html, body, .Transit {
+  .Transit {
     width: 100%;
     height: 100%;
-  }
-
-  body {
-    margin: 0;
-    overflow: hidden;
-  }
-
-  #transit {
     cursor: pointer;
-  }
-
-  .Transit {
     object-fit: cover;
   }
 </style>

@@ -1,86 +1,138 @@
-<style>
-    .welcome {
-        color: #D0CDBE;
-        position: absolute;
-        top: 50%;
-        left: 19%;
-        font-size: 4.7vmin;
-        font-family: trebuchet ms, sans-serif;
-        transform: perspective(950px) rotate(3deg) rotateY(-20deg) skew(3deg);
-        text-align: right;
-        opacity: 90%;
-    }
-
-    .Dialog {
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-    }
-
-    .Dialog-text {
-        margin: 0;
-    }
-
-    a {
-        color: #76b2d4;
-    }
-</style>
-
 <body>
-    <img class="background" src="./images/landing.gif">
+  <img
+    class="background"
+    src="./images/landing.gif"
+  >
 
-    <img id="pointer-bin" class="hotspot nosparkle" src="./images/pointer_bin.png" style="cursor: grab; top: 79%; left: 27%; width: 20%;">
+  <img
+    id="pointer-bin"
+    class="hotspot nosparkle"
+    src="./images/pointer_bin.png"
+    style="cursor: grab; top: 79%; left: 27%; width: 20%;"
+  >
 
-    <div class="welcome"><a class="cursor-shoes hotspot" style="display: inline; position:static; color: #2e26c7" href="./1.html">please leave your shoes<br> at
-            the door</a>
-        <br>— the parks staff
+  <div class="welcome">
+    <a
+      class="cursor-shoes hotspot"
+      href="./1.html"
+      style="display: inline; position:static; color: #2e26c7"
+    >
+      please leave your shoes
+      <br>
+      at the door
+    </a>
+
+    <br>
+    — the parks staff
+  </div>
+
+  <button
+    id="stop"
+    class="hotspot"
+    style="left: 25%; top: 23%; width: 8%; height: 5%;"
+  ></button>
+
+  <a
+    class="hotspot"
+    href="./55highway_to_the_cosmod.html"
+    style="left: 7.188%; top: 17.996%; width: 17%; height: 9%"
+  ></a>
+
+  <a
+    class="hotspot centered cursor-bird"
+    href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &"
+    target="_blank"
+    rel="noreferrer"
+    style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"
+  ></a>
+
+  <a-dumpling
+    id="stop-dialog"
+    temperament="phlegmatic"
+    hidden
+    x=37 y=18
+    w=16 h=15
+  >
+    <div class="Dialog">
+      <p class="Dialog-text">
+        please look both ways before entering the park. drivers are pretty
+        careless around here.
+      </p>
     </div>
+  </a-dumpling>
 
-    <button id="stop" class="hotspot" style="left: 25%; top: 23%; width: 8%; height: 5%;"></button>
+  <a-dumpling
+    temperament="phlegmatic"
+    id="version"
+    x=69 y=5
+    w=16 h=21
+  >
+    <iframe src="/misc/version.html"></iframe>
+  </a-dumpling>
 
-    <a class="hotspot" href="./55highway_to_the_cosmod.html" style="left: 7.188%; top: 17.996%; width: 17%; height: 9%"></a>
-
-    <a class="hotspot centered cursor-bird" href="https://twitter.com/intent/tweet?text=.@flantz i love to click hyperlinks and play a videogame story — the parks staff &" target="_blank" rel="noreferrer" style="left: 91.188%; top: 73.996%; width: 4%; height: 5%"></a>
-
-    <a-dumpling id="stop-dialog" temperament="phlegmatic" hidden x=37 y=18 width=16 height=15>
-        <div class="Dialog">
-            <p class="Dialog-text">please look both ways before entering the park. drivers are pretty careless around
-                here.</p>
-        </div>
-    </a-dumpling>
-
-    <a-dumpling temperament='phlegmatic' id='version' x=69 y=5 width=16 height=21>
-        <iframe src='/misc/version.html'></iframe>
-    </a-dumpling>
-
-    <a-dumpling temperament='choleric' id='speedrun' persistent hidden x=110 y=00 width=40 height=90>
-        <iframe src='./items/speedrun.html'></iframe>
-    </a-dumpling>
+  <a-dumpling
+    id="speedrun"
+    temperament="choleric"
+    persistent
+    hidden
+    x=110 y=00
+    w=40 h=90
+  >
+    <iframe src="./items/speedrun.html"></iframe>
+  </a-dumpling>
 </body>
 
 <script type="module">
-    import { kCursor } from "./cursor.js"
+  import { kCursor } from "./cursor.js"
 
-    // TODO: I absolutely hate this, but I am tired and I cant figure out another way to make this thing show when coming from another window
-    setTimeout(() => {
-        const hash = window.location.hash.slice(1)
-        if (hash === 'gamermode') {
-            Frames.toggle('speedrun')
-        }
-    }, 1000)
+  // TODO: I absolutely hate this, but I am tired and I cant figure out another way to make this thing show when coming from another window
+  setTimeout(() => {
+    const hash = window.location.hash.slice(1)
+    if (hash === "gamermode") {
+      Frames.toggle("speedrun")
+    }
+  }, 1000)
 
-    // stop sign
-    document.getElementById("stop").addEventListener("click", (evt) => {
-        evt.preventDefault()
+  // stop sign
+  document.getElementById("stop").addEventListener("click", (evt) => {
+    evt.preventDefault()
 
-        // harsh era
-        const title = document.querySelector("title")
-        title.innerHTML = "don't go!"
+    // harsh era
+    const title = document.querySelector("title")
+    title.innerHTML = "don't go!"
 
-        // mellow era
-        Frames.toggle("stop-dialog")
-    })
+    // mellow era
+    Frames.toggle("stop-dialog")
+  })
 
-    // get or return the cursor
-    document.getElementById("pointer-bin").addEventListener("click", kCursor.onToggle)
+  // get or return the cursor
+  document.getElementById("pointer-bin").addEventListener("click", kCursor.onToggle)
 </script>
+
+<style>
+  .welcome {
+    color: #D0CDBE;
+    position: absolute;
+    top: 50%;
+    left: 19%;
+    font-size: 4.7vmin;
+    font-family: trebuchet ms, sans-serif;
+    transform: perspective(950px) rotate(3deg) rotateY(-20deg) skew(3deg);
+    text-align: right;
+    opacity: 90%;
+  }
+
+  .Dialog {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  .Dialog-text {
+    margin: 0;
+  }
+
+  a {
+    color: #76b2d4;
+  }
+</style>

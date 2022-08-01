@@ -218,10 +218,8 @@
     </div>
   </a-dumpling>
 
-  <a-dumpling temperament='phlegmatic' hidden id='keys' width=30 height=30>
-    <div>
-      <span id='foundKeys'></span>
-    </div>
+  <a-dumpling temperament='phlegmatic' hidden id="keys-dialog" width=30 height=30>
+    <span id="keys-dialog-message"></span>
   </a-dumpling>
 
   <div class="ForestLayer--overlay">
@@ -242,9 +240,9 @@
 
   // -- events --
   window.gotKeys = function () {
-    Frames.show("keys")
+    Frames.show("keys-dialog")
 
-    const carText = document.getElementById("foundKeys")
+    const carText = document.getElementById("keys-dialog-message")
     if (d.State.foundVehicle) {
       carText.innerHTML = "You found the keys to your car! Your car! Of course you left them here..."
     } else {
@@ -253,10 +251,8 @@
 
     // spawn the keys
     mInventory.addNamed("keys", {
-      "x": 91,
-      "y": 7,
-      "w": 25,
-      "h": 30,
+      "x": 91, "y": 7,
+      "w": 10, "h": 10,
       "temperament": "choleric",
       "no-back": true,
       "no-close": true,

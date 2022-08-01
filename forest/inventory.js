@@ -8,6 +8,7 @@ const k = {
     inventory: "inventory",
   },
   paths: {
+    // absolute root to items
     base: "/forest/items",
   },
   attrs: {
@@ -94,17 +95,20 @@ export class Inventory {
     }
     // if top, only add & spawn if not present
     else {
-      const isPresent = m.records[id] != null
+      const existing = m.records[id]
 
       // add or update record
-      m.records[id] = record
+      m.records[id] = {
+        ...existing,
+        ...record,
+      }
 
       // only spawn new records
-      if (!isMutation && !isPresent) {
+      if (!isMutation && existing == null) {
         m.spawn(record)
       }
 
-      if (!isPresent) {
+      if (existing == null) {
         console.debug(`[invtry] added record ${id}`)
       }
     }
@@ -117,6 +121,7 @@ export class Inventory {
     m.add({
       id: name,
       src: `${k.paths.base}/${name}/${name}.html`,
+      partial: true,
       attrs
     })
   }
@@ -130,18 +135,25 @@ export class Inventory {
       return
     }
 
-    // invisible dumplings should not be added to the inventory element
-    // TODO: currently a race between Dumpling.parsedCallback and MutationObserver
-    if (!$el.visible) {
+    // check visibility
+    const visible = $el.visible
+
+    // if undefined, we probably just spawned this
+    // TODO: maybe a race between Dumpling.parsedCallback and MutationObserver, fix this
+    if (visible === undefined) {
+      return
+    }
+    // hidden dumplings should not be added to the inventory element
+    else if (!visible) {
       console.error("[invtry] hidden dumplings should not be added to the inventory!")
       return
     }
 
-    // find iframe
-    const iframe = $el.findIframe()
+    // find inner
+    const $inner = $el.findInner()
 
     // don't save dumplings w/o src
-    const src = iframe && iframe.src
+    const src = $inner && $inner.src
     if (src == null) {
       return
     }
@@ -201,6 +213,7 @@ export class Inventory {
   spawn({
     id,
     src,
+    partial,
     attrs,
   }) {
     const m = this
@@ -220,7 +233,7 @@ export class Inventory {
     // template the html
     const html = `
       <a-dumpling ${attrs}>
-        <d-iframe
+        <${partial ? "p-artial" : "d-iframe"}
           src="${src}"
           dumpling-id="${id}"
           autoload
