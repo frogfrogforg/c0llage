@@ -27,7 +27,7 @@ const initialState = {
   claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",
   hasSkate: false,
-  knowsSkate: false,
+  knowsSkate: false
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
@@ -56,7 +56,9 @@ Object.setPrototypeOf(state, {
 // proxy get/set for unknown keys to the state object
 const ProxyState = new Proxy(state, {
   get(target, prop) {
-    return Reflect.get(target, prop)
+    const val = Reflect.get(target, prop)
+    if(val === undefined)
+    return initialState[prop]
   },
   set(target, prop, value) {
     const r = Reflect.set(target, prop, value)
