@@ -57,8 +57,10 @@ Object.setPrototypeOf(state, {
 const ProxyState = new Proxy(state, {
   get(target, prop) {
     const val = Reflect.get(target, prop)
-    if(val === undefined)
-    return initialState[prop]
+    if(val === undefined) {
+      return initialState[prop]
+    }
+    return val
   },
   set(target, prop, value) {
     const r = Reflect.set(target, prop, value)
