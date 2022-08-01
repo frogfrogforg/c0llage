@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import pydot
 import os
-
+import json
+import networkx as nx
 
 def urlbase(url):
     return urljoin(url, '/')
@@ -23,6 +24,7 @@ def template_file(file):
 
 def crawl(startfile, url_root, include_external=False, include_iframe=False, draw_images=False, relative_pathnames=False):
     graph = pydot.Dot('my_graph', graph_type='digraph')
+    graphObj = {}
 
     seen_paths = set()
 
@@ -94,7 +96,7 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False, dra
 
             if (not href.startswith("http")):
                 # internal link, normalize path & continue traversing
-                if (href.startswith('/')):
+                if (href.startswith("/")):
                     # handle absolute path
                     # probably a better way to do this
                     neighbor = url_root + href
@@ -116,18 +118,60 @@ def crawl(startfile, url_root, include_external=False, include_iframe=False, dra
                 continue
 
             e = pydot.Edge(this, neighbor)
+
+
             if (is_iframe):
                 e.set_style("dotted")
             graph.add_edge(e)
 
     return graph
 
+def JsonMap(g):
+    G = nx.nx_pydot.from_pydot(g)
+    distances = list(nx.all_pairs_shortest_path_length(G))
+    dists = {}
+    for d in distances:
+        dists[d[0]] = d[1]
+    dist_json = json.dumps(dists)
+    dist_json = dist_json.replace("\\\\", "/",).replace(".html", "").replace("forest/", "/forest/")
 
-g = crawl("/forest/welcome.html", "..", draw_images=False)
-g_images = crawl("/forest/welcome.html", "..",
+    # max_dist = nx.diameter(G) sadly the graph is not strongly connected so this doesnt work
+    max_dist = -1
+    for v in dists.values():
+        for dist in v.values():
+            if max_dist < dist:
+                max_dist = dist
+
+    with open("sitemap/mapDistances.js", "w") as outfile:
+        outfile.write("const kDistances = ")
+        outfile.write(dist_json)
+        outfile.write("\n")
+
+        outfile.write("export const kMaxDistance = ")
+        outfile.write(str(max_dist))
+        outfile.write("\n")
+
+        outfile.write("export function Distance(start, end) {\n")
+        outfile.write("    if(!(start in kDistances)) {\n")
+        outfile.write("        console.log(`start ${start} not in distance graph`)\n")
+        outfile.write("        return kMaxDistance\n")
+        outfile.write("    }\n")
+        outfile.write("    const startDistances = kDistances[start]\n")
+        outfile.write("    if(!(end in startDistances)) {\n")
+        outfile.write("        console.log(`end ${end} not in distance graph`)\n")
+        outfile.write("        return kMaxDistance\n")
+        outfile.write("    }\n")
+        outfile.write("    return startDistances[end]\n")
+        outfile.write("}\n")
+
+
+g = crawl("forest\\welcome.html", "..", draw_images=False)
+JsonMap(g)
+g_images = crawl("forest\\welcome.html", "..",
                  draw_images=True, relative_pathnames=False)
-g_extended = crawl("/forest/welcome.html", "..",
+g_extended = crawl("forest\\welcome.html", "..",
                    include_external=True, include_iframe=True)  # kinda redundant but simplest way
+
 
 g.set_overlap(False)
 g_images.set_overlap(False)
@@ -140,10 +184,10 @@ g_extended.set_overlap(False)
 prog = "circo"  # seems to work best without much tweaking
 extended_prog = "dot"  # simple tree, looks cleaner for complex graph
 
-g.write_svg("sitemap.svg", prog=prog)
-g.write_png("sitemap.png", prog=prog)
+g.write_svg("sitemap/sitemap.svg", prog=prog)
+g.write_png("sitemap/sitemap.png", prog=prog)
 # can't render images in svg (graphviz can't seem to deal with relative pathnames)
-g_images.write_png("sitemap-illustrated.png", prog=prog)
+g_images.write_png("sitemap/sitemap-illustrated.png", prog=prog)
 
-g_extended.write_svg("sitemap-extended.svg", prog=extended_prog)
-g_extended.write_png("sitemap-extended.png", prog=extended_prog)
+g_extended.write_svg("sitemap/sitemap-extended.svg", prog=extended_prog)
+g_extended.write_png("sitemap/sitemap-extended.png", prog=extended_prog)
