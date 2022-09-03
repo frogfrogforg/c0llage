@@ -66,7 +66,7 @@ class DeferredIframeElement extends HTMLParsedElement {
 
   // -- commands --
   load() {
-    console.log(`loaded iframe ${this.src}`)
+    console.debug(`[dframe] loaded ${this.src}`)
     this.loadUrl(this.src)
   }
 

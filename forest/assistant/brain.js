@@ -2,9 +2,9 @@ import { kInventory } from "../inventory.js"
 import { Ledger } from "./ledger.js"
 
 // -- constants --
-const kIdScript = "script"
+const kIdScript = "assistant-main"
 const kScriptHookDebts = "debts-hook"
-const kLedgerDialogName = "ledger"
+// const kLedgerDialogName = "ledger"
 
 // -- impls --
 export class Assistant {
@@ -67,7 +67,12 @@ export class Assistant {
   // -- factories --
   // spawn the assistant when available
   static spawn() {
-    if (document.location.pathname.endsWith("welcome")) {
+    let path = document.location.pathname
+    if (path.endsWith(".html")) {
+      path = path.slice(0, -5)
+    }
+
+    if (path.endsWith("welcome")) {
       return
     }
 
