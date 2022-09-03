@@ -1,0 +1,44 @@
+<style>
+    .monitor {
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .screen {
+        position: absolute;
+        display: flex;
+    }
+
+    .screen iframe {
+        position: absolute;
+        display: flex;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body>
+    <svg id="hotspot-map"
+         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewBox="0 0 1000 1000" >
+        <image preserveAspectRatio="none" id="background-img" href="images/79questioning.jpg"></image>
+        <a title="" class="hotspot cursor-swim" href="301water_log.html">
+            <rect x=905.1497490157761 y=132.51114980639235 width=126.77351346882779 height=235.50248901235074 />
+        </a>
+        <a title="" class="hotspot cursor-swim" href="15waterfromfar.html">
+            <rect x=-5.911718244660365 y=169.90290990027535 width=112.32264664854696 height=219.75859002545263 />
+        </a>
+    </svg>
+    <div class="screen" style="left: 7%; top: 57.111%; width: 87.555%; height: 32.222%;">
+    </div>
+
+    <a-dumpling title="art Forms" id="artForms" temperament="phlegmatic" w=50 h=110 x=90 y=-5 hidden>
+        <d-iframe src="./computer-forms.html" autoload></d-iframe>
+    </a-dumpling>
+
+    <button class="hotspot cursor-keyboard" style="bottom: 16%; left: 10%; width: 32%; height: 12%;" onclick="Frames.show('artForms')"></button>
+
+    <div style="color: #DCDCDC; position: absolute; font-size:18px; top: 67%; left: 51%; width: 28%; height:30%">please fill out these forms to help us make the park a better place</div>
+</body>
