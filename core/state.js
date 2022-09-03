@@ -23,6 +23,7 @@ const initialState = {
   pickedUpSquirrel: false,
   highwayStep: 0,
   foundVehicle: false,
+  foundKeyring: false,
   foundKeys: false,
   claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",

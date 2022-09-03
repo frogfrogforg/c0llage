@@ -1,0 +1,67 @@
+<!-- template: item {title: ourkeys} -->
+
+<body>
+  <img
+    id="keys-target"
+    class="Keys"
+    src="/forest/items/ourkey/ourkey.png"
+  >
+
+  <audio id="keys-sound">
+    <!-- credits: https://www.freesoundslibrary.com/car-lock-sound-effect/ -->
+    <source src="/forest/items/ourkey/ourkey.mp3" type="audio/mpeg">
+  </audio>
+</body>
+
+<script type="module">
+  import { Distance, kMaxDistance } from "/sitemap/mapDistances.js"
+
+  const kCarLocation = "/forest/55highway_to_the_cosmod"
+
+  function main() {
+    d.State.foundKeys = true
+
+    const $keys = document.getElementById("keys-target")
+    const $keysSound = document.getElementById("keys-sound")
+
+    const audioCtx = new AudioContext();
+    const element = $keysSound
+    const source = audioCtx.createMediaElementSource(element);
+    const gainNode = audioCtx.createGain();
+    const biquadFilter = audioCtx.createBiquadFilter();
+
+    source.connect(biquadFilter)
+    biquadFilter.connect(gainNode)
+    gainNode.connect(audioCtx.destination)
+
+    $keys.addEventListener("click", () => {
+      const maxDistance = (kMaxDistance + 2) // adding the 3 extra steps to get to the car
+      let distance = maxDistance
+      if(d.State.foundVehicle) {
+        distance = 0
+      } else  {
+        distance = Distance(kCarLocation, d.State.location)
+        // add the steps
+        distance += 2 - Math.min(2, d.State.highwayStep)
+      }
+      const normalizedDistance = distance / maxDistance;
+      const nd = normalizedDistance * 6.9;
+      const pdist = 1.0/(1 + nd * nd)
+      const k = pdist
+      biquadFilter.frequency.value = 10000 * k
+      $keysSound.volume = k
+      $keysSound.play();
+    })
+  }
+
+  main()
+</script>
+
+<style>
+  .Keys {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+  }
+</style>

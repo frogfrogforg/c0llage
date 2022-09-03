@@ -4,15 +4,15 @@ import { Dumpling } from "/core/dumpling/a-dumpling.js"
 // -- constants --
 const k = {
   id:  {
-    // of the inventory el
+    /// of the inventory el
     inventory: "inventory",
   },
   paths: {
-    // absolute root to items
+    /// absolute root to items
     base: "/forest/items",
   },
   attrs: {
-    // attrs to ignore when building records
+    /// attrs to ignore when building records
     ignored: new Set([
       "id",
     ])
@@ -32,15 +32,15 @@ function single($w) {
 }
 
 // -- class --
-// a page-persistent inventory bound to a particular el
+/// a page-persistent inventory bound to a particular el
 export class Inventory {
   // -- module --
-  // get the current window's inventory
+  /// get the current window's inventory
   static get() {
     return single(window)
   }
 
-  // get the top window's inventory
+  /// get the top window's inventory
   static top() {
     return single(window.top)
   }
@@ -114,19 +114,19 @@ export class Inventory {
     }
   }
 
-  /// add an item with name & attrs
+  /// add an item in a p-artial with name & attrs
   addNamed(name, attrs) {
     const m = this
 
     m.add({
       id: name,
-      src: `${k.paths.base}/${name}/${name}.html`,
+      src: m.getItemPath(name),
       partial: true,
       attrs
     })
   }
 
-  /// add a dom mutation
+  /// add by dom mutation
   addByMutation($el) {
     const m = this
 
@@ -176,7 +176,7 @@ export class Inventory {
     m.add(record, true)
   }
 
-  // delete the record with the id
+  /// delete the record with the id
   delete(id, isMutation = false) {
     const m = this
 
@@ -197,6 +197,7 @@ export class Inventory {
     }
   }
 
+  /// remove element by dom mutation
   deleteByMutation($el) {
     const m = this
 
@@ -209,7 +210,7 @@ export class Inventory {
   }
 
   // -- c/spawn
-  // spawn item element
+  /// spawn item element
   spawn({
     id,
     src,
@@ -250,7 +251,7 @@ export class Inventory {
     m.$el.appendChild($el)
   }
 
-  // remove item element
+  /// remove item element
   despawn(id) {
     const m = this
     const $el = m.$el.querySelector(`#${id}`)
@@ -260,7 +261,7 @@ export class Inventory {
   }
 
   // -- c/clear
-  // remove all items from the inventory
+  /// remove all items from the inventory
   clear() {
     const m = this
 
@@ -274,7 +275,7 @@ export class Inventory {
   }
 
   // -- c/serialization
-  // load inventory from persistent storage
+  /// load inventory from persistent storage
   load() {
     const m = this
 
@@ -293,7 +294,7 @@ export class Inventory {
     }
   }
 
-  // save inventory to persistent storage
+  /// save inventory to persistent storage
   save() {
     const m = this
 
@@ -312,13 +313,18 @@ export class Inventory {
   }
 
   // -- queries --
-  // the top window's inventory
+  /// the top window's inventory
   get top() {
     return Inventory.top()
   }
 
-  // if this is the top window's inventory
+  /// if this is the top window's inventory
   get isTop() {
     return this.records != null
+  }
+
+  /// get the path to an item's html page (forest/items/<name>/<name>.html)
+  getItemPath(name) {
+    return `${k.paths.base}/${name}/${name}.html`
   }
 }

@@ -2,8 +2,26 @@ import { State } from "/core/state.js"
 import { Inventory } from "./inventory.js"
 
 // -- constants --
-const kLinkId = "highway-link"
-const kHighwaySteps = 420
+const k = {
+  id: {
+    /// the id of a link to the next highway page
+    link: "highway-link",
+  },
+  steps: {
+    /// the number of steps to get the keyring
+    keyring: 3,
+    /// the number of steps to get the rv
+    transit: 8,
+    /// the number of steps to exit the highway
+    exit: 420,
+  },
+  speed: {
+    /// the speed in steps walking
+    walking: 1,
+    /// the speed in steps driving
+    driving: 100,
+  }
+}
 
 // -- deps --
 const mInventory = Inventory.get()
@@ -29,7 +47,7 @@ function move(id) {
   const step = State.highwayStep || 0
 
   // if we haven't reached the goal, move. otherwise, redirect to the exit
-  if (step < kHighwaySteps) {
+  if (step < k.steps.exit) {
     advance(id, step)
   } else {
     exit()
@@ -37,10 +55,19 @@ function move(id) {
 }
 
 function advance(id, step) {
-  // if we reached step 3, add the transit vehicle
-  if (step == 2) {
+  // discover items on the road
+  if (step === k.steps.keyring) {
+    mInventory.addNamed("keyring", {
+      "w": 20, "h": 20,
+      "holds": "key",
+      "temperament": "phlegmatic",
+      "no-back": true,
+      "no-close": true,
+    })
+  }
+
+  if (step === k.steps.transit) {
     mInventory.addNamed("transit", {
-      "y": 40,
       "w": 20, "h": 20,
       "temperament": "phlegmatic",
       "no-back": true,
@@ -57,11 +84,12 @@ function advance(id, step) {
   setUrl(getHighwayUrl(next))
 
   // update the highway step
-  State.highwayStep = step + getSpeed()
-}
+  let steps = k.speed.walking
+  if (d.State.foundKeys) {
+    steps = k.speed.driving
+  }
 
-function getSpeed() {
-  return d.State.foundKeys ? 100 : 1;
+  State.highwayStep = step + steps
 }
 
 function exit() {
@@ -76,7 +104,7 @@ function reset(path = document.location.pathname) {
 
 // -- c/helpers
 function setUrl(url) {
-  document.getElementById(kLinkId).href = url
+  document.getElementById(k.id.link).href = url
 }
 
 // -- queries --

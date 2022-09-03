@@ -293,6 +293,10 @@ export class Dumpling extends HTMLParsedElement {
 
     // register events
     m.initEvents()
+
+    // try to add to a bag if we're on one (parsing race condition???)
+    const dr = m.getBoundingClientRect()
+    m.addToBag(dr.x, dr.y)
   }
 
   onClose = () => {
@@ -477,8 +481,16 @@ export class Dumpling extends HTMLParsedElement {
     // and use an index one higher
     i = sTopIndexByLayer[m.layer] = i + 1
 
-    // update state (using style to store state)
-    this.style.zIndex = i
+    // update z-pos (using style to store state)
+    m.style.zIndex = i
+
+    // and update z-pos of bagged dumplings, if any
+    if (m.$contents != null) {
+      i += 1
+      for (const $i of m.$contents) {
+        $i.style.zIndex = i
+      }
+    }
 
     // update visibility of frames
     window.dispatchEvent(new CustomEvent(
@@ -487,8 +499,7 @@ export class Dumpling extends HTMLParsedElement {
     ))
 
     // focus iframe if necessary
-    this.focusIframe()
-
+    m.focusIframe()
   }
 
   blurIframe() {
@@ -505,7 +516,7 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
-  // move to the correct parent, or remove if duplicate; returns true if removed
+  /// move to the correct parent, or remove if duplicate; returns true if removed
   addToParent() {
     const m = this
 
@@ -517,7 +528,7 @@ export class Dumpling extends HTMLParsedElement {
       pid = k.id.permanent
     }
 
-    // if parent doens't match, move the element
+    // if parent doesn't match, move the element
     if (m.parentElement.id !== pid) {
       const parent = document.getElementById(pid)
 
@@ -543,72 +554,206 @@ export class Dumpling extends HTMLParsedElement {
     return isDuplicate
   }
 
+  // -- c/bag
+  /// try to add to a bag at a given point
+  addToBag(x, y) {
+    const m = this
+
+    // look for a parent at this point
+    const $els = document.elementsFromPoint(x, y)
+    if ($els == null) {
+      return
+    }
+
+    let $bag = null
+    for (const $el of $els) {
+      // it must be a dumpling, but not this one
+      if ($el === m || !($el instanceof Dumpling)) {
+        continue
+      }
+
+      // and it must be able to hold this kind of dumpling
+      if ($el.getAttribute("holds") === m.getAttribute("kind")) {
+        $bag = $el
+        break
+      }
+    }
+
+    if ($bag != null) {
+      $bag.addItem(m)
+    }
+  }
+
+  /// add dumpling to this bag
+  addItem($el) {
+    const m = this
+
+    // add item to the bag
+    m.$contents ||= new Set()
+    m.$contents.add($el)
+
+    // item tracks the bag
+    $el.$bag = m
+    console.log(`${m.id} add ${$el.id}`)
+  }
+
+  /// remove dumpling from this bag
+  removeItem($el) {
+    const m = this
+
+    // don't remove nothing to/from nothing
+    if (m.$contents == null || $el == null) {
+      return
+    }
+
+    // remove item from the bag
+    m.$contents.delete($el)
+    console.log(`${m.id} remove ${$el.id}`, m.$contents)
+
+    // item clear the bag
+    $el.$bag = null
+  }
+
+  // -- c/gesture
+  /// create a gesture with the initial mouse position
+  initGesture(type, m0) {
+    const m = this
+
+    // create the gesture
+    m.gesture = { type }
+
+    // apply gesture style
+    switch (m.gesture.type) {
+    case Ops.Move:
+      m.classList.toggle(k.class.is.dragging, true); break
+    case Ops.Scale:
+      m.classList.toggle(k.class.is.scaling, true); break
+    }
+
+    // record initial position
+    const dr = m.getBoundingClientRect()
+    const pr = m.parentElement.getBoundingClientRect()
+
+    m.gesture.initialPosition = {
+      x: dr.x - pr.x,
+      y: dr.y - pr.y,
+    }
+
+    // record initial mouse position (we need to calc dx/dy manually on move b/c
+    // evt.offset, the pos within the element, doesn't seem to include borders,
+    // etc.)
+    m.gesture.initialMousePosition = m0
+
+    // create drag gestures for any bagged dumplings
+    if (type == Ops.Move && m.$contents != null) {
+      for (const $i of m.$contents) {
+        $i.initGesture(type, m0)
+      }
+    }
+  }
+
+  /// move dumpling w/ new mouse position
+  moveTo(mx, my) {
+    const m = this
+    if (m.gesture == null) {
+      return
+    }
+
+    // get initial pos
+    const p0 = m.gesture.initialPosition
+    const m0 = m.gesture.initialMousePosition
+
+    // get the mouse delta
+    const dx = mx - m0.x
+    const dy = my - m0.y
+
+    // apply it to the initial position
+    m.style.left = `${p0.x + dx}px`
+    m.style.top = `${p0.y + dy}px`
+
+    // also move any bagged dumplings
+    if (m.$contents != null) {
+      for (const $i of m.$contents) {
+        $i.moveTo(mx, my)
+      }
+    }
+  }
+
+  /// clear the gesture
+  clearGesture() {
+    const m = this
+    if (m.gesture == null) {
+      return
+    }
+
+    // clear the gesture
+    m.gesture = null
+
+    // reset style
+    const classes = m.classList
+    classes.toggle(k.class.is.dragging, false)
+    classes.toggle(k.class.is.scaling, false)
+
+    // and clear for any bagged dumplings
+    if (m.$contents != null) {
+      for (const $i of m.$contents) {
+        $i.clearGesture()
+      }
+    }
+  }
+
+  // -- c/viz
   open = this.show
   close = this.hide
-  clisten = addEventListener
 
   // -- events --
+  /// when the mouse button is pressed
   onMouseDown = (evt) => {
-    // mousedown behavior on the header/handle
+    const m = this
 
     // TODO: probably don't need to prevent default, there should no default.
     // Commented preventDefault here so that you can interact with non iframed stuff inside dumplings
     // evt.preventDefault()
 
     // bring this frame to top of stack
-    this.bringToTop()
+    m.bringToTop()
 
     // determine gesture, if any
+    let type = null
+
     const classes = evt.target.classList
-    if (classes.contains('Frame-title')) {
-      this.gesture = { type: Ops.Move }
-    } else if (classes.contains('Frame-handle')) {
-      this.gesture = { type: Ops.Scale }
+    if (classes.contains(k.class.title)) {
+      type = Ops.Move
+    } else if (classes.contains(k.class.handle)) {
+      type = Ops.Scale
     }
 
-    if (this.gesture == null) {
+    if (type == null) {
       return
     }
 
-    // apply op style
-    switch (this.gesture.type) {
-      case Ops.Move:
-        this.classList.toggle(k.class.is.dragging, true); break
-      case Ops.Scale:
-        this.classList.toggle(k.class.is.scaling, true); break
-    }
+    // create the gesture with the initial mouse pos
+    m.initGesture(type, {
+      x: evt.clientX,
+      y: evt.clientY
+    })
 
     // disable collisions with iframes
-    const iframes = document.querySelectorAll('iframe')
+    const iframes = document.querySelectorAll("iframe")
     for (const iframe of Array.from(iframes)) {
-      iframe.style.pointerEvents = 'none'
-    }
-
-    // record initial position
-    const dr = this.getBoundingClientRect()
-    const pr = this.parentElement.getBoundingClientRect()
-
-    this.gesture.initialPosition = {
-      x: dr.x - pr.x,
-      y: dr.y - pr.y,
-    }
-
-    // record initial mouse position (we need to calc dx/dy manually on move
-    // b/c evt.offset, the pos within the element, doesn't seem to include
-    // borders, etc.)
-    this.gesture.initialMousePosition = {
-      x: evt.clientX,
-      y: evt.clientY,
+      iframe.style.pointerEvents = "none"
     }
 
     // start the operation
-    switch (this.gesture.type) {
-      case Ops.Scale:
-        this.onScaleStart(dr)
-        break
+    switch (m.gesture.type) {
+    case Ops.Move:
+      m.onDragStart(); break;
+    case Ops.Scale:
+      m.onScaleStart(); break
     }
   }
 
+  /// when the mouse moves
   onMouseMove = (evt) => {
     if (this.gesture == null) {
       return
@@ -630,8 +775,10 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
-  onMouseUp = () => {
-    if (this.gesture == null) {
+  /// when the mouse button is released
+  onMouseUp = (evt) => {
+    const m = this
+    if (m.gesture == null) {
       return
     }
 
@@ -641,48 +788,72 @@ export class Dumpling extends HTMLParsedElement {
       iframe.style.pointerEvents = null
     }
 
-    // reset gesture style
-    this.classList.toggle(k.class.is.dragging, false)
-    this.classList.toggle(k.class.is.scaling, false)
+    // finish gesture
+    const mx = evt.clientX
+    const my = evt.clientY
 
-    // clear gesture
-    this.gesture = null
+    switch (m.gesture.type) {
+    case Ops.Move:
+      m.onDragEnd(mx, my); break
+    case Ops.Scale:
+      m.onScaleEnd(); break;
+    }
 
-    this.focusIframe()
+    m.clearGesture()
+
+    // focus frame
+    m.focusIframe()
   }
 
   // -- e/drag
+  /// when the drag starts
+  onDragStart() {
+    const m = this
+
+    // if we're in a bag, remove ourselves
+    if (m.$bag) {
+      m.$bag.removeItem(m)
+    }
+  }
+
+  /// when the drag gesture moves
   onDrag(mx, my) {
     const m = this
 
-    // get initial pos
-    const p0 = this.gesture.initialPosition
-    const m0 = this.gesture.initialMousePosition
-
-    // get the mouse delta
-    const dx = mx - m0.x
-    const dy = my - m0.y
-
-    // apply it to the initial position
-    m.style.left = `${p0.x + dx}px`
-    m.style.top = `${p0.y + dy}px`
+    // move the dumpling and any bagged dumplings
+    m.moveTo(mx, my)
   }
 
-  onScaleStart(dr) {
+  /// when the drag gesture finishes
+  onDragEnd(mx, my) {
+    const m = this
+
+    // try to add to a bag at the mouse position
+    m.addToBag(mx, my)
+  }
+
+  // -- e/scale
+  /// when a scale gesture starts
+  onScaleStart() {
+    const m = this
+
+    // get dumpling rect
+    const dr = m.getBoundingClientRect()
+
     // capture the frame's w/h at the beginning of the gesture
-    this.gesture.initialSize = {
+    m.gesture.initialSize = {
       w: dr.width,
       h: dr.height
     }
 
     // get the scale target, we calculate some scaling against the target
     // element's size
-    const target = this.findScaleTarget()
+    const target = m.findScaleTarget()
     if (target != null) {
       const tr = target.getBoundingClientRect()
 
       // capture the target's w/h at the beginning of the op
-      this.gesture.initialTargetSize = {
+      m.gesture.initialTargetSize = {
         w: tr.width,
         h: tr.height,
       }
@@ -690,21 +861,24 @@ export class Dumpling extends HTMLParsedElement {
       // and if this is the first ever time scaling frame, also set the
       // target's initial w/h as its style. we'll use `transform` to scale
       // the target in most cases, so it can't use percentage sizing.
-      if (!this.isScaleSetup) {
-        this.baseTargetSize = this.gesture.initialTargetSize
+      if (!m.isScaleSetup) {
+        m.baseTargetSize = m.gesture.initialTargetSize
 
         target.style.transformOrigin = "top left"
-        target.style.width = this.baseTargetSize.w
-        target.style.height = this.baseTargetSize.h
+        target.style.width = m.baseTargetSize.w
+        target.style.height = m.baseTargetSize.h
 
-        this.isScaleSetup = true
+        m.isScaleSetup = true
       }
     }
   }
 
+  /// when a scale gesture changes
   onScale(mx, my) {
-    const s0 = this.gesture.initialSize
-    const m0 = this.gesture.initialMousePosition
+    const m = this
+
+    const s0 = m.gesture.initialSize
+    const m0 = m.gesture.initialMousePosition
 
     // get the mouse delta; we'll use this to update the sizes captured
     // at the start of each scale op
@@ -712,7 +886,7 @@ export class Dumpling extends HTMLParsedElement {
     let dy = my - m0.y
 
     // unless choleric, update the frame's size. this resizes the outer frame
-    if (this.temperament !== choleric) {
+    if (m.temperament !== choleric) {
       let newWidth = s0.w + dx;
       let newHeight = s0.h + dy;
 
@@ -720,10 +894,10 @@ export class Dumpling extends HTMLParsedElement {
       // let xflip = (newWidth < 0) ? -1 : 1
       // if (newWidth < 0) {
       //   // todo flip
-      //   this.style.transform = "scale(-1, 1)"
+      //   m.style.transform = "scale(-1, 1)"
       //   newWidth = -newWidth;
       // } else {
-      //   this.style.transform = "scale(1, 1)"
+      //   m.style.transform = "scale(1, 1)"
       // }
 
       newWidth = Math.max(newWidth, MinContentWidth);
@@ -733,21 +907,21 @@ export class Dumpling extends HTMLParsedElement {
       dx = newWidth - s0.w;
       dy = newHeight - s0.h;
 
-      this.style.width = `${newWidth}px`
-      this.style.height = `${newHeight}px`
+      m.style.width = `${newWidth}px`
+      m.style.height = `${newHeight}px`
     }
 
     // get the target, the frame's content, to apply temperamental scaling
-    const target = this.findScaleTarget()
+    const target = m.findScaleTarget()
     if (target != null) {
-      const tsb = this.baseTargetSize
-      const ts0 = this.gesture.initialTargetSize
+      const tsb = m.baseTargetSize
+      const ts0 = m.gesture.initialTargetSize
 
       // calculate the scale factor based on the target's w/h ratios
       const scaleX = (ts0.w + dx) / tsb.w
       const scaleY = (ts0.h + dy) / tsb.h
 
-      switch (this.temperament) {
+      switch (m.temperament) {
         case sanguine:
           target.style.transform = `scale(${scaleX}, ${scaleY})`
           target.style.width = `${100/scaleX}%`
@@ -765,9 +939,29 @@ export class Dumpling extends HTMLParsedElement {
           break
         case choleric:
           // IMPORTANT - DO NOT REMOVE
-          target.style.width = `${this.tw + dx}px`
-          target.style.height = `${this.th + dy}px`
+          target.style.width = `${m.tw + dx}px`
+          target.style.height = `${m.th + dy}px`
           break
+      }
+    }
+  }
+
+  /// when a scale gesture ends
+  onScaleEnd = () => {
+    const m = this
+
+    // remove any bagged dumplings that are no longer contained
+    if (m.$contents != null) {
+      const dr = m.getBoundingClientRect()
+
+      // for every item
+      for (const $i of Array.from(m.$contents)) {
+        const ir = $i.getBoundingClientRect()
+
+        // if its top-left corner is outside our bottom-right corner, remove it
+        if (ir.top > dr.bottom && ir.left > dr.right) {
+          m.removeItem($i)
+        }
       }
     }
   }
