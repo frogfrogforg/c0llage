@@ -1,4 +1,4 @@
-<style>
+<head><style>
     .monitor {
         z-index: 1;
         pointer-events: none;
@@ -19,23 +19,63 @@
     }
 </style>
 
-<body>
-    <svg id="hotspot-map"
-         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-         viewBox="0 0 1000 1000" >
+</head><body>
+        <svg id="hotspot-map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
         <image preserveAspectRatio="none" id="background-img" href="images/79questioning.jpg"></image>
-        <a title="" class="hotspot cursor-swim" href="301water_log.html">
-            <rect x=905.1497490157761 y=132.51114980639235 width=126.77351346882779 height=235.50248901235074 />
+        <a title="" class="hotspot cursor-inspect" href="#" onclick="Frames.show('question-5')">
+            <polygon points="758.670508064747, 467.069003277977 768.5233718058477, 582.5242625152298 887.414594281795, 579.244283559626 872.306869878774, 465.7570116957355"></polygon>
         </a>
-        <a title="" class="hotspot cursor-swim" href="15waterfromfar.html">
-            <rect x=-5.911718244660365 y=169.90290990027535 width=112.32264664854696 height=219.75859002545263 />
+        <a title="" class="hotspot cursor-inspect" href="#" onclick="Frames.show('question-4')">
+            <polygon points="749.4745019063864, 467.069003277977 756.6999353165269, 582.5242625152298 631.2401370131792, 583.1802583063505 627.9558490994789, 469.0369906513393"></polygon>
+        </a>
+        <a title="" class="hotspot cursor-inspect" href="#" onclick="Frames.show('question-3')">
+            <polygon points="504.46662354435125, 473.62896118918457 505.7803387098313, 587.116233053075 625.3284187685188, 582.5242625152298 621.3872732720785, 469.0369906513393"></polygon>
+        </a>
+        <a title="" class="hotspot cursor-inspect" href="#" onclick="Frames.show('question-2')">
+            <polygon points="381.63425557196365, 471.6609738158223 373.75196457908316, 587.7722288441958 498.55490529969086, 588.4282246353165 499.21176288243095, 472.3169696069431"></polygon>
+        </a>
+        <a title="" class="hotspot cursor-inspect" href="#" onclick="Frames.show('question-1')">
+            <polygon points="372.43824941360305, 473.62896118918457 367.8402463344228, 587.7722288441958 247.63530869299535, 587.7722288441958 252.89016935491566, 473.62896118918457 252.89016935491566, 473.62896118918457"></polygon>
+        </a>
+        <a title="" class="hotspot cursor-inspect" href="#" onclick="Frames.show('question-0')">
+            <polygon points="129.40094379978802, 474.2849569803053 117.57750731046728, 591.0522077997996 240.4098752828549, 589.7402162175581 247.63530869299535, 474.2849569803053"></polygon>
+        </a>
+        <a title="" class="hotspot cursor-swim" href="./15waterfromfar.html">
+            <rect x="-5.911718368530273" y="169.9029083251953" width="112.32264709472656" height="219.7585906982422"></rect>
+        </a>
+        <a title="" class="hotspot cursor-swim" href="./301water_log.html">
+            <rect x="905.1497192382812" y="132.5111541748047" width="126.77351379394531" height="235.5024871826172"></rect>
         </a>
     </svg>
     <div class="screen" style="left: 7%; top: 57.111%; width: 87.555%; height: 32.222%;">
     </div>
 
-    <a-dumpling title="art Forms" id="artForms" temperament="phlegmatic" w=50 h=110 x=90 y=-5 hidden>
-        <d-iframe src="./computer-forms.html" autoload></d-iframe>
+    <a-dumpling title="art Forms" id="artForms" temperament="phlegmatic" w="50" h="110" x="90" y="-5" hidden="">
+        <d-iframe src="./computer-forms.html" autoload=""></d-iframe>
+    </a-dumpling>
+
+    <a-dumpling id="question-0" temperament="phlegmatic" w="23" h="8" x-min="10" x-max="60" y-min="5" y-max="40" hidden>
+        <div>is this what you see?</div>
+    </a-dumpling>
+
+    <a-dumpling id="question-1" temperament="phlegmatic" w="23" h="8" x-min="10" x-max="60" y-min="5" y-max="40" hidden>
+        <div>where is the water?</div>
+    </a-dumpling>
+
+    <a-dumpling id="question-2" temperament="phlegmatic" w="23" h="8" x-min="10" x-max="60" y-min="5" y-max="40" hidden>
+        <div>skunk cabbage</div>
+    </a-dumpling>
+
+    <a-dumpling id="question-3" temperament="phlegmatic" w="23" h="8" x-min="10" x-max="60" y-min="5" y-max="40" hidden>
+        <div>tussock sedge</div>
+    </a-dumpling>
+
+    <a-dumpling id="question-4" temperament="phlegmatic" w="23" h="8" x-min="10" x-max="60" y-min="5" y-max="40" hidden>
+        <div>sensitive fern</div>
+    </a-dumpling>
+
+    <a-dumpling id="question-5" temperament="phlegmatic" w="23" h="8" x-min="10" x-max="60" y-min="5" y-max="40" hidden>
+        <div>buttress roots</div>
     </a-dumpling>
 
     <button class="hotspot cursor-keyboard" style="bottom: 16%; left: 10%; width: 32%; height: 12%;" onclick="Frames.show('artForms')"></button>
