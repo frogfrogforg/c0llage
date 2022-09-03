@@ -573,7 +573,8 @@ export class Dumpling extends HTMLParsedElement {
       }
 
       // and it must be able to hold this kind of dumpling
-      if ($el.getAttribute("holds") === m.getAttribute("kind")) {
+      const holds = $el.getAttribute("holds")
+      if (holds === "*" || holds === m.getAttribute("kind")) {
         $bag = $el
         break
       }
