@@ -595,7 +595,6 @@ export class Dumpling extends HTMLParsedElement {
 
     // item tracks the bag
     $el.$bag = m
-    console.log(`${m.id} add ${$el.id}`)
   }
 
   /// remove dumpling from this bag
@@ -609,7 +608,6 @@ export class Dumpling extends HTMLParsedElement {
 
     // remove item from the bag
     m.$contents.delete($el)
-    console.log(`${m.id} remove ${$el.id}`, m.$contents)
 
     // item clear the bag
     $el.$bag = null
