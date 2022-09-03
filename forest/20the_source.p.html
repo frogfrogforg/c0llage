@@ -63,11 +63,6 @@
         <span class="fire">🔥🔥🔥🔥🔥</span>
     </a-dumpling>
 
-    <s-cript target="assistant">
-        --- click
-        I love Christmas presents!
-    </s-cript>
-
 </body>
 <script type="module">
     const $skateBox = document.getElementById("skate-box")
@@ -76,3 +71,14 @@
         d.State.hasSkate = true
     })
 </script>
+
+<s-cript target="assistant">
+    --- enter [once]
+    This must be the source of the fire level. {oh no!|i like this}
+    [cont] You should contact the parks staff to let them know you found this, maybe they can put it out. {i'll think about it}
+    ==> click
+
+    --- click
+    Don't forget to open your presents.
+    ==> click
+</s-cript>

@@ -1,19 +1,16 @@
 <body>
     <img class="background" src="./images/DirtBully.png">
 
-    <button class="hotspot centered cursor-talk" onclick="DirtTalk()"
+    <button id="dirt" class="hotspot centered cursor-talk" onclick="DirtTalk()"
         style=" left: 67.888%; top: 69.666%; width: 25%; height: 43%" data-turbo="false"></button>
 
     <a class="hotspot centered cursor-move" href="./80meditation.html"
         style="left: 40.549%; top: 42.955%; width: 19.920%; height: 18.383%;"></a>
-
+<!-- 
     <a-dumpling hidden id="rude" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
         <span> u r nerd </span>
-    </a-dumpling>
+    </a-dumpling> -->
 
-    <a-dumpling hidden id="bully2" x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-        <span> u r nerder </span>
-    </a-dumpling>
 </body>
 
 <script type="module">
@@ -25,3 +22,15 @@
         }
     }
 </script>
+
+<s-cript target="dirt" id="dirt" main>
+    --- click
+      u r nerd
+      ==> click
+</s-cript>
+
+<s-cript target="assistant">
+    --- click
+    Not everyone here is kind. Not everyone anywhere is kind.
+    ==> click
+</s-cript>
