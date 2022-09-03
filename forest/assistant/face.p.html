@@ -9,35 +9,37 @@
 
   <template id="main-hook">
     <article class="Dialog">
-      <p>yes, come to me any time</p>
+      <p>I like it when you click on me.</p>
 
       <div class="Dialog-buttons">
-        <button class="Dialog-button">thank you</button>
+        <button class="Dialog-button">i like to click on you</button>
       </div>
     </article>
   </template>
 
   <s-cript id="script" target="assistant" main>
     --- intro
-    how are you? {no complaints :)}
+    How are you? {no complaints :)}
     ==> main
 
     --- main
     <!-- *** main-hook -->
-    yes, come to me any time {o.k.}
+    I like it when you click on me. {i like to click on you}
     ==> main
 
     --- ledger
-    wow, you're using the website! {yes}
-    you've been at it for a while...but if you're feeling excited, keep going. there's still so much more to click on, i
-    promise. {}
-    [cont] i guess i should probably tell you soon... {huh | what}
-    [cont] you've just used your 100 free clicks, you see. {my...}
-    [cont] your free clicks. {my clicks}
-    [cont] from here on out, each click will cost you 1¢. {...}
-    [cont] i'm sorry, i don't set the policy. i don't really even enforce it. you'll have to take that one up with the parks staff... {.}
-    [cont] ...but i can help you settle up your debts to them. {how | no}
+    Wow, you're using the website! {yes}
+    You've been at it for a while... but if you're feeling excited, keep going. There's still so much more to click on, I promise. {}
+    [cont] I guess I should probably tell you soon... {huh | what}
+    [cont] ...you've just used your 100 free clicks, you see. {my...}
+    [cont] Your free clicks. {my clicks}
+    [cont] From here on out, each click will cost you 1¢. {...}
+    [cont] I'm sorry, I don't make the rules. I don't really even enforce the rules. You'll have to take that one up with the parks staff... {.}
+    [cont] ...but I can help you settle up your debts to them. {how | no}
     *** debts-hook
+
+    <!-- this goes no where -->
+    
   </s-cript>
 </body>
 
