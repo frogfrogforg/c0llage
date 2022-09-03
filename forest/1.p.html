@@ -28,34 +28,20 @@
     style="left: 0; bottom: 0%; width: 10%; height: 10%;"
   ></a>
 
-  <a-dumpling
-    id="assistant"
-    x="91" y="7"
-    w="25" h="30"
-    temperament="choleric"
-    permanent
-    no-back no-close
-  >
-    <d-iframe
-      src="./assistant/face.html"
-      autoload
-    />
-  </a-dumpling>
-
   <s-cript target="assistant">
     --- enter
     ==> [once] intro
 
     --- intro
-    [cont] Traveler...! Look over here, click over here. I'm The Assistant.
-    [cont] Welcome to our forest. If you ever need guidance, click on my window & we can talk. {thank you}
-    [cont] The forest can be a confusing place, but you don't need to worry.{why not?}
+    [cont] Traveler...! Look over here! {who are you?}
+    [cont] Welcome to our forest. I'm the Assistant. If you ever need guidance, click on my window & we can talk. {thank you}
+    [cont] Let's get you acquainted with some of the other forest denizens. {sure thing}
     [cont] I'll be here with you the entire way. I've lived here for years and years. I can guide you.{that sounds useful}
     [cont] I'm a good friend to have.{a handsome one, too}
     ==> click
 
     --- click
-    Do you really think I'm handsome?{yes ;)}
+    Go explore, meet some of the park dwellers. {Cancel}
     ==> click
   </s-cript>
 </body>
