@@ -4,9 +4,6 @@
 <head>
   <meta charset="UTF-8">
 
-  <!-- caching -->
-  <meta name="turbo-cache-control" content="no-cache">
-
   <!-- title -->
   <title>{title}</title>
 
@@ -36,9 +33,10 @@ the 1 day marshmallow">
 <body class="Forest">
   <div id="game">
     {content}
-    <div class="ForestLayer--overlay">
-      <section id="frames" class="ForestLayer-content"></section>
-    </div>
+  </div>
+
+  <div class="ForestLayer--overlay">
+    <section id="frames" class="ForestLayer-content"></section>
   </div>
 
   <div class="ForestLayer--overlay">
@@ -47,8 +45,18 @@ the 1 day marshmallow">
 
   <div class="ForestLayer--overlay">
     <section class="ForestLayer-content">
-      <object type='image/svg+xml' data='./skills/istealth.svg' class='stealthIcon' id='stealthSVG' style="fill: none;">
-      </object>
+      <object type='image/svg+xml'
+        data='./skills/istealth.svg'
+        class='stealthIcon'
+        id='stealthSVG'
+        style="fill: none;"
+      ></object>
+
+      <img
+        id="free-claribelle"
+        class="Claribelle"
+        src="../forest/images/Claribelle.png"
+      >
     </section>
   </div>
 </body>
