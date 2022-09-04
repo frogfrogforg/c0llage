@@ -80,21 +80,23 @@ const cx = (...classes) =>
   `class="${classes.join(" ")}"`
 
 const kTemplate = `
-  <div ${cx(k.class.content)}">
-    <div ${cx(k.class.header)}>
-      <div ${cx(k.class.close, k.class.headerButton)} id="$id-close"></div>
-      <div ${cx(k.class.maximize, k.class.headerButton)} id="$id-max"></div>
+  <article ${cx(k.class.content)}">
+    <header ${cx(k.class.header)}>
+      <div ${cx(k.class.close, k.class.headerButton)}></div>
+      <div ${cx(k.class.maximize, k.class.headerButton)}></div>
       <div ${cx(k.class.back, k.class.headerButton)}>☚</div>
-      <div ${cx(k.class.temperament, k.class.headerButton)} id="$id-feelings">?</div>
+      <div ${cx(k.class.temperament, k.class.headerButton)}>?</div>
 
       <div ${cx(k.class.title)}>
-        <div ${cx(k.class.titleText)} id="$id-title"></div>
+        <span ${cx(k.class.titleText)}></span>
       </div>
-    </div>
+    </header>
 
-    <div ${cx(k.class.body)} id="$id-body"></div>
+    <section ${cx(k.class.body)}>
+    </section>
+
     <div ${cx(k.class.handle)}></div>
-  </div>
+  </article>
 `
 
 // -- c/focus
@@ -196,9 +198,9 @@ export class Dumpling extends HTMLParsedElement {
     const children = Array.from(m.children)
 
     // render template
-    // TODO: shouldn't need to add ids to every element, query based on class
-    const template = kTemplate.replaceAll("$id", id)
-    m.innerHTML = template
+    // TODO: "compile" template by doing this once and then using cloneNode for
+    // every other dumpling
+    m.innerHTML = kTemplate
 
     // set body element
     m.$body = m.querySelector(`.${k.class.body}`)
@@ -212,7 +214,7 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // move children
-    if (children.length != 0) {
+    if (children.length !== 0) {
       // pick inner element to move children to
       let $inner = m.$body
 
@@ -240,31 +242,30 @@ export class Dumpling extends HTMLParsedElement {
     })
 
     // temperament Stuff
-    this.temperament = this.getAttribute('temperament') || DefaultTemperament
-    this.classList.toggle(this.temperament, true)
-    const temperamentData = TemperamentData[this.temperament]
+    m.temperament = m.getAttribute('temperament') || DefaultTemperament
+    m.classList.toggle(m.temperament, true)
+    const temperamentData = TemperamentData[m.temperament]
 
-    const feelingsButton = this.querySelector(`#${id}-feelings`)
-    feelingsButton.innerHTML =
-      temperamentData.emoji
+    const feelingsButton = m.querySelector(`.${k.class.temperament}`)
+    feelingsButton.innerHTML = temperamentData.emoji
 
     feelingsButton.onclick = () => {
       window.alert(temperamentData.alert)
     }
 
     // close button
-    const closeButton = this.querySelector(`#${id}-close`)
-    if (!this.hasAttribute("no-close")) {
-      closeButton.addEventListener("click", this.onClose)
+    const closeButton = m.querySelector(`.${k.class.close}`)
+    if (!m.hasAttribute("no-close")) {
+      closeButton.addEventListener("click", m.onClose)
     } else {
       closeButton.style.display = 'none'
     }
 
     // maximize button
-    const iframe = this.findIframe()
-    const maximizeButton = this.querySelector(`#${id}-max`)
+    const iframe = m.findIframe()
+    const maximizeButton = m.querySelector(`.${k.class.maximize}`)
 
-    if (this.hasAttribute('maximize') && iframe != null) {
+    if (m.hasAttribute('maximize') && iframe != null) {
       maximizeButton.onclick = () => {
         window.open(iframe.contentDocument.location, '_self')
       }
@@ -273,8 +274,8 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // back button
-    const backButton = this.querySelector(`.Frame-backButton`)
-    if (!this.hasAttribute('no-back') && iframe != null) {
+    const backButton = m.querySelector(`.${k.class.back}`)
+    if (!m.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
@@ -300,7 +301,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   onClose = () => {
-    const diframe = this.querySelector('d-iframe')
+    const diframe = this.querySelector("d-iframe")
     if (diframe != null) {
       diframe.destroyIframe()
     }
@@ -559,7 +560,7 @@ export class Dumpling extends HTMLParsedElement {
   addToBag(x, y) {
     const m = this
 
-    // look for a parent at this point
+    // look for a bag at this point
     const $els = document.elementsFromPoint(x, y)
     if ($els == null) {
       return
@@ -567,7 +568,7 @@ export class Dumpling extends HTMLParsedElement {
 
     let $bag = null
     for (const $el of $els) {
-      // it must be a dumpling, but not this one
+      // it must be a dumpling, but not this dumpling
       if ($el === m || !($el instanceof Dumpling)) {
         continue
       }
@@ -580,37 +581,41 @@ export class Dumpling extends HTMLParsedElement {
       }
     }
 
-    if ($bag != null) {
-      $bag.addItem(m)
+    // if none, don't add
+    if ($bag == null) {
+      return
     }
+
+    // otherwise, add
+    $bag.addItem(m)
   }
 
   /// add dumpling to this bag
-  addItem($el) {
+  addItem($item) {
     const m = this
 
     // add item to the bag
     m.$contents ||= new Set()
-    m.$contents.add($el)
+    m.$contents.add($item)
 
     // item tracks the bag
-    $el.$bag = m
+    $item.$bag = m
   }
 
   /// remove dumpling from this bag
-  removeItem($el) {
+  removeItem($item) {
     const m = this
 
     // don't remove nothing to/from nothing
-    if (m.$contents == null || $el == null) {
+    if (m.$contents == null || $item == null) {
       return
     }
 
     // remove item from the bag
-    m.$contents.delete($el)
+    m.$contents.delete($item)
 
-    // item clear the bag
-    $el.$bag = null
+    // item tracks the lack of bag
+    $item.$bag = null
   }
 
   // -- c/gesture
@@ -738,9 +743,9 @@ export class Dumpling extends HTMLParsedElement {
     })
 
     // disable collisions with iframes
-    const iframes = document.querySelectorAll("iframe")
-    for (const iframe of Array.from(iframes)) {
-      iframe.style.pointerEvents = "none"
+    const $iframes = document.querySelectorAll("iframe")
+    for (const $iframe of Array.from($iframes)) {
+      $iframe.style.pointerEvents = "none"
     }
 
     // start the operation
@@ -782,12 +787,12 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // re-enable mouse events on iframes
-    const iframes = document.querySelectorAll('iframe')
+    const iframes = document.querySelectorAll("iframe")
     for (const iframe of Array.from(iframes)) {
       iframe.style.pointerEvents = null
     }
 
-    // finish gesture
+    // send per-gesture events
     const mx = evt.clientX
     const my = evt.clientY
 
@@ -798,6 +803,7 @@ export class Dumpling extends HTMLParsedElement {
       m.onScaleEnd(); break;
     }
 
+    // and clear it
     m.clearGesture()
 
     // focus frame
@@ -1032,16 +1038,16 @@ export class Dumpling extends HTMLParsedElement {
     return this._title
   }
 
-  set title(value) {
-    const titleEl = this.querySelector(`#${this.id}-title`)
-    this._title = value;
+  set title(text) {
+    const m = this
 
-    if (!value) {
-      titleEl.style.display = 'none'
-    } else {
-      delete titleEl.style.display
-      titleEl.innerHTML = value;
-    }
+    // store title
+    m._title = text
+
+    // update el
+    const $el = m.querySelector(`.${k.class.titleText}`)
+    $el.innerText = text
+    $el.style.display = text ? "" : "none"
   }
 
   // find the title from many different possible sources
