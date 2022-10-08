@@ -16,6 +16,9 @@ let mUrl = null
 /// the game element
 let $mGame = null
 
+/// the frames element
+let $mFrames = null
+
 // -- lifetime --
 function main() {
   /// set props
@@ -23,6 +26,7 @@ function main() {
 
   // capture elements
   $mGame = document.getElementById("game")
+  $mFrames = document.getElementById("frames")
   setTitle("welcome")
 
   // inventory (persistent windows) loading and saving
@@ -78,14 +82,11 @@ async function visit(url) {
   // extract the game
   const $next = $el.querySelector("#game")
 
-  // replace children of game element
-  while ($mGame.firstChild) {
-    $mGame.removeChild($mGame.lastChild)
-  }
+  // remove all frames
+  $mFrames.replaceChildren()
 
-  for (const child of Array.from($next.children)) {
-    $mGame.appendChild(child)
-  }
+  // replace children of game element
+  $mGame.replaceChildren(...$next.children)
 
   // TODO: do we need this?
   // activate any inert script tags in the new game
