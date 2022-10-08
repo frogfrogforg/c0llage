@@ -38,6 +38,10 @@
 
 /* classes for specific characters */
 .Dialog-assistant {
-    font-family: 'Courier New', Courier, monospace;
+
 }
 
+.Dialog-assistant .Dialog-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight:bold;
+}
