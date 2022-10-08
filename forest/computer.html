@@ -122,6 +122,29 @@
 
     </div>
 
+    <!-- glumby -->
+    <iframe id="glumby" disable-randomization=true class="background" src="/games/glumby/web-build/index.html"></iframe>
+    <script type="module">
+        const getDumplingElements = () => document.querySelectorAll("a-dumpling.is-visible");
+        // Support for glumby - interface to pass along info about the number and position of open dumplings
+        // (Look at callbacks.jslib in the glumby unity proj for more info)
+        window.getNDumplings = () => {
+            return getDumplingElements().length;
+        }
+        window.getDumplingX = (i) => {
+            return getDumplingElements()[i].getBoundingClientRect().left;
+        }
+        window.getDumplingY = (i) => {
+            return getDumplingElements()[i].getBoundingClientRect().top;
+        }
+        window.getDumplingW = (i) => {
+            return getDumplingElements()[i].getBoundingClientRect().width;
+        }
+        window.getDumplingH = (i) => {
+            return getDumplingElements()[i].getBoundingClientRect().height;
+        }
+    </script>
+
     <!-- claribelle is unhidden when she escapes from alidator -->
     <img id="claribelle" class="Claribelle" src="./images/Claribelle.png">
 

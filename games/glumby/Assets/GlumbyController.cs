@@ -117,7 +117,7 @@ public class GlumbyController : MonoBehaviour
                     _canWallJump = false;
                 }
             }
-            _yVelocity -= _gravity;
+            _yVelocity -= _gravity * Time.deltaTime;
         }
 
         _velocity.y = _yVelocity;
