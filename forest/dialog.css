@@ -8,6 +8,7 @@
     margin: 0;
     background: #efefef;
     padding: 4px;
+    padding-left:8px;
     border: 2px inset #E6E3E0;
     font:menu;
     font-size:1em;
@@ -39,3 +40,4 @@
 .Dialog-assistant {
     font-family: 'Courier New', Courier, monospace;
 }
+
