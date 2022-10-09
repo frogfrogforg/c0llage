@@ -59,6 +59,11 @@
   }
 
   // -- commands --
+  /// show the rv
+  function showRv(isVisible) {
+    $el.style.visibility = isVisible ? "visible" : "hidden"
+  }
+
   /// show the rv keys
   function showKeys(isVisible) {
     $keys.style.visibility = isVisible ? "visible" : "hidden"
@@ -130,6 +135,7 @@
     }
 
     // toggle the visibility of the rv parts
+    showRv(!isDriving)
     showKeys(!isDriving)
     showInterior(isDriving)
   }
