@@ -217,3 +217,21 @@ s-cript {
 .sparkle::selection {
   background: transparent;
 }
+
+/* different formatting for different dialogs */
+
+.d-internal{
+  font-style:italic;
+  animation: internal 4s infinite;
+  text-shadow: 0px 0px 2px gray;
+}
+
+@keyframes internal{
+  50% {filter: opacity(0.69);}
+  100% { }
+}
+
+.d-wizard{
+  font-family:'Brush Script MT', cursive !important;
+  font-size: 1.5em !important;
+}

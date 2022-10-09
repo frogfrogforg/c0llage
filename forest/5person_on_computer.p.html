@@ -52,7 +52,7 @@
         bodyClass="InvertedFrame"
         hidden
     >
-        <span>
+        <span class="d-internal">
             Don't <a href="#" onclick="Frames.show('more-rude')">be rude</a>, they are using <a href="#" onclick="Frames.show('the-computer')">the computer</a>
         </span>
     </a-dumpling>
@@ -70,12 +70,12 @@
     </a-dumpling>
 
     <a-dumpling id="more-rude" hidden x=40 y=30 width=50 height=35 bodyClass="frog-dialogue">
-        <span>
-            <p>The frog looks you in the eye, frowning.</p>
+        <div class="Dialog-text">
+            <p class="d-internal">the frog looks you in the eye & frowns</p>
             <p>"Please leave me alone. We don't get internet back at the <span class='cosmodrome'>Cosmodrome</span>. Between taking
                 care of my kids and
                 my mother, this is the one hour a week that I get to see what my friends are up to."</p>
-        </span>
+        </div>
     </a-dumpling>
 
     <iframe id="honeybee" disable-randomization=true class="background" src="/games/honeybee/web-build/honeybee.html"></iframe>

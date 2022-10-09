@@ -61,6 +61,8 @@ const k = {
       "persistent",
     ],
     bodyClass: "bodyClass",
+    holds: "holds",
+    kind: "kind",
   },
   tag: {
     iframe: new Set([
@@ -203,7 +205,7 @@ export class Dumpling extends HTMLParsedElement {
     m.innerHTML = kTemplate
 
     // set body element
-    m.$body = m.querySelector(`.${k.class.body}`)
+    m.$body = m.findByClass(k.class.body)
     if (m.$body == null) {
       console.error(`[dmplng] a-dumpling ${id} has no body!`)
     }
@@ -246,7 +248,7 @@ export class Dumpling extends HTMLParsedElement {
     m.classList.toggle(m.temperament, true)
     const temperamentData = TemperamentData[m.temperament]
 
-    const feelingsButton = m.querySelector(`.${k.class.temperament}`)
+    const feelingsButton = m.findByClass(k.class.temperament)
     feelingsButton.innerHTML = temperamentData.emoji
 
     feelingsButton.onclick = () => {
@@ -254,7 +256,7 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // close button
-    const closeButton = m.querySelector(`.${k.class.close}`)
+    const closeButton = m.findByClass(k.class.close)
     if (!m.hasAttribute("no-close")) {
       closeButton.addEventListener("click", m.onClose)
     } else {
@@ -263,7 +265,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // maximize button
     const iframe = m.findIframe()
-    const maximizeButton = m.querySelector(`.${k.class.maximize}`)
+    const maximizeButton = m.findByClass(k.class.maximize)
 
     if (m.hasAttribute('maximize') && iframe != null) {
       maximizeButton.onclick = () => {
@@ -274,7 +276,7 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // back button
-    const backButton = m.querySelector(`.${k.class.back}`)
+    const backButton = m.findByClass(k.class.back)
     if (!m.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
@@ -574,8 +576,8 @@ export class Dumpling extends HTMLParsedElement {
       }
 
       // and it must be able to hold this kind of dumpling
-      const holds = $el.getAttribute("holds")
-      if (holds === "*" || holds === m.getAttribute("kind")) {
+      const holds = $el.getAttribute(k.attr.holds)
+      if (holds === "*" || holds === m.getAttribute(k.attr.kind)) {
         $bag = $el
         break
       }
@@ -998,30 +1000,39 @@ export class Dumpling extends HTMLParsedElement {
     return this.getAttribute("layer") || kLayerDefault
   }
 
+  /// find the thing inside the dumpling to scale
   findScaleTarget() {
-    const body = this.querySelector(`#${this.id}-body`)
-    const child = body.firstElementChild
-    if (child == null) {
+    const m = this
+
+    // find our content element
+    const inner = m.findInner()
+    if (inner == null) {
       return null
     }
 
-    // search for a wrapped iframe (youtube embed is one level deep)
-    const iframe = this.findIframe()
+    // if it's an iframe, use its inner body (youtube embed is one level deep)
+    const iframe = m.asIframe(inner)
     if (iframe != null) {
       return iframe.contentDocument.body
     }
 
-    // otherwise, return first child
-    return child
+    // otherwise, use the content element
+    return inner
+  }
+
+  /// find the first child w/ the matching class
+  findByClass(klass) {
+    return this.querySelector(`.${klass}`)
   }
 
   // -- q/inner
-  // find the single content element
+  /// find the single content element
   findInner() {
     return this.$body != null ? this.$body.children[0] : null
   }
 
   // -- q/iframe --
+  /// find our inner iframe, if any
   findIframe() {
     return this.asIframe(this.findInner())
   }
@@ -1045,7 +1056,7 @@ export class Dumpling extends HTMLParsedElement {
     m._title = text
 
     // update el
-    const $el = m.querySelector(`.${k.class.titleText}`)
+    const $el = m.findByClass(k.class.titleText)
     $el.innerText = text
     $el.style.display = text ? "" : "none"
   }
