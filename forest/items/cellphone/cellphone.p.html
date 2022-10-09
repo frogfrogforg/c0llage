@@ -17,7 +17,7 @@
     }
 
     .PhoneBg {
-      position: relative;
+      position: absolute;
       top:0px;
       left:0px;
       width: 100%;
@@ -29,6 +29,12 @@
       width: 18%;
       height: 7%;
       cursor: pointer;
+      background-color: transparent;
+      border: none;
+    }
+
+    #phone-face {
+      transform-origin: 50% 40%;
     }
 
     #call {
@@ -83,7 +89,7 @@
       left: 70%;
     }
 
-    #nP {
+    #nS {
       bottom: 06%;
       left: 16%;
     }
@@ -93,7 +99,7 @@
       left: 42%;
     }
 
-    #nS {
+    #nP {
       bottom: 06%;
       left: 69%;
     }
@@ -382,7 +388,7 @@
     document.getElementById('nP').addEventListener("pointerup", () => {
         dtmf.stop()
         if(speechSynthesis.speaking) return;
-        () => executeUtterance(textAdventure.getDescription())
+        executeUtterance(textAdventure.getDescription())
     })
 
     function executeUtterance(phrase) {
@@ -390,6 +396,34 @@
       speech.speak(utterThis)
     }
 
+    const face = document.getElementById("phone-face")
+    let animationDir = {x:0, y:1}
+    let animationMax = 0.4
+    let animationSpeed = 0.2
+    utterThis.addEventListener('boundary', (event) => {
+      console.log("aaaaa")
+      animationSpeed = 1 + Math.random() * 0.3
+      const a = Math.random() * 2*Math.PI
+      animationDir = { x:Math.cos(a), y:Math.sin(a) }
+    })
+
+    document.reque
+
+
+    function animateFace(timestamp) {
+      if (speech.speaking) {
+        const s = animationMax * Math.sin(timestamp * animationSpeed / 100)
+        const x = 1 + s * animationDir.x;
+        const y = 1 + s * animationDir.y;
+        face.style.transform = `scale(${x}, ${y})`
+      } else {
+        face.style.transform = `scale(1, 1)`
+      }
+
+      window.requestAnimationFrame(animateFace);
+    }
+
+    window.requestAnimationFrame(animateFace);
   </script>
 </head>
 <body class="ItemBody">
@@ -401,18 +435,20 @@
   </audio>
   <div class="Item">
     <img class="PhoneBg" src="phone.png">
-    <button class="PhoneKey" id="call">call</button>
-    <button class="PhoneKey" id="n1">1</button>
-    <button class="PhoneKey" id="n2">2</button>
-    <button class="PhoneKey" id="n3">3</button>
-    <button class="PhoneKey" id="n4">4</button>
-    <button class="PhoneKey" id="n5">5</button>
-    <button class="PhoneKey" id="n6">6</button>
-    <button class="PhoneKey" id="n7">7</button>
-    <button class="PhoneKey" id="n8">8</button>
-    <button class="PhoneKey" id="n9">9</button>
-    <button class="PhoneKey" id="nP">#</button>
-    <button class="PhoneKey" id="n0">0</button>
-    <button class="PhoneKey" id="nS">*</button>
+    <img class="PhoneBg PhoneScreen" src="phone-screen.png">
+    <img class="PhoneBg PhoneFace" id="phone-face" src="phone-face.png">
+    <button class="PhoneKey" id="call"></button>
+    <button class="PhoneKey" id="n1"></button>
+    <button class="PhoneKey" id="n2"></button>
+    <button class="PhoneKey" id="n3"></button>
+    <button class="PhoneKey" id="n4"></button>
+    <button class="PhoneKey" id="n5"></button>
+    <button class="PhoneKey" id="n6"></button>
+    <button class="PhoneKey" id="n7"></button>
+    <button class="PhoneKey" id="n8"></button>
+    <button class="PhoneKey" id="n9"></button>
+    <button class="PhoneKey" id="nS"></button>
+    <button class="PhoneKey" id="n0"></button>
+    <button class="PhoneKey" id="nP"></button>
   </div>
 </body>
