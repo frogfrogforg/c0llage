@@ -25,6 +25,7 @@ const initialState = {
   foundVehicle: false,
   foundKeyring: false,
   foundKeys: false,
+  isDriving: false,
   claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",
   hasSkate: false,

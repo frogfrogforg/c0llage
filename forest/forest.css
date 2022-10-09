@@ -193,6 +193,10 @@ p-artial {
   height: 100%;
 }
 
+p-artial.is-passthrough {
+  display: contents;
+}
+
 s-cript {
   display: none;
 }
