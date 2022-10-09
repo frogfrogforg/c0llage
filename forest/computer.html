@@ -6,13 +6,14 @@
             position: relative;
             background-color: blue;
             overflow: hidden;
+            margin: 0
         }
 
         .icons {
             position: absolute;
             /* This is becoming a very common pattern */
-            top: 2%;
-            left: 3%;
+            top: 5%;
+            left: 4%;
             width: 100%;
             display: flex;
             flex-direction: row;
@@ -74,6 +75,14 @@
             transform: scale(var(--scaleFactor));
             transform-origin: top left
         }
+
+        #glumby-frame Frame-body {
+            opacity:0
+        }
+
+        #glumby {
+            z-index:100; /* render on top of everything */
+        }
     </style>
 </head>
 
@@ -86,6 +95,10 @@
         <d-iframe style="--scaleFactor: 0.5;" id="forest" src="./1.html"></d-iframe>
     </a-dumpling>
 
+    <a-dumpling title='glumby' temperament='phlegmatic' id="glumby-frame" width=40 height=50 hidden>
+        loading...
+    </a-dumpling>
+
     <a-dumpling title='blog' temperament='phlegmatic' id="main-frame" hidden min-size=60 max-size=80>
         <d-iframe style="--scaleFactor: 1.0;" id="main" src="/home.html"></d-iframe>
     </a-dumpling>
@@ -93,6 +106,7 @@
     <a-dumpling title='cyberpunk 2077' temperament='choleric' id="narrative" width=35 height=80 hidden>
         <d-iframe style="--scaleFactor: 1.0;" id="main" src="./cyberpunk2077.html"></d-iframe>
     </a-dumpling>
+    
 
     <a-dumpling title='promedator' temperament='melancholic' id="promedator" hidden min-size=60 max-size=80>
         <d-iframe style="--scaleFactor: 1.0;" id="main" src="/gatherings/bucket.html"></d-iframe>
@@ -113,36 +127,104 @@
 
         <pc-icon target="main-frame" name='home' src="./images/icons/home.png"></pc-icon>
 
+        <pc-icon target="glumby-frame" name='glumby' src="./images/icons/glumby.png"></pc-icon>
+
         <pc-icon target="narrative" name='cyberpunk 2077' condition="sawMessyServerNarrative"
             src="./images/icons/narrative.png"></pc-icon>
 
         <pc-icon target="promedator" name='promedator' condition="visitedAlidator visitedPrometeus"
             src="./images/icons/promedator.png"></pc-icon>
 
-
     </div>
 
     <!-- glumby -->
-    <iframe id="glumby" disable-randomization=true class="background" src="/games/glumby/web-build/index.html"></iframe>
+    <iframe id="glumby" disable-randomization=true class="background" src="/games/glumby/web-build/glumby.html"></iframe>
     <script type="module">
         const getDumplingElements = () => document.querySelectorAll("a-dumpling.is-visible");
-        // Support for glumby - interface to pass along info about the number and position of open dumplings
-        // (Look at callbacks.jslib in the glumby unity proj for more info)
-        window.getNDumplings = () => {
-            return getDumplingElements().length;
-        }
-        window.getDumplingX = (i) => {
-            return getDumplingElements()[i].getBoundingClientRect().left;
-        }
-        window.getDumplingY = (i) => {
-            return getDumplingElements()[i].getBoundingClientRect().top;
-        }
-        window.getDumplingW = (i) => {
-            return getDumplingElements()[i].getBoundingClientRect().width;
-        }
-        window.getDumplingH = (i) => {
-            return getDumplingElements()[i].getBoundingClientRect().height;
-        }
+        const getGlumbyDumplingElement = () => document.querySelector("#glumby-frame.is-visible");
+        const body = document.querySelector("body");
+
+        const glumbyIframe = document.getElementById("glumby");
+        glumbyIframe.contentWindow.addEventListener('unity-loaded', () => {
+            const glumbyCanvas = glumby.contentDocument.getElementById("unity-canvas");
+
+            // Pass through keystrokes and clicks to the glumby frame
+            // (we do something v similar for honeybee, TODO make this code reusable)
+            ['click', 'mouseenter', 'mouseleave',
+            'mouseout', 'mouseover', 'mousemove',
+            'mousedown', 'mouseup'].forEach((eventName) => {
+                document.addEventListener(eventName, function (e) {
+                    const rect = glumbyIframe.getBoundingClientRect();
+                    // let e2 = new e.constructor(e.type, e);
+                    let e2 = new MouseEvent(e.type, {
+                        // Adjust client coordinates to be relative to the iframe document:
+                        clientX: e.clientX - rect.x,
+                        clientY: e.clientY - rect.y,
+                        // Everything else stays the same:
+                        screenX: e.screenX,
+                        screenY: e.screenY,
+                        region: e.region,
+                        relatedTarget: e.relatedTarget,
+                        composed: e.composed,
+                        view: e.view,
+                        bubbles: e.bubbles,
+                        cancelable: e.cancelable
+                    });
+
+                    glumbyCanvas.dispatchEvent(e2);
+                });
+            });
+
+            ['keydown', 'keyup'].forEach((eventName) => {
+                document.addEventListener(eventName, function (e) {
+                    const rect = glumbyIframe.getBoundingClientRect();
+                    // let e2 = new e.constructor(e.type, e);
+                    let e2 = new KeyboardEvent(e.type, e);
+
+                    glumbyCanvas.dispatchEvent(e2);
+                });
+            });
+
+            // Support for glumby - interface to pass along info about the number and position of open dumplings
+            // (Look at callbacks.jslib in the glumby unity proj for more info)
+            glumbyIframe.contentWindow.getNDumplings = () => {
+                return getDumplingElements().length;
+            }
+            glumbyIframe.contentWindow.getDumplingX = (i) => {
+                return getDumplingElements()[i].getBoundingClientRect().left / body.getBoundingClientRect().width;
+            }
+            glumbyIframe.contentWindow.getDumplingY = (i) => {
+                return getDumplingElements()[i].getBoundingClientRect().top / body.getBoundingClientRect().height;
+            }
+            glumbyIframe.contentWindow.getDumplingW = (i) => {
+                return getDumplingElements()[i].getBoundingClientRect().width / body.getBoundingClientRect().width;
+            }
+            glumbyIframe.contentWindow.getDumplingH = (i) => {
+                return getDumplingElements()[i].getBoundingClientRect().height / body.getBoundingClientRect().height;
+            }
+            glumbyIframe.contentWindow.isGlumbyDumplingOpen = () => {
+                debugger;
+                return getGlumbyDumplingElement() !== null;
+            }
+            glumbyIframe.contentWindow.getGlumbyDumplingX = () => {
+                return getGlumbyDumplingElement().getBoundingClientRect().left / body.getBoundingClientRect().width;
+            }
+            glumbyIframe.contentWindow.getGlumbyDumplingY = () => {
+                return getGlumbyDumplingElement().getBoundingClientRect().top / body.getBoundingClientRect().height;
+            }
+            glumbyIframe.contentWindow.getGlumbyDumplingW = () => {
+                return getGlumbyDumplingElement().getBoundingClientRect().width / body.getBoundingClientRect().width;
+            }
+            glumbyIframe.contentWindow.getGlumbyDumplingH = () => {
+                return getGlumbyDumplingElement().getBoundingClientRect().height / body.getBoundingClientRect().height;
+            }
+
+            // Override the setpointer callback from unity to set both the pointer style and pointerEvents
+            glumbyIframe.contentWindow.setUnityPointer = (pointer) => {
+                canvas.style.cursor = pointer ? "pointer" : "default"
+                glumbyIframe.style.pointerEvents = pointer ? "all" : "none"
+            }
+        });
     </script>
 
     <!-- claribelle is unhidden when she escapes from alidator -->

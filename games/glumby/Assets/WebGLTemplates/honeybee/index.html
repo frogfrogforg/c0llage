@@ -7,18 +7,18 @@
   </head>
   <body style="text-align: center; margin: 0">
     <canvas id="unity-canvas" style="opacity: 0; width: 100%; height: 100%; background: none /* transparent background ! */"></canvas>
-    <script src="Build/{{{ LOADER_FILENAME }}}"></script>
+    <script src="./Build/{{{ LOADER_FILENAME }}}"></script>
     <script src="./honeybee.js"></script>
     <script>
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/{{{ DATA_FILENAME }}}",
-        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
-        codeUrl: "Build/{{{ CODE_FILENAME }}}",
+        dataUrl: "./Build/{{{ DATA_FILENAME }}}",
+        frameworkUrl: "./Build/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: "./Build/{{{ CODE_FILENAME }}}",
 #if MEMORY_FILENAME
-        memoryUrl: "Build/{{{ MEMORY_FILENAME }}}",
+        memoryUrl: "./Build/{{{ MEMORY_FILENAME }}}",
 #endif
 #if SYMBOLS_FILENAME
-        symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
+        symbolsUrl: ./Build/{{{ SYMBOLS_FILENAME }}}",
 #endif
         streamingAssetsUrl: "StreamingAssets",
         companyName: "{{{ COMPANY_NAME }}}",

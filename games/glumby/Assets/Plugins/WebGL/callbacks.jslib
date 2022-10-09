@@ -30,7 +30,9 @@ mergeInto(LibraryManager.library, {
   },
 
   /* float */ _GetDumplingW: function (/* int */ i) {
+   // console.log("called _GetDumplingW from Unity");
     if (window.getDumplingW) {
+     // console.log("calling window.getDumplingW in JS");
       return window.getDumplingW(i);
     }
   },
@@ -39,5 +41,36 @@ mergeInto(LibraryManager.library, {
     if (window.getDumplingH) {
       return window.getDumplingH(i);
     }
+  },
+
+  /* bool */ _IsGlumbyDumplingOpen: function () {
+    if (window.isGlumbyDumplingOpen) {
+      return window.isGlumbyDumplingOpen();
+    }
+  },
+
+  /* float */ _GetGlumbyDumplingX: function () {
+    if (window.getGlumbyDumplingX) {
+      return window.getGlumbyDumplingX();
+    }
+  },
+
+  /* float */ _GetGlumbyDumplingY: function () {
+    if (window.getGlumbyDumplingY) {
+      return window.getGlumbyDumplingY();
+    }
+  },
+
+  /* float */ _GetGlumbyDumplingW: function () {
+    if (window.getGlumbyDumplingW) {
+      return window.getGlumbyDumplingW();
+    }
+  },
+
+  /* float */ _GetGlumbyDumplingH: function () {
+    if (window.getGlumbyDumplingH) {
+      return window.getGlumbyDumplingH();
+    }
   }
+  
 });

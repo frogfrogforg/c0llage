@@ -6,7 +6,9 @@ using UnityEngine;
 public class GlumbyController : MonoBehaviour
 {
     [Header("References")]
+    public JSCallbacks jsCallbacks;
     public Animator animator;
+    public GameObject glumbyRenderObject;
 
     [Header("Parameters")]
     [SerializeField]
@@ -47,7 +49,9 @@ public class GlumbyController : MonoBehaviour
     private Vector3 _wallJumpNormal;
     private CharacterController _controller;
 
-    [Header("Depedent variables")]
+    private bool _wasGlumbyDumplingOpen;
+
+    [Header("Dependent variables")]
 
     [SerializeField]
     private float _maxVelocity;
@@ -55,11 +59,37 @@ public class GlumbyController : MonoBehaviour
     void Start()
     {
         _controller = GetComponent<CharacterController>();
+        _wasGlumbyDumplingOpen = false;
+        glumbyRenderObject.SetActive(false);
     }
 
     void Update()
     {
         HandleMovement();
+
+        Rect? glumbyDumplingRect = jsCallbacks.GetGlumbyDumplingRect();
+        if (glumbyDumplingRect.HasValue != _wasGlumbyDumplingOpen) {
+            if (glumbyDumplingRect.HasValue) {
+                // dumpling just opened, position glumby and show
+                transform.position = jsCallbacks.ScreenPointToWorldPoint(glumbyDumplingRect.Value.center);
+                Debug.Log(transform.position);
+                glumbyRenderObject.SetActive(true);
+            } else {
+                // just closed, hide glumby
+                glumbyRenderObject.SetActive(false);
+            }
+            _wasGlumbyDumplingOpen = glumbyDumplingRect.HasValue;
+        }
+
+        if (glumbyDumplingRect.HasValue) {
+            // Clamp glumby's coordinates inside his dumpling.
+            Bounds b = jsCallbacks.ScreenRectToWorldBounds(glumbyDumplingRect.Value);
+            transform.position = new Vector3 (
+                Mathf.Clamp(transform.position.x, b.min.x+_controller.bounds.extents.x, b.max.x-_controller.bounds.extents.x),
+                Mathf.Clamp(transform.position.y, b.min.y+_controller.bounds.extents.y, b.max.y-_controller.bounds.extents.y),
+                transform.position.z
+            );
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
