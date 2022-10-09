@@ -39,20 +39,40 @@
       src="/forest/items/ourkey/ourkey.png"
     >
   </a>
+
+  <audio id="transit-engine" loop>
+    <!-- credits: https://freesound.org/people/MarlonHJ/sounds/242740/ -->
+    <source
+      src="/forest/items/transit/interior/engine.wav"
+      type="audio/wav"
+    >
+  </audio>
 </div>
 
 <script type="module">
   const k = {
     id: {
-      key: "transit-ourkey"
+      key: "transit-ourkey",
+      engine: "transit-engine"
     }
   }
 
+  // -- props --
+  /// the engine sound
+  let $engine = null
+
   // -- lifetime --
   function main() {
-    // bind key events
+    // get props
+    $engine = document.getElementById(k.id.engine)
+
+    // bind key event
     const $key = document.getElementById(k.id.key)
     $key.addEventListener("click", onClickKey)
+
+    // bind state events
+    d.State.listen("isDriving", onIsDrivingChanged)
+    onIsDrivingChanged()
   }
 
   // -- commands
@@ -66,6 +86,35 @@
   function onClickKey(evt) {
     evt.preventDefault()
     stopDriving()
+  }
+
+  /// when is driving changes
+  function onIsDrivingChanged() {
+    onEngineSoundChanged()
+  }
+
+  /// when the engine sound changes
+  async function onEngineSoundChanged() {
+    const isDriving = d.State.isDriving
+
+    // play the engine sound whenever driving
+    if (isDriving) {
+      try {
+        await $engine.play()
+      }
+      // if we run into a permission error on load, retry on the first click
+      catch {
+        document.addEventListener("click", onRetryEngineSound)
+      }
+    } else {
+      $engine.pause()
+    }
+  }
+
+  /// when we should retry playing the engine sound
+  function onRetryEngineSound() {
+    document.removeEventListener("click", onRetryEngineSound)
+    onEngineSoundChanged()
   }
 
   // -- boostrap --
