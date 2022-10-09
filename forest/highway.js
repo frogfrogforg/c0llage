@@ -85,7 +85,7 @@ function advance(id, step) {
 
   // update the highway step
   let steps = k.speed.walking
-  if (d.State.foundKeys) {
+  if (d.State.isDriving) {
     steps = k.speed.driving
   }
 

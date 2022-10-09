@@ -1,7 +1,16 @@
 import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
+// -- constants --
+const k = {
+  class: {
+    is: {
+      passthrough: "is-passthrough"
+    }
+  }
+}
+
 // -- impls --
-class Partial extends HTMLParsedElement {
+export class Partial extends HTMLParsedElement {
   // -- props --
   // src: string - path of the partial, must be relative
   // ready: Promise<void> - when the partial is ready
@@ -57,6 +66,16 @@ class Partial extends HTMLParsedElement {
 
     // render element
     const $el = m
+
+    // add head elements
+    for (const $child of Array.from(doc.head.children)) {
+      // TODO: unsure if this should append more than style
+      if ($child.tagName === "STYLE") {
+        $el.appendChild($child)
+      }
+    }
+
+    // add body elements
     for (const $child of Array.from(doc.body.children)) {
       $el.appendChild($child)
     }
@@ -87,6 +106,25 @@ class Partial extends HTMLParsedElement {
   // a promise that produces the title
   get title() {
     return this.ready.then(() => this._title)
+  }
+
+  // -- factories --
+  /// create a new partial w/ a src and options
+  static spawn(src, opts) {
+    const options = {
+      ...opts
+    }
+
+    // create partial
+    const partial = document.createElement("p-artial")
+    partial.setAttribute("src", src)
+
+    // add passthrough if set
+    if (options.isPassthrough) {
+      partial.classList.add(k.class.is.passthrough)
+    }
+
+    return partial
   }
 }
 
