@@ -32,13 +32,13 @@
   <!-- dialogs -->
   <a-dumpling id="ouch-dialog" temperament="phlegmatic" hidden x=20 y=50 width=16 height=20>
     <div class="Dialog">
-      <p class="Dialog-text">some gloves would be nice...</p>
+      <p class="Dialog-text"><i>it hurts to touch. some gloves would be nice...</i></p>
     </div>
   </a-dumpling>
 
   <a-dumpling id="wait-dialog" temperament="phlegmatic" hidden x=25 y=20 width=16 height=20>
     <div class="Dialog">
-      <p class="Dialog-text">you can't quite make out what it is</p>
+      <p class="Dialog-text"><i>there's something here, but you can't quite make it out</i></p>
     </div>
   </a-dumpling>
 </body>
@@ -125,6 +125,7 @@
 
 <s-cript target="assistant" >
   --- click
-    It's a nice day out, don't you think? {i don't think!}
+    [once] It's a nice day out, don't you think? {i don't think!}
+    [cont] I wonder if we can get closer to the branches...?
   ==> click
 </s-cript>
