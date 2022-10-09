@@ -1,0 +1,418 @@
+<!-- template: item {title: cellphone} -->
+
+<head>
+  <style>
+    .ItemBody {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .Item {
+      width: 100%;
+      height: 100%;
+      top:0px;
+      position: absolute;
+    }
+
+    .PhoneBg {
+      position: relative;
+      top:0px;
+      left:0px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .PhoneKey {
+      position: absolute;
+      width: 18%;
+      height: 7%;
+      cursor: pointer;
+    }
+
+    #call {
+      width: 18%;
+      height: 7%;
+      bottom: 40%;
+      left: 14%;
+    }
+
+    #n1 {
+      bottom: 30%;
+      left: 14%;
+    }
+
+    #n2 {
+      bottom: 29%;
+      left: 42%;
+    }
+
+    #n3 {
+      bottom: 30%;
+      left: 71%;
+    }
+
+    #n4 {
+      bottom: 22%;
+      left: 14%;
+    }
+
+    #n5 {
+      bottom: 21%;
+      left: 42%;
+    }
+
+    #n6 {
+      bottom: 22%;
+      left: 71%;
+    }
+
+    #n7 {
+      bottom: 14%;
+      left: 15%;
+    }
+
+    #n8 {
+      bottom: 13%;
+      left: 42%;
+    }
+
+    #n9 {
+      bottom: 14%;
+      left: 70%;
+    }
+
+    #nP {
+      bottom: 06%;
+      left: 16%;
+    }
+
+    #n0 {
+      bottom: 05%;
+      left: 42%;
+    }
+
+    #nS {
+      bottom: 06%;
+      left: 69%;
+    }
+  </style>
+  <script>
+    ( function ()
+    {
+      /**
+       * Private variables
+       */
+      var frequencies = {
+        '1': { f1: 697, f2: 1209},
+        '2': { f1: 697, f2: 1336},
+        '3': { f1: 697, f2: 1477},
+        'A': { f1: 697, f2: 1633},
+        '4': { f1: 770, f2: 1209},
+        '5': { f1: 770, f2: 1336},
+        '6': { f1: 770, f2: 1477},
+        'B': { f1: 770, f2: 1633},
+        '7': { f1: 852, f2: 1209},
+        '8': { f1: 852, f2: 1336},
+        '9': { f1: 852, f2: 1477},
+        'C': { f1: 852, f2: 1633},
+        '*': { f1: 941, f2: 1209},
+        '0': { f1: 941, f2: 1336},
+        '#': { f1: 941, f2: 1477},
+        'D': { f1: 941, f2: 1633}
+      }
+      var audioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext;
+      var settings = {};
+      var status = 0;	// 0 = Not initialized, 1 = Initialized (not playing), 2 = Playing
+      var freq1 = 0;
+      var freq2 = 0;
+      var osc1 = null;
+      var osc2 = null;
+      var tone = null;
+      var context = null;
+
+      /**
+       * Method constructor
+       */
+      this.DTMFTone = function ()
+      {
+        settings.context = new audioContext ();
+        context = settings.context;
+        status = 1;
+
+        /**
+         * Object methods
+         */
+        this.isPlaying = function ()
+        {
+          return status == 2;
+        }
+        this.getTone = function ()
+        {
+          return tone;
+        }
+        this.setTone = function ( newtone)
+        {
+          if ( frequencies.hasOwnProperty ( newtone))
+          {
+            tone = newtone;
+            var frequencyPair = frequencies[newtone];
+            freq1 = frequencyPair.f1;
+            freq2 = frequencyPair.f2;
+          } else {
+            throw new Error ( 'Invalid tone.');
+          }
+
+          return this;
+        }
+        this.play = function ()
+        {
+          if ( osc1)
+          {
+            osc1.disconnect ();
+          }
+          if ( osc2)
+          {
+            osc2.disconnect ();
+          }
+          setup ();
+          osc1.start ? osc1.start ( 0) : osc1.noteOn ( 0);
+          osc2.start ? osc2.start ( 0) : osc2.noteOn ( 0);
+          status = 2;
+
+          return this;
+        }
+        this.stop = function ()
+        {
+          if ( osc1)
+          {
+            osc1.disconnect ();
+          }
+          if ( osc2)
+          {
+            osc2.disconnect ();
+          }
+          status = 1;
+
+          return this;
+        }
+
+        /**
+         * Private methods
+         */
+        function setup ()
+        {
+          osc1 = context.createOscillator ();
+          osc2 = context.createOscillator ();
+          osc1.frequency.value = freq1;
+          osc2.frequency.value = freq2;
+
+          gainNode = context.createGain ();
+          gainNode.gain.value = 0.25;
+
+          filter = context.createBiquadFilter ();
+          filter.type = 'lowpass';
+          filter.frequency = 8000;
+
+          osc1.connect ( gainNode);
+          osc2.connect ( gainNode);
+
+          gainNode.connect ( filter);
+          filter.connect ( settings.context.destination);
+        }
+
+        return this;
+      }
+
+      /**
+       * Public variables
+       */
+      this.about = {
+        version: '1.0',
+        author: 'Ernani José Camargo Azevedo'
+      };
+
+      // We need that our library is globally accesible, then we save in the window
+      if ( typeof ( window.DTMFTone) === 'undefined')
+      {
+        window.DTMFTone = DTMFTone;
+      }
+    }) ();
+  </script>
+  <script type="module">
+
+    import { Map } from "/sitemap/map.js"
+
+    const speech = window.speechSynthesis
+    const voices = speech.getVoices()
+    const voice = voices.find(v => v.default) || voices[0]
+
+    const Pause = (dur) => `<silence msec="${dur}" />`
+    const pauseDesc = '!' //Pause(300)
+    const pauseList = '!!' //Pause(500)
+    const pauseOption = '!' //Pause(300)
+    var dtmf = new DTMFTone ();
+
+
+    const kHello = "hello, thank you for calling us. we are happy to help you today!"
+    const kInitialNode= "/forest/welcome"
+    class TextAdventure {
+      currentNode
+      map
+      constructor(map, initialNode) {
+        this.currentNode = initialNode || kInitialNode
+        this.map = Object.keys(map).reduce(
+          (m, k) => {
+            const node = map[k]
+            m[k] = {
+              description: node.description || "you are somewhere in the forest",
+              paths: node.paths.map(p => {
+                const split = p.description.split('|')
+                const simplified = split[0] || 'a place you can go'
+                const description = split[1] || `theres' ${simplified}`
+                return {
+                  destination: p.destination,
+                  location,
+                  description,
+                  simplified
+                }
+              }),
+            }
+
+            return m
+          },
+        {})
+      }
+
+      setCurrentNode(node) {
+        this.currentNode = node
+      }
+
+      getDescription() {
+        const node = this.map[this.currentNode]
+        let description = node.description
+        let options = node.paths
+
+        const optionsDescriptions = options.map(o => `${o.description}`).join(pauseDesc)
+        const optionList = options.map((o, i) => `press ${i+1} to click ${o.simplified}`).join(pauseOption)
+
+        return `${description}${pauseDesc}${optionsDescriptions}${pauseList}${optionList}${pauseOption}Press pound to repeat this text`
+      }
+
+      selectPath(i) {
+        const node = this.map[this.currentNode]
+        if(i >= node.paths.length) {
+          return false
+        }
+        const target = node.paths[i]
+        this.currentNode = target.destination
+        return `clicked on ${target.simplified}`
+      }
+    }
+
+
+    const utterThis = new SpeechSynthesisUtterance()
+    const textAdventure = new TextAdventure(Map)
+    let optionsAvailable = false
+    const calltone = document.getElementById("calltone")
+    const pickup = document.getElementById("pickup")
+
+    document.getElementById('call').addEventListener("click",
+      () => {
+        textAdventure.setCurrentNode(d.State.location)
+        const hello = `${kHello}!${textAdventure.getDescription()}`
+        const callDuration = 5000 + Math.random() * 15000
+        calltone.play()
+        optionsAvailable = false
+        setTimeout(() => {
+          calltone.pause()
+          calltone.currentTime = 0
+          pickup.play()
+          setTimeout(() => {
+            pickup.pause()
+            pickup.currentTime = 0
+            executeUtterance(hello)
+            optionsAvailable = true
+          }, 690);
+        }, callDuration)
+      })
+
+    for(let i = 1; i < 10; i++ ) {
+      document.getElementById(`n${i}`).addEventListener("pointerdown",
+        () => {
+          dtmf.setTone(`${i}`)
+          dtmf.play()
+        })
+
+      document.getElementById(`n${i}`).addEventListener("pointerup",
+        () => {
+          dtmf.stop()
+          if(!optionsAvailable) return;
+          if(speechSynthesis.speaking) speech.cancel()
+          setTimeout(() => {
+            const next = textAdventure.selectPath(i-1)
+            if(next) {
+              executeUtterance(next)
+              executeUtterance(textAdventure.getDescription())
+            }
+          }, 400)
+        })
+    }
+    document.getElementById('n0').addEventListener("pointerdown", () => {
+        dtmf.setTone('0')
+        dtmf.play()
+    })
+    document.getElementById('n0').addEventListener("pointerup", () => {
+          dtmf.stop()
+    })
+
+    document.getElementById('nS').addEventListener("pointerdown", () => {
+        dtmf.setTone('*')
+        dtmf.play()
+    })
+    document.getElementById('nS').addEventListener("pointerup", () => {
+        dtmf.stop()
+    })
+
+    document.getElementById('nP').addEventListener("pointerdown", () => {
+        dtmf.setTone('#')
+        dtmf.play()
+    })
+    document.getElementById('nP').addEventListener("pointerup", () => {
+        dtmf.stop()
+        if(speechSynthesis.speaking) return;
+        () => executeUtterance(textAdventure.getDescription())
+    })
+
+    function executeUtterance(phrase) {
+      utterThis.text = phrase
+      speech.speak(utterThis)
+    }
+
+  </script>
+</head>
+<body class="ItemBody">
+  <audio id="pickup" style="display: none">
+    <source src="./pickup.wav" type="audio/wav">
+  </audio>
+  <audio id="calltone" style="display: none" loop>
+    <source src="./calltone.mp3" type="audio/mp3">
+  </audio>
+  <div class="Item">
+    <img class="PhoneBg" src="phone.png">
+    <button class="PhoneKey" id="call">call</button>
+    <button class="PhoneKey" id="n1">1</button>
+    <button class="PhoneKey" id="n2">2</button>
+    <button class="PhoneKey" id="n3">3</button>
+    <button class="PhoneKey" id="n4">4</button>
+    <button class="PhoneKey" id="n5">5</button>
+    <button class="PhoneKey" id="n6">6</button>
+    <button class="PhoneKey" id="n7">7</button>
+    <button class="PhoneKey" id="n8">8</button>
+    <button class="PhoneKey" id="n9">9</button>
+    <button class="PhoneKey" id="nP">#</button>
+    <button class="PhoneKey" id="n0">0</button>
+    <button class="PhoneKey" id="nS">*</button>
+  </div>
+</body>

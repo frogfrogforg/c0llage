@@ -19,7 +19,7 @@
             <ul>
                 <li>Round Stuff</li>
                 <li><a href='javascript:void(0);' onclick='Frames.show("handheld")'>Rectangular Stuff</a></li>
-                <li>Triangula Stuff</li>
+                <li><a href='javascript:void(0);' id='cellphoneGet'>Triangular Stuff</a></li>
             </ul>
         </div>
     </a-dumpling>
@@ -29,6 +29,10 @@
         <img style="position: absolute; top: 0; left: 0; cursor: pointer;" onclick="document.getElementById('assistant-garbage').showNamedDialog('handheld')" src="items/handheld/handheld-screen.png">
     </a-dumpling>
 
+    <a-dumpling persistent hidden id="handheld" y=40 width=40 height=60 title="a handheld">
+        <img style="position: absolute; top: 0; left: 0;" src="items/handheld/handheld.png">
+        <img style="position: absolute; top: 0; left: 0; cursor: pointer;" onclick="document.getElementById('assistant-garbage').showNamedDialog('handheld')" src="items/handheld/handheld-screen.png">
+    </a-dumpling>
 
     <s-cript target="assistant" id="assistant-garbage">
         --- enter
@@ -43,5 +47,33 @@
             [cont] does it still work??? {i hope so}
             i miss playing videogames {me too...}
             ==> click
+
     </s-cript>
+
+    <script type="module">
+        import { Inventory } from "./inventory.js"
+
+        const inventory = Inventory.get()
+        const cellphoneGet = document.getElementById("cellphoneGet")
+        cellphoneGet.addEventListener("click", () => {
+            d.State.hasCellphone = true
+            const phone = inventory.add({
+                id: "a-phone",
+                src: "items/cellphone/cellphone",
+                attrs: {
+                    "title": "cellphone",
+                    "no-back": true,
+                    "persistent": true,
+                    "layer": "items",
+                    temperament: "phlegmatic",
+                    width: 65,
+                    height: 40,
+                    "min-x": 20,
+                    "max-x": 60,
+                    "min-y": 40,
+                    "max-y": 70,
+                }
+            })
+        })
+    </script>
 </body>

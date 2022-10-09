@@ -28,6 +28,7 @@ const initialState = {
   claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",
   hasSkate: false,
+  hasCellphone: false,
   knowsSkate: false
 }
 
