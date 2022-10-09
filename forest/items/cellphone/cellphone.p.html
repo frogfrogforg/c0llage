@@ -1,5 +1,7 @@
 <!-- template: item {title: cellphone} -->
 
+<!-- TODO: a great idea here would be the phone to just hang up when you call it somewhere that is not implemented -->
+
 <head>
   <style>
     .ItemBody {
@@ -354,14 +356,13 @@
       document.getElementById(`n${i}`).addEventListener("pointerup",
         () => {
           dtmf.stop()
-          if(!optionsAvailable) return;
+          if(!optionsAvailable) return
+          const next = textAdventure.selectPath(i-1)
+          if(!next) return
           if(speechSynthesis.speaking) speech.cancel()
           setTimeout(() => {
-            const next = textAdventure.selectPath(i-1)
-            if(next) {
-              executeUtterance(next)
-              executeUtterance(textAdventure.getDescription())
-            }
+            executeUtterance(next)
+            executeUtterance(textAdventure.getDescription())
           }, 400)
         })
     }
@@ -401,14 +402,10 @@
     let animationMax = 0.4
     let animationSpeed = 0.2
     utterThis.addEventListener('boundary', (event) => {
-      console.log("aaaaa")
       animationSpeed = 1 + Math.random() * 0.3
       const a = Math.random() * 2*Math.PI
       animationDir = { x:Math.cos(a), y:Math.sin(a) }
     })
-
-    document.reque
-
 
     function animateFace(timestamp) {
       if (speech.speaking) {
