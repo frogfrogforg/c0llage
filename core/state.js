@@ -4,6 +4,7 @@ import { Events } from "./events.js"
 
 // decode state
 const initialState = {
+  border: "broider",
   referrer: "nowhere", // the location we came from
   location: "nowhere", // our current location
   sawMessyServerNarrative: false,
