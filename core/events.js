@@ -12,7 +12,13 @@ export const Events = {
   },
   raise(name, value) {
     raised.add(name)
-    console.debug(`[events] raise ${name} with ${value}`)
+
+    if (value == null) {
+      console.debug(`[events] raise ${name}`)
+    } else {
+      console.debug(`[events] raise ${name} with ${JSON.stringify(value)}`)
+    }
+
     root.dispatchEvent(new CustomEvent(name, { detail: value || false }))
   },
   // -- constants --
@@ -20,7 +26,8 @@ export const Events = {
     return `state.${propertyName}`
   },
   Forest: {
-    Visited: "forest.visited",
+    BeforeVisit: "forest.before-visit",
+    AfterVisit: "forest.after-visit",
   },
   Juice: {
     Appeared: "juice.appeared",
@@ -30,8 +37,7 @@ export const Events = {
   Alidator: {
     Cat: "alidator.cat",
     Tea: "alidator.tea",
-    ExitLeft: "alidator.exitleft",
-    ExitRight: "alidator.exitright",
+    Exit: "alidator.exit", // value: x, y (position); dx, dy (direction)
   },
   Salada: {
     Bucket: "salada.bucket",
@@ -41,7 +47,7 @@ export const Events = {
     ExitLevel: "mario.exitlevel",
   },
   Computer: {
-    ClaribelleEscape: "computer.claribelleescape",
+    ClaribelleEscape: "computer.claribelleescape", // value: x, y (position)
   },
   Transit: {
     Interact: "transit.interact",

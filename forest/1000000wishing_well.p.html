@@ -54,10 +54,11 @@
 </body>
 
 <script type="module">
-  import { kInventory } from "./inventory.js"
+  import { Inventory } from "./inventory.js"
 
   const COIN_TYPES_COUNT = 6
   const exchangeRate = 1.05
+  const inventory = Inventory.get()
 
   window.wellDrop = (evt) => {
     evt.preventDefault();
@@ -76,7 +77,7 @@
       }
       // document.getElementById("wishMessage").innerHTML =
       // d.State.wishes == 0 ? ""
-      kInventory.add({
+      inventory.add({
         id: "wish" + d.State.wishes,
         src: "items/wish",
         attrs: {
@@ -126,7 +127,7 @@
           d.State.quarters = 1
         }
 
-        kInventory.add({
+        inventory.add({
           id: "quarter" + d.State.quarters,
           src: "items/quarter",
           attrs: {

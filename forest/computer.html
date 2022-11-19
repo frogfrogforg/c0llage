@@ -1,6 +1,6 @@
 <head>
-    <script type="module" src="forest.js"></script>
     <link rel="stylesheet" href="/core/dumpling/dumpling.css">
+    <link rel="stylesheet" href="/forest/forest.css">
     <style>
         body {
             position: relative;
@@ -74,13 +74,6 @@
             transform: scale(var(--scaleFactor));
             transform-origin: top left
         }
-
-        #claribelle {
-            position: absolute;
-            left: 60px;
-            top: 69px;
-            transform: scale(.125);
-        }
     </style>
 </head>
 
@@ -104,7 +97,7 @@
     <a-dumpling title='promedator' temperament='melancholic' id="promedator" hidden min-size=60 max-size=80>
         <d-iframe style="--scaleFactor: 1.0;" id="main" src="/gatherings/bucket.html"></d-iframe>
     </a-dumpling>
-    <a-dumpling title='no disk' temperament='choleric' id="disk-frame" hidden height=10 width=18>
+    <a-dumpling title='no disk' temperament='choleric' id="disk-frame" hidden height=12 width=18>
         <div>
             there's no disk on the d: drive
         </div>
@@ -130,7 +123,7 @@
     </div>
 
     <!-- claribelle is unhidden when she escapes from alidator -->
-    <img id="claribelle" src="./images/Claribelle.png" hidden>
+    <img id="claribelle" class="Claribelle" src="./images/Claribelle.png">
 
     <script type="module" src="/core/d-iframe.js"></script>
     <script type="module" src="/core/dumpling/a-dumpling.js"></script>
@@ -200,68 +193,43 @@
             }
         }
 
-
-
-        // commenting out while fran is still wokring on it
-        d.Events.listen('alidator.exitright', () => {
+        d.Events.listen('alidator.exit', ({x, y, dx, dy}) => {
             // claribelle escapes
-
+            claribelle_left = true
             const targetFrame = document.getElementById('alidator-frame');
             const f = targetFrame.getBoundingClientRect();
 
-            const claribelle = document.getElementById('claribelle');
-
-            // move  claribelle to the left-middle of the frame
-            // i always have to add these magic offsets when i work
-            // with getBoundingClientRect() bc i dont understand it
-            place_claribelle(f.x + f.width - 50,
-                f.y + f.height / 2);
+            // move  claribelle to the corresponding location in screen
+            place_claribelle_world(
+                f.x + f.width * x / 16.0,
+                f.y + f.height * y / 16.0)
+            claribelle_x += dx
+            claribelle_y += dy
+            update_claribelle()
 
             // reveal claribelle
-            claribelle.removeAttribute("hidden");
+            claribelle.style.visibility = "visible"
 
             // switch focus to computer (not alidator) to let keyboard
             // inputs work
             window.top.focus()
+        })
 
-            d.Events.raise('computer.claribelleescape');
-        });
-
-        d.Events.listen('alidator.exitleft', () => {
-            // claribelle escapes
-
-            const targetFrame = document.getElementById('alidator-frame');
-            const f = targetFrame.getBoundingClientRect();
-
-            const claribelle = document.getElementById('claribelle');
-
+        function place_claribelle_world(x, y) {
             // move  claribelle to the left-middle of the frame
             // i always have to add these magic offsets when i work
             // with getBoundingClientRect() bc i dont understand it
-            place_claribelle(f.x - 100,
-                f.y + f.height / 2);
+            [claribelle_x, claribelle_y] = WorldToClaribelleSpace(x, y)
+            update_claribelle()
+        }
 
-            // reveal claribelle
-            claribelle.removeAttribute("hidden");
 
-            // switch focus to computer (not alidator) to let keyboard
-            // inputs work
-            window.top.focus()
-
-            d.Events.raise('computer.claribelleescape');
-        });
-
-        function place_claribelle(x, y) {
-            const claribelle = document.getElementById('claribelle');
-
-            // move  claribelle to the left-middle of the frame
-            // i always have to add these magic offsets when i work
-            // with getBoundingClientRect() bc i dont understand it
-            claribelle_x = x;
-            claribelle_y = y;
-            claribelle.style.left = `${claribelle_x}px`;
-            claribelle.style.top = `${claribelle_y}px`;
-
+        function WorldToClaribelleSpace(wx, wy) {
+            const screen = claribelle.parentElement.getBoundingClientRect()
+            return [
+                Math.floor(((wx - screen.x) / screen.width) * 16),
+                Math.floor(((wy - screen.y) / screen.height) * 16),
+            ]
         }
 
         // thank you bitsy
@@ -281,37 +249,58 @@
         // claribelle.removeAttribute("hidden");
 
         // claribelle stuff position
-        var claribelle_x = 50;
-        var claribelle_y = 50;
-        var claribelle_hidden = true;
-        const k_claribelle_move_incr = 16
+        // make claribelle always move on a 16x16 grid
+        var claribelle_x = 8
+        var claribelle_y = 8
+
+        // if claribelle escaped the screen
+        var claribelle_escaped = false
+        // if claribelle left alidator
+        var claribelle_left = false
+
+        const k_claribelle_move_incr = 100.0/16
+        const claribelle = document.getElementById('claribelle')
 
         window.top.addEventListener('keydown', (event) => {
-            console.log("aaaaaa")
-            const claribelle = document.getElementById('claribelle');
+            if(!claribelle_left) return true
+            if(claribelle_escaped) return true
+
+            const claribelle = document.getElementById('claribelle')
             // LIVE HAUNTING
             const screen = claribelle.parentElement.getBoundingClientRect()
 
             if (event.keyCode == key.left) {
-                claribelle_x -= k_claribelle_move_incr;
+                claribelle_x -= 1
             }
-            if (event.keyCode == key.right) {
-                claribelle_x += k_claribelle_move_incr;
+            else if (event.keyCode == key.right) {
+                claribelle_x += 1
             }
-            if (event.keyCode == key.up) {
-                claribelle_y -= k_claribelle_move_incr;
+            else if (event.keyCode == key.up) {
+                claribelle_y -= 1
             }
-            if (event.keyCode == key.down) {
-                claribelle_y += k_claribelle_move_incr;
+            else if (event.keyCode == key.down) {
+                claribelle_y += 1
+            } else {
+                return true
             }
 
-            const y = screen.height
-            const x = screen.width
-            claribelle_x = (claribelle_x + x) % x
-            claribelle_y = (claribelle_y + y) % y
-            claribelle.style.top = `${claribelle_y}px`;
-            claribelle.style.left = `${claribelle_x}px`;
+            if(claribelle_y < 0 || claribelle_y >= 16 || claribelle_x < 0 || claribelle_x >= 16) {
+                console.log("oh no! claribelle escaped again!")
+                claribelle_escaped = true
+                claribelle.style.visibility = "hidden"
+                d.Events.raise("computer.claribelleescape", {x: claribelle_x, y: claribelle_y})
+            } else {
+                update_claribelle()
+            }
         });
+
+        function update_claribelle() {
+            claribelle_x = ((claribelle_x % 16) + 16) % 16
+            claribelle_y = ((claribelle_y % 16) + 16) % 16
+            claribelle.style.left = `${(claribelle_x * k_claribelle_move_incr) % 100}%`
+            claribelle.style.top = `${(claribelle_y * k_claribelle_move_incr) % 100}%`
+        }
+
 
 
         // all the touch/mobile input is untested

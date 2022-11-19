@@ -2,7 +2,13 @@ import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 import { Dumpling } from "/core/dumpling/a-dumpling.js"
 
 // -- constants --
-const kPermittedAttrs = new Set([
+/// attrs references by d-iframe
+const kAttrs = {
+  src: "src"
+}
+
+/// the set of attrs not passed through to the iframe
+const kExclusiveAttrs = new Set([
   "autoload",
   "id",
   "src",
@@ -54,7 +60,7 @@ class DeferredIframeElement extends HTMLParsedElement {
 
     // for every non d-iframe attr
     for (const a of m.attributes) {
-      if (kPermittedAttrs.has(a.name)) {
+      if (kExclusiveAttrs.has(a.name)) {
         continue
       }
 
@@ -66,7 +72,6 @@ class DeferredIframeElement extends HTMLParsedElement {
 
   // -- commands --
   load() {
-    console.debug(`[dframe] loaded ${this.src}`)
     this.loadUrl(this.src)
   }
 
@@ -75,12 +80,28 @@ class DeferredIframeElement extends HTMLParsedElement {
   }
 
   loadUrl(url) {
+    const m = this
+
+    // update src if changed
+    const isChange = m.src !== url
+    if (isChange) {
+      m.setAttribute(kAttrs.src, url)
+      return
+    }
+
+    // if no url, just clear
     if (!url) {
-      this.destroyIframe()
-    } else if (this._iframe == null || this.src != url) {
-      // TODO: set d-iframe url?
-      this.destroyIframe()
-      this.createIframe(url)
+      if (isChange) {
+        m.destroyIframe()
+        console.debug(`[dframe] unload`)
+      }
+    }
+    else {
+      if (isChange || m._iframe == null) {
+        m.destroyIframe()
+        m.createIframe(url)
+        console.debug(`[dframe] load url: ${url}`)
+      }
     }
   }
 
@@ -132,6 +153,12 @@ class DeferredIframeElement extends HTMLParsedElement {
     }
   }
 
+  blur() {
+    if (this._iframe != null) {
+      this._iframe.blur()
+    }
+  }
+
   addEventListener(...args) {
     const m = this
 
@@ -147,7 +174,7 @@ class DeferredIframeElement extends HTMLParsedElement {
 
   // -- i/queries
   get src() {
-    return this.getAttribute("src")
+    return this.getAttribute(kAttrs.src)
   }
 
   get contentWindow() {

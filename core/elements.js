@@ -1,0 +1,5 @@
+import "./dumpling/a-dumpling.js"
+import "./c-picky.js"
+import "./p-artial.js"
+import "./d-iframe.js"
+import "./s-cript.js"

@@ -1,0 +1,40 @@
+<!-- template: item {title: bag for keys} -->
+
+<body>
+  <img
+    id="keyring-target"
+    class="Keyring"
+    src="/forest/items/keyring/keyring.jpg"
+    hide-dialog-title
+  >
+
+  <s-cript target="keyring-target" main>
+    --- enter
+    ==> [once] find-keys
+
+    --- find-keys
+    [cont] wow an empty bag for keys and in the middle of the road
+    but it's empty
+  </s-cript>
+</body>
+
+<script type="module">
+  function main() {
+    d.State.foundKeyring = true
+  }
+
+  main()
+</script>
+
+<style>
+  body {
+    margin: 0;
+  }
+
+  .Keyring {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    object-fit: cover;
+  }
+</style>

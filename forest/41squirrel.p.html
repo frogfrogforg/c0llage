@@ -15,10 +15,9 @@
         <a class="hotspot cursor-move" href="./70outhouse.html" style="right: 43%; top: 30%; width: 20%; height: 31%;"></a>
 
         <c-picky wants="!pickedUpSquirrel">
-            <a id="squirrel" class="hotspot centered nosparkle cursor-talk" href="#" style="left: 39%; top: 78%; width: 25%; height: 23%; filter: hue-rotate(250deg) brightness(1.2);;" data-turbo="false">
-
+            <button id="squirrel" class="hotspot centered nosparkle cursor-talk" style="left: 39%; top: 78%; width: 25%; height: 23%; filter: hue-rotate(250deg) brightness(1.2);">
                 <img src="images/squirrel.png" style="width:100%;height:100%">
-            </a>
+            </button>
         </c-picky>
 
         <audio id="sq0">
@@ -37,7 +36,7 @@
             <source src="./sound/squirrel/sq_006.mp3" type="audio/mpeg">
         </audio>
 
-        <a-dumpling temperament="phlegmatic" hidden id="dialog1" class="dialog">
+        <!-- <a-dumpling temperament="phlegmatic" hidden id="dialog1" class="dialog">
             <span>these days i stay the heck away from Cyberspace...</span>
         </a-dumpling>
 
@@ -65,10 +64,10 @@
         <a-dumpling persistent hidden title="squirrel" id="pet_squirrel">
             <d-iframe src='./items/squirrel.html'></d-iframe>
         </a-dumpling>
-    </div>
+    </div> -->
 </body>
 
-<s-cript target="squirrel">
+<s-cript target="squirrel" id="squirrel-main" main>
     --- click
     ==> [once] first-conversation
     [cont] after you dropped me I just came back here... can you take me with again? {ok | sure...}
@@ -85,7 +84,7 @@
     *** pick-squirrel
 </s-cript>
 
-<s-cript target="assistant">
+<s-cript target="assistant" >
     --- enter
     [once] Oh, this squirrel is a stranger to me
 
@@ -98,12 +97,12 @@
     I thought I knew all the squirrels here.
 
     --- see-squirrel-again
-    Maybe you should try talking to them. Find out what their deal is..
+    Maybe you should try talking to them. Find out what their deal is...
+    ==> see-squirrel-again
 </s-cript>
 
 <script type="module">
     let click_i = 0;
-
 
     const $squirrelScript = document.getElementById("squirrel-main")
     const dPetSquirrel = document.getElementById('pet_squirrel')

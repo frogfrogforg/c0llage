@@ -1,8 +1,13 @@
-
-import { kInventory } from "./inventory.js"
+import { Inventory } from "./inventory.js"
 import { initSparkles, addHoverSparklesToElements } from "./sparkles.js"
 import { addOnBeforeSaveStateListener } from "/core/state.js"
-import { Assistant } from "./assistant/brain.js"
+
+// skills
+import "./skills/stealth.js"
+import "./skills/claribelle.js"
+
+// -- deps --
+const mInventory = Inventory.get()
 
 // -- props --
 /// the current location
@@ -11,6 +16,9 @@ let mUrl = null
 /// the game element
 let $mGame = null
 
+/// the frames element
+let $mFrames = null
+
 // -- lifetime --
 function main() {
   /// set props
@@ -18,11 +26,12 @@ function main() {
 
   // capture elements
   $mGame = document.getElementById("game")
+  $mFrames = document.getElementById("frames")
   setTitle("welcome")
 
   // inventory (persistent windows) loading and saving
-  kInventory.loadFromState();
-  addOnBeforeSaveStateListener(kInventory.saveToState)
+  mInventory.load()
+  addOnBeforeSaveStateListener(() => { mInventory.save() })
 
   // bind events
   const d = document
@@ -39,6 +48,10 @@ function main() {
 // -- commands --
 /// navigate to the url
 function navigate(url) {
+  if(!(url instanceof URL)) {
+    url = new URL(url, `${window.origin}/forest/`)
+  }
+
   // add history entry
   history.pushState({}, "", url)
 
@@ -63,20 +76,17 @@ async function visit(url) {
   $el.innerHTML = text
 
   // update the title
-  const title = $el.querySelector('title')
+  const title = $el.querySelector("title")
   setTitle(title && title.innerText)
 
   // extract the game
   const $next = $el.querySelector("#game")
 
-  // replace children of game element
-  while ($mGame.firstChild) {
-    $mGame.removeChild($mGame.lastChild)
-  }
+  // remove all frames
+  $mFrames.replaceChildren()
 
-  for (const child of Array.from($next.children)) {
-    $mGame.appendChild(child)
-  }
+  // replace children of game element
+  $mGame.replaceChildren(...$next.children)
 
   // TODO: do we need this?
   // activate any inert script tags in the new game
@@ -151,7 +161,7 @@ function randomizeUrl(url) {
 
 // reset everything
 function reset() {
-  kInventory.clear()
+  mInventory.clear()
   d.State.clear()
 }
 
@@ -172,7 +182,6 @@ function didChangeState() {
 }
 
 function didRefresh(evt) {
-  console.log("didRefresh");
   evt.preventDefault()
   d.State.save()
   return evt.returnValue = "don't leave gamer"
@@ -226,12 +235,26 @@ function didPopState() {
 }
 
 function didStartVisit() {
-  d.State.referrer = mUrl.pathname
+  // track visit
+  d.Events.raise(d.Events.Forest.BeforeVisit)
+
+  // store current url as referrer
+  d.State.referrer = mUrl && mUrl.pathname || "nowhere"
 }
 
 function setTitle(title) {
-  const defaultTitle = mUrl.pathname.slice(8, -5).replaceAll("_" , " ")
-  document.title = title || defaultTitle
+  if (title == null || title === "") {
+    // format the url as a title
+    title = mUrl.pathname.slice(8, -5).replaceAll("_", " ")
+
+    // if it has a text title, remove the numbers
+    const match = title.match(/\D/)
+    if (match != null) {
+      title = title.slice(match.index)
+    }
+  }
+
+  document.title = title
 }
 
 function didFinishVisit() {
@@ -240,11 +263,13 @@ function didFinishVisit() {
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
   addHoverSparklesToElements(hotspots);
 
-  // track visit
-  d.Events.raise(d.Events.Forest.Visited)
+  // store location
+  // TODO: should this be set alongside d.State.referrer?
+  const location = mUrl.pathname.replace(/\.html.*/, "")
+  d.State.location = location
 
-  // spawn the assistant if possible
-  Assistant.spawn()
+  // track visit
+  d.Events.raise(d.Events.Forest.AfterVisit, location)
 }
 
 // -- exports --

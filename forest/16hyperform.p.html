@@ -19,7 +19,6 @@
 
     .angel {
         width: 100%;
-        position: absolute;
         transform: rotate(69deg);
         transform-origin: center;
         animation: charisma 12s infinite;
@@ -55,18 +54,27 @@
 </style>
 
 <body>
-    <img class="background" src="./images/16.png">
+    <img
+        class="background"
+        src="./images/16.png"
+        alt="you find yourself in a clearing. in front of you a being of infinite beauty. its eyes gaze upon you, wondering, shifting, shimmering. its body a mirror of many forests unseen, all accumulating over each other. it moves, slowly, but steadily, on a rhythm hard to describe. you are very afraid!!!!unfortunately interacting with such lifeforms over phone is impossible, so i can't help you here"
+    >
 
-    <a class="hotspot centered cursor-talk nosparkle" href="#" onclick="Frames.toggle('afraid'); RandomizeScattered();" style="left: 62.888%; top: 34.666%; width: 42.0%; height: 42.0%" data-turbo="false">
+    <button class="hotspot centered cursor-talk nosparkle" onclick="Frames.toggle('afraid'); RandomizeScattered();" style="left: 62.888%; top: 34.666%; width: 42.0%; height: 42.0%" data-turbo="false">
         <img src="./images/angeleyes.gif" class="eyes" style="top:46%;left:7%;transform: rotate(22deg);">
         <img src="./images/angeleyes.gif" class="eyes" style="top:25%;left:34%;transform: rotate(-17deg) scale(125%);">
         <img src="./images/angeleyes.gif" class="eyes" style="top: 69%;left: 8%;transform: rotate(59deg) scale(90%);">
         <img src="./images/angeleyes.gif" class="eyes" style="top: 53%;left: 70%;transform: rotate(5deg);">
         <img src="./images/angeleyes.gif" class="eyes" style="top: 67%;left: 57%;transform: rotate(-27deg) scale(120%);">
         <img src="./images/angel.png" class="angel">
-    </a>
+    </button>
 
-    <a class="hotspot cursor-move" href="./10forest_edge.html" style="left: 0%; top: 0%; width: 10%; height: 100%"></a>
+    <a
+        class="hotspot cursor-move"
+        href="./10forest_edge.html"
+        style="left: 0%; top: 0%; width: 10%; height: 100%"
+        title="a path behind you"
+    ></a>
 
     <a-dumpling x=0 y=0 width=24 height=23>
         <a class="cursor-move" style="font-size: 5vw; text-decoration: none; opacity: 0.5" href="10forest_edge.html">
@@ -95,13 +103,13 @@
         ==> [once] intro
 
         --- intro
-        [cont] My Goodness, what a friendly looking fellow!
-        [cont] As a pup, I used to deliver their newspaper..
-        [cont] Now all the news is on those newfangled computers.
-        ==> talk
+        [cont] I've known this old manihedron for a long, long time.
+        [cont] As a pup, I used to deliver their newspaper.
+        [cont] Now all the news is on my internet pad.
+        ==> click
 
         --- click
-        There are all sorts of weird and wonderful characters here..
+        Sit here & rest a while if you need to, it's peaceful.
         ==> click
     </s-cript>
 </body>

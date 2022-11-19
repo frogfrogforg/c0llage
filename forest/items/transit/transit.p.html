@@ -1,0 +1,154 @@
+<!-- template: item {title: ourv} -->
+
+<body>
+  <img
+    id="transit-target"
+    class="Transit"
+    src="/forest/items/transit/transit.png"
+    hide-dialog-title
+  >
+
+  <s-cript target="transit-target" main>
+    --- click
+    you can't remember where you put your keys {is this mine?}
+    ==> click
+  </s-cript>
+</body>
+
+<script type="module">
+  import { Partial } from "/core/p-artial.js"
+
+  // -- constants --
+  const k = {
+    id: {
+      self: "transit",
+      keys: "ourkey",
+      game: "game",
+      interior: "transit-interior"
+    },
+  }
+
+  // -- props --
+  /// this element
+  let $el = null
+
+  /// our key, if we've started the rv
+  let $keys = null
+
+  /// the interior of the rv, if we've started tit
+  let $interior = null
+
+  // -- lifetime --
+  function main() {
+    d.State.foundVehicle = true
+
+    // find dumpling
+    $el = document.getElementById(k.id.self)
+    if ($el == null) {
+      console.error("[transit] can't find a-dumpling w/ id 'transit'!")
+      return
+    }
+
+    // bind events
+    $el.addEventListener("dragover", onDragOver)
+    $el.addEventListener("drop", onDrop)
+
+    // set initial state
+    d.State.listen("isDriving", onIsDrivingChanged)
+    onIsDrivingChanged()
+  }
+
+  // -- commands --
+  /// show the rv
+  function showRv(isVisible) {
+    $el.style.visibility = isVisible ? "visible" : "hidden"
+  }
+
+  /// show the rv keys
+  function showKeys(isVisible) {
+    $keys.style.visibility = isVisible ? "visible" : "hidden"
+  }
+
+  /// show the rv interior
+  function showInterior(isVisible) {
+    if ($interior == null) {
+      createInterior()
+    }
+
+    $interior.style.display = isVisible ? "block" : "none"
+  }
+
+  // create a new interior
+  function createInterior() {
+    // create interior layer
+    const $partial = Partial.spawn(
+      "./items/transit/interior/interior.html",
+      { isPassthrough: true }
+    )
+
+    const $layer = document.createElement("div")
+    $layer.id = "transit-interior"
+    $layer.classList.add("ForestLayer--overlay")
+    $layer.appendChild($partial)
+
+    // show interior
+    const $game = document.getElementById(k.id.game)
+    $game.insertAdjacentElement("afterend", $layer)
+
+    // update state
+    $interior = $layer
+  }
+
+  // -- events --
+  /// need to do this to receive drop
+  function onDragOver(evt) {
+    evt.preventDefault()
+  }
+
+  /// when something is dropped on the car
+  function onDrop(evt) {
+    evt.preventDefault()
+
+    // if it was the key, start driving
+    const id = evt.dataTransfer.getData("a-dumpling/id")
+    if (id === k.id.keys) {
+      d.State.isDriving = true
+    }
+  }
+
+  function onIsDrivingChanged() {
+    const isDriving = d.State.isDriving
+
+    // find the rv parts
+    if ($keys == null) {
+      $keys = document.getElementById(k.id.keys)
+    }
+
+    if ($interior == null) {
+      $interior = document.getElementById(k.id.interior)
+    }
+
+    // you can't drive without keys
+    if (isDriving && $keys == null) {
+      console.error("[transit] tried to start the car, but had no keys")
+      return
+    }
+
+    // toggle the visibility of the rv parts
+    showRv(!isDriving)
+    showKeys(!isDriving)
+    showInterior(isDriving)
+  }
+
+  // -- bootstrap --
+  main()
+</script>
+
+<style>
+  .Transit {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    object-fit: cover;
+  }
+</style>

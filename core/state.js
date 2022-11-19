@@ -4,6 +4,8 @@ import { Events } from "./events.js"
 
 // decode state
 const initialState = {
+  referrer: "nowhere", // the location we came from
+  location: "nowhere", // our current location
   sawMessyServerNarrative: false,
   visitedAlidator: false,
   visitedPrometeus: false,
@@ -19,6 +21,16 @@ const initialState = {
   visitedFranBlog: false,
   hasBoombox: false,
   pickedUpSquirrel: false,
+  highwayStep: 0,
+  foundVehicle: false,
+  foundKeyring: false,
+  foundKeys: false,
+  isDriving: false,
+  claribelle: {x: 0, y: 0},
+  claribelleLocation: "alidator",
+  hasSkate: false,
+  hasCellphone: false,
+  knowsSkate: false
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
@@ -47,7 +59,11 @@ Object.setPrototypeOf(state, {
 // proxy get/set for unknown keys to the state object
 const ProxyState = new Proxy(state, {
   get(target, prop) {
-    return Reflect.get(target, prop)
+    const val = Reflect.get(target, prop)
+    if(val === undefined) {
+      return initialState[prop]
+    }
+    return val
   },
   set(target, prop, value) {
     const r = Reflect.set(target, prop, value)
@@ -71,5 +87,3 @@ export const addOnBeforeSaveStateListener = (listener) => {
   }
   onBeforeSaveStateListeners.push(listener);
 }
-
-

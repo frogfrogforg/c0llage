@@ -1,33 +1,41 @@
 import { State } from "/core/state.js"
-import { kInventory } from "./inventory.js"
+import { Inventory } from "./inventory.js"
 
 // -- constants --
-const kLinkId = "highway-link"
-const kTransitId = "public-transit"
-const kHighwaySteps = 420
+const k = {
+  id: {
+    /// the id of a link to the next highway page
+    link: "highway-link",
+  },
+  steps: {
+    /// the number of steps to get the keyring
+    keyring: 3,
+    /// the number of steps to get the rv
+    transit: 8,
+    /// the number of steps to exit the highway
+    exit: 420,
+  },
+  speed: {
+    /// the speed in steps walking
+    walking: 1,
+    /// the speed in steps driving
+    driving: 100,
+  }
+}
 
-// -- templates --
-const kTransitHtml = `
-  <a-dumpling persistent temperament="phlegmatic" y=40 width=20 height=20>
-    <d-iframe src="./items/transit.html" autoload>
-  </a-dumpling>
-`
+// -- deps --
+const mInventory = Inventory.get()
 
 // -- lifetime --
 // drives each highway page
 function main() {
   reset(State.referrer)
 
-  kInventory.add({
-    id: kTransitId,
-    html: kTransitHtml
-  })
-
-  document.addEventListener("turbo:render", () => {
+  d.Events.listen(d.Events.Forest.AfterVisit, () => {
     let id = getHighwayId()
 
     if (id != null) {
-      traverse(id)
+      move(id)
     } else {
       reset()
     }
@@ -35,26 +43,36 @@ function main() {
 }
 
 // -- commands --
-function traverse(id) {
+function move(id) {
   const step = State.highwayStep || 0
 
   // if we haven't reached the goal, move. otherwise, redirect to the exit
-  if (step < kHighwaySteps) {
-    move(id, step)
+  if (step < k.steps.exit) {
+    advance(id, step)
   } else {
     exit()
   }
 }
 
-function move(id, step) {
-  // if we reached step 3, add the transit vehicle
-  if (step == 2) {
-    const transit = kInventory.get(kTransitId)
+function advance(id, step) {
+  // discover items on the road
+  if (step === k.steps.keyring) {
+    mInventory.addNamed("keyring", {
+      "w": 20, "h": 20,
+      "holds": "key",
+      "temperament": "phlegmatic",
+      "no-back": true,
+      "no-close": true,
+    })
+  }
 
-    if (transit != null) {
-      transit.querySelector("iframe").contentWindow.interrupt()
-      transit.bringToTop()
-    }
+  if (step === k.steps.transit) {
+    mInventory.addNamed("transit", {
+      "w": 20, "h": 20,
+      "temperament": "phlegmatic",
+      "no-back": true,
+      "no-close": true,
+    })
   }
 
   // randomize the next link
@@ -66,15 +84,16 @@ function move(id, step) {
   setUrl(getHighwayUrl(next))
 
   // update the highway step
-  State.highwayStep = step + getSpeed()
-}
+  let steps = k.speed.walking
+  if (d.State.isDriving) {
+    steps = k.speed.driving
+  }
 
-function getSpeed() {
-  return d.State.foundKeys ? 100 : 1;
+  State.highwayStep = step + steps
 }
 
 function exit() {
-  setUrl("./418exit_to_the_cosmodrome.html")
+  setUrl("./418exit_to_the_cosmodr.html")
 }
 
 function reset(path = document.location.pathname) {
@@ -85,7 +104,7 @@ function reset(path = document.location.pathname) {
 
 // -- c/helpers
 function setUrl(url) {
-  document.getElementById(kLinkId).href = url
+  document.getElementById(k.id.link).href = url
 }
 
 // -- queries --
@@ -95,7 +114,7 @@ function getHighwayId(path = document.location.pathname) {
   }
 
   // match the url
-  const matches = path.match(/(\d+)highway_to_the_cosmodrome/)
+  const matches = path.match(/(\d+)highway_to_the_cosmod/)
 
   // if we can't find a page number, not a highway page
   const id = matches && matches[1]
@@ -108,7 +127,7 @@ function getHighwayId(path = document.location.pathname) {
 }
 
 function getHighwayUrl(i) {
-  return `./${i}highway_to_the_cosmodrome.html`
+  return `./${i}highway_to_the_cosmod.html`
 }
 
 // -- bootstrap --

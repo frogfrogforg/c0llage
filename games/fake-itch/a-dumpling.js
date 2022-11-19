@@ -1,15 +1,19 @@
-import { HTMLParsedElement } from "./html-parsed-element@0.4.0.js"
+import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
-window.Frames = {
-  ...staticize('show', 'open'),
-  ...staticize('hide', 'close'),
-  ...staticize('toggle'),
-  ...staticize('bringToTop'),
-  ...staticize('addEventListener', "listen"),
-}
+window.Frames = staticize(
+  "show",
+  "open",
+  "hide",
+  "close",
+  "toggle",
+  "bringToTop",
+  "addEventListener",
+  "listen" ,
+)
 
 function staticize(...names) {
   const methodName = names[0]
+
   function action(id, ...args) {
     const el = document.getElementById(id)
     return el[methodName](...args)
@@ -23,30 +27,77 @@ function staticize(...names) {
   return actions
 }
 
-const frameTemplate = `
-  <div class="Frame-content">
-    <div class="Frame-header">
-      <div class="Frame-close-button Frame-header-button" id="$id-close"></div>
-      <div class="Frame-header-maximize Frame-header-button" id="$id-max"></div>
-      <div class="Frame-header-back Frame-header-button"> ☚ </div>
-      <div class="Frame-header-temperament Frame-header-button" id="$id-feelings"> ? </div>
-      <div class="Frame-header-blank">
-        <div class="Frame-header-title-container">
-          <div class="Frame-header-title" id="$id-title"></div>
-        </div>
-      </div>
-    </div>
-    <div id="$id-body" class="Frame-body"></div>
-    <div class="Frame-handle"></div>
-  </div>
-`
-
 // -- constants --
-// -- c/style
-const kVisibleClass = 'Frame-Visible'
-const kDraggingClass = 'Frame-Dragging'
-const kScalingClass = 'Frame-Scaling'
-const kUnfocusedClass = 'Frame-Unfocused'
+const k = {
+  id: {
+    transient: "frames",
+    permanent: "inventory",
+  },
+  class: {
+    root: "Frame",
+    content: "Frame-content",
+    body: "Frame-body",
+    header: "Frame-header",
+    headerButton: "Frame-headerButton",
+    close: "Frame-closeButton",
+    maximize: "Frame-maximizeButton",
+    back: "Frame-backButton",
+    temperament: "Frame-temperament",
+    handle: "Frame-handle",
+    title: "Frame-title",
+    titleText: "Frame-titleText",
+    shim: "Frame-shim",
+    is: {
+      visible: "is-visible",
+      dragging: "is-dragging",
+      scaling: "is-scaling",
+      unfocused: "is-unfocused",
+    },
+  },
+  attr: {
+    title: "title",
+    permanent: [
+      "permanent",
+      "persistent",
+    ],
+    bodyClass: "bodyClass",
+  },
+  tag: {
+    iframe: new Set([
+      "IFRAME",
+      "D-IFRAME",
+    ]),
+    wrapper: new Set([
+      "IFRAME",
+      "D-IFRAME",
+      "P-ARTIAL",
+    ]),
+  }
+}
+
+// -- template --
+const cx = (...classes) =>
+  `class="${classes.join(" ")}"`
+
+const kTemplate = `
+  <article ${cx(k.class.content)}">
+    <header ${cx(k.class.header)}>
+      <div ${cx(k.class.close, k.class.headerButton)}></div>
+      <div ${cx(k.class.maximize, k.class.headerButton)}></div>
+      <div ${cx(k.class.back, k.class.headerButton)}>☚</div>
+      <div ${cx(k.class.temperament, k.class.headerButton)}>?</div>
+
+      <div ${cx(k.class.title)}>
+        <span ${cx(k.class.titleText)}></span>
+      </div>
+    </header>
+
+    <section ${cx(k.class.body)}>
+    </section>
+
+    <div ${cx(k.class.handle)}></div>
+  </article>
+`
 
 // -- c/focus
 // the default focus layer
@@ -125,71 +176,96 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- lifetime --
   parsedCallback() {
-    const id = this.getAttribute('id') || makeId(5)
-    this.id = id
+    const m = this
 
-    this.setVisible(!this.hasAttribute('hidden'))
+    // set id
+    const id = m.id = m.getAttribute('id') || makeId(5)
 
-    const templateHtml = frameTemplate.replaceAll('$id', id)
+    // set visibility
+    m.setVisible(!this.hasAttribute("hidden"))
 
-    // move original children of <a-dumpling> to be children of the body element
-    // (don't use innerhtml to do this, in case those elements had some important hidden state)
-    const originalChildren = [...this.children]
-    this.innerHTML = templateHtml
-    this.bodyElement = this.querySelector(`#${id}-body`)
-    let bodyContainer = this.bodyElement
-
-    if (originalChildren.length > 1 || this.findIframeInChildren(originalChildren) == null) {
-      bodyContainer = document.createElement('div')
-      bodyContainer.classList.toggle("Frame-shim")
-      this.bodyElement.appendChild(bodyContainer)
+    // move to the correct parent, abandoning if removed
+    const isDuplicate = m.addToParent()
+    if (isDuplicate) {
+      return
     }
 
-    for (const childNode of originalChildren) {
-      bodyContainer.appendChild(childNode)
+    // set class
+    m.classList.add(k.class.root)
+
+    // capture original children of <a-dumpling> before rendering the template,
+    // because it will clear them
+    const children = Array.from(m.children)
+
+    // render template
+    // TODO: "compile" template by doing this once and then using cloneNode for
+    // every other dumpling
+    m.innerHTML = kTemplate
+
+    // set body element
+    m.$body = m.findByClass(k.class.body)
+    if (m.$body == null) {
+      console.error(`[dmplng] a-dumpling ${id} has no body!`)
     }
 
-    this.classList.add('Frame')
-
-    if (this.hasAttribute('bodyClass')) {
-      this.bodyElement.classList.add(this.getAttribute('bodyClass'))
+    // add custom body class
+    if (m.hasAttribute(k.attr.bodyClass)) {
+      m.$body.classList.add(m.getAttribute(k.attr.bodyClass))
     }
 
-    this.initStyleFromAttributes()
+    // move children
+    if (children.length !== 0) {
+      // pick inner element to move children to
+      let $inner = m.$body
 
-    //#region Header Button Functionality
+      // if there are a bunch of elements, e.g. p tags, or a not-known
+      // wrapper element, add children to a shim
+      if (children.length > 1 || !k.tag.wrapper.has(children[0].nodeName)) {
+        $inner = document.createElement("div")
+        $inner.classList.toggle(k.class.shim)
+        m.$body.appendChild($inner)
+      }
 
-    // title
-    this.findTitle().then((title) => {
-      this.title = title
+      // move children to the inner element (don't use innerHTML to do this, in case those
+      // elements had important in-memory state)
+      for (const $child of children)  {
+        $inner.appendChild($child)
+      }
+    }
+
+    // apply initial style
+    m.initStyleFromAttributes()
+
+    // set title
+    m.findTitle().then((title) => {
+      m.title = title
     })
 
-    // Temperament Stuff
-    this.temperament = this.getAttribute('temperament') || DefaultTemperament
-    this.classList.toggle(this.temperament, true)
-    const temperamentData = TemperamentData[this.temperament]
+    // temperament Stuff
+    m.temperament = m.getAttribute('temperament') || DefaultTemperament
+    m.classList.toggle(m.temperament, true)
+    const temperamentData = TemperamentData[m.temperament]
 
-    const feelingsButton = this.querySelector(`#${id}-feelings`)
-    feelingsButton.innerHTML =
-      temperamentData.emoji
+    const feelingsButton = m.findByClass(k.class.temperament)
+    feelingsButton.innerHTML = temperamentData.emoji
 
     feelingsButton.onclick = () => {
       window.alert(temperamentData.alert)
     }
 
-    // Close button
-    const closeButton = this.querySelector(`#${id}-close`)
-    if (!this.hasAttribute('no-close')) {
-      closeButton.addEventListener("click", this.onClose)
+    // close button
+    const closeButton = m.findByClass(k.class.close)
+    if (!m.hasAttribute("no-close")) {
+      closeButton.addEventListener("click", m.onClose)
     } else {
       closeButton.style.display = 'none'
     }
 
-    // Maximize button
-    const iframe = this.findIframe()
-    const maximizeButton = this.querySelector(`#${id}-max`)
+    // maximize button
+    const iframe = m.findIframe()
+    const maximizeButton = m.findByClass(k.class.maximize)
 
-    if (this.hasAttribute('maximize') && iframe != null) {
+    if (m.hasAttribute('maximize') && iframe != null) {
       maximizeButton.onclick = () => {
         window.open(iframe.contentDocument.location, '_self')
       }
@@ -198,8 +274,8 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     // back button
-    const backButton = this.querySelector(`.Frame-header-back`)
-    if (!this.hasAttribute('no-back') && iframe != null) {
+    const backButton = m.findByClass(k.class.back)
+    if (!m.hasAttribute('no-back') && iframe != null) {
       // back button only exists for iframes
       backButton.onclick = () => {
         // note: for some reason all our d-frames start with a length of 2, so I'll leave this here for now
@@ -212,43 +288,20 @@ export class Dumpling extends HTMLParsedElement {
     } else {
       backButton.style.display = 'none'
     }
-    //#endregion
 
-    //#region focus logic
-    this.bringToTop()
-    //#endregion
-
-    // move to the correct container if necessary
-    let pid = "frames"
-    if (this.hasAttribute("permanent") || this.hasAttribute("persistent")) {
-      pid = "inventory"
-    }
-
-    if (this.parentElement.id !== pid) {
-      const parent = document.getElementById(pid)
-
-      // parent can be null on computer right now; anywhere that doesn't use
-      // the template
-      if (parent != null) {
-        // there is a copy already, remove
-        // maybe we might want non unique permanent frames?
-        // TODO: does this miss a case where the el was already added to the correct
-        // parent? (e.g. this.parentElement.id === pid)
-        if (pid === "inventory" && parent.querySelector(`#${this.id}`) != null) {
-          this.remove()
-          return
-        }
-
-        parent.appendChild(this)
-      }
-    }
+    // focus on create
+    m.bringToTop()
 
     // register events
-    this.initEvents()
+    m.initEvents()
+
+    // try to add to a bag if we're on one (parsing race condition???)
+    const dr = m.getBoundingClientRect()
+    m.addToBag(dr.x, dr.y)
   }
 
   onClose = () => {
-    const diframe = this.querySelector('d-iframe')
+    const diframe = this.querySelector("d-iframe")
     if (diframe != null) {
       diframe.destroyIframe()
     }
@@ -265,62 +318,74 @@ export class Dumpling extends HTMLParsedElement {
       return null
     }
 
-    let width = fallbackAttributes('width', 'w')
-    if (width == null) {
-      const minSize = parseFloat(fallbackAttributes(
-        'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
-        || FrameRng.MinSize
-      const maxSize = parseFloat(fallbackAttributes(
-        'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
-        || FrameRng.MaxSize
-      width = (minSize + Math.random() * (maxSize - minSize))
+    let width = 0
+    if (this.style.width === "") {
+      width = fallbackAttributes('width', 'w')
+      if (width == null) {
+        const minSize = parseFloat(fallbackAttributes(
+          'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
+          || FrameRng.MinSize
+        const maxSize = parseFloat(fallbackAttributes(
+          'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
+          || FrameRng.MaxSize
+        width = (minSize + Math.random() * (maxSize - minSize))
+      }
+
+      this.style.width = width + '%'
     }
 
-    this.style.width = width + '%'
+    let height = 0
+    if (this.style.height === "") {
+      height = fallbackAttributes('height', 'h')
+      if (height == null) {
+        const minSize = parseFloat(fallbackAttributes(
+          'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
+          || FrameRng.MinSize
+        const maxSize = parseFloat(fallbackAttributes(
+          'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
+          || FrameRng.MaxSize
+        height = (minSize + Math.random() * (maxSize - minSize))
+      }
 
-    let height = fallbackAttributes('height', 'h')
-    if (height == null) {
-      const minSize = parseFloat(fallbackAttributes(
-        'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
-        || FrameRng.MinSize
-      const maxSize = parseFloat(fallbackAttributes(
-        'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
-        || FrameRng.MaxSize
-      height = (minSize + Math.random() * (maxSize - minSize))
+      this.style.height = height + '%'
     }
-    this.style.height = height + '%'
 
     // TODO: maybe have some aspect ratio attribute so that can be specified instead of both width and height
+    if (this.style.left === "") {
+      let x = 0
+      if (this.attributes.x) {
+        x = this.attributes.x.value
+      } else {
+        const xMin = parseFloat(fallbackAttributes(
+          'x-min', 'min-x', 'pos-min', 'min-pos'))
+          || FrameRng.margin
+        const xMax = parseFloat(fallbackAttributes(
+          'x-max', 'max-x', 'pos-max', 'max-pos'))
+          || (100 - FrameRng.margin - width)
+        x =
+          xMin + Math.random() * (xMax - xMin)
+      }
 
-    let x = 0
-    if (this.attributes.x) {
-      x = this.attributes.x.value
-    } else {
-      const xMin = parseFloat(fallbackAttributes(
-        'x-min', 'min-x', 'pos-min', 'min-pos'))
-        || FrameRng.margin
-      const xMax = parseFloat(fallbackAttributes(
-        'x-max', 'max-x', 'pos-max', 'max-pos'))
-        || (100 - FrameRng.margin - width)
-      x =
-        xMin + Math.random() * (xMax - xMin)
+      this.style.left = x + '%'
     }
-    this.style.left = x + '%'
 
-    let y = 0
-    if (this.attributes.y) {
-      y = this.attributes.y.value
-    } else {
-      const yMin = parseFloat(fallbackAttributes(
-        'y-min', 'min-y', 'pos-min', 'min-pos'))
-        || FrameRng.margin
-      const yMax = parseFloat(fallbackAttributes(
-        'y-max', 'max-y', 'pos-max', 'max-pos'))
-        || (100 - FrameRng.margin - height)
-      y =
-        yMin + Math.random() * (yMax - yMin)
+    if (this.style.top === "") {
+      let y = 0
+      if (this.attributes.y) {
+        y = this.attributes.y.value
+      } else {
+        const yMin = parseFloat(fallbackAttributes(
+          'y-min', 'min-y', 'pos-min', 'min-pos'))
+          || FrameRng.margin
+        const yMax = parseFloat(fallbackAttributes(
+          'y-max', 'max-y', 'pos-max', 'max-pos'))
+          || (100 - FrameRng.margin - height)
+        y =
+          yMin + Math.random() * (yMax - yMin)
+      }
+
+      this.style.top = y + '%'
     }
-    this.style.top = y + '%'
   }
 
   initEvents() {
@@ -365,28 +430,41 @@ export class Dumpling extends HTMLParsedElement {
   hide() {
     const m = this
 
-    m.setVisible(false)
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.HideEvent,
-      { detail: m },
-    ))
+    // hide if visible
+    if (m.visible) {
+      m.setVisible(false)
+      m.addToParent()
+
+      m.dispatchEvent(new CustomEvent(
+        Dumpling.HideEvent,
+        { detail: m },
+      ))
+
+    }
   }
 
   show() {
     const m = this
 
-    m.setVisible(true)
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.ShowEvent,
-      { detail: m },
-    ))
+    // show if hidden
+    if (!m.visible) {
+      m.setVisible(true)
+      m.addToParent()
 
+      m.dispatchEvent(new CustomEvent(
+        Dumpling.ShowEvent,
+        { detail: m },
+      ))
+    }
+
+    // TODO: bring to top anyways?
     m.bringToTop()
   }
 
   setVisible(isVisible) {
-    this.visible = isVisible
-    this.classList.toggle(kVisibleClass, isVisible)
+    const m = this
+    m.visible = isVisible
+    m.classList.toggle(k.class.is.visible, isVisible)
   }
 
   bringToTop() {
@@ -404,8 +482,16 @@ export class Dumpling extends HTMLParsedElement {
     // and use an index one higher
     i = sTopIndexByLayer[m.layer] = i + 1
 
-    // update state (using style to store state)
-    this.style.zIndex = i
+    // update z-pos (using style to store state)
+    m.style.zIndex = i
+
+    // and update z-pos of bagged dumplings, if any
+    if (m.$contents != null) {
+      i += 1
+      for (const $i of m.$contents) {
+        $i.style.zIndex = i
+      }
+    }
 
     // update visibility of frames
     window.dispatchEvent(new CustomEvent(
@@ -414,78 +500,264 @@ export class Dumpling extends HTMLParsedElement {
     ))
 
     // focus iframe if necessary
+    m.focusIframe()
+  }
+
+  blurIframe() {
+    const iframe = this.findIframe()
+    if (iframe != null) {
+      iframe.blur()
+    }
+  }
+
+  focusIframe() {
     const iframe = this.findIframe()
     if (iframe != null) {
       iframe.focus()
     }
   }
 
+  /// move to the correct parent, or remove if duplicate; returns true if removed
+  addToParent() {
+    const m = this
+
+    let isDuplicate = false
+
+    // move to permanent once visible, if tagged
+    let pid = k.id.transient
+    if (m.visible && m.hasAttributeWithAliases(k.attr.permanent)) {
+      pid = k.id.permanent
+    }
+
+    // if parent doesn't match, move the element
+    if (m.parentElement.id !== pid) {
+      const parent = document.getElementById(pid)
+
+      // parent can be null on computer right now; anywhere that doesn't use
+      // the template
+      if (parent != null) {
+        // there is a copy already, remove
+        // maybe we might want non unique permanent frames?
+        // TODO: does this miss a case where the el was already added to the correct
+        // parent? (e.g. this.parentElement.id === pid)
+        // NOTE: only one element on the page should ever have an id; using querySelector
+        // to check for an id in a subtree is not a great idea. we should make sure that
+        // duplicated dumplings dont have ids.
+        if (pid === k.id.permanent && parent.querySelector(`#${m.id}`) != null) {
+          m.remove()
+          isDuplicate = true
+        } else {
+          parent.appendChild(m)
+        }
+      }
+    }
+
+    return isDuplicate
+  }
+
+  // -- c/bag
+  /// try to add to a bag at a given point
+  addToBag(x, y) {
+    const m = this
+
+    // look for a bag at this point
+    const $els = document.elementsFromPoint(x, y)
+    if ($els == null) {
+      return
+    }
+
+    let $bag = null
+    for (const $el of $els) {
+      // it must be a dumpling, but not this dumpling
+      if ($el === m || !($el instanceof Dumpling)) {
+        continue
+      }
+
+      // and it must be able to hold this kind of dumpling
+      const holds = $el.getAttribute("holds")
+      if (holds === "*" || holds === m.getAttribute("kind")) {
+        $bag = $el
+        break
+      }
+    }
+
+    // if none, don't add
+    if ($bag == null) {
+      return
+    }
+
+    // otherwise, add
+    $bag.addItem(m)
+  }
+
+  /// add dumpling to this bag
+  addItem($item) {
+    const m = this
+
+    // add item to the bag
+    m.$contents ||= new Set()
+    m.$contents.add($item)
+
+    // item tracks the bag
+    $item.$bag = m
+  }
+
+  /// remove dumpling from this bag
+  removeItem($item) {
+    const m = this
+
+    // don't remove nothing to/from nothing
+    if (m.$contents == null || $item == null) {
+      return
+    }
+
+    // remove item from the bag
+    m.$contents.delete($item)
+
+    // item tracks the lack of bag
+    $item.$bag = null
+  }
+
+  // -- c/gesture
+  /// create a gesture with the initial mouse position
+  initGesture(type, m0) {
+    const m = this
+
+    // create the gesture
+    m.gesture = { type }
+
+    // apply gesture style
+    switch (m.gesture.type) {
+    case Ops.Move:
+      m.classList.toggle(k.class.is.dragging, true); break
+    case Ops.Scale:
+      m.classList.toggle(k.class.is.scaling, true); break
+    }
+
+    // record initial position
+    const dr = m.getBoundingClientRect()
+    const pr = m.parentElement.getBoundingClientRect()
+
+    m.gesture.initialPosition = {
+      x: dr.x - pr.x,
+      y: dr.y - pr.y,
+    }
+
+    // record initial mouse position (we need to calc dx/dy manually on move b/c
+    // evt.offset, the pos within the element, doesn't seem to include borders,
+    // etc.)
+    m.gesture.initialMousePosition = m0
+
+    // create drag gestures for any bagged dumplings
+    if (type == Ops.Move && m.$contents != null) {
+      for (const $i of m.$contents) {
+        $i.initGesture(type, m0)
+      }
+    }
+  }
+
+  /// move dumpling w/ new mouse position
+  moveTo(mx, my) {
+    const m = this
+    if (m.gesture == null) {
+      return
+    }
+
+    // get initial pos
+    const p0 = m.gesture.initialPosition
+    const m0 = m.gesture.initialMousePosition
+
+    // get the mouse delta
+    const dx = mx - m0.x
+    const dy = my - m0.y
+
+    // apply it to the initial position
+    m.style.left = `${p0.x + dx}px`
+    m.style.top = `${p0.y + dy}px`
+
+    // also move any bagged dumplings
+    if (m.$contents != null) {
+      for (const $i of m.$contents) {
+        $i.moveTo(mx, my)
+      }
+    }
+  }
+
+  /// clear the gesture
+  clearGesture() {
+    const m = this
+    if (m.gesture == null) {
+      return
+    }
+
+    // clear the gesture
+    m.gesture = null
+
+    // reset style
+    const classes = m.classList
+    classes.toggle(k.class.is.dragging, false)
+    classes.toggle(k.class.is.scaling, false)
+
+    // and clear for any bagged dumplings
+    if (m.$contents != null) {
+      for (const $i of m.$contents) {
+        $i.clearGesture()
+      }
+    }
+  }
+
+  // -- c/viz
   open = this.show
   close = this.hide
-  clisten = addEventListener
 
   // -- events --
+  /// when the mouse button is pressed
   onMouseDown = (evt) => {
-    // mousedown behavior on the header/handle
+    const m = this
 
     // TODO: probably don't need to prevent default, there should no default.
     // Commented preventDefault here so that you can interact with non iframed stuff inside dumplings
     // evt.preventDefault()
 
     // bring this frame to top of stack
-    this.bringToTop()
+    m.bringToTop()
 
     // determine gesture, if any
+    let type = null
+
     const classes = evt.target.classList
-    if (classes.contains('Frame-header-blank')) {
-      this.gesture = { type: Ops.Move }
-    } else if (classes.contains('Frame-handle')) {
-      this.gesture = { type: Ops.Scale }
+    if (classes.contains(k.class.title)) {
+      type = Ops.Move
+    } else if (classes.contains(k.class.handle)) {
+      type = Ops.Scale
     }
 
-    if (this.gesture == null) {
+    if (type == null) {
       return
     }
 
-    // apply op style
-    switch (this.gesture.type) {
-      case Ops.Move:
-        this.classList.toggle(kDraggingClass, true); break
-      case Ops.Scale:
-        this.classList.toggle(kScalingClass, true); break
-    }
+    // create the gesture with the initial mouse pos
+    m.initGesture(type, {
+      x: evt.clientX,
+      y: evt.clientY
+    })
 
     // disable collisions with iframes
-    const iframes = document.querySelectorAll('iframe')
-    for (const iframe of Array.from(iframes)) {
-      iframe.style.pointerEvents = 'none'
-    }
-
-    // record initial position
-    const dr = this.getBoundingClientRect()
-    const pr = this.parentElement.getBoundingClientRect()
-
-    this.gesture.initialPosition = {
-      x: dr.x - pr.x,
-      y: dr.y - pr.y,
-    }
-
-    // record initial mouse position (we need to calc dx/dy manually on move
-    // b/c evt.offset, the pos within the element, doesn't seem to include
-    // borders, etc.)
-    this.gesture.initialMousePosition = {
-      x: evt.clientX,
-      y: evt.clientY,
+    const $iframes = document.querySelectorAll("iframe")
+    for (const $iframe of Array.from($iframes)) {
+      $iframe.style.pointerEvents = "none"
     }
 
     // start the operation
-    switch (this.gesture.type) {
-      case Ops.Scale:
-        this.onScaleStart(dr)
-        break
+    switch (m.gesture.type) {
+    case Ops.Move:
+      m.onDragStart(); break;
+    case Ops.Scale:
+      m.onScaleStart(); break
     }
   }
 
+  /// when the mouse moves
   onMouseMove = (evt) => {
     if (this.gesture == null) {
       return
@@ -507,50 +779,86 @@ export class Dumpling extends HTMLParsedElement {
     }
   }
 
-  onMouseUp = () => {
+  /// when the mouse button is released
+  onMouseUp = (evt) => {
+    const m = this
+    if (m.gesture == null) {
+      return
+    }
+
     // re-enable mouse events on iframes
-    const iframes = document.querySelectorAll('iframe')
+    const iframes = document.querySelectorAll("iframe")
     for (const iframe of Array.from(iframes)) {
       iframe.style.pointerEvents = null
     }
 
-    // reset gesture style
-    this.classList.toggle(kDraggingClass, false)
-    this.classList.toggle(kScalingClass, false)
+    // send per-gesture events
+    const mx = evt.clientX
+    const my = evt.clientY
 
-    // clear gesture
-    this.gesture = null
+    switch (m.gesture.type) {
+    case Ops.Move:
+      m.onDragEnd(mx, my); break
+    case Ops.Scale:
+      m.onScaleEnd(); break;
+    }
+
+    // and clear it
+    m.clearGesture()
+
+    // focus frame
+    m.focusIframe()
   }
 
   // -- e/drag
-  onDrag(mx, my) {
-    const p0 = this.gesture.initialPosition
-    const m0 = this.gesture.initialMousePosition
+  /// when the drag starts
+  onDragStart() {
+    const m = this
 
-    // get the mouse delta
-    const dx = mx - m0.x
-    const dy = my - m0.y
-
-    // apply it to the initial position
-    this.style.left = `${p0.x + dx}px`
-    this.style.top = `${p0.y + dy}px`
+    // if we're in a bag, remove ourselves
+    if (m.$bag) {
+      m.$bag.removeItem(m)
+    }
   }
 
-  onScaleStart(dr) {
+  /// when the drag gesture moves
+  onDrag(mx, my) {
+    const m = this
+
+    // move the dumpling and any bagged dumplings
+    m.moveTo(mx, my)
+  }
+
+  /// when the drag gesture finishes
+  onDragEnd(mx, my) {
+    const m = this
+
+    // try to add to a bag at the mouse position
+    m.addToBag(mx, my)
+  }
+
+  // -- e/scale
+  /// when a scale gesture starts
+  onScaleStart() {
+    const m = this
+
+    // get dumpling rect
+    const dr = m.getBoundingClientRect()
+
     // capture the frame's w/h at the beginning of the gesture
-    this.gesture.initialSize = {
+    m.gesture.initialSize = {
       w: dr.width,
       h: dr.height
     }
 
     // get the scale target, we calculate some scaling against the target
     // element's size
-    const target = this.findScaleTarget()
+    const target = m.findScaleTarget()
     if (target != null) {
       const tr = target.getBoundingClientRect()
 
       // capture the target's w/h at the beginning of the op
-      this.gesture.initialTargetSize = {
+      m.gesture.initialTargetSize = {
         w: tr.width,
         h: tr.height,
       }
@@ -558,21 +866,24 @@ export class Dumpling extends HTMLParsedElement {
       // and if this is the first ever time scaling frame, also set the
       // target's initial w/h as its style. we'll use `transform` to scale
       // the target in most cases, so it can't use percentage sizing.
-      if (!this.isScaleSetup) {
-        this.baseTargetSize = this.gesture.initialTargetSize
+      if (!m.isScaleSetup) {
+        m.baseTargetSize = m.gesture.initialTargetSize
 
         target.style.transformOrigin = "top left"
-        target.style.width = this.baseTargetSize.w
-        target.style.height = this.baseTargetSize.h
+        target.style.width = m.baseTargetSize.w
+        target.style.height = m.baseTargetSize.h
 
-        this.isScaleSetup = true
+        m.isScaleSetup = true
       }
     }
   }
 
+  /// when a scale gesture changes
   onScale(mx, my) {
-    const s0 = this.gesture.initialSize
-    const m0 = this.gesture.initialMousePosition
+    const m = this
+
+    const s0 = m.gesture.initialSize
+    const m0 = m.gesture.initialMousePosition
 
     // get the mouse delta; we'll use this to update the sizes captured
     // at the start of each scale op
@@ -580,7 +891,7 @@ export class Dumpling extends HTMLParsedElement {
     let dy = my - m0.y
 
     // unless choleric, update the frame's size. this resizes the outer frame
-    if (this.temperament !== choleric) {
+    if (m.temperament !== choleric) {
       let newWidth = s0.w + dx;
       let newHeight = s0.h + dy;
 
@@ -588,10 +899,10 @@ export class Dumpling extends HTMLParsedElement {
       // let xflip = (newWidth < 0) ? -1 : 1
       // if (newWidth < 0) {
       //   // todo flip
-      //   this.style.transform = "scale(-1, 1)"
+      //   m.style.transform = "scale(-1, 1)"
       //   newWidth = -newWidth;
       // } else {
-      //   this.style.transform = "scale(1, 1)"
+      //   m.style.transform = "scale(1, 1)"
       // }
 
       newWidth = Math.max(newWidth, MinContentWidth);
@@ -601,21 +912,21 @@ export class Dumpling extends HTMLParsedElement {
       dx = newWidth - s0.w;
       dy = newHeight - s0.h;
 
-      this.style.width = `${newWidth}px`
-      this.style.height = `${newHeight}px`
+      m.style.width = `${newWidth}px`
+      m.style.height = `${newHeight}px`
     }
 
     // get the target, the frame's content, to apply temperamental scaling
-    const target = this.findScaleTarget()
+    const target = m.findScaleTarget()
     if (target != null) {
-      const tsb = this.baseTargetSize
-      const ts0 = this.gesture.initialTargetSize
+      const tsb = m.baseTargetSize
+      const ts0 = m.gesture.initialTargetSize
 
       // calculate the scale factor based on the target's w/h ratios
       const scaleX = (ts0.w + dx) / tsb.w
       const scaleY = (ts0.h + dy) / tsb.h
 
-      switch (this.temperament) {
+      switch (m.temperament) {
         case sanguine:
           target.style.transform = `scale(${scaleX}, ${scaleY})`
           target.style.width = `${100/scaleX}%`
@@ -633,9 +944,29 @@ export class Dumpling extends HTMLParsedElement {
           break
         case choleric:
           // IMPORTANT - DO NOT REMOVE
-          target.style.width = `${this.tw + dx}px`
-          target.style.height = `${this.th + dy}px`
+          target.style.width = `${m.tw + dx}px`
+          target.style.height = `${m.th + dy}px`
           break
+      }
+    }
+  }
+
+  /// when a scale gesture ends
+  onScaleEnd = () => {
+    const m = this
+
+    // remove any bagged dumplings that are no longer contained
+    if (m.$contents != null) {
+      const dr = m.getBoundingClientRect()
+
+      // for every item
+      for (const $i of Array.from(m.$contents)) {
+        const ir = $i.getBoundingClientRect()
+
+        // if its top-left corner is outside our bottom-right corner, remove it
+        if (ir.top > dr.bottom && ir.left > dr.right) {
+          m.removeItem($i)
+        }
       }
     }
   }
@@ -648,10 +979,17 @@ export class Dumpling extends HTMLParsedElement {
       return
     }
 
+    const isFocused = m.style.zIndex == sTopIndexByLayer[m.layer]
     m.classList.toggle(
-      kUnfocusedClass,
-      m.style.zIndex != sTopIndexByLayer[m.layer]
+      k.class.is.unfocused,
+      !isFocused
     )
+
+    if(isFocused) {
+      this.focusIframe()
+    } else {
+      this.blurIframe()
+    }
   }
 
   // -- queries --
@@ -660,83 +998,138 @@ export class Dumpling extends HTMLParsedElement {
     return this.getAttribute("layer") || kLayerDefault
   }
 
+  /// find the thing inside the dumpling to scale
   findScaleTarget() {
-    const body = this.querySelector(`#${this.id}-body`)
-    const child = body.firstElementChild
-    if (child == null) {
+    const m = this
+
+    // find our content element
+    const inner = m.findInner()
+    if (inner == null) {
       return null
     }
 
-    // search for a wrapped iframe (youtube embed is one level deep)
-    const iframe = this.findIframe()
+    // if it's an iframe, use its inner body (youtube embed is one level deep)
+    const iframe = m.asIframe(inner)
     if (iframe != null) {
       return iframe.contentDocument.body
     }
 
-    // otherwise, return first child
-    return child
+    // otherwise, use the content element
+    return inner
+  }
+
+  /// find the first child w/ the matching class
+  findByClass(klass) {
+    return this.querySelector(`.${klass}`)
+  }
+
+  // -- q/inner
+  /// find the single content element
+  findInner() {
+    return this.$body != null ? this.$body.children[0] : null
   }
 
   // -- q/iframe --
+  /// find our inner iframe, if any
   findIframe() {
-    return this.findIframeInChildren(this.bodyElement.children)
+    return this.asIframe(this.findInner())
   }
 
-  findIframeInChildren(children) {
-    const child = children[0]
-    switch (child && child.nodeName) {
-      case "IFRAME":
-      case "D-IFRAME":
-        return child
-      default:
-        return null
-    }
+  // safe-cast the element to an iframe
+  asIframe($child) {
+    return k.tag.iframe.has($child && $child.nodeName) ? $child : null
   }
 
+  // -- title --
   _title = null
 
   get title() {
     return this._title
   }
 
-  set title(value) {
-    const titleEl = this.querySelector(`#${this.id}-title`)
-    this._title = value;
+  set title(text) {
+    const m = this
 
-    if (!value) {
-      titleEl.style.display = 'none'
-    } else {
-      delete titleEl.style.display
-      titleEl.innerHTML = value;
-    }
+    // store title
+    m._title = text
+
+    // update el
+    const $el = m.findByClass(k.class.titleText)
+    $el.innerText = text
+    $el.style.display = text ? "" : "none"
   }
 
+  // find the title from many different possible sources
   findTitle() {
+    const m = this
+
     // use attr if available
-    const title = this.getAttribute("title")
+    const title = m.getAttribute(k.attr.title)
     if (title != null) {
       return Promise.resolve(title)
     }
 
-    // if we have a nested iframe
-    const iframe = this.findIframe()
-    if (iframe == null) {
+    // if we have an inner element
+    const $inner = m.findInner()
+    if ($inner == null) {
       return Promise.resolve(null)
     }
 
-    // use its title
-    const doc = iframe.contentDocument
-    if (doc != null) {
-      return Promise.resolve(doc.title)
+    // let's use some duck-typing to find its title
+    // if it has a content document property, it's an iframe-like
+    const doc = $inner.contentDocument
+    if (doc !== undefined) {
+      // if it's present, use its title
+      if (doc != null) {
+        return Promise.resolve(doc.title)
+      }
+
+      // otherwise, wait for it to load
+      // TODO: this probably doesn't do the right thing when the iframe changes page
+      return new Promise((resolve) => {
+        $inner.addEventListener("load", () => {
+          resolve($inner.contentDocument.title)
+        })
+      })
     }
 
-    // or wait for it (this probably doesn't do the right thing when the iframe changes page)
-    return new Promise((resolve) => {
-      iframe.addEventListener("load", () => {
-        resolve(iframe.contentDocument.title)
-      })
-    })
+    // otherwise, use its title
+    const innerTitle = $inner.title
+    if (innerTitle instanceof Promise) {
+      return innerTitle
+    }
+
+    return Promise.resolve(innerTitle)
+  }
+
+  // check for any attribute from a list of aliases
+  hasAttributeWithAliases(names) {
+    const m = this
+
+    for (const name of names) {
+      if (m.hasAttribute(name)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  // get first value for an attribute with a list of aliases
+  getAttributeWithAliases(names) {
+    const m = this
+
+    for (const name of names) {
+      const val = m.getAttribute(name)
+
+      // TODO: how to handle empty strings here (currently, ignoring them)
+      if (val) {
+        return val
+      }
+    }
+
+    return null
   }
 }
 
-customElements.define('a-dumpling', Dumpling)
+customElements.define("a-dumpling", Dumpling)

@@ -25,29 +25,49 @@
 </style>
 
 <body>
-    <img id="background" class="background" src="./images/person_on_computer.png">
+    <img
+        id="background"
+        class="background"
+        src="./images/person_on_computer.png"
+        alt="you find yourself on top of a large log, deep in the woods. on the other end of the log there's a frog, deeply focused on its use of his computer. near the frog there's a beautiful picture frame of what look like a stack of tiny frogs on top of a bigger frog, the word love is written in bright magenta. you should not interrupt the frog. around you there are honeybees, they are very gigantic!!"
+    >
+
     <c-picky wants='stoleFrogFrame'>
         <img id="background2" class="background" src="./images/person_on_computer-nophoto.png">
     </c-picky>
 
-
-    <a class="hotspot cursor-inspect" href="./8messy_server_transition.html"
-        style="left: 1.5%; top: 14.450%; width: 22.034%; height: 22.011%"></a>
+    <a
+        class="hotspot cursor-inspect"
+        href="./8messy_server_transition.html"
+        style="left: 1.5%; top: 14.450%; width: 22.034%; height: 22.011%"
+        title="the deeper path|beyond you there's a path deeper to the woods"
+    ></a>
 
     <c-picky wants='stealthy'>
         <button class="hotspot cursor-spy" onclick="stealFrame()"
             style="left: 58.5%; top: 38.45%; width: 9.034%; height: 9.011%;"></button>
     </c-picky>
 
-    <a class="hotspot cursor-move" href="./1.html" style="left: -1%; top: 72.345%; width: 26.125%; height: 26.176%"></a>
+    <a
+        class="hotspot cursor-move"
+        href="./1.html" style="left: -1%; top: 72.345%; width: 26.125%; height: 26.176%"
+        title="a path behind you"
+        ></a>
 
-    <a class="hotspot centered cursor-talk" href="#" onclick="Frames.toggle('rude')"
-        style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%" data-turbo="false"></a>
+    <button class="hotspot centered cursor-talk" onclick="Frames.toggle('rude')"
+        style="left: 70.114%; top: 40.604%; width: 13.626%; height: 20.160%" data-turbo="false"></button>
 
-    <a-dumpling hidden id="rude" title='frog' x=40 y=15 width=70 height=40 bodyClass="InvertedFrame">
-        <span>Don't <a href="#" onclick="Frames.show('more-rude')" data-turbo="false">be rude</a>, they
-            are using <a href="#" onclick="Frames.show('the-computer')" data-turbo="false">the
-                computer</a></span>
+    <a-dumpling
+        id="rude"
+        title='frog'
+        x=40 y=15
+        w=70 h=40
+        bodyClass="InvertedFrame"
+        hidden
+    >
+        <span class="d-internal">
+            Don't <a href="#" onclick="Frames.show('more-rude')">be rude</a>, they are using <a href="#" onclick="Frames.show('the-computer')">the computer</a>
+        </span>
     </a-dumpling>
 
     <a-dumpling id="the-computer" title='the computer' hidden permanent x=60 y=28 width=25 height=35>
@@ -55,6 +75,7 @@
             height="480" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen>
         </d-iframe>
     </a-dumpling>
+
     <a-dumpling id="frog-family" temperament='sanguine' title='family' hidden permanent x=60 y=28 width=25 height=35>
         <div>
             <img style='width: 100%; height: 100%' src='./images/family.jpg'>
@@ -62,19 +83,20 @@
     </a-dumpling>
 
     <a-dumpling id="more-rude" hidden x=40 y=30 width=50 height=35 bodyClass="frog-dialogue">
-        <span>
-            <p>The frog looks you in the eye, frowning.</p>
-            <p>"Please. We don't get internet back at the <span class='cosmodrome'>Cosmodrome</span>. Between taking
+        <div class="Dialog-text">
+            <p class="d-internal">the frog looks you in the eye & frowns</p>
+            <p>"Please leave me alone. We don't get internet back at the <span class='cosmodrome'>Cosmodrome</span>. Between taking
                 care of my kids and
                 my mother, this is the one hour a week that I get to see what my friends are up to."</p>
-        </span>
+        </div>
     </a-dumpling>
 
     <iframe id="honeybee" disable-randomization=true class="background" src="/games/honeybee/web-build/honeybee.html"></iframe>
 
     <s-cript target="assistant">
-        --- frog
-        I actually know this guy from way back. We don't hang out much any more. {oh|i see}
+        --- click
+        I actually know this guy from way back. We don't hang out much any more. {oh|that's unfortunate}
+        ==> click
     </s-cript>
 
 </body>

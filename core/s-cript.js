@@ -14,7 +14,7 @@ const kJumpPattern = /==>\s*(\[.*\])?\s*([\w-_]+)\s*/
 const kLinePattern = /\s*(\[.*\])?\s*([^\{]+)\s*(\{(.*)\})?\s*/
 
 // matches operations: "[cont]" "[set a]", "[a,!b]"
-const kOperationPattern = /\[(.*)\]/
+const kOperationPattern = /\[([^\[\]]*)\]/g
 
 // the prefix of the set operation
 const kSetOperation = "set"
@@ -35,6 +35,7 @@ const kClickSectionName = "click"
 const kAttrs = {
   target: "target",
   main: "main",
+  hideTitle: "hide-dialog-title"
 }
 
 // class names
@@ -64,7 +65,12 @@ class ScriptElement extends HTMLParsedElement {
 
     // if no id, we'll try to inferred one
     if (!m.id) {
-      m.id = `${m.targetId}-${document.location.pathname.slice(1).replaceAll("/", "-")}`
+      if (m.isMain) {
+        m.id = `${m.targetId}-main`
+      } else {
+        m.id = `${m.targetId}-${document.location.pathname.slice(1).replaceAll("/", "-")}`
+      }
+
       console.debug(`[script] s-cript inferred id="${m.id}"`)
     }
 
@@ -145,28 +151,34 @@ class ScriptGod {
   // -- lifetime --
   constructor($window) {
     const m = this
+
+    // set props
     m.$window = $window
     m.heralds = {}
+
+    // bind events
+    d.Events.listen(d.Events.Forest.BeforeVisit, m.OnBeforeVisit)
   }
 
   // -- commands --
   // add script to new or existing herald
-  addScriptToHerald(id, scriptId, content, isMain, window) {
+  addScriptToHerald(id, scriptId, textContent, isMain, window) {
     const m = this
 
     // get the herald
     const herald = m.findOrCreateHerald(id)
 
+    // evaluate the key for this script
+    const key = isMain ? "*" : scriptId
+
     // add the script if necessary
     if (!herald.hasScript(scriptId)) {
-      // longer keys are more important
-      // TODO: use a real key from the el attr
-      const key = isMain ? "*" : window.location.pathname
-      const script = Script.decode(content, scriptId)
+      const script = Script.decode(scriptId, key, textContent)
       herald.addScript(scriptId, script, key)
-    } else {
-      console.debug(`[script] herald ${id} ignoring duplicate script w/ id ${scriptId}`)
     }
+
+    // add an active key
+    herald.addActiveKey(key)
 
     // bind once we hit the main script
     if (isMain) {
@@ -208,36 +220,53 @@ class ScriptGod {
 
     return herald
   }
+
+  // -- events --
+  /// before a visit starts
+  OnBeforeVisit = () => {
+    const m = this
+
+    // clear each herald's active keys
+    for (const herald of Object.values(m.heralds)) {
+      herald.clearActiveKeys()
+    }
+  }
 }
 
 // one who announces the script(ture)
 class ScriptHerald {
   // -- props --
   // id: string - the target id
+  // scripts: {[string]: Script} - a map of script id to script
+  // hooks: {}
+  // activeKeys: [string] - a list of active keys on the herald
+  // $window: Window - the window containing the target
+  // $godWindow: Window - the script god's (root) window
 
   // -- lifetime --
   constructor(id, $godWindow) {
     const m = this
     m.id = id
-    m.scripts = []
+    m.scripts = {}
     m.hooks = {}
+    m.activeKeys = []
     m.$window = null
     m.$godWindow = $godWindow
   }
 
   // -- commands --
-  // add a new script
-  addScript(id, script, key) {
+  /// add a new script
+  addScript(id, script) {
     const m = this
 
     if (!m.hasScript(id)) {
-      m.scripts[id] = { id, script, key }
+      m.scripts[id] = script
     } else {
       console.warn(`[script] herald ${m.id} already had script w/ id ${id}!`)
     }
   }
 
-  // adds a new rendering hook for the name
+  /// adds a new rendering hook for the name
   addHookToScript(id, name, render) {
     const m = this
 
@@ -251,7 +280,7 @@ class ScriptHerald {
     hooks[name] = render
   }
 
-  // bind the script to its target
+  /// bind the script to its target
   bindToTarget($window) {
     const m = this
 
@@ -263,7 +292,7 @@ class ScriptHerald {
 
     // if we have a target
     if ($target == null) {
-      console.warn(`couldn't find target ${m.id} for script`)
+      console.warn(`[script] couldn't find target ${m.id} for script`)
       return
     }
 
@@ -272,9 +301,15 @@ class ScriptHerald {
     $target.classList.toggle(kClass.cursor, true)
   }
 
-  // show the next onclick dialog
+  // -- c/dialogs
+  /// show the next onclick dialog
   showNextDialog(isClick = false) {
     const m = this
+
+    // we need a target to do anything
+    if (!m.hasTarget()) {
+      return
+    }
 
     // don't show dialog if the item is marked continue
     if(isClick && m.currentItem != null && m.currentItem.operations.cont) {
@@ -285,16 +320,14 @@ class ScriptHerald {
     }
 
     // advance to the next line
-    const best = m.findBestScript()
-    if (best == null) {
+    const script = m.findBestScript()
+    if (script == null) {
       return
     }
 
-    const { id: scriptId, script } = best
-
     // get current item and advance
     const curr = script.findCurrentPath(false) // also sets state
-    console.log(`[script] ${scriptId} show dialog: [${curr[0]}, ${curr[1]}]`)
+    console.debug(`[script] ${script.id} show dialog: [${curr[0]}, ${curr[1]}]`)
 
     const item = script.findItemByPath(...curr)
     script.advance(...curr)
@@ -303,21 +336,26 @@ class ScriptHerald {
 
     // show dialog
     m.showDialogForItem(
-      scriptId,
+      script.id,
       item,
       () => {
-        console.log(`[script] ${scriptId} cont [showNextDialog]`)
+        console.debug(`[script] ${script.id} cont [showNextDialog]`)
         m.showNextDialog()
       }
     )
   }
 
-  // shows the dialog at section w/ name, item j
+  /// shows the dialog at section w/ name, item j
   showNamedDialogForScript(scriptId, name) {
     const m = this
 
+    // we need a target to do anything
+    if (!m.hasTarget()) {
+      return
+    }
+
     // find the script
-    const { script } = m.scripts[scriptId]
+    const script = m.scripts[scriptId]
     if (script == null) {
       return
     }
@@ -349,14 +387,14 @@ class ScriptHerald {
 
     // update current script position
     script.flow = name
-    script.advance(i, -1)
+    script.setPath(i, 0, true) // read only (don't call sets)
 
     // show the dialog
     m.showNextDialog()
   }
 
-  // -- c/helpers
-  // shows a dialog howor the item
+  // -- c/d/helpers
+  /// shows a dialog for the item
   showDialogForItem(scriptId, item, cont) {
     const m = this
 
@@ -372,11 +410,11 @@ class ScriptHerald {
       case ScriptLine.kind:
         m.showDialogForLine(item, cont); break
       default:
-        console.error("attempting to show dialogue for invalid item", item); break
+        console.error("[script] attempting to show dialog for invalid item", item); break
     }
   }
 
-  // show a dialog for the hook
+  /// show a dialog for the hook
   showDialogForHook(scriptId, item, cont) {
     const m = this
 
@@ -388,7 +426,7 @@ class ScriptHerald {
     }
   }
 
-  // show a dialog for the hook in a render fn
+  /// show a dialog for the hook in a render fn
   showDialogForRenderHook(render, cont) {
     const dialog = `
       <article class="Dialog">
@@ -399,7 +437,7 @@ class ScriptHerald {
     this.showDialog(dialog)
   }
 
-  // show a dialog for the hook in an html template
+  /// show a dialog for the hook in an html template
   showDialogForHtmlHook(hook, cont) {
     const m = this
 
@@ -415,7 +453,7 @@ class ScriptHerald {
     })
   }
 
-  // show a dialog for the line
+  /// show a dialog for the line
   showDialogForLine(line, cont) {
     const m = this
 
@@ -444,7 +482,7 @@ class ScriptHerald {
     })
   }
 
-  // shows a dialog with the line
+  /// shows a dialog with the line
   showDialog(html, cont) {
     const m = this
 
@@ -499,12 +537,23 @@ class ScriptHerald {
     m.$godWindow.document.firstElementChild.appendChild($el)
   }
 
-  // close the open dialog dumpling, if any
+  /// close the open dialog, if any
   closeOpenDialog() {
     const $dialog = this.findOpenDialog()
     if ($dialog != null) {
       $dialog.hide()
     }
+  }
+
+  // -- c/keys
+  /// adds an active key to the set
+  addActiveKey(key) {
+    this.activeKeys.push(key)
+  }
+
+  /// clears the active keys
+  clearActiveKeys() {
+    this.activeKeys.length = 0
   }
 
   // -- queries --
@@ -523,6 +572,10 @@ class ScriptHerald {
     return this.scripts[id] != null
   }
 
+  hasTarget() {
+    return this.findTarget(this.targetId) != null
+  }
+
   // find the open dialog dumpling
   findOpenDialog() {
     return this.findById(this.dialogId, this.$window)
@@ -532,21 +585,38 @@ class ScriptHerald {
   findBestScript() {
     const m = this
 
-    // todo: be smart about location metadata, e.g. location.tags.include("water-level")
-    const path = m.$godWindow.location.pathname
-    const all = Object.values(m.scripts)
+    // find the script with the longest key match
+    let best = null
 
-    const filtered = all
-      .filter((s) => s.script.findCurrentPath() != null)
-      .filter((s) => s.key === "*" || path.startsWith(s.key))
-      .sort((s0, s1) => s1.key.length - s0.key.length) // longer keys are more important.
-
-    const match = filtered[0]
-    if (match == null) {
-      return null
+    function addMatch(match) {
+      if (best == null || match.key.length > best.key.length) {
+        best = match
+      }
     }
 
-    return match
+    // for every script
+    for (const script of Object.values(m.scripts)) {
+      // must have a path
+      if (script.findCurrentPath() == null) {
+        continue
+      }
+
+      // and can either have a wildcard key (main)
+      if (script.key === "*") {
+        addMatch(script)
+      }
+      // or contain one of the active keys
+      else {
+        for (const key of m.activeKeys) {
+          // this should probably be checked before anything else
+          if (key.includes(script.key)) {
+            addMatch(script)
+          }
+        }
+      }
+    }
+
+    return best
   }
 
   // find the hook by script id and name
@@ -588,6 +658,10 @@ class ScriptHerald {
 
   // find the title of the dialog given the target
   findTitle($target) {
+    if ($target.hasAttribute(kAttrs.hideTitle)) {
+      return ""
+    }
+
     const name = $target.id || $target.title || $target.ownerDocument.title
     if (!name) {
       return ""
@@ -617,17 +691,21 @@ class ScriptHerald {
 // the script model
 class Script {
   // -- props --
+  // id: the script id
   // sections: ScriptSection[] - the dialogue sections
   // i: int - the current section index
+  // key: the script key for priority matching
+  // flow: the current flow
 
   // -- lifetime --
   // create a new script
-  constructor(id, sections) {
+  constructor(id, key, sections) {
     const m = this
     m.id = id
     m.sections = sections
-    m.i = 0
-    m.flow = 'click'
+    m.key = key
+    m.i = null
+    m.flow = kClickSectionName
   }
 
   // -- commands --
@@ -636,8 +714,11 @@ class Script {
     const m = this
 
     // find the next path
-    m.resolvePath(i, j) // a hacky way to call set for jumps
-    const next = m.resolvePath(i, j + 1)
+    // just go to j+1 if its there, let the jumps resolve later
+    let next = null
+    if(m.sections[i].get(j+1)) {
+      next = [i, j+1]
+    }
 
     // if there isn't one, end this script
     if (next == null) {
@@ -677,13 +758,16 @@ class Script {
       s.i = j
     }
 
-    console.log(`[script] ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
+    console.debug(`[script] ${m.id} set path: [${i}${j == null ? "" : `, ${j}`}] sec: ${s != null ? s.name : "none"}`)
   }
 
   // -- queries --
   // find the current section's current item, if any
   findCurrentPath(readonly = true) {
     const m = this
+    if(m.i === null) {
+     return null
+    }
 
     const section = m.sections[m.i]
     if (section == null) {
@@ -778,12 +862,12 @@ class Script {
 
   // -- encoding --
   // decode the script text
-  static decode(text, scriptId) {
+  static decode(scriptId, key, textContent) {
     // produce a list of sections
     const sections = []
 
     // get the text as lines
-    const lines = text.split("\n")
+    const lines = textContent.split("\n")
 
     // parsing one section at a time
     let curr = null
@@ -809,7 +893,11 @@ class Script {
       }
     }
 
-    return new Script(scriptId, sections)
+    return new Script(
+      scriptId,
+      key,
+      sections
+    )
   }
 }
 
@@ -864,7 +952,7 @@ class ScriptSection {
     // create the new secction
     return new ScriptSection(
       name,
-      decodeOperations(ostr),
+      decodeOperations(ostr)
     )
   }
 
@@ -919,7 +1007,7 @@ class ScriptJump {
     return new ScriptJump(
       id,
       name,
-      decodeOperations(ostr, id),
+      decodeOperations(ostr, id)
     )
   }
 }
@@ -1025,7 +1113,7 @@ class ScriptLine  {
       id,
       text,
       buttons,
-      decodeOperations(ostr, id),
+      decodeOperations(ostr, id)
     )
   }
 }
@@ -1033,6 +1121,17 @@ class ScriptLine  {
 ScriptLine.kind = "line"
 
 // -- helpers --
+const kGetOps = {
+  Is: 0,
+  Not: 1,
+  Eq: 2,
+  Neq: 3,
+  Lt: 4,
+  Lte: 5,
+  Gt: 6,
+  Gte: 7,
+}
+
 // decode an operation string "[cont] [a,!b] [set a, b]" into an object like:
 //   { cont: bool, get: [fn], set: [fn] }
 function decodeOperations(ostr, id) {
@@ -1044,7 +1143,9 @@ function decodeOperations(ostr, id) {
   }
 
   // then parse each one
-  for (const operation of ostr.match(kOperationPattern).slice(1)) {
+  const rawOps = ostr.matchAll(kOperationPattern)
+  for (const rawOp of rawOps) {
+    const operation = rawOp[1]
     switch (operation.trim().split(" ")[0]) { // gets the operation type
       case kOnceOperation:
         const seenId = `seen-${id}`
@@ -1066,7 +1167,7 @@ function decodeOperations(ostr, id) {
   return operations
 }
 
-// decode a get operation "a,!b"
+// decode a get operation "a,!b,c>=3"
 function decodeGetOperation(oldGet, str) {
   return addGetOperation(
     oldGet,
@@ -1074,26 +1175,130 @@ function decodeGetOperation(oldGet, str) {
   )
 }
 
-// add a get operation for a list of variables
-function addGetOperation(oldGet, ...vars) {
+// add a get operation for a list of queries
+function addGetOperation(oldGet, ...queryStrings) {
+  // parse the queries from text
+  const queries = []
+
+  // for each text
+  for (let s of queryStrings) {
+    // trim the query string
+    s = s.trim()
+
+    // ignore leading "+"
+    if (s[0] === "+") {
+      s = s.slice(1)
+    }
+
+    // default to "is" operation
+    let q = {
+      opr: kGetOps.Is,
+      key: s,
+      val: true,
+    }
+
+    // parse prefix operations
+    if (s[0] === "!") {
+      q = {
+        opr: kGetOps.Not,
+        key: s.slice(1),
+        val: false
+      }
+    }
+    // parse infix operations
+    else {
+      // find index of operator
+      let j = -1
+
+      for (let i = 0; i < s.length; i++) {
+        const ch = s[i]
+
+        switch (ch) {
+        case "!":
+        case "=":
+        case "<":
+        case ">":
+          j = i;
+          break;
+        }
+
+        if (j >= 0) {
+          break;
+        }
+      }
+
+      // if found...
+      if (j !== -1) {
+        // parse the key
+        q.key = s.slice(0, j)
+
+        // parse the op
+        const isNextEq = s[j + 1] === "="
+        switch (s[j]) {
+        case "=":
+          q.opr = isNextEq ? kGetOps.Eq : kGetOps.Is; break;
+        case "!":
+          q.opr = isNextEq ? kGetOps.Neq : kGetOps.Is; break;
+        case "<":
+          q.opr = isNextEq ? kGetOps.Lte : kGetOps.Lt; break;
+        case ">":
+          q.opr = isNextEq ? kGetOps.Gte : kGetOps.Gt; break;
+        }
+
+        // parse the val
+        switch (q.opr) {
+        case kGetOps.Eq:
+        case kGetOps.Neq:
+        case kGetOps.Lte:
+        case kGetOps.Gte:
+          q.val = Number.parseFloat(s.slice(j + 2)); break;
+        case kGetOps.Lt:
+        case kGetOps.Gt:
+          q.val = Number.parseFloat(s.slice(j + 1)); break;
+        }
+      }
+    }
+
+    // add the query
+    queries.push(q)
+  }
+
+  // produce the operation fn
   return () => {
     if (oldGet && !oldGet()) {
       return false
     }
 
-    for (const v of vars) {
-      // key on the var
-      let key = v
-
-      // if negated, remove "!" from key
-      const isNot = v[0] === "!"
-      if (isNot) {
-        key = key.slice(1)
+    for (const q of queries) {
+      // get the current value
+      let curr = d.State[q.key]
+      if (curr == null) {
+        curr = false
       }
 
-      // if current state matches flag, (??? what does this do)
-      const state = d.State[key]
-      if (state == isNot) {
+      // try the query
+      let r = true
+      switch (q.opr) {
+      case kGetOps.Is:
+        r = curr == true; break
+      case kGetOps.Not:
+        r = curr == false; break
+      case kGetOps.Eq:
+        r = curr == q.val; break
+      case kGetOps.Neq:
+        r = curr != q.val; break
+      case kGetOps.Lte:
+        r = curr <= q.val; break
+      case kGetOps.Gte:
+        r = curr >= q.val; break
+      case kGetOps.Lt:
+        r = curr < q.val; break
+      case kGetOps.Gt:
+        r = curr > q.val; break
+      }
+
+      // if any fail, this fails
+      if (!r) {
         return false
       }
     }
