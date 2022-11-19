@@ -27,37 +27,41 @@
       --- brochure-pick-up-second
       omg you picked up another brochure piece this must be love
 
+      --- brochure-pick-up-third
+      i love you
     </s-cript>
 
     <script type="module">
+      import {Inventory} from "./inventory.js"
 
-      import {kInventory} from "./inventory.js"
+      const inventory = Inventory.get();
 
-      let pickedUpPiece = false;
+      let numPieces = 0;
       window.pickUpBrochure = function(pieceNum) {
-
-	const dialog = document.getElementById("intro-dialog");
-	console.log(dialog);
-
-	kInventory.add({
-	  id: "brochure-piece" + pieceNum,
-	  src: "items/brochurepiece" + pieceNum,
-	  attrs: {
+        // add piece to inventory
+        inventory.add({
+          id: "brochure-piece" + pieceNum,
+          src: "items/brochurepiece" + pieceNum,
+          attrs: {
             "temperament": "choleric",
             "no-close": true,
           }
-	})
+        })
+        
+        // remove piece from the scene
+        document.getElementById("brochure-piece" + pieceNum).remove()
 
-	document.getElementById("brochure-piece" + pieceNum).remove()
-
-        if (pickedUpPiece) {
-	  dialog.showNamedDialog("brochure-pick-up-second");
+        // show assistant dialogue
+        const dialog = document.getElementById("intro-dialog");
+        if (numPieces == 0) {
+          console.log("display dialogue?");
+          dialog.showNamedDialog("brochure-pick-up-first");
+        } else if (numPieces == 1) {
+          dialog.showNamedDialog("brochure-pick-up-second");
         } else {
-	  dialog.showNamedDialog("brochure-pick-up-first");
+          dialog.showNamedDialog("brochure-pick-up-third");
         }
-        pickedUpPiece = true;
-
-
+        numPieces += 1;
       }
     </script>
     <a class="hotspot cursor-move" href="intro_bridge.html"
