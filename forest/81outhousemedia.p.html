@@ -9,6 +9,11 @@
   ></a>
 
   <button
+  data-border="sleek"
+  class="EmptyFrame ForestBackground cursor-grab"
+></button>
+
+  <button
     data-border="broider"
     class="EmptyFrame ForestBackground cursor-grab"
   ></button>
@@ -93,6 +98,13 @@
 
 .EmptyFrame.is-visible {
   visibility: visible;
+}
+
+.EmptyFrame[data-border="sleek"]{
+  bottom: 48%;
+  left: 77%;
+  transform: rotateZ(-6deg);
+
 }
 
 .EmptyFrame[data-border="line"] {

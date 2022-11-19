@@ -59,7 +59,7 @@
 }
 
 *[data-border="line"] {
-  border: 1px solid black;
+  border: .1vmin solid black;
 }
 
 *[data-border="broider"] {
