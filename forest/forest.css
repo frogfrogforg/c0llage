@@ -52,6 +52,12 @@
   background: linear-gradient(180deg, rgba(226, 247, 247, 1) 0%, rgba(207, 191, 181, 1) 100%);
 }
 
+*[data-border="sleek"] {
+  border: .1vmin solid black;
+  box-shadow: 0px 0px 10px #A4978E;
+  border-radius: 1vmin;
+}
+
 *[data-border="line"] {
   border: 1px solid black;
 }
