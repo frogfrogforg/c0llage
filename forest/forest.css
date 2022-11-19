@@ -56,6 +56,7 @@
   border: .1vmin solid black;
   box-shadow: 0px 0px 10px #A4978E;
   border-radius: 1vmin;
+  overflow: hidden;
 }
 
 *[data-border="line"] {
