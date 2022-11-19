@@ -36,24 +36,24 @@
       let pickedUpPiece = false;
       window.pickUpBrochure = function(pieceNum) {
 
-	      const dialog = document.getElementById("intro-dialog");
-	      console.log(dialog);
+	const dialog = document.getElementById("intro-dialog");
+	console.log(dialog);
 
-	      kInventory.add({
-	        id: "brochure-piece" + pieceNum,
-	        src: "items/brochurepiece" + pieceNum,
-          attrs: {
+	kInventory.add({
+	  id: "brochure-piece" + pieceNum,
+	  src: "items/brochurepiece" + pieceNum,
+	  attrs: {
             "temperament": "choleric",
             "no-close": true,
           }
-	      })
+	})
 
-	      document.getElementById("brochure-piece" + pieceNum).remove()
+	document.getElementById("brochure-piece" + pieceNum).remove()
 
         if (pickedUpPiece) {
-	       dialog.showNamedDialog("brochure-pick-up-second");
+	  dialog.showNamedDialog("brochure-pick-up-second");
         } else {
-	       dialog.showNamedDialog("brochure-pick-up-first");
+	  dialog.showNamedDialog("brochure-pick-up-first");
         }
         pickedUpPiece = true;
 
