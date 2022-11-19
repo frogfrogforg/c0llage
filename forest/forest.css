@@ -63,9 +63,7 @@
 }
 
 *[data-border="broider"] {
-  /* from https://maxbittker.github.io/broider/ */
-  /* pls change/add more =) */
-  border-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 / 3vmin / 0 round;
+  border-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 /  3vmin / 0 round;
   border-width: 3vmin;
   border-style: solid;
 }
@@ -190,6 +188,21 @@
   100% {
     opacity: 1.0;
   }
+}
+
+.flood-inspect{
+  width:10%;
+  height:10%;
+  border:7px dashed cornflowerblue;
+  border-radius:100%;
+  position:absolute;
+  animation: flood-spin 60s linear infinite;
+}
+
+@keyframes flood-spin{
+  0%{}
+  100%{transform: rotate(1turn);}
+
 }
 
 /* custom elements */
