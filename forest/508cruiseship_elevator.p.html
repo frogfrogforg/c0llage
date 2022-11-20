@@ -1,0 +1,180 @@
+<body>
+    <svg id="hotspot-map"
+         version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewBox="0 0 1000 1000" >
+        <image preserveAspectRatio="none" id="background-img" href="images/508cruiseship_elevator.jpg"></image>
+        <a title="door" class="hotspot cursor-move" href="#" id="elevator-door">
+            <polygon points="687.0730315460826, 7.215953702328287 666.7104464811413, 764.2350966556787 777.0625203814682, 666.4917237786863 797.4251054464094, 5.247966328966024"/>
+        </a>
+        <a title="buttons" id="elevator-buttons" class="hotspot cursor-pointer" href="#">
+            <polygon points="225.30215087983396, 408.68537786822986 250.2627390239555, 808.8428104518899 380.3205404064836, 765.5470882379202 359.9579553415423, 390.9734915079695"/>
+        </a>
+    </svg>
+    <a-dumpling title="elevator" id="elevator" hidden w="40" h="70">
+        <div class="elevator-panel">
+            <div class="current-floor" id="current-floor">69</div>
+            <div class="elevator-buttons">
+                <button class="elevator-button" id="deck">deck</button>
+                <button class="elevator-button" id="cabin">your cabin</button>
+                <button class="elevator-button" id="buffet">buffet</button>
+                <div class="empty-space"></div>
+                <button class="elevator-button basement" id="basement">basement</button>
+            </div>
+        </div>
+    </a-dumpling>
+</body>
+
+<script type="module">
+    const $door = document.getElementById("elevator-door")
+    const $buttons = document.getElementById("elevator-buttons")
+    const $currentFloor = document.getElementById("current-floor")
+
+    const kDoorClosing = 'closing'
+    const kDoorClosed = 'closed'
+    const kDoorOpening = 'opening'
+    const kDoorOpen = 'open'
+    const kDoorClosingTime = 1000
+    const kDoorOpeningTime = 1000
+    const kDoorOpenTime = 1000
+    const kDoorTimePerNumber = 300
+
+    const kFloors = {
+        'deck': {
+            number: 15,
+            dest: '503cruiseship_hallway',
+        },
+        'buffet': {
+            number: 1,
+            dest: '507cruiseship_buffet',
+        },
+        'cabin': {
+            number: 3,
+            dest: '505cruiseship_cabin',
+        },
+        'basement': {
+            number: -69,
+            dest: '506cruiseship_basement',
+        }
+    }
+
+    var doorState = kDoorOpen
+    var nextFloor = null
+    function setCurrentFloorNo(n) {
+        $currentFloor.innerHTML = n.toString().padStart(2, "0")
+    }
+
+    setCurrentFloorNo(kFloors[d.State.currentElevatorFloor].number)
+
+    const floorStack = []
+
+    let interval
+    // TODO: add sound to state tansitions
+    function setDoorState(state) {
+        if (state == kDoorClosing) {
+            $door.classList.add("cursor-move")
+            $door.classList.remove("cursor-stop")
+            clearTimeout(interval)
+            interval = setTimeout(() => setDoorState(kDoorClosed), kDoorClosingTime)
+        } else if (state == kDoorOpening) {
+            $door.classList.add("cursor-move")
+            $door.classList.remove("cursor-stop")
+            clearTimeout(interval)
+            d.State.currentElevatorFloor = nextFloor
+            interval = setTimeout(() => setDoorState(kDoorOpen), kDoorOpeningTime)
+        } else if (state == kDoorOpen) {
+            $door.classList.add("cursor-move")
+            $door.classList.remove("cursor-stop")
+            if (floorStack.length > 0) {
+                clearTimeout(interval)
+                interval = setTimeout(
+                    () => setDoorState(kDoorClosing),
+                     kDoorOpenTime)
+            }
+        } else if (state == kDoorClosed) {
+            $door.classList.remove("cursor-move")
+            $door.classList.add("cursor-stop")
+            nextFloor = floorStack.pop()
+            console.log('[elevator] nextfloor: ', nextFloor)
+            var moveFloorNo = kFloors[d.State.currentElevatorFloor].number
+            const targetFloorNo = kFloors[nextFloor].number
+            const direction = Math.sign(targetFloorNo - moveFloorNo)
+            function moveFloor() {
+                if(moveFloorNo != targetFloorNo) {
+                    moveFloorNo += direction
+                    setCurrentFloorNo(moveFloorNo)
+                    clearTimeout(interval)
+                    interval = setTimeout(
+                        () => moveFloor(),
+                        kDoorTimePerNumber)
+                } else {
+                    setDoorState(kDoorOpening)
+                }
+            }
+            moveFloor()
+        }
+
+        console.log(`[elevator] door ${doorState} -> ${state}`)
+        doorState = state
+    }
+
+    $buttons.addEventListener("click", () => {
+        Frames.toggle("elevator")
+
+    })
+
+    $door.addEventListener("click", () => {
+       if (doorState != kDoorClosed) {
+            navigate(`${kFloors[d.State.currentElevatorFloor].dest}.html`)
+        }
+    })
+
+    const buttons = document.querySelectorAll('.elevator-button')
+    buttons.forEach(b => {
+        b.addEventListener("click", () => {
+            const pressedFloor = b.id
+            console.log("[elevator] stack: ", floorStack)
+            if(floorStack.includes(pressedFloor)) return;
+            if(pressedFloor == d.State.currentElevatorFloor) return;
+            floorStack.unshift(pressedFloor)
+            setDoorState(kDoorClosing)
+        })
+    })
+
+</script>
+<style>
+    .elevator-panel {
+        background: rgb(254,249,255);
+        background: linear-gradient(115deg, rgba(254,249,255,1) 0%, rgba(0,0,0,1) 41%, rgba(54,54,54,1) 69%, rgba(231,227,213,1) 75%, rgba(103,103,103,1) 77%, rgba(150,150,150,1) 100%);
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+
+    .current-floor {
+        width: fit-content;
+        padding: 5px;
+        margin-left: 0.3em;
+        margin-right: 0.3em;
+        text-align: right;
+        height: 1em;
+        font-family: monospace;
+        background-color: black;
+        color: red;
+        font-size: 10em;
+    }
+
+    .elevator-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .elevator-button {
+        height: 100px;
+        width: 200px;
+        font-size: 2em;
+        margin: 10px;
+    }
+    .empty-space {
+        height: 2000px;
+    }
+</style>

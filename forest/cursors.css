@@ -125,3 +125,19 @@
 .cursor-skate {
     cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🛹</text></svg>'), auto !important;
 }
+
+.cursor-wave {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🌊</text></svg>'), auto !important;
+}
+
+.cursor-couch {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🛋️</text></svg>'), auto !important;
+}
+
+.cursor-cook {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🍳</text></svg>'), auto !important;
+}
+
+.cursor-boat {
+    cursor: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="40" width="40"><text x="0" y="10" font-size="30" dominant-baseline="hanging">🚢</text></svg>'), auto !important;
+}
