@@ -324,7 +324,7 @@ export class Inventory {
       return
     }
 
-    for (const key of k.migrations) {
+    for (const key in k.migrations) {
       src = src.replace(key, k.migrations[key])
     }
 
