@@ -16,12 +16,15 @@ let mUrl = null
 /// the game element
 let $mGame = null
 
+/// the main element inside the game
+let $mMain = null
+
 /// the frames element
 let $mFrames = null
 
 // -- lifetime --
 function main() {
-  /// set props
+  // set props
   mUrl = document.location
 
   // capture elements
@@ -34,11 +37,12 @@ function main() {
   addOnBeforeSaveStateListener(() => { mInventory.save() })
 
   // bind events
-  const d = document
+  const o = document
   const w = window
-  d.addEventListener("click", didClick)
+  o.addEventListener("click", didClick)
   w.addEventListener("popstate", didPopState)
   w.addEventListener("beforeunload", didRefresh)
+  d.State.listen("border", OnBorderChanged)
 
   // run post visit events first time
   didChangeState()
@@ -258,8 +262,12 @@ function setTitle(title) {
 }
 
 function didFinishVisit() {
+  // add border
+  $mMain = $mGame.querySelector("#main")
+  $mMain.dataset.border = d.State.border
+
   // add sparkles to hotpsots (is this the right place to call this?)
-  initSparkles($mGame.querySelector("#main"));
+  initSparkles($mMain)
   const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
   addHoverSparklesToElements(hotspots);
 
@@ -270,6 +278,11 @@ function didFinishVisit() {
 
   // track visit
   d.Events.raise(d.Events.Forest.AfterVisit, location)
+}
+
+// when the border state changes
+function OnBorderChanged() {
+  $mMain.dataset.border = d.State.border
 }
 
 // -- exports --

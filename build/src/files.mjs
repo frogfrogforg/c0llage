@@ -1,10 +1,18 @@
 import * as path from "path"
+import { randomBytes } from "crypto"
 import { promises as fs } from "fs"
 import { paths } from "./paths.mjs"
 import { log } from "./log.mjs"
 import { ignores } from "./ignores.mjs"
 import { template } from "./template.mjs"
 import { read } from "./utils.mjs"
+
+// -- constants --
+const kAssetPattern = /(\.(css|js))/g
+
+// -- props --
+// build id for fingerprinting asset requests
+let buildId = null
 
 // -- commands --
 export async function clean() {
@@ -16,19 +24,20 @@ export async function clean() {
 }
 
 export async function build() {
-  const ignored = await ignores()
-
   // remake dist dir
   await fs.mkdir(paths.dist)
 
   // filter ignored paths during traversal
+  const ignored = await ignores()
   function filter(_child, entry) {
     return !ignored.has(entry)
   }
 
-  let pages = [];
+  // generate build id
+  buildId = randomBytes(3).toString("hex")
 
-  // traverse proj dir
+  // traverse proj dir and build every entry
+  let pages = [];
   for await (const [child, entry] of traverse(paths.proj, filter)) {
     log.debug(`- ${entry}`)
 
@@ -43,26 +52,26 @@ export async function build() {
 export async function transfer(entry, isDirectory = false) {
   const pages = []; // list of all forest pages
 
-  // 🎵 make ev'ry direct'ry 🎵
+  // make directories
   if (isDirectory) {
     await fs.mkdir(path.join(paths.dist, entry), {
       recursive: true,
     })
   }
-  // 🎵 compile ev'ry template 🎵
+  // compile templates
   else if (entry.endsWith(paths.ext.partial)) {
     const pagePath = await compile(entry);
 
     const relativeToForest = path.relative(paths.forest, pagePath);
-    if (! relativeToForest.startsWith("..")) {
+    if (!relativeToForest.startsWith("..")) {
       pages.push(relativeToForest);
     }
   }
-  // 🎵 copy ev'ry other file 🎵
+  // copy other files
   else {
     await copy(entry)
   }
-  // 🎵 'til you find your dream 🎵
+
   return pages;
 }
 
@@ -85,7 +94,8 @@ async function compile(entry) {
   const partial = await read(src)
   const compiled = await template(partial)
 
-  await fs.writeFile(dst, compiled)
+  await writeFile(dst, compiled)
+
   return dst;
 }
 
@@ -94,9 +104,17 @@ async function copy(entry) {
   const src = path.join(paths.curr, entry)
   const dst = path.join(paths.dist, entry)
 
-  if (isProd()) {
+  // rewrite html & js files to cache bust any asset requests
+  const ext = path.extname(dst)
+  if (ext === ".html" || ext === ".js") {
+    await writeFile(dst, await read(src))
+  }
+  // copy non-html files in prod
+  else if (isProd()) {
     await fs.copyFile(src, dst)
-  } else {
+  }
+  // symlink non-html files in dev
+  else {
     // check if symlink exists
     try {
       await fs.stat(dst)
@@ -110,6 +128,12 @@ async function copy(entry) {
 
 function rename(entry) {
   return entry.replace(paths.ext.partial, ".html")
+}
+
+// write file to disk and rewrite asset requests
+async function writeFile(dst, text) {
+  text = text.replace(kAssetPattern, `$1?v=${buildId}`)
+  await fs.writeFile(dst, text)
 }
 
 // -- queries --
