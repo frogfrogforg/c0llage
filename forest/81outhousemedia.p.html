@@ -9,9 +9,9 @@
   ></a>
 
   <button
-  data-border="sleek"
-  class="EmptyFrame ForestBackground cursor-grab"
-></button>
+    data-border="sleek"
+    class="EmptyFrame ForestBackground cursor-grab"
+  ></button>
 
   <button
     data-border="broider"
@@ -25,7 +25,6 @@
 
   <s-cript target="assistant" >
     --- click
-    [once] There's some trash lying around here. I guess you could take it.
     Success does strange things to people.
     ==> click
   </s-cript>
@@ -88,41 +87,42 @@
 </script>
 
 <style>
-.EmptyFrame {
-  position: absolute;
-  display: block;
-  width: 80px;
-  height: 80px;
-  visibility: hidden;
-}
+  .EmptyFrame {
+    position: absolute;
+    display: block;
+    width: 80px;
+    height: 80px;
+    visibility: hidden;
+  }
 
-.EmptyFrame.is-visible {
-  visibility: visible;
-}
+  .EmptyFrame.is-visible {
+    visibility: visible;
+  }
 
-.EmptyFrame[data-border="sleek"]{
-  bottom: 48%;
-  left: 77%;
-  transform: rotateZ(-6deg);
+  .EmptyFrame[data-border="sleek"] {
+    top: 40%;
+    right: 12%;
+    transform: perspective(250px) translate3d(0, 0, -140px) rotate3d(0, 0, 1, -1deg);
+  }
 
-}
+  .EmptyFrame[data-border="line"] {
+    bottom: 5%;
+    left: 55%;
+    transform: perspective(250px) rotate3d(1,0,0,50deg) rotateZ(15deg);
+  }
 
-.EmptyFrame[data-border="line"] {
-  bottom: 5%;
-  left: 55%;
-  transform: perspective(250px) rotate3d(1,0,0,50deg) rotateZ(15deg);
-}
-
-.EmptyFrame[data-border="broider"] {
-  top: 38%;
-  left: 39%;
-  transform: perspective(250px) translate3d(0,0,-100px) rotate3d(0, 0, 1, 40deg);
-  filter: brightness(75%);
-}
+  .EmptyFrame[data-border="broider"] {
+    top: 38%;
+    left: 39%;
+    transform: perspective(250px) translate3d(0,0,-100px) rotate3d(0, 0, 1, 40deg);
+    filter: brightness(75%);
+  }
 </style>
 
 <s-cript target="assistant">
   --- click
- Don't spend too long here, my little dumpling. It doesn't feel entirely safe.
-
+  [once] Don't spend too long here, my little dumpling. It doesn't feel entirely safe.
+  [once] Some successful videogame developers used to live in this shack.
+  [once] Now it's just full of garbage.
+  Success does strange things to people...
 </s-cript>
