@@ -17,6 +17,10 @@ const k = {
       "id",
     ])
   },
+  migrations: {
+    /// paths to migrate in record src
+    "assistant/face": "assistant/assistant"
+  }
 }
 
 // -- scoping --
@@ -283,6 +287,7 @@ export class Inventory {
     if (m.isTop) {
       const records = State.inventory
       for (const record of records || []) {
+        m.migrate(record)
         m.add(record)
       }
     }
@@ -310,6 +315,20 @@ export class Inventory {
 
     // save all the current records
     State.inventory = Object.values(m.records)
+  }
+
+  /// migrate the record data if it's some old thing
+  migrate(record) {
+    let { src } = record
+    if (src == null) {
+      return
+    }
+
+    for (const key of k.migrations) {
+      src = src.replace(key, k.migrations[key])
+    }
+
+    record.src = src
   }
 
   // -- queries --
