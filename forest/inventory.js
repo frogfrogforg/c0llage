@@ -293,7 +293,7 @@ export class Inventory {
     }
     // otherwise, spawn all of the top records
     else {
-      for (const record of m.top.records) {
+      for (const record of Object.values(m.top.records)) {
         m.spawn(record)
       }
     }
