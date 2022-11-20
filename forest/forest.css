@@ -63,6 +63,12 @@
   border: .1vmin solid black;
 }
 
+*[data-border="real"] {
+  border-image: url("./images/frame.png") 50 /  3.2vmin ;
+  border-width: 3vmin;
+  border-style: solid;
+}
+
 *[data-border="broider"] {
   border-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAABDklEQVR4nO3VQWrDMABFQR+jt+o5e8p030CD8HMkxfPgr0ywNAvn+Pn+eli3Y/YBPm1Aga69YdDjZgGNAxoHNO7toPVHffaAAl17QFcHff4s/99sgKtBR+8PFCjQrXY5aH2A1Ru9L9AXAY0DGrcc6Nk/hXcPKNC1B/TuoH+fzw5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcUDjgMYBjQMaBzQOaBzQOKBxQOOAxgGNAxoHNA5oHNA4oHFA44DGAY0DGgc0Dmgc0DigcduDrj6gQNce0LuB7h7QOKBxQOMuBz17gN129v5AgQLdajno6AtnA1wNOvx7oECB7rTpoJ8e0DigcUDjLgc1oEB3HtB4v5SS4sNf+2LBAAAAAElFTkSuQmCC") 28 /  3vmin / 0 round;
   border-width: 3vmin;

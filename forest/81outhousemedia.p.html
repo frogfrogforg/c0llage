@@ -23,6 +23,11 @@
     class="EmptyFrame ForestBackground cursor-grab"
   ></button>
 
+  <button
+    data-border="real"
+    class="EmptyFrame ForestBackground cursor-grab"
+  ></button>
+
   <s-cript target="assistant" >
     --- click
     Success does strange things to people.
@@ -103,6 +108,14 @@
     top: 40%;
     right: 12%;
     transform: perspective(250px) translate3d(0, 0, -140px) rotate3d(0, 0, 1, -1deg);
+  }
+
+  .EmptyFrame[data-border="real"] {
+    top: 40%;
+    right: 12%;
+    transform: perspective(250px) translate3d(-620px, 370px, -70px) rotate3d(0, 1, 0, 10deg) rotate3d(1, 0, 1, -4deg);
+    height: 150px;
+    width: 130px;
   }
 
   .EmptyFrame[data-border="line"] {
