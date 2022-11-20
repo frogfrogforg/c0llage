@@ -132,7 +132,7 @@ function rename(entry) {
 
 // write file to disk and rewrite asset requests
 async function writeFile(dst, text) {
-  text = text.replaceAll(kAssetPattern, `$1?v=${buildId}`)
+  text = text.replace(kAssetPattern, `$1?v=${buildId}`)
   await fs.writeFile(dst, text)
 }
 
