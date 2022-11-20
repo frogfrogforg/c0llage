@@ -1,0 +1,46 @@
+
+<style>
+</style>
+
+<script>
+</script>
+
+<body>
+  <!-- https://www.youtube.com/watch?v=kUijvlTgXtk -->
+  <!-- https://www.youtube.com/watch?v=TV5bpSYF_6I -->
+  <!-- https://www.youtube.com/watch?v=A05XO183NVs -->
+  <img class="background" src="./images/509waterslide.jpg">
+  <video id="slide-video" width="420" height="420" class="background" muted autoplay>
+    <source src="./images/Slide-Cronch.m4v" type="video/mp4" >
+    Your browser does not support the video tag.
+  </video>
+  <a-dumpling temperament="choleric" title="pose" h="10" w="30">
+    <div style="width: 100%;">
+      <input class="pose-slider" id="speed" type="range" min="-1" max="1" value="0" step="0.01">
+    </div>
+  </a-dumpling>
+</body>
+<style>
+  .pose-slider {
+    width: 80%;
+  }
+
+</style>
+<script type="module">
+  const $video = document.getElementById("slide-video");
+  const $speed = document.getElementById("speed");
+  $video.addEventListener('ended', (event) => {
+    navigate("29firewater.html")
+  });
+  const kMinSpeed = 0
+  const kMaxSpeed = 5
+  $video.playbackRate = 1.0;
+
+  $speed.addEventListener("input", () => {
+    const x = $speed.value
+    const k = Math.abs(x*x)
+    const rate = kMinSpeed + (kMaxSpeed - kMinSpeed) * k
+    $video.playbackRate = rate;
+  })
+
+</script>
