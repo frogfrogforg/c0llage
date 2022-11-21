@@ -35,14 +35,12 @@
   position: relative;
   height: 80vmin;
   width: 80vmin;
-  overflow: hidden;
 }
 
 /* layer/shared */
 .ForestLayer--framed,
 .ForestLayer--overlay {
   display: flex;
-  overflow: hidden;
   justify-content: center;
   align-items: center;
 }
@@ -57,6 +55,7 @@
   border: .1vmin solid black;
   box-shadow: 0px 0px 10px #A4978E;
   border-radius: 1vmin;
+  overflow: hidden;
 }
 
 *[data-border="line"] {
