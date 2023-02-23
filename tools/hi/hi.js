@@ -181,7 +181,7 @@ function didClickAction() {
 // -- limits --
 function initTimeLimit() {
   return initLimit({
-    duration: 15 + roll("1d30"),
+    duration: 5 + roll("1d20"),
     loop() {
       let now = seconds()
       if (this.t0 == null) {
