@@ -1,0 +1,58 @@
+.Dialog-text {
+  height:94%;
+  margin: 0;
+  background: #efefef;
+  padding: 4px;
+  padding-left:8px;
+  border: 2px inset #E6E3E0;
+  font:menu;
+  font-size:1em;
+}
+
+/* -- World -- */
+.World {
+  width: 3000px;
+  height: 3000px;
+  background:
+    url(/sky/annharbor.png),
+    url(/sky/brasilia.png),
+    url(/sky/california.png),
+    url(/sky/canberra.png),
+    url(/sky/chicago.png),
+    url(/sky/greenwitch.png)
+  ;
+  background-blend-mode: darken;
+  background-position-x: -5%, 10%, 90%, 20%, 35%, 30%, 5%;
+  background-color: #decda4;
+}
+
+/* -- World/Name -- */
+.WorldName {
+  position: absolute;
+  width: 600px;
+  height: 357px;
+  top: 0;
+  left: 0;
+  background: url(/sky/cloud.png);
+  background: #d3d282;
+  background-size: auto;
+  background-size: cover;
+  border: 10px double;
+  mix-blend-mode: lighten;
+}
+
+.WorldName-text {
+  margin: 44px;
+  margin-top: 14px;
+  font-size: 76px;
+  text-shadow: -1px -1px 0 #00f3ff, 1px -1px 0 #ff0303, -1px 1px 0 #afff00, 1px 1px 0 #fc00a5;"
+}
+
+/* -- World/Forest -- */
+.WorldForest {
+  width: 100%;
+  height: 62%;
+  background: url(/images/dumpling-gameplay.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
+}

@@ -11,49 +11,30 @@ in Washington to change Forg time.
 First words said was that only 1 day
 could be used on Forg to not change
 the 1 day marshmallow">
-  <script type="module" src="/core/dumpling/a-dumpling.js"></script>
+  <link rel="stylesheet" href="/core/world.css">
   <link rel="stylesheet" href="/core/dumpling/dumpling.css">
-  <link rel="stylesheet" href="/core/universal-styles.css">
+  <script type="module" src="/core/dumpling/a-dumpling.js"></script>
 </head>
 
-<body style="background: url(sky/annharbor.png), url(sky/brasilia.png), url(sky/california.png), url(sky/canberra.png), url(sky/chicago.png), url(sky/greenwitch.png);
-  background-blend-mode: darken;
-  background-position-x: -5%, 10%, 90%, 20%, 35%, 30%, 5%;
-  background-color: #decda4
-  ;width: 3000px;
-  height: 3000px;">
-
-  <div style="background: url(sky/cloud.png);
-    background: #d3d282;
-    background-size: auto;
-    width: 600px;
-    background-size: cover;
-    height: 357px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    mix-blend-mode: lighten;
-    border: 10px double;"><br>
-
-    <h1 class="title" style="margin: 44px;
-      margin-top: 14px;
-      font-size: 76px;
-      text-shadow: -1px -1px 0 #00f3ff, 1px -1px 0 #ff0303, -1px 1px 0 #afff00, 1px 1px 0 #fc00a5;">
-      &lt;h1&gt; <br>
-      dumpling.love 
-    <br>&lt;/h1&gt;</h1>
+<body class="World">
+  <div class="WorldName">
+    <br>
+    <h1 class="WorldName-text">
+      &lt;h1&gt;
+      <br>
+      dumpling.love
+      <br>
+      &lt;/h1&gt;
+    </h1>
   </div>
 
   <a-dumpling title="the park">
     <div>
-      <div style="background: url(images/dumpling-gameplay.gif);
-        width: 100%;
-        height: 62%;
-        background-size: contain;
-        background-repeat: no-repeat;"></div>
+      <div class="WorldForest"></div>
       <p></p>
+
       <button class="button" onClick="window.open('http://dumpling.love/forest/welcome.html');">
-          <span class="icon">wanna go on a walk with me?</span>
+        <span class="icon">wanna go on a walk with me?</span>
       </button>
     </div>
   </a-dumpling>
@@ -62,7 +43,6 @@ the 1 day marshmallow">
     <div class="Dialog-text">
       hello web user
     </div>
-
   </a-dumpling>
 
   <script>
