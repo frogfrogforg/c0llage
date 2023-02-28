@@ -14,15 +14,15 @@
   width: 3000px;
   height: 3000px;
   background:
-    url(/sky/annharbor.png),
-    url(/sky/brasilia.png),
-    url(/sky/california.png),
-    url(/sky/canberra.png),
-    url(/sky/chicago.png),
-    url(/sky/greenwitch.png)
+    url(/sky/sky-lofi/annharbor.png),
+    url(/sky/sky-lofi/brasilia.png),
+    url(/sky/sky-lofi/california.png),
+    url(/sky/sky-lofi/canberra.png),
+    url(/sky/sky-lofi/chicago.png),
+    url(/sky/sky-lofi/greenwitch.png)
   ;
   background-blend-mode: darken;
-  background-position-x: -5%, 10%, 90%, 20%, 35%, 30%, 5%;
+  /* background-position-x: -5%, 10%, 90%, 20%, 35%, 30%, 5%; */
   background-color: #decda4;
 }
 
@@ -45,13 +45,13 @@
   margin: 44px;
   margin-top: 14px;
   font-size: 76px;
-  text-shadow: -1px -1px 0 #00f3ff, 1px -1px 0 #ff0303, -1px 1px 0 #afff00, 1px 1px 0 #fc00a5;"
+  text-shadow: -1px -1px 0 #00f3ff, 1px -1px 0 #ff0303, -1px 1px 0 #afff00, 1px 1px 0 #fc00a5;
 }
 
 /* -- World/Forest -- */
 .WorldForest {
   width: 100%;
-  height: 62%;
+  height: 80%;
   background: url(/images/dumpling-gameplay.gif);
   background-size: contain;
   background-repeat: no-repeat;
