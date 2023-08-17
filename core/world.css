@@ -56,3 +56,12 @@
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.WorldHack {
+  font-size: 20px;
+  cursor: pointer;
+  color: #D3D2A4;
+  position: absolute;
+  bottom: 0px;
+  width: 420px;
+}
