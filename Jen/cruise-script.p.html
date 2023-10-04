@@ -1,0 +1,112 @@
+<!-- template: neutral {title: a narrative thing}  -->
+
+<body style="background-color:#fb8d74;">
+      <h2>Relationship to the forest</h2>
+      <ul>
+          <li>
+              Yuck??
+              <ul><li>
+                  Kitch
+              </li></ul>
+          </li>
+          <li>
+              Climate Mourning?
+              <ul><li>
+                  Maybe something like the PG&E in Albany
+              </li></ul>
+          </li>
+          <li>
+              Did the ship appear one day magically or did someone make it happen?
+              <ul><li>
+                  Adventure Time train murder mystery ep
+              </li></ul>
+          </li>
+          <li>
+              Who/what is the cruise for?
+              <ul>
+                  <li>
+                      What is the relationship to the cosmodrome/how does it relate?
+                      <ul>
+                          <li>
+                              Is there a path to the cosmodrome from the ship??
+                              <ul>
+                                  <li>
+                                      Maybe once you find the romance then the <a href="/forest/42069wedding.html">wedding</a> goes there??
+                                  </li>
+                              </ul>
+                          </li>
+                          <li>
+                              Is it really a reality tv show??
+                              <ul>
+                                  <li>
+                                      Maybe too much but also could be an interesting pastiche
+                                  </li>
+                              </ul>
+                          </li>
+                      </ul>
+                  </li>
+              </ul>
+          </li>
+      </ul>
+</body>
+
+<script type="module">
+  import { Inventory } from "/forest/inventory.js"
+
+  // -- deps --
+  const mInventory = Inventory.get()
+
+  // -- events --
+  window.gotKeys = function () {
+    Frames.show("keys-dialog")
+
+    const carText = document.getElementById("keys-dialog-message")
+    if (d.State.foundVehicle) {
+      carText.innerHTML = "You found the keys to your car! Your car! Of course you left them here..."
+    } else {
+      carText.innerHTML = "You found a key under the rug..."
+    }
+
+    // spawn the keys
+    mInventory.addNamed("ourkey", {
+      "x": 91, "y": 7,
+      "w": 10, "h": 10,
+      "kind": "key",
+      "temperament": "choleric",
+      "no-back": true,
+      "no-close": true,
+    })
+  }
+</script>
+
+<style>
+  .Door {
+    position: relative;
+  }
+
+  .Door-plank {
+    height: 100%;
+    width: 100%;
+  }
+
+  .Door-mat {
+    appearance: none;
+    position: absolute;
+    width: 50%;
+    height: 12%;
+    left: 29%;
+    bottom: 3%;
+    border: none;
+    background: none;
+  }
+
+  .Spoiler {
+    background-color: #fb8d74;
+    color: #fb8d74;
+  }
+
+  ::selection {
+    background-color: white;
+    color: white;
+  }
+</style>
