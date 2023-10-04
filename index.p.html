@@ -1,0 +1,54 @@
+<!-- template: dump  -->
+<body>
+  <main class="World">
+    <div class="WorldName">
+      <br>
+      <h1 class="WorldName-text">
+        &lt;h1&gt;
+        <br>
+        dumpling.love
+        <br>
+        &lt;/h1&gt;
+      </h1>
+    </div>
+
+    <div class="WorldHack" id="toggle-dev">
+      please position me on the bottom of the page
+      <img src="./forest/images/wordhack.png" alt="a person holding two computer punch cards like in the good old computer times">
+    </div>
+
+    <a-dumpling title="the park">
+      <div>
+        <div class="WorldForest"></div>
+        <p></p>
+
+        <button class="button" onClick="window.open('forest/welcome.html');" style="translate: 69px;">
+          <span class="icon">wanna go on a walk with me?</span>
+        </button>
+      </div>
+    </a-dumpling>
+
+    <a-dumpling title="welcome" >
+      <div class="Dialog-text">
+        hello web user
+      </div>
+    </a-dumpling>
+  </main>
+</body>
+
+<script type="module">
+  import { Inventory } from "./forest/inventory.js"
+
+  const images = document.querySelector(".sky-image")
+  const $dev = document.getElementById("toggle-dev")
+
+  const mInventory = Inventory.get()
+
+  mInventory.load()
+  // how do you add this stuff to the inventory proper??
+  $dev.addEventListener("click", () => {
+    mInventory.addNamed("devcommentary")
+    mInventory.save()
+    d.State.save()
+  })
+</script>
