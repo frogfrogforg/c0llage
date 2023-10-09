@@ -264,12 +264,16 @@ function setTitle(title) {
 function didFinishVisit() {
   // add border
   $mMain = $mGame.querySelector("#main")
-  $mMain.dataset.border = d.State.border
 
-  // add sparkles to hotpsots (is this the right place to call this?)
-  initSparkles($mMain)
-  const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
-  addHoverSparklesToElements(hotspots);
+  // TODO: neutral template pages don't have a #main el, figure out what to do
+  if ($mMain != null) {
+    $mMain.dataset.border = d.State.border
+
+    // add sparkles to hotpsots (is this the right place to call this?)
+    initSparkles($mMain)
+    const hotspots = $mGame.querySelectorAll(".hotspot:not(.nosparkle)");
+    addHoverSparklesToElements(hotspots);
+  }
 
   // store location
   // TODO: should this be set alongside d.State.referrer?
@@ -282,7 +286,9 @@ function didFinishVisit() {
 
 // when the border state changes
 function OnBorderChanged() {
-  $mMain.dataset.border = d.State.border
+  if ($mMain != null) {
+    $mMain.dataset.border = d.State.border
+  }
 }
 
 // -- exports --
