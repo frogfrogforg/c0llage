@@ -86,20 +86,24 @@
 </s-cript>
 
 <s-cript target="assistant" >
-    --- enter
-    [once] Oh, this squirrel is a stranger to me
-
     --- click
     ==> [once] see-squirrel
     ==> see-squirrel-again
 
     --- see-squirrel
+    [cont] Oh, this squirrel is a stranger to me
     [cont] I've never met them before.
     I thought I knew all the squirrels here.
+    ==> see-squirrel-again
 
     --- see-squirrel-again
+    ==> [pickedUpSquirrel] picked-up-squirrel
     Maybe you should try talking to them. Find out what their deal is...
     ==> see-squirrel-again
+
+    --- picked-up-squirrel
+    i thought i was your favorite rodent... {...}
+    ==> picked-up-squirrel
 </s-cript>
 
 <script type="module">
