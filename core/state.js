@@ -21,7 +21,6 @@ const initialState = {
   wished: 0,
   visitedFranBlog: false,
   hasBoombox: false,
-  pickedUpSquirrel: false,
   highwayStep: 0,
   foundVehicle: false,
   foundKeyring: false,

@@ -107,6 +107,9 @@ export class Inventory {
         ...record,
       }
 
+      // set "has" property for this item
+      d.State[m.getItemHasProperty(id)] = true
+
       // only spawn new records
       if (!isMutation && existing == null) {
         m.spawn(record)
@@ -192,6 +195,10 @@ export class Inventory {
     else if (id in m.records) {
       // remove record
       delete m.records[id]
+
+      // unset "has" property for this item
+      d.State[m.getItemHasProperty(id)] = false
+
       console.debug(`[invtry] removed record ${id}`)
     }
 
@@ -345,5 +352,12 @@ export class Inventory {
   /// get the path to an item's html page (forest/items/<name>/<name>.html)
   getItemPath(name) {
     return `${k.paths.base}/${name}/${name}.html`
+  }
+
+  /// get the id of the item as a "has" property e.g.:
+  /// pet-squirrel -> hasPetSquirrel
+  getItemHasProperty(id) {
+    const camelized = id.split("-").map((c) => c[0].toUpperCase() + c.slice(1)).join("")
+    return `has${camelized}`
   }
 }

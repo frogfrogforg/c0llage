@@ -120,12 +120,12 @@
       const value = document.getElementById('ammountPaid').value
       const numCoins = Math.floor(value / exchangeRate * 4)
       for (let i = 0; i < numCoins; i++) {
-        // d.State.hasQuarters = true
         if (d.State.quarters) {
           d.State.quarters += 1
         } else {
           d.State.quarters = 1
         }
+        d.State.hasQuarters = d.State.quarters > 0
 
         inventory.add({
           id: "quarter" + d.State.quarters,
