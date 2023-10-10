@@ -2,6 +2,10 @@
 <body>
   <main id="scroll-container" class="Wedding">
     <img class="Wedding-background" src="./images/42069wedding.jpg">
+
+    <audio id="wedding-music" style="display: none">
+      <source src="./sound/wedding/wedding.mp3" type="audio/mpeg">
+    </audio>
   </main>
 </body>
 
@@ -23,10 +27,12 @@
 <script type="module">
   // -- props --
   let $el = null
+  let $music = null
 
   // -- init --
   function Main() {
     $el = document.getElementById("scroll-container")
+    $music = document.getElementById("wedding-music")
     initTouch()
   }
 
@@ -52,6 +58,7 @@
     isTouching = true
     xi = evt.clientX
     yi = evt.clientY
+    $music.play()
   }
 
   function didMoveTouch(evt) {
@@ -76,6 +83,7 @@
 
   function didEndTouch() {
     isTouching = false
+    $music.pause()
   }
 
   // -- bootstrap --
