@@ -52,9 +52,8 @@
         const inventory = Inventory.get()
         const cellphoneGet = document.getElementById("cellphoneGet")
         cellphoneGet.addEventListener("click", () => {
-            d.State.hasCellphone = true
             const phone = inventory.add({
-                id: "a-phone",
+                id: "cellphone",
                 src: "items/cellphone/cellphone",
                 attrs: {
                     "title": "cellphone",

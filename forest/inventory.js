@@ -108,7 +108,9 @@ export class Inventory {
       }
 
       // set "has" property for this item
-      d.State[m.getItemHasProperty(id)] = true
+      if (!record.many) {
+        d.State[m.getItemHasProperty(id)] = true
+      }
 
       // only spawn new records
       if (!isMutation && existing == null) {
@@ -193,11 +195,15 @@ export class Inventory {
     }
     // if top, delete the record if it exists
     else if (id in m.records) {
+      const record = m.records[id]
+
       // remove record
       delete m.records[id]
 
       // unset "has" property for this item
-      d.State[m.getItemHasProperty(id)] = false
+      if (!record.many) {
+        d.State[m.getItemHasProperty(id)] = false
+      }
 
       console.debug(`[invtry] removed record ${id}`)
     }
