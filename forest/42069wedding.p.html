@@ -1,10 +1,23 @@
 <!-- template: neutral -->
 <body>
   <main id="scroll-container" class="Wedding">
-    <img class="Wedding-background" src="./images/42069wedding.jpg">
+    <section class="Wedding-zone">
+      <img
+        class="Wedding-background"
+        src="./assets/42069wedding/field.jpg"
+      >
 
-    <audio id="wedding-music" style="display: none">
-      <source src="./sound/wedding/wedding.mp3" type="audio/mpeg">
+      <img
+        class="Wedding-arch WeddingSprite"
+        src="./assets/42069wedding/arch.png"
+      >
+    </section>
+
+    <audio id="wedding-music">
+      <source
+        src="./assets/42069wedding/march.mp3"
+        type="audio/mpeg"
+      >
     </audio>
   </main>
 </body>
@@ -17,10 +30,40 @@
     cursor: grab;
   }
 
+  .Wedding audio {
+    display: none;
+  }
+
+  .Wedding-zone {
+    position: relative;
+    width: fit-content;
+  }
+
   .Wedding-background {
     display: block;
     width: 10000px;
     pointer-events: none;
+  }
+
+  .Wedding-arch {
+    position: absolute;
+    top: 1069px;
+    left: 6150px;
+    width: 469px;
+    transform: skewX(2deg);
+    pointer-events: none;
+    animation: Wobble 4.20s;
+  }
+
+  .WeddingSprite {
+    animation-direction: alternate-reverse;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+  }
+
+  @keyframes Wobble {
+    from { transform: skew(-3deg); }
+    to   { transform: skew(3deg); }
   }
 </style>
 
@@ -28,11 +71,13 @@
   // -- props --
   let $el = null
   let $music = null
+  let $sprites = []
 
   // -- init --
   function Main() {
     $el = document.getElementById("scroll-container")
     $music = document.getElementById("wedding-music")
+    $sprites = document.getElementsByClassName("WeddingSprite")
     initTouch()
   }
 
@@ -58,7 +103,12 @@
     isTouching = true
     xi = evt.clientX
     yi = evt.clientY
+
+    // start elements
     $music.play()
+    for (const $sprite of $sprites) {
+      $sprite.style.animationPlayState = "running"
+    }
   }
 
   function didMoveTouch(evt) {
@@ -83,7 +133,12 @@
 
   function didEndTouch() {
     isTouching = false
+
+    // pause elements
     $music.pause()
+    for (const $sprite of $sprites) {
+      $sprite.style.animationPlayState = ""
+    }
   }
 
   // -- bootstrap --
