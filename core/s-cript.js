@@ -228,7 +228,7 @@ class ScriptGod {
 
     // clear each herald's active keys
     for (const herald of Object.values(m.heralds)) {
-      herald.clearActiveKeys()
+      herald.OnBeforeVisit()
     }
   }
 }
@@ -311,7 +311,8 @@ class ScriptHerald {
       return
     }
 
-    // don't show dialog if the item is marked continue
+    // don't show dialog if the item is marked continue because cont will move
+    // automatically to next on close
     if(isClick && m.currentItem != null && m.currentItem.operations.cont) {
       m.closeOpenDialog()
       return
@@ -676,6 +677,12 @@ class ScriptHerald {
   }
 
   // -- events --
+  OnBeforeVisit = () => {
+    const m = this
+    m.currentItem = null
+    m.clearActiveKeys()
+  }
+
   // when the target is clicked
   onTargetClick = () => {
     this.showNextDialog(true)

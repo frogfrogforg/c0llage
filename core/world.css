@@ -55,11 +55,20 @@ body {
 
 /* -- World/Forest -- */
 .WorldForest {
+  height: 100%;
+}
+
+.WorldForest img {
   width: 100%;
-  height: 80%;
-  background: url(/images/dumpling-gameplay.gif);
-  background-size: contain;
-  background-repeat: no-repeat;
+  object-fit: contain;
+  object-position: top left;
+  cursor: zoom-in;
+}
+
+.WorldForest button {
+  cursor: pointer;
+  margin-top: 10px;
+  transform: translateX(69px);
 }
 
 .WorldHack {

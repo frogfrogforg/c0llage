@@ -20,8 +20,6 @@ const initialState = {
   clicks: 0,
   wished: 0,
   visitedFranBlog: false,
-  hasBoombox: false,
-  pickedUpSquirrel: false,
   highwayStep: 0,
   foundVehicle: false,
   foundKeyring: false,
@@ -29,7 +27,6 @@ const initialState = {
   isDriving: false,
   claribelle: {x: 0, y: 0},
   claribelleLocation: "alidator",
-  hasSkate: false,
   hasCellphone: false,
   knowsSkate: false,
   currentElevatorFloor: "deck"

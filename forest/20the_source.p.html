@@ -68,17 +68,19 @@
     const $skateBox = document.getElementById("skate-box")
     $skateBox.addEventListener("click", () => {
         Frames.show("skate")
-        d.State.hasSkate = true
     })
 </script>
 
 <s-cript target="assistant">
-    --- enter [once]
-    This must be the source of the fire level. {oh no!|i like this}
-    [cont] You should contact the parks staff to let them know you found this, maybe they can put it out. {i'll think about it}
+    --- enter
+    ==> [once] intro
+
+    --- intro
+        This must be the source of the fire level. {oh no!|i like this}
+        [cont] You should contact the parks staff to let them know you found this, maybe they can put it out. {i'll think about it}
     ==> click
 
     --- click
-    Don't forget to open your presents.
+        Don't forget to open your presents.
     ==> click
 </s-cript>

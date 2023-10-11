@@ -13,17 +13,22 @@
     </div>
 
     <div class="WorldHack" id="toggle-dev">
-      please position me on the bottom of the page
-      <img src="./forest/images/wordhack.png" alt="a person holding two computer punch cards like in the good old computer times">
+      <img
+        src="./forest/images/wordhack.png"
+        alt="a person holding two computer punch cards like in the good old computer times"
+      >
     </div>
 
-    <a-dumpling title="the park">
-      <div>
-        <div class="WorldForest"></div>
-        <p></p>
+    <a-dumpling layer="play" title="the park" w="50" h="50">
+      <div class="WorldForest">
+        <img
+          class="WorldForest-link"
+          src="/images/dumpling-gameplay.gif"
+          alt="a sped up animation of someone doing an asmr let's play of the videog ame dumpling.love"
+        >
 
-        <button class="button" onClick="window.open('forest/welcome.html');" style="translate: 69px;">
-          <span class="icon">wanna go on a walk with me?</span>
+        <button class="WorldForest-link">
+          wanna go on a walk with me?
         </button>
       </div>
     </a-dumpling>
@@ -34,21 +39,48 @@
       </div>
     </a-dumpling>
   </main>
+
+  <s-cript target="assistant">
+    --- click
+    what was that?! i don't understand this place. {it's me|this is the web}
+    i can't see you, friend. {Cancel}
+    ==> click
+  </s-cript>
 </body>
 
 <script type="module">
   import { Inventory } from "./forest/inventory.js"
 
-  const images = document.querySelector(".sky-image")
-  const $dev = document.getElementById("toggle-dev")
-
+  // -- deps --
   const mInventory = Inventory.get()
 
+  // -- elements --
+  const $dev = document.getElementById("toggle-dev")
+  const $forestLinks = document.getElementsByClassName("WorldForest-link")
+
+  // -- init --
   mInventory.load()
+
+  for (const $link of $forestLinks) {
+    $link.addEventListener("click", onForestClicked)
+  }
+
   // how do you add this stuff to the inventory proper??
-  $dev.addEventListener("click", () => {
-    mInventory.addNamed("devcommentary")
+  $dev.addEventListener("click", onDevToggleClicked)
+
+  // -- events --
+  // TODO: a tag that looks like a button (so they can can link w/o hoops)
+  function onForestClicked() {
+    window.location.href = "forest/welcome.html"
+  }
+
+  function onDevToggleClicked() {
+    mInventory.addNamed("devcommentary", {
+      temperament: "phlegmatic",
+      w: 80,
+      h: 50,
+    })
     mInventory.save()
     d.State.save()
-  })
+  }
 </script>

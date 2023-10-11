@@ -60,9 +60,10 @@ const k = {
       "permanent",
       "persistent",
     ],
+    hidden: "hidden",
     bodyClass: "bodyClass",
     holds: "holds",
-    kind: "kind",
+    kind: "kind"
   },
   tag: {
     iframe: new Set([
@@ -184,7 +185,7 @@ export class Dumpling extends HTMLParsedElement {
     const id = m.id = m.getAttribute('id') || makeId(5)
 
     // set visibility
-    m.setVisible(!this.hasAttribute("hidden"))
+    m.setVisible(!this.hasAttribute(k.attr.hidden))
 
     // move to the correct parent, abandoning if removed
     const isDuplicate = m.addToParent()
@@ -467,6 +468,7 @@ export class Dumpling extends HTMLParsedElement {
     const m = this
     m.visible = isVisible
     m.classList.toggle(k.class.is.visible, isVisible)
+    m.toggleAttribute(k.attr.hidden, !isVisible)
   }
 
   bringToTop() {
@@ -523,12 +525,26 @@ export class Dumpling extends HTMLParsedElement {
   addToParent() {
     const m = this
 
-    let isDuplicate = false
-
-    // move to permanent once visible, if tagged
+    // move duplings to transient by default
     let pid = k.id.transient
-    if (m.visible && m.hasAttributeWithAliases(k.attr.permanent)) {
-      pid = k.id.permanent
+
+    // if permanent...
+    const isPermanent = m.hasAttributeWithAliases(k.attr.permanent)
+    if (isPermanent) {
+      // (if this is already in the inventory, remove it)
+      const inventory = document.getElementById(k.id.permanent)
+      if (inventory != null) {
+        const other = inventory.querySelector(`#${m.id}`)
+        if (other != null && this !== other) {
+          m.remove()
+          return true
+        }
+      }
+
+      // ...and visible, move to the inventory instead
+      if (m.visible) {
+        pid = k.id.permanent
+      }
     }
 
     // if parent doesn't match, move the element
@@ -538,23 +554,11 @@ export class Dumpling extends HTMLParsedElement {
       // parent can be null on computer right now; anywhere that doesn't use
       // the template
       if (parent != null) {
-        // there is a copy already, remove
-        // maybe we might want non unique permanent frames?
-        // TODO: does this miss a case where the el was already added to the correct
-        // parent? (e.g. this.parentElement.id === pid)
-        // NOTE: only one element on the page should ever have an id; using querySelector
-        // to check for an id in a subtree is not a great idea. we should make sure that
-        // duplicated dumplings dont have ids.
-        if (pid === k.id.permanent && parent.querySelector(`#${m.id}`) != null) {
-          m.remove()
-          isDuplicate = true
-        } else {
-          parent.appendChild(m)
-        }
+        parent.appendChild(m)
       }
     }
 
-    return isDuplicate
+    return false
   }
 
   // -- c/bag
