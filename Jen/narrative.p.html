@@ -186,9 +186,12 @@
 
   <a-dumpling id="door1" temperament="phlegmatic" hidden>
     <div class="Door">
+      <audio id="door1-sound">
+        <source src="/forest/doors/door1sound.wav" type="audio/wav">
+      </audio>
       <img
         class="Door-plank"
-        src='/forest/images/doors/door1.jpg'
+        src='/forest/doors/door1.jpg'
       >
 
       <button
@@ -200,25 +203,38 @@
 
   <a-dumpling id="door2" temperament="phlegmatic" hidden>
     <div class="Door">
-      <img class="Door-plank" src='/forest/images/doors/door2.jpg'>
+      <audio id="door2-sound">
+        <source src="/forest/doors/door2sound.wav" type="audio/wav">
+      </audio>
+      <img class="Door-plank" src='/forest/doors/door2.jpg'>
     </div>
   </a-dumpling>
 
   <a-dumpling id="door3" temperament="phlegmatic" hidden>
     <div class="Door">
-      <img class="Door-plank" src='/forest/images/doors/door3.jpg'>
+      <audio id="door3-sound">
+        <source src="/forest/doors/door3sound.mp3" type="audio/mpeg">
+      </audio>
+      <img class="Door-plank" src='/forest/doors/door3.jpg'>
     </div>
   </a-dumpling>
 
   <a-dumpling id="door4" temperament="phlegmatic" hidden>
     <div class="Door">
-      <img class="Door-plank" src='/forest/images/doors/door4.jpg'>
+      <audio id="door4-sound">
+        <!-- TODO: convert all sond to mp3 -->
+        <source src="/forest/doors/door4sound.wav" type="audio/wav">
+      </audio>
+      <img class="Door-plank" src='/forest/doors/door4.jpg'>
     </div>
   </a-dumpling>
 
   <a-dumpling id="door5" temperament="phlegmatic" hidden>
     <div class="Door">
-      <img class="Door-plank" src='/forest/images/doors/door5.jpg'>
+      <audio id="door5-sound">
+        <source src="/forest/doors/door5sound.wav" type="audio/wav">
+      </audio>
+      <img class="Door-plank" src='/forest/doors/door5.jpg'>
     </div>
   </a-dumpling>
 
@@ -241,6 +257,13 @@
 
   // -- deps --
   const mInventory = Inventory.get()
+
+  // -- sound --
+  for (let i = 0; i < 5; i++) {
+    const $door = document.getElementById(`door${i+1}`).querySelector(".Door-plank")
+    const $doorSound = document.getElementById(`door${i+1}-sound`)
+    $door.addEventListener("click", () => $doorSound.play())
+  }
 
   // -- events --
   window.gotKeys = function () {
@@ -273,6 +296,7 @@
   .Door-plank {
     height: 100%;
     width: 100%;
+    cursor: grabbing;
   }
 
   .Door-mat {
