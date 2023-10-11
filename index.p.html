@@ -13,15 +13,13 @@
     </div>
 
     <div class="WorldHack" id="toggle-dev">
-      please position me on the bottom of the page
-
       <img
         src="./forest/images/wordhack.png"
         alt="a person holding two computer punch cards like in the good old computer times"
       >
     </div>
 
-    <a-dumpling title="the park">
+    <a-dumpling layer="play" title="the park" w="50" h="50">
       <div class="WorldForest">
         <img
           class="WorldForest-link"
@@ -77,7 +75,11 @@
   }
 
   function onDevToggleClicked() {
-    mInventory.addNamed("devcommentary")
+    mInventory.addNamed("devcommentary", {
+      temperament: "phlegmatic",
+      w: 80,
+      h: 50,
+    })
     mInventory.save()
     d.State.save()
   }
