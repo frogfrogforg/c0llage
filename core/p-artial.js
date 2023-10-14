@@ -95,6 +95,13 @@ export class Partial extends HTMLParsedElement {
       inert.parentElement.replaceChild(script, inert)
     }
 
+    // send a load event for the partial
+    const load = new CustomEvent("load-partial", {
+      detail: $el
+    })
+
+    document.dispatchEvent(load)
+
     // resolve the ready promise, and then get rid of this!
     if (m._ready != null) {
       m._ready()

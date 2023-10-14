@@ -7,9 +7,9 @@
         src="./assets/42069wedding/field.jpg"
       >
 
-     <!-- TODO: add all the other characters -->
-     <!-- TODO: add visit conditions -->
-     <a-dumpling title="TODO: wedding">
+      <!-- TODO: add all the other characters -->
+      <!-- TODO: add visit conditions -->
+      <a-dumpling title="TODO: wedding">
         <div style="overflow-y: scroll;">
           <p>
             there should be (a pile of) wedding invitations somewhere that you can collect
@@ -27,7 +27,7 @@
           <p>for the characters in doom, someone needs to mod doom to add an invitation shooting gun</p>
           <p>for the character in bitsy games, you can give invites to claribelle, and they can deliver the invites</p>
         </div>
-     </a-dumpling>
+      </a-dumpling>
 
       <div id="characters">
         <c-picky wants="invitedAMan">
@@ -233,8 +233,10 @@
       </div>
 
       <img
+        id="wedding-arch"
         class="Wedding-arch WeddingSprite"
         src="./assets/42069wedding/arch.png"
+        draggable="false"
       >
     </section>
 
@@ -285,8 +287,9 @@
     left: 6150px;
     width: 469px;
     transform: skewX(2deg);
-    pointer-events: none;
     animation: Wobble 4.20s;
+    cursor: pointer;
+    user-select: none;
   }
 
   .WeddingSprite {
@@ -301,13 +304,13 @@
   }
 
   @keyframes Summer {
-    0% { transform: skew(0deg) scale(1, 1); }
-    10%   { transform: skew(0deg) scale(1, 0.9);}
-    33% { transform: skew(-6deg) rotate(6deg) scale(1, 0.9); }
-    50% { transform: scale(1, 1.4);}
-    66% { transform: skew(5deg) rotate(-5deg) scale(1, 1.2); }
-    90%   { transform: skew(0deg) scale(1, 0.9);}
-    100%   { transform: skew(0deg) scale(1, 1);}
+    0%   { transform: skew(0deg) scale(1, 1); }
+    10%  { transform: skew(0deg) scale(1, 0.9);}
+    33%  { transform: skew(-6deg) rotate(6deg) scale(1, 0.9); }
+    50%  { transform: scale(1, 1.4);}
+    66%  { transform: skew(5deg) rotate(-5deg) scale(1, 1.2); }
+    90%  { transform: skew(0deg) scale(1, 0.9);}
+    100% { transform: skew(0deg) scale(1, 1);}
   }
 </style>
 
@@ -315,26 +318,33 @@
   // -- props --
   let $el = null
   let $music = null
+  let $arch = null
   let $sprites = []
+  let $frames = null
 
   // -- init --
   function Main() {
+    // get elements
     $el = document.getElementById("scroll-container")
     $music = document.getElementById("wedding-music")
+    $arch = document.getElementById("wedding-arch")
     $sprites = document.getElementsByClassName("WeddingSprite")
-    initTouch()
-    initCharacters()
+    $frames = document.getElementById("frames")
+
+    // setup & bind events
+    InitTouch()
+    InitCharacters()
+    $arch.addEventListener("click", OnArchClicked)
   }
 
-  // -- elements --
-  function initCharacters() {
-    const characters = document.querySelectorAll(".Wedding-guest")
+  function InitCharacters() {
     const kDefaultPos = 1500;
     const kRandomOffset = 150;
     const kAnimationDelay = 1;
-    for (const $character of characters) {
 
-      if($character.style.bottom ===  `${kDefaultPos}px`) {
+    const $characters = document.querySelectorAll(".Wedding-guest")
+    for (const $character of $characters) {
+      if ($character.style.bottom ===  `${kDefaultPos}px`) {
         $character.style.bottom = `${kDefaultPos + kRandomOffset * Math.random()}px`
       }
 
@@ -342,12 +352,30 @@
     }
   }
 
+  // -- events --
+  function OnArchClicked() {
+    const id = d.State.balloonsFilled
+
+    const scale = 1 + Math.random()
+    $frames.spawn({
+      id: "balloon-" + id,
+      src: "assets/42069wedding/balloon/balloon.html",
+      many: true,
+      partial: true,
+      attrs: {
+        "w": 5 * scale,
+        "h": 10 * scale,
+        "temperament": "choleric",
+      }
+    })
+  }
+
   // -- touch --
   let isTouching = false
   let xi = null
   let yi = null
 
-  function initTouch() {
+  function InitTouch() {
     $el.addEventListener("pointerdown", didStartTouch)
     $el.addEventListener("pointermove", didMoveTouch)
     $el.addEventListener("pointerup", didEndTouch)

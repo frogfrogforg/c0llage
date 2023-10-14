@@ -29,7 +29,8 @@ const initialState = {
   claribelleLocation: "alidator",
   hasCellphone: false,
   knowsSkate: false,
-  currentElevatorFloor: "deck"
+  currentElevatorFloor: "deck",
+  balloonsFilled: 0,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState

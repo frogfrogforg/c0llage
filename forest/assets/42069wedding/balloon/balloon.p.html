@@ -1,0 +1,114 @@
+<!-- template: item {title: ourkey} -->
+
+<body>
+  <img
+    class="Balloon"
+    src="/forest/assets/42069wedding/balloon/balloon-blue.png"
+    draggable="false"
+  >
+
+  <audio id="keys-sound">
+    <!-- credits: https://www.freesoundslibrary.com/car-lock-sound-effect/ -->
+    <source
+      src="/forest/items/ourkey/ourkey.mp3"
+      type="audio/mpeg"
+    >
+  </audio>
+</body>
+
+<script type="module">
+  // -- constants --
+  const p0 = Math.PI * 2
+  const k = {
+    p0,
+    spd: {
+      y: -0.06,
+    },
+    lft: {
+      amt: 0.03,
+      dur: 4.0 * 1000,
+      prd: p0,
+      shf: 0.75 * Math.PI
+    },
+    wob: {
+      amt: 1.2,
+      dur: 8.0 * 1000,
+      prd: p0
+    }
+  }
+
+  // -- props --
+  /// the position
+  let x = 0
+  let y = 0
+
+  /// the initial position
+  let x0 = 0
+
+  /// the period offset
+  let ox = 0
+  let oy = 0
+
+  /// the enclosing dumpling
+  let $dumpling = null
+
+  // -- main --
+  function Main($el) {
+    // set elements
+    $dumpling = document.getElementById($el.getAttribute("dumpling-id"))
+
+    // set props
+    x = Number.parseFloat($dumpling.style.left)
+    y = Number.parseFloat($dumpling.style.top)
+    x0 = x
+
+    ox = Math.random() * k.p0
+    oy = Math.random() * k.p0
+
+    // start
+    d.State.balloonsFilled += 1
+    requestAnimationFrame(Loop)
+  }
+
+  function Loop(t) {
+    const vx = k.wob
+    const tx = (t % vx.dur) / vx.dur
+    const dx = vx.amt * Math.sin(tx * vx.prd + ox)
+
+    const vy = k.lft
+    const ty = (t % vy.dur) / vy.dur
+    const dy = k.spd.y + vy.amt * ((Math.sin(ty * vy.prd + oy) + 1) / 2)
+
+    x = x0 + dx
+    y = y + dy
+
+    const rect = $dumpling.parentElement.getBoundingClientRect()
+    const minY = -(rect.y / rect.height) * 100
+    if (y <= minY) {
+      y = minY
+    }
+
+    $dumpling.style.left = `${x}%`
+    $dumpling.style.top = `${y}%`
+
+    requestAnimationFrame(Loop)
+  }
+
+  // -- events --
+  function OnLoad(evt) {
+    Main(evt.detail)
+  }
+
+  // -- bootstrap --
+  document.addEventListener("load-partial", OnLoad, { once: true })
+</script>
+
+<style>
+  .Balloon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    user-select: none;
+  }
+</style>
