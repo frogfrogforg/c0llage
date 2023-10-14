@@ -33,7 +33,6 @@ class StateConditionalElement extends HTMLParsedElement {
 
   setChildrenVisibility(show) {
     [...this.children].forEach(child => {
-      console.log(child)
       child.style.display = show ? 'block' : 'none'
     })
   }

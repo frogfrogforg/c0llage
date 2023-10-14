@@ -56,14 +56,32 @@ const k = {
   },
   attr: {
     title: "title",
-    permanent: [
-      "permanent",
-      "persistent",
-    ],
+    w: {
+      val: ["width", "w"],
+      min: ["min-w", "w-min", "min-width", "width-min", "min-size", "size-min"],
+      max: ["max-w", "w-max", "width-max", "max-width", "max-size", "size-max"],
+    },
+    h: {
+      val: ["height", "h"],
+      min: ["min-h", "h-min", "min-height", "height-min", "min-size", "size-min"],
+      max: ["max-h", "h-max", "max-height", "height-max", "max-size", "size-max"],
+    },
+    x: {
+      val: ["x"],
+      min: ["x-min", "min-x", "pos-min", "min-pos"],
+      max: ["x-max", "max-x", "pos-max", "max-pos"],
+    },
+    y: {
+      val: ["y"],
+      min: ["y-min", "min-y", "pos-min", "min-pos"],
+      max: ["y-max", "max-y", "pos-max", "max-pos"],
+    },
+    permanent: ["permanent", "persistent"],
     hidden: "hidden",
     bodyClass: "bodyClass",
     holds: "holds",
-    kind: "kind"
+    kind: "kind",
+    extendsToEdges: "extends-to-edges"
   },
   tag: {
     iframe: new Set([
@@ -146,7 +164,7 @@ const DefaultTemperament = 'melancholic'
 
 // Frame random spawn tuning parameters, in %
 const FrameRng = {
-  margin: 2,
+  Margin: 2,
   MinSize: 20,
   MaxSize: 40
 }
@@ -313,25 +331,26 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   initStyleFromAttributes() {
-    const fallbackAttributes = (...params) => {
-      for (const attrName of params) {
-        const attr = this.getAttribute(attrName)
-        if (attr != null) return attr;
-      }
-      return null
+    const m = this
+
+    // get parent margins if we extend to edges
+    let pMarginX = 0;
+    let pMarginY = 0
+
+    if (m.hasAttribute(k.attr.extendsToEdges)) {
+      const pRect = this.parentElement.getBoundingClientRect()
+      pMarginX = pRect.x / pRect.width * 100
+      pMarginY = pRect.y / pRect.height * 100
     }
 
+    // position dumpling
     let width = 0
     if (this.style.width === "") {
-      width = fallbackAttributes('width', 'w')
+      width = m.getAttrWithAliases(k.attr.w.val, parseFloat)
       if (width == null) {
-        const minSize = parseFloat(fallbackAttributes(
-          'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
-          || FrameRng.MinSize
-        const maxSize = parseFloat(fallbackAttributes(
-          'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
-          || FrameRng.MaxSize
-        width = (minSize + Math.random() * (maxSize - minSize))
+        const wMin = m.getAttrWithAliases(k.attr.w.min, parseFloat) || FrameRng.MinSize
+        const wMax = m.getAttrWithAliases(k.attr.w.max, parseFloat) || FrameRng.MaxSize
+        width = (wMin + Math.random() * (wMax - wMin))
       }
 
       this.style.width = width + '%'
@@ -339,15 +358,11 @@ export class Dumpling extends HTMLParsedElement {
 
     let height = 0
     if (this.style.height === "") {
-      height = fallbackAttributes('height', 'h')
+      height = m.getAttrWithAliases(k.attr.h.val, parseFloat)
       if (height == null) {
-        const minSize = parseFloat(fallbackAttributes(
-          'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
-          || FrameRng.MinSize
-        const maxSize = parseFloat(fallbackAttributes(
-          'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
-          || FrameRng.MaxSize
-        height = (minSize + Math.random() * (maxSize - minSize))
+        const hMin = m.getAttrWithAliases(k.attr.h.min, parseFloat) || FrameRng.MinSize
+        const hMax = m.getAttrWithAliases(k.attr.h.max, parseFloat) || FrameRng.MaxSize
+        height = (hMin + Math.random() * (hMax - hMin))
       }
 
       this.style.height = height + '%'
@@ -355,36 +370,22 @@ export class Dumpling extends HTMLParsedElement {
 
     // TODO: maybe have some aspect ratio attribute so that can be specified instead of both width and height
     if (this.style.left === "") {
-      let x = 0
-      if (this.attributes.x) {
-        x = this.attributes.x.value
-      } else {
-        const xMin = parseFloat(fallbackAttributes(
-          'x-min', 'min-x', 'pos-min', 'min-pos'))
-          || FrameRng.margin
-        const xMax = parseFloat(fallbackAttributes(
-          'x-max', 'max-x', 'pos-max', 'max-pos'))
-          || (100 - FrameRng.margin - width)
-        x =
-          xMin + Math.random() * (xMax - xMin)
+      let x = m.getAttrWithAliases(k.attr.x.val, parseFloat)
+      if (x == null) {
+        const xMin = m.getAttrWithAliases(k.attr.x.min, parseFloat) || FrameRng.Margin - pMarginX
+        const xMax = m.getAttrWithAliases(k.attr.x.max, parseFloat) || (100 - FrameRng.Margin - width) + pMarginX
+        x = xMin + Math.random() * (xMax - xMin)
       }
 
       this.style.left = x + '%'
     }
 
     if (this.style.top === "") {
-      let y = 0
-      if (this.attributes.y) {
-        y = this.attributes.y.value
-      } else {
-        const yMin = parseFloat(fallbackAttributes(
-          'y-min', 'min-y', 'pos-min', 'min-pos'))
-          || FrameRng.margin
-        const yMax = parseFloat(fallbackAttributes(
-          'y-max', 'max-y', 'pos-max', 'max-pos'))
-          || (100 - FrameRng.margin - height)
-        y =
-          yMin + Math.random() * (yMax - yMin)
+      let y = m.getAttrWithAliases(k.attr.y.val, parseFloat)
+      if (y == null) {
+        const yMin = m.getAttrWithAliases(k.attr.y.min, parseFloat) || FrameRng.Margin - pMarginY
+        const yMax = m.getAttrWithAliases(k.attr.y.max, parseFloat) || (100 - FrameRng.Margin - height) + pMarginY
+        y = yMin + Math.random() * (yMax - yMin)
       }
 
       this.style.top = y + '%'
@@ -529,7 +530,7 @@ export class Dumpling extends HTMLParsedElement {
     let pid = k.id.transient
 
     // if permanent...
-    const isPermanent = m.hasAttributeWithAliases(k.attr.permanent)
+    const isPermanent = m.hasAttrWithAliases(k.attr.permanent)
     if (isPermanent) {
       // (if this is already in the inventory, remove it)
       const inventory = document.getElementById(k.id.permanent)
@@ -1109,7 +1110,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // check for any attribute from a list of aliases
-  hasAttributeWithAliases(names) {
+  hasAttrWithAliases(names) {
     const m = this
 
     for (const name of names) {
@@ -1122,7 +1123,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // get first value for an attribute with a list of aliases
-  getAttributeWithAliases(names) {
+  getAttrWithAliases(names, parse = null) {
     const m = this
 
     for (const name of names) {
@@ -1130,7 +1131,7 @@ export class Dumpling extends HTMLParsedElement {
 
       // TODO: how to handle empty strings here (currently, ignoring them)
       if (val) {
-        return val
+        return parse != null ? parse(val) : val
       }
     }
 
