@@ -364,6 +364,14 @@
     $sprites = document.getElementsByClassName("WeddingSprite")
     $frames = document.getElementById("frames")
 
+    const params = new URLSearchParams(document.location.search)
+    console.log(params)
+    debugger
+    $el.scrollTo({
+      left: params.get('x') || 0,
+      top: params.get('y') || 0
+    })
+
     // setup & bind events
     InitTouch()
     InitCharacters()
