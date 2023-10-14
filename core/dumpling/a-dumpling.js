@@ -464,6 +464,10 @@ export class Dumpling extends HTMLParsedElement {
     m.bringToTop()
   }
 
+  onHide(listener) {
+    this.addEventListener(Dumpling.HideEvent, listener)
+  }
+
   setVisible(isVisible) {
     const m = this
     m.visible = isVisible

@@ -44,6 +44,9 @@
   }
 
   // -- props --
+  /// if this has been popped
+  let isPopped = false
+
   /// the position
   let x = 0
   let y = 0
@@ -81,6 +84,7 @@
     // bind events
     const $img = $dumpling.querySelector(`.${k.class.img}`)
     $img.addEventListener("click", OnImageClicked)
+    $dumpling.onHide(OnHidden)
 
     // start
     d.State.balloonsFilled += 1
@@ -110,6 +114,10 @@
   }
 
   function Loop(t) {
+    if (isPopped) {
+      return
+    }
+
     const vx = k.wob
     const tx = (t % vx.dur) / vx.dur
     const dx = vx.amt * Math.sin(tx * vx.prd + ox)
@@ -139,8 +147,14 @@
   }
 
   function OnImageClicked() {
-    $pop.play()
     $dumpling.hide()
+  }
+
+  function OnHidden() {
+    isPopped = true
+    d.State.balloonsPopped += 1
+    $pop.play()
+    setTimeout(() => $dumpling.remove(), 2000);
   }
 
   // -- bootstrap --

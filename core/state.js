@@ -31,6 +31,7 @@ const initialState = {
   knowsSkate: false,
   currentElevatorFloor: "deck",
   balloonsFilled: 0,
+  balloonsPopped: 0,
 }
 
 const state = JSON.parse((window.localStorage.getItem("state") || "false")) || initialState
