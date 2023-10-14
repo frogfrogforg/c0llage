@@ -106,25 +106,40 @@
 
   <a-dumpling temperament='sanguine' id="gamer" hidden persistent width=50 height=50 x=4>
     <span>then say it.</span><br><br>
-
     <span style="animation:reveal 6s 1; animation-timing-function:ease-out;"><a
         href="https://frogfrogforg.itch.io/super-cosmodrome?password=verysecretpassword"><button>"gamer"</button></a></span>
   </a-dumpling>
 
+  <audio id="thanks">
+    <source src="assets/420cosmodrome/thanks.mp3" type="audio/mpeg">
+  </audio>
 </body>
 
 <script type="module">
+  // -- constants --
+  const k = {
+    ids: {
+      thanks: "thanks"
+    },
+    wordOfPower: "gamer"
+  }
+
   // -- props --
   let $el = null
+  let $thanks = null
+  let input = ""
 
   // -- init --
   function main() {
-    console.log("loaded cosmodrome")
     $el = document.getElementById("cosmodrome")
+    $thanks = document.getElementById(k.ids.thanks)
+
     $el.style.overflow = "hidden"
 
     initTouch()
     loopGuard()
+
+    document.addEventListener("keydown", OnKeyDown)
   }
 
   //  -- guard --
@@ -135,6 +150,27 @@
 
     $el.style.overflow = "hidden"
     requestAnimationFrame(loopGuard)
+  }
+
+  // -- events --
+  function OnKeyDown(evt) {
+    if (event.isComposing || event.keyCode === 229) {
+      return;
+    }
+
+    // append char
+    const char = String.fromCharCode(event.keyCode).toLowerCase()
+    input += char
+
+    // reset on mistake
+    if (!k.wordOfPower.startsWith(input)) {
+      input = ""
+    }
+    // play on success
+    else if (input === k.wordOfPower) {
+      $thanks.play()
+      input = ""
+    }
   }
 
   // -- touch --
