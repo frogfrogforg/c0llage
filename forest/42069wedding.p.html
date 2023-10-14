@@ -10,16 +10,17 @@
       <!-- TODO: add all the other characters -->
       <!-- TODO: add visit conditions -->
       <a-dumpling title="TODO: wedding">
-        <div style="overflow-y: scroll;">
-          <p>there should be (a pile of) wedding invitations somewhere that you can collect</p>
-          <p>for every character you drag the wedding invitation to, they respond with a dialog</p>
-          <p>and whoever was invited shows up in this screen...</p>
-          <hr>
-
-          <p>notes on specific characters:</p>
-          <p>for the characters in doom, someone needs to mod doom to add an invitation shooting gun</p>
-          <p>for the character in bitsy games, you can give invites to claribelle, and they can deliver the invites</p>
-        </div>
+        <section class="WeddingTodo">
+          <article>
+            <p>there should be (a pile of) wedding invitations somewhere that you can collect</p>
+            <p>for every character you drag the wedding invitation to, they respond with a dialog</p>
+            <p>and whoever was invited shows up in this screen...</p>
+            <hr>
+            <p>notes on specific characters:</p>
+            <p>for the characters in doom, someone needs to mod doom to add an invitation shooting gun</p>
+            <p>for the character in bitsy games, you can give invites to claribelle, and they can deliver the invites</p>
+          </div>
+        </section>
       </a-dumpling>
 
       <div id="characters">
@@ -321,6 +322,11 @@
     animation-direction: alternate-reverse;
     animation-iteration-count: infinite;
     animation-play-state: paused;
+  }
+
+  .WeddingTodo {
+    height: 100%;
+    overflow-y: scroll;
   }
 
   @keyframes Wobble {
