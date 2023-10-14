@@ -93,7 +93,20 @@ const k = {
       "D-IFRAME",
       "P-ARTIAL",
     ]),
-  }
+  },
+  events: {
+    // an event when a dumpling shows
+    show: "show-frame",
+    // an event when a dumpling hides
+    hide: "hide-frame",
+    // an event when the player starts dragging a dumpling
+    dragStart: "drag-start",
+    // an event when the player stops dragging a dumpling
+    dragEnd: "drag-end"
+  },
+  // an event when the top z-index changes for a layer
+  // TODO: re-understand why this emits from window instead of dumpling
+  focusChange: "focus-change",
 }
 
 // -- template --
@@ -123,9 +136,6 @@ const kTemplate = `
 // -- c/focus
 // the default focus layer
 const kLayerDefault = "default"
-
-// the event when the top z-index changes for a layer
-const kEventFocusChange = "focus-change"
 
 // TODO: make this an attribute with these as default values?
 const MinContentHeight = 40
@@ -277,7 +287,7 @@ export class Dumpling extends HTMLParsedElement {
     // close button
     const closeButton = m.findByClass(k.class.close)
     if (!m.hasAttribute("no-close")) {
-      closeButton.addEventListener("click", m.onClose)
+      closeButton.addEventListener("click", m.onCloseClicked)
     } else {
       closeButton.style.display = 'none'
     }
@@ -319,15 +329,6 @@ export class Dumpling extends HTMLParsedElement {
     // try to add to a bag if we're on one (parsing race condition???)
     const dr = m.getBoundingClientRect()
     m.addToBag(dr.x, dr.y)
-  }
-
-  onClose = () => {
-    const diframe = this.querySelector("d-iframe")
-    if (diframe != null) {
-      diframe.destroyIframe()
-    }
-
-    this.hide()
   }
 
   initStyleFromAttributes() {
@@ -406,7 +407,7 @@ export class Dumpling extends HTMLParsedElement {
     // listen to move/up on the parent to catch mouse events that are fast
     // enough to exit the frame
     const container = document.body
-    container.addEventListener("pointermove", this.onMouseMove)
+    container.addEventListener("pointermove", this.onMouseMoved)
     container.addEventListener("pointerup", this.onMouseUp)
 
     // end drag if mouse exits the window
@@ -419,7 +420,7 @@ export class Dumpling extends HTMLParsedElement {
     })
 
     // when the focused dumpling changes
-    window.addEventListener(kEventFocusChange, m.onFocusChange)
+    window.addEventListener(k.focusChange, m.onFocusChanged)
   }
 
   // -- commands --
@@ -438,11 +439,7 @@ export class Dumpling extends HTMLParsedElement {
     if (m.visible) {
       m.setVisible(false)
       m.addToParent()
-
-      m.dispatchEvent(new CustomEvent(
-        Dumpling.HideEvent,
-        { detail: m },
-      ))
+      m.sendEvent(k.events.hide)
     }
   }
 
@@ -453,19 +450,11 @@ export class Dumpling extends HTMLParsedElement {
     if (!m.visible) {
       m.setVisible(true)
       m.addToParent()
-
-      m.dispatchEvent(new CustomEvent(
-        Dumpling.ShowEvent,
-        { detail: m },
-      ))
+      m.sendEvent(k.events.show)
     }
 
     // TODO: bring to top anyways?
     m.bringToTop()
-  }
-
-  onHide(listener) {
-    this.addEventListener(Dumpling.HideEvent, listener)
   }
 
   setVisible(isVisible) {
@@ -503,7 +492,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // update visibility of frames
     window.dispatchEvent(new CustomEvent(
-      kEventFocusChange,
+      k.focusChange,
       { detail: { layer: m.layer } }
     ))
 
@@ -628,6 +617,11 @@ export class Dumpling extends HTMLParsedElement {
     $item.$bag = null
   }
 
+  sendEvent(type, detail = null) {
+    const m = this
+    m.dispatchEvent(new CustomEvent(type, { detail: detail || m }))
+  }
+
   // -- c/gesture
   /// create a gesture with the initial mouse position
   initGesture(type, m0) {
@@ -721,6 +715,16 @@ export class Dumpling extends HTMLParsedElement {
   close = this.hide
 
   // -- events --
+  onCloseClicked = () => {
+    const diframe = this.querySelector("d-iframe")
+    if (diframe != null) {
+      diframe.destroyIframe()
+    }
+
+    this.hide()
+  }
+
+  // -- e/mouse
   /// when the mouse button is pressed
   onMouseDown = (evt) => {
     const m = this
@@ -761,14 +765,14 @@ export class Dumpling extends HTMLParsedElement {
     // start the operation
     switch (m.gesture.type) {
     case Ops.Move:
-      m.onDragStart(); break;
+      m.onDragStarted(); break;
     case Ops.Scale:
-      m.onScaleStart(); break
+      m.onScaleStarted(); break
     }
   }
 
   /// when the mouse moves
-  onMouseMove = (evt) => {
+  onMouseMoved = (evt) => {
     if (this.gesture == null) {
       return
     }
@@ -783,9 +787,9 @@ export class Dumpling extends HTMLParsedElement {
 
     switch (this.gesture.type) {
       case Ops.Move:
-        this.onDrag(mx, my); break
+        this.onDragMoved(mx, my); break
       case Ops.Scale:
-        this.onScale(mx, my); break
+        this.onScaleChanged(mx, my); break
     }
   }
 
@@ -808,9 +812,9 @@ export class Dumpling extends HTMLParsedElement {
 
     switch (m.gesture.type) {
     case Ops.Move:
-      m.onDragEnd(mx, my); break
+      m.onDragEnded(mx, my); break
     case Ops.Scale:
-      m.onScaleEnd(); break;
+      m.onScaleEnded(); break;
     }
 
     // and clear it
@@ -822,17 +826,20 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- e/drag
   /// when the drag starts
-  onDragStart() {
+  onDragStarted() {
     const m = this
 
     // if we're in a bag, remove ourselves
     if (m.$bag) {
       m.$bag.removeItem(m)
     }
+
+    // send event
+    m.sendEvent(k.events.dragStart)
   }
 
   /// when the drag gesture moves
-  onDrag(mx, my) {
+  onDragMoved(mx, my) {
     const m = this
 
     // move the dumpling and any bagged dumplings
@@ -840,16 +847,30 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   /// when the drag gesture finishes
-  onDragEnd(mx, my) {
+  onDragEnded(mx, my) {
     const m = this
+
+    // convert dumpling pos from px to %
+    let x = parseFloat(m.style.left)
+    let y = parseFloat(m.style.top)
+
+    const rect = this.parentElement.getBoundingClientRect()
+    x = x / rect.width * 100
+    y = y / rect.height * 100
+
+    m.style.left = `${x}%`
+    m.style.top = `${y}%`
 
     // try to add to a bag at the mouse position
     m.addToBag(mx, my)
+
+    // send event
+    m.sendEvent(k.events.dragEnd)
   }
 
   // -- e/scale
   /// when a scale gesture starts
-  onScaleStart() {
+  onScaleStarted() {
     const m = this
 
     // get dumpling rect
@@ -889,7 +910,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   /// when a scale gesture changes
-  onScale(mx, my) {
+  onScaleChanged(mx, my) {
     const m = this
 
     const s0 = m.gesture.initialSize
@@ -962,7 +983,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   /// when a scale gesture ends
-  onScaleEnd = () => {
+  onScaleEnded = () => {
     const m = this
 
     // remove any bagged dumplings that are no longer contained
@@ -983,7 +1004,7 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- e/focus
   // when the focused dumpling changes for a layer
-  onFocusChange = (evt) => {
+  onFocusChanged = (evt) => {
     const m = this
     if (evt.detail.layer != m.layer) {
       return
@@ -1139,6 +1160,14 @@ export class Dumpling extends HTMLParsedElement {
     }
 
     return null
+  }
+}
+
+// add listener methods for every event in k.events
+for (const eventName in k.events) {
+  const methodName = `on${eventName[0].toUpperCase() + eventName.slice(1)}`
+  Dumpling.prototype[methodName] = function (listener) {
+    this.addEventListener(k.events[eventName], listener)
   }
 }
 

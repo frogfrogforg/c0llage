@@ -21,11 +21,19 @@
       pop: 'Balloon-pop'
     },
     sounds: [
-      { pct: 33, src: "pop1.mp3" },
-      { pct: 33, src: "pop2.mp3" },
-      { pct: 33, src: "bub.mp3" },
-      { pct: 1,  src: "woo.mp3" },
+      { frq: 10, src: "balloon0.mp3" },
+      { frq: 10, src: "balloon1.mp3" },
+      { frq: 10, src: "balloon2.mp3" },
+      { frq: 10, src: "balloon3.mp3" },
+      { frq: 10, src: "balloon4.mp3" },
+      { frq: 10, src: "balloon5.mp3" },
+      { frq: 10, src: "balloon6.mp3" },
+      { frq: 10, src: "balloon7.mp3" },
+      { frq: 10, src: "balloon8.mp3" },
+      { frq: 10, src: "balloon9.mp3" },
+      { frq: 10, src: "balloon10.mp3" },
     ],
+    volume: 0.2,
     p0,
     spd: {
       y: -0.06,
@@ -43,9 +51,11 @@
     },
   }
 
+  k.sounds.amt = k.sounds.reduce((memo, sound) => memo + sound.frq, 0)
+
   // -- props --
-  /// if this has been popped
-  let isPopped = false
+  /// the current loop id
+  let loopId = null
 
   /// the position
   let x = 0
@@ -70,38 +80,45 @@
     $dumpling = document.getElementById($el.getAttribute("dumpling-id"))
     $pop = $dumpling.querySelector(`.${k.class.pop}`)
 
-    // set props
-    x = Number.parseFloat($dumpling.style.left)
-    y = Number.parseFloat($dumpling.style.top)
-    x0 = x
+    // setup, set props
+    InitPos()
+    InitPop()
 
     ox = Math.random() * k.p0
     oy = Math.random() * k.p0
-
-    // setup
-    InitPop()
 
     // bind events
     const $img = $dumpling.querySelector(`.${k.class.img}`)
     $img.addEventListener("click", OnImageClicked)
     $dumpling.onHide(OnHidden)
+    $dumpling.onDragStart(OnDragStarted)
+    $dumpling.onDragEnd(OnDragEnded)
 
     // start
     d.State.balloonsFilled += 1
-    requestAnimationFrame(Loop)
+    Play()
+  }
+
+  function InitPos() {
+    x = Number.parseFloat($dumpling.style.left)
+    y = Number.parseFloat($dumpling.style.top)
+    x0 = x
   }
 
   function InitPop() {
+    $pop.volume = k.volume
+
+    // set the audio src file
     const $source = $pop.querySelector("source")
 
     // pick a sound
     let sound = k.sounds[0]
 
     // sampling from the list
-    let pct = Math.random() * 100
+    let sample = Math.random() * k.sounds.amt
     for (const option of k.sounds) {
-      pct -= option.pct
-      if (pct <= 0) {
+      sample -= option.frq
+      if (sample <= 0) {
         sound = option
         break
       }
@@ -114,10 +131,6 @@
   }
 
   function Loop(t) {
-    if (isPopped) {
-      return
-    }
-
     const vx = k.wob
     const tx = (t % vx.dur) / vx.dur
     const dx = vx.amt * Math.sin(tx * vx.prd + ox)
@@ -138,7 +151,25 @@
     $dumpling.style.left = `${x}%`
     $dumpling.style.top = `${y}%`
 
-    requestAnimationFrame(Loop)
+    loopId = requestAnimationFrame(Loop)
+  }
+
+  // -- commands --
+  function Play() {
+    if (loopId != null) {
+      return
+    }
+
+    loopId = requestAnimationFrame(Loop)
+  }
+
+  function Stop() {
+    if (loopId == null) {
+      return
+    }
+
+    cancelAnimationFrame(loopId)
+    loopId = null
   }
 
   // -- events --
@@ -151,10 +182,19 @@
   }
 
   function OnHidden() {
-    isPopped = true
+    Stop()
     d.State.balloonsPopped += 1
     $pop.play()
     setTimeout(() => $dumpling.remove(), 2000);
+  }
+
+  function OnDragStarted() {
+    Stop()
+  }
+
+  function OnDragEnded() {
+    InitPos()
+    Play()
   }
 
   // -- bootstrap --
