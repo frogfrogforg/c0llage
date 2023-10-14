@@ -2,17 +2,13 @@
 
 <body>
   <img
-    class="Balloon"
+    class="Balloon-img"
     src="/forest/assets/42069wedding/balloon/balloon-blue.png"
     draggable="false"
   >
 
-  <audio id="keys-sound">
-    <!-- credits: https://www.freesoundslibrary.com/car-lock-sound-effect/ -->
-    <source
-      src="/forest/items/ourkey/ourkey.mp3"
-      type="audio/mpeg"
-    >
+  <audio class="Balloon-pop">
+    <source type="audio/mpeg">
   </audio>
 </body>
 
@@ -20,6 +16,16 @@
   // -- constants --
   const p0 = Math.PI * 2
   const k = {
+    class: {
+      img: 'Balloon-img',
+      pop: 'Balloon-pop'
+    },
+    sounds: [
+      { pct: 33, src: "pop1.mp3" },
+      { pct: 33, src: "pop2.mp3" },
+      { pct: 33, src: "bub.mp3" },
+      { pct: 1,  src: "woo.mp3" },
+    ],
     p0,
     spd: {
       y: -0.06,
@@ -34,7 +40,7 @@
       amt: 1.2,
       dur: 8.0 * 1000,
       prd: p0
-    }
+    },
   }
 
   // -- props --
@@ -52,10 +58,14 @@
   /// the enclosing dumpling
   let $dumpling = null
 
+  /// the pop audio
+  let $pop = null
+
   // -- main --
   function Main($el) {
-    // set elements
+    // get elements
     $dumpling = document.getElementById($el.getAttribute("dumpling-id"))
+    $pop = $dumpling.querySelector(`.${k.class.pop}`)
 
     // set props
     x = Number.parseFloat($dumpling.style.left)
@@ -65,9 +75,38 @@
     ox = Math.random() * k.p0
     oy = Math.random() * k.p0
 
+    // setup
+    InitPop()
+
+    // bind events
+    const $img = $dumpling.querySelector(`.${k.class.img}`)
+    $img.addEventListener("click", OnImageClicked)
+
     // start
     d.State.balloonsFilled += 1
     requestAnimationFrame(Loop)
+  }
+
+  function InitPop() {
+    const $source = $pop.querySelector("source")
+
+    // pick a sound
+    let sound = k.sounds[0]
+
+    // sampling from the list
+    let pct = Math.random() * 100
+    for (const option of k.sounds) {
+      pct -= option.pct
+      if (pct <= 0) {
+        sound = option
+        break
+      }
+    }
+
+    $source.setAttribute(
+      "src",
+      `/forest/assets/42069wedding/balloon/${sound.src}`
+    )
   }
 
   function Loop(t) {
@@ -99,12 +138,17 @@
     Main(evt.detail)
   }
 
+  function OnImageClicked() {
+    $pop.play()
+    $dumpling.hide()
+  }
+
   // -- bootstrap --
   document.addEventListener("load-partial", OnLoad, { once: true })
 </script>
 
 <style>
-  .Balloon {
+  .Balloon-img {
     width: 100%;
     height: 100%;
     object-fit: cover;

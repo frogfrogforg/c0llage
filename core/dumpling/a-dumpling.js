@@ -443,7 +443,6 @@ export class Dumpling extends HTMLParsedElement {
         Dumpling.HideEvent,
         { detail: m },
       ))
-
     }
   }
 
