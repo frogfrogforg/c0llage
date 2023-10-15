@@ -77,6 +77,8 @@
         $cowRight = document.getElementById("cow-right")
         $cowSky = document.getElementById("cow-sky")
 
+        let $cowRightScript = document.getElementById("cow-right-script");
+
         // move cows on click
         $cowLeft.addEventListener("click", (evt) => {
             moveInForKiss($cowLeft, 1.0)
@@ -85,6 +87,17 @@
         $cowRight.addEventListener("click", (evt) => {
             moveInForKiss($cowRight, -1.0)
         })
+
+        $cowRight.addEventListener("dragover", (evt) => evt.preventDefault()); // i think this is necessary for drag-drop to work
+        $cowRight.addEventListener("drop", (evt) => {
+            evt.preventDefault();
+            if (evt.dataTransfer.getData("text") == "invitation") {
+                if (!d.State.invitedCow1) {
+                    $cowRightScript.showNamedDialog('invited');
+                    d.State.invitedCow1 = true;
+                }
+            }
+        });
     }
 
     main()
@@ -94,5 +107,12 @@
     --- click
         Oh, to be young and filled with milk.
     ==> click
+
+</s-cript>
+
+<s-cript target="cow-right" id="cow-right-script">
+    --- invited
+        Moo
+    ==> invited
 
 </s-cript>

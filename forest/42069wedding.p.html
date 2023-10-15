@@ -12,7 +12,7 @@
       <a-dumpling title="TODO: wedding">
         <section class="WeddingTodo">
           <article>
-            <p>there should be (a pile of) wedding invitations somewhere that you can collect</p>
+            <p>there should be (a pile of) <a href="#" id="invitations-link">wedding invitations</a> somewhere that you can collect</p>
             <p>for every character you drag the wedding invitation to, they respond with a dialog</p>
             <p>and whoever was invited shows up in this screen...</p>
             <hr>
@@ -346,6 +346,11 @@
 </style>
 
 <script type="module">
+  import { Inventory } from "/forest/inventory.js"
+
+  // -- deps --
+  const mInventory = Inventory.get()
+
   // -- constants --
   const k = {
     cursor: {
@@ -354,12 +359,14 @@
     }
   }
 
+
   // -- props --
   let $el = null
   let $music = null
   let $arch = null
   let $sprites = []
   let $frames = null
+  let $invitationsLink = null
 
   // -- init --
   function Main() {
@@ -369,10 +376,11 @@
     $arch = document.getElementById("wedding-arch")
     $sprites = document.getElementsByClassName("WeddingSprite")
     $frames = document.getElementById("frames")
+    $invitationsLink = document.getElementById("invitations-link")
 
     const params = new URLSearchParams(document.location.search)
     console.log(params)
-    debugger
+
     $el.scrollTo({
       left: params.get('x') || 0,
       top: params.get('y') || 0
@@ -381,6 +389,7 @@
     // setup & bind events
     InitTouch()
     InitCharacters()
+    $invitationsLink.addEventListener("click", PickupInvitations)
     $arch.addEventListener("click", OnArchClicked)
   }
 
@@ -415,6 +424,17 @@
         "temperament": "choleric",
         "extends-to-edges": true
       }
+    })
+  }
+
+  function PickupInvitations() {
+    // spawn the keys
+    mInventory.addNamed("invitationPile", {
+      "x": 91, "y": 7,
+      "w": 50, "h": 50,
+      "kind": "invitations",
+      "no-back": true,
+      "no-close": true,
     })
   }
 
