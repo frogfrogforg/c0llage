@@ -19,7 +19,7 @@
             <p>notes on specific characters:</p>
             <p>for the characters in doom, someone needs to mod doom to add an invitation shooting gun</p>
             <p>for the character in bitsy games, you can give invites to claribelle, and they can deliver the invites</p>
-          </div>
+          </article>
         </section>
       </a-dumpling>
 
@@ -378,19 +378,19 @@
     $frames = document.getElementById("frames")
     $invitationsLink = document.getElementById("invitations-link")
 
-    const params = new URLSearchParams(document.location.search)
-    console.log(params)
-
-    $el.scrollTo({
-      left: params.get('x') || 0,
-      top: params.get('y') || 0
-    })
-
     // setup & bind events
     InitTouch()
     InitCharacters()
-    $invitationsLink.addEventListener("click", PickupInvitations)
+
     $arch.addEventListener("click", OnArchClicked)
+    $invitationsLink.addEventListener("click", OnInvitationsLinkClicked)
+
+    // scroll to position
+    const params = new URLSearchParams(document.location.search)
+    $el.scrollTo({
+      left: params.get('x') || 0,
+      top:  params.get('y') || 0
+    })
   }
 
   function InitCharacters() {
@@ -427,9 +427,8 @@
     })
   }
 
-  function PickupInvitations() {
-    // spawn the keys
-    mInventory.addNamed("invitationPile", {
+  function OnInvitationsLinkClicked() {
+    mInventory.addNamed("invitationpile", {
       "x": 91, "y": 7,
       "w": 50, "h": 50,
       "kind": "invitations",
