@@ -628,7 +628,10 @@ export class Dumpling extends HTMLParsedElement {
     const m = this
 
     // create the gesture
-    m.gesture = { type }
+    m.gesture = {
+      type,
+      isMoved: false
+    }
 
     // apply gesture style
     switch (m.gesture.type) {
@@ -678,6 +681,9 @@ export class Dumpling extends HTMLParsedElement {
     // apply it to the initial position
     m.style.left = `${p0.x + dx}px`
     m.style.top = `${p0.y + dy}px`
+
+    // flag the gesture as moved (to know when we swap from % to px)
+    m.gesture.isMoved = true
 
     // also move any bagged dumplings
     if (m.$contents != null) {
@@ -851,15 +857,17 @@ export class Dumpling extends HTMLParsedElement {
     const m = this
 
     // convert dumpling pos from px to %
-    let x = parseFloat(m.style.left)
-    let y = parseFloat(m.style.top)
+    if (m.gesture.isMoved) {
+      let x = parseFloat(m.style.left)
+      let y = parseFloat(m.style.top)
 
-    const rect = this.parentElement.getBoundingClientRect()
-    x = x / rect.width * 100
-    y = y / rect.height * 100
+      const rect = this.parentElement.getBoundingClientRect()
+      x = x / rect.width * 100
+      y = y / rect.height * 100
 
-    m.style.left = `${x}%`
-    m.style.top = `${y}%`
+      m.style.left = `${x}%`
+      m.style.top = `${y}%`
+    }
 
     // try to add to a bag at the mouse position
     m.addToBag(mx, my)
