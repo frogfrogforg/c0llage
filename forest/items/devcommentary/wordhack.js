@@ -1,3 +1,5 @@
+import { Inventory } from "../../inventory.js"
+
 // -- types --
 const Actions = {
   Start: 0,
@@ -35,6 +37,7 @@ function init() {
 
   // bind events
   $el.action.addEventListener("click", didClickAction)
+  document.addEventListener("keydown", OnKeyDown)
 
   // set initial state
   reset()
@@ -63,6 +66,17 @@ function start() {
 
   // hide the config
   drawConfig()
+}
+
+function Act() {
+  switch (getAction()) {
+    case Actions.Start:
+      start(); break
+    case Actions.Next:
+      advance(); break
+    case Actions.Reset:
+      reset(); break
+  }
 }
 
 function advance() {
@@ -124,7 +138,7 @@ function getAction() {
   if (mLimit == null) {
     return Actions.Start
   } else if (mNames.isEmpty) {
-    return Actions.Reset
+    return Actions.Start
   } else {
     return Actions.Next
   }
@@ -168,13 +182,16 @@ function decodeBagFromList(str) {
 
 // -- events --
 function didClickAction() {
-  switch (getAction()) {
-    case Actions.Start:
-      start(); break
-    case Actions.Next:
-      advance(); break
-    case Actions.Reset:
-      reset(); break
+  Act()
+}
+
+function OnKeyDown(evt) {
+  if (evt.isComposing || evt.keyCode === 229) {
+    return;
+  }
+
+  if (evt.keyCode >= 96 && evt.keyCode <= 105) {
+    Act()
   }
 }
 

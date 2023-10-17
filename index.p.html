@@ -76,11 +76,26 @@
 
   function onDevToggleClicked() {
     mInventory.addNamed("devcommentary", {
-      temperament: "phlegmatic",
       w: 80,
       h: 50,
-    })
+      temperament: "phlegmatic",
+    }, false)
+
     mInventory.save()
     d.State.save()
   }
+
+  // function OnDevCommentaryChanged() {
+  //   if (d.State.hasDevcommentary) {
+  //     document.getElementById("devthanks").hide()
+  //     return
+  //   }
+
+  //   mInventory.addNamed("devthanks", {
+  //     "w": 69, "h": 69,
+  //     "temperament": "choleric",
+  //     "no-back": true,
+  //     "no-close": true,
+  //   })
+  // }
 </script>

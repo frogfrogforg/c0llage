@@ -124,13 +124,13 @@ export class Inventory {
   }
 
   /// add an item in a p-artial with name & attrs
-  addNamed(name, attrs) {
+  addNamed(name, attrs, partial = true) {
     const m = this
 
     m.add({
       id: name,
       src: m.getItemPath(name),
-      partial: true,
+      partial,
       attrs
     })
   }
@@ -258,6 +258,7 @@ export class Inventory {
         >
       </a-dumpling>
     `
+
     // build el
     let $el = document.createElement("div")
     $el.innerHTML = html
