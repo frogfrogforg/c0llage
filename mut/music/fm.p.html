@@ -1,0 +1,128 @@
+<style>
+</style>
+
+<body>
+  <img class="background" src="/forest/images/templatesforestforest.jpg">
+
+  <a class="hotspot cursor-move" href="/forest/welcome.html" style="left: 10%; top: 40%; width: 30%; height: 30%;"> </a>
+
+  <a-dumpling focused title='instrument' id="musical-dumpling" x=40 y=15 width=40 height=15>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">
+      <p id="musical-emoji" style="font-size: 10vmin; margin: 0px">🔇</p>
+    </div>
+  </a-dumpling>
+</body>
+
+<script type="text/javascript" src="./lib/rnbo.min.js"></script>
+<script type="module">
+  const $musicDumpling = document.getElementById("musical-dumpling")
+  const $musicEmoji = document.getElementById("musical-emoji")
+  const kOnEmoji = "🔊"
+  const kOffEmoji = "🔇"
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t
+  }
+
+
+  // https://rnbo.cycling74.com/learn/loading-a-rnbo-device-in-the-browser-js
+  let initialized = false;
+  const setup = async () => {
+    if (initialized) return
+    initialized = true
+
+    // Create AudioContext
+    const WAContext = window.AudioContext || window.webkitAudioContext
+    const context = new WAContext()
+
+    const rawPatcher = await fetch("./basic-fm.export.json")
+    const patcher = await rawPatcher.json()
+
+    const device = await RNBO.createDevice({ context, patcher })
+
+    // This connects the device to audio output, but you may still need to call context.resume()
+    // from a user-initiated function.
+
+    device.node.connect(context.destination)
+
+    // get device parameters
+    let gain = device.parametersById.get("gain");
+
+    const adsr = {
+      a: device.parametersById.get("adsr-a"),
+      d: device.parametersById.get("adsr-d"),
+      s: device.parametersById.get("adsr-s"),
+      r: device.parametersById.get("adsr-r"),
+    }
+
+    const lores = {
+      freq: device.parametersById.get("lores-freq"),
+      res: device.parametersById.get("lores-res"),
+    }
+
+    const fm = {
+      carrierFrequency: device.parametersById.get("carrier-frequency"),
+      harmonicityRatio: device.parametersById.get("harmonicity-ratio"),
+      modulationIndex: device.parametersById.get("modulation-index"),
+    }
+
+    lores.freq.value = 158
+    lores.res.value = 0.82
+    fm.carrierFrequency.value = 260
+    fm.harmonicityRatio.value = 85
+    fm.modulationIndex.value = 59
+    adsr.a.value = 11
+    adsr.d.value = 0.2
+    adsr.s.value = 0.9
+    adsr.r.value = 690
+
+    $musicDumpling.addEventListener("drag-start", () => {
+      adsr.a.value = 20
+      adsr.d.value = 20
+      adsr.s.value = 0.12
+      adsr.r.value = 500
+      gain.value = 1
+      $musicEmoji.innerHTML = kOnEmoji
+    })
+
+    $musicDumpling.addEventListener("drag-end", () => {
+      gain.value = 0
+      $musicEmoji.innerHTML = kOffEmoji
+    })
+
+    $musicDumpling.addEventListener("scale-start", () => {
+      adsr.a.value = 1000
+      adsr.d.value = 100
+      adsr.s.value = 1
+      adsr.r.value = 10
+      gain.value = 1
+      $musicEmoji.innerHTML = kOnEmoji
+    })
+
+    $musicDumpling.addEventListener("scale-end", () => {
+      gain.value = 0
+      $musicEmoji.innerHTML = kOffEmoji
+    })
+
+    $musicDumpling.addEventListener("scale", () => {
+      console.log("scaling")
+      const r = $musicDumpling.getBoundingClientRect()
+      const area = r.height * r.width
+      const areaIndex = area / (window.innerWidth * window.innerHeight)
+      console.log(r.height)
+      console.log(r.width)
+      console.log(areaIndex)
+
+      fm.harmonicityRatio.value = lerp(0, 10000, r.height/window.innerHeight)
+      fm.modulationIndex.value = lerp(0, 10000, r.width/window.innerWidth)
+
+      lores.freq.value = lerp(50, 10000, areaIndex * areaIndex)
+    })
+
+    console.log("finish setup")
+  };
+
+  // We can't await an asynchronous function at the top level, so we create an asynchronous
+  // function setup, and then call it without waiting for the result.
+  $musicDumpling.addEventListener("click", setup)
+</script>

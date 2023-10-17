@@ -177,6 +177,14 @@ export class Dumpling extends HTMLParsedElement {
   static ShowEvent = "show-frame"
   static HideEvent = "hide-frame"
 
+  static DragEvent = "drag"
+  static DragStartEvent = "drag-start"
+  static DragEndEvent = "drag-end"
+
+  static ScaleEvent = "scale"
+  static ScaleStartEvent = "scale-start"
+  static ScaleEndEvent = "scale-end"
+
   // -- lifetime --
   parsedCallback() {
     const m = this
@@ -825,6 +833,11 @@ export class Dumpling extends HTMLParsedElement {
     if (m.$bag) {
       m.$bag.removeItem(m)
     }
+
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.DragStartEvent,
+      { detail: m },
+    ))
   }
 
   /// when the drag gesture moves
@@ -833,14 +846,23 @@ export class Dumpling extends HTMLParsedElement {
 
     // move the dumpling and any bagged dumplings
     m.moveTo(mx, my)
+
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.DragEvent,
+      { detail: m },
+    ))
   }
 
   /// when the drag gesture finishes
   onDragEnd(mx, my) {
     const m = this
-
     // try to add to a bag at the mouse position
     m.addToBag(mx, my)
+
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.DragEndEvent,
+      { detail: m },
+    ))
   }
 
   // -- e/scale
@@ -882,6 +904,11 @@ export class Dumpling extends HTMLParsedElement {
         m.isScaleSetup = true
       }
     }
+
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.ScaleStartEvent,
+      { detail: m },
+    ))
   }
 
   /// when a scale gesture changes
@@ -955,6 +982,11 @@ export class Dumpling extends HTMLParsedElement {
           break
       }
     }
+
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.ScaleEvent,
+      { detail: m },
+    ))
   }
 
   /// when a scale gesture ends
@@ -975,6 +1007,11 @@ export class Dumpling extends HTMLParsedElement {
         }
       }
     }
+
+    m.dispatchEvent(new CustomEvent(
+      Dumpling.ScaleEndEvent,
+      { detail: m },
+    ))
   }
 
   // -- e/focus

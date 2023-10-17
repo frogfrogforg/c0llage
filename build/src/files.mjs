@@ -8,7 +8,7 @@ import { template } from "./template.mjs"
 import { read } from "./utils.mjs"
 
 // -- constants --
-const kAssetPattern = /(\.(css|js))/g
+const kAssetPattern = /(\.(css|js))\b/g
 
 // -- props --
 // build id for fingerprinting asset requests
