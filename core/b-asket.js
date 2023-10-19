@@ -1,8 +1,8 @@
 import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
 
 // -- impls --
-/// a dumpling layer
-export class Layer extends HTMLParsedElement {
+/// a dumpling basket
+export class Basket extends HTMLParsedElement {
   // -- commands --
   /// spawn dumpling from record
   spawn({
@@ -54,4 +54,4 @@ export class Layer extends HTMLParsedElement {
   }
 }
 
-customElements.define("l-ayer", Layer)
+customElements.define("b-asket", Basket)
