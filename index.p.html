@@ -38,6 +38,18 @@
         hello web user
       </div>
     </a-dumpling>
+
+    <a-dumpling
+      id="devcom"
+      w=80 h=50
+      temperament="phlegmatic"
+      permanent
+      hidden
+    >
+      <p-artial
+        src="./forest/items/devcommentary/devcommentary.html"
+      />
+    </a-dumpling>
   </main>
 
   <s-cript target="assistant">
@@ -152,11 +164,7 @@
   }
 
   function OnDevToggleClicked() {
-    mInventory.addNamed("devcommentary", {
-      w: 80,
-      h: 50,
-      temperament: "phlegmatic",
-    }, false)
+    Frames.show("devcom")
   }
 
   // function OnDevCommentaryChanged() {

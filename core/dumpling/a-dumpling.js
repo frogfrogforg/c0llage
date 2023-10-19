@@ -532,14 +532,15 @@ export class Dumpling extends HTMLParsedElement {
     // if permanent...
     const isPermanent = m.hasAttrWithAliases(k.attr.permanent)
     if (isPermanent) {
-      // (if this is already in the inventory, remove it)
-      const inventory = document.getElementById(k.id.permanent)
-      if (inventory != null) {
-        const other = inventory.querySelector(`#${m.id}`)
-        if (other != null && this !== other) {
-          m.remove()
-          return true
-        }
+      const other = (
+        m.findDuplicateInParent(k.id.transient) ||
+        m.findDuplicateInParent(k.id.permanent)
+      )
+
+      if (other != null && m !== other) {
+        m.remove()
+        other.show()
+        return true
       }
 
       // ...and visible, move to the inventory instead
@@ -627,7 +628,10 @@ export class Dumpling extends HTMLParsedElement {
 
   sendEvent(type, detail = null) {
     const m = this
-    m.dispatchEvent(new CustomEvent(type, { detail: detail || m }))
+    m.dispatchEvent(new CustomEvent(type, {
+      detail: detail || m,
+      bubbles: true,
+    }))
   }
 
   // -- c/gesture
@@ -1087,7 +1091,7 @@ export class Dumpling extends HTMLParsedElement {
     return this.$body != null ? this.$body.children[0] : null
   }
 
-  // -- q/iframe --
+  // -- q/iframe
   /// find our inner iframe, if any
   findIframe() {
     return this.asIframe(this.findInner())
@@ -1096,6 +1100,17 @@ export class Dumpling extends HTMLParsedElement {
   // safe-cast the element to an iframe
   asIframe($child) {
     return k.tag.iframe.has($child && $child.nodeName) ? $child : null
+  }
+
+  // -- q/duplicate
+  /// find a duplicate of this dumpling in the parent
+  findDuplicateInParent(id) {
+    const parent = document.getElementById(id)
+    if (parent == null) {
+      return null
+    }
+
+    return parent.querySelector(`#${this.id}`)
   }
 
   // -- title --
