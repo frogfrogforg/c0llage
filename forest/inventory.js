@@ -179,6 +179,7 @@ export class Inventory {
     const record = {
       id: $el.id,
       src,
+      partial: $inner.tagName === "P-ARTIAL",
       attrs,
     }
 

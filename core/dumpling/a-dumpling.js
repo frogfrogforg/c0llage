@@ -12,16 +12,14 @@ window.Frames = staticize(
 )
 
 function staticize(...names) {
-  const methodName = names[0]
-
-  function action(id, ...args) {
+  const action = (name) => (id, ...args) => {
     const el = document.getElementById(id)
-    return el[methodName](...args)
+    return el[name](...args)
   }
 
   const actions = {}
   for (const name of names) {
-    actions[name] = action
+    actions[name] = action(name)
   }
 
   return actions

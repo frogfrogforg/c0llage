@@ -32,6 +32,19 @@
       <button id="action" class="Action">start</button>
     </section>
   </main>
+
+  <a-dumpling
+    id="devthanks"
+    w=69 h=69,
+    temperament="choleric",
+    no-back
+    no-close
+    hidden
+  >
+    <p-artial
+      src="/forest/items/devthanks/devthanks.html"
+    />
+  </a-dumpling>
 </body>
 
 <style>
@@ -93,6 +106,8 @@
 </style>
 
 <script type="module">
+  import { Inventory } from "/forest/inventory.js"
+
   // -- types --
   const Actions = {
     Start: 0,
@@ -406,10 +421,20 @@
     return Math.floor(new Date().getTime() / 1000)
   }
 
-  // window.addEventListener("show-frame", (evt) => {
-  //   debugger
-  //   console.log("devcom show frame", evt)
-  // })
+  d.State.listen("hasDevcom", () => {
+    if (d.State.hasDevcom) {
+      document.getElementById("devthanks").remove()
+    } else {
+      Inventory.get().addNamed("devthanks", {
+        "id": "devthanks",
+        "w": 69,
+        "h": 69,
+        "temperament": "choleric",
+        "no-back": true,
+        "no-close": true
+      })
+    }
+  })
 
   // -- bootstrap --
   init()
