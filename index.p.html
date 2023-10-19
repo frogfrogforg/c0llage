@@ -1,6 +1,6 @@
-<!-- template: dump  -->
+<!-- template: neutral  -->
 <body>
-  <main class="World">
+  <main class="ForestLayer World">
     <div class="WorldName">
       <br>
       <h1 class="WorldName-text">
@@ -48,6 +48,83 @@
   </s-cript>
 </body>
 
+<style>
+  body {
+    margin: 0;
+  }
+
+  /* -- World -- */
+  .World {
+    position: relative;
+    width: 3000px;
+    height: 3000px;
+    background:
+      url(/sky/sky-lofi/annharbor.png),
+      url(/sky/sky-lofi/brasilia.png),
+      url(/sky/sky-lofi/california.png),
+      url(/sky/sky-lofi/canberra.png),
+      url(/sky/sky-lofi/chicago.png),
+      url(/sky/sky-lofi/greenwitch.png)
+    ;
+    background-blend-mode: darken;
+    /* background-position-x: -5%, 10%, 90%, 20%, 35%, 30%, 5%; */
+    background-color: #decda4;
+  }
+
+  /* -- World/Name -- */
+  .WorldName {
+    position: absolute;
+    width: 600px;
+    height: 357px;
+    top: 0;
+    left: 0;
+    background: url(/sky/cloud.png);
+    background: #d3d282;
+    background-size: auto;
+    background-size: cover;
+    border: 10px double;
+    mix-blend-mode: lighten;
+  }
+
+  .WorldName-text {
+    margin: 44px;
+    margin-top: 14px;
+    font-size: 76px;
+    text-shadow: -1px -1px 0 #00f3ff, 1px -1px 0 #ff0303, -1px 1px 0 #afff00, 1px 1px 0 #fc00a5;
+  }
+
+  /* -- World/Forest -- */
+  .WorldForest {
+    height: 100%;
+  }
+
+  .WorldForest img {
+    width: 100%;
+    object-fit: contain;
+    object-position: top left;
+    cursor: zoom-in;
+  }
+
+  .WorldForest button {
+    cursor: pointer;
+    margin-top: 10px;
+    transform: translateX(69px);
+  }
+
+  .WorldHack {
+    font-size: 20px;
+    cursor: pointer;
+    color: #D3D2A4;
+    position: absolute;
+    bottom: 0px;
+    width: 420px;
+  }
+
+  .WorldHack img {
+    display: block;
+  }
+</style>
+
 <script type="module">
   import { Inventory } from "./forest/inventory.js"
 
@@ -62,27 +139,24 @@
   mInventory.load()
 
   for (const $link of $forestLinks) {
-    $link.addEventListener("click", onForestClicked)
+    $link.addEventListener("click", OnForestClicked)
   }
 
   // how do you add this stuff to the inventory proper??
-  $dev.addEventListener("click", onDevToggleClicked)
+  $dev.addEventListener("click", OnDevToggleClicked)
 
   // -- events --
   // TODO: a tag that looks like a button (so they can can link w/o hoops)
-  function onForestClicked() {
-    window.location.href = "forest/welcome.html"
+  function OnForestClicked() {
+    navigate("welcome.html")
   }
 
-  function onDevToggleClicked() {
+  function OnDevToggleClicked() {
     mInventory.addNamed("devcommentary", {
       w: 80,
       h: 50,
       temperament: "phlegmatic",
     }, false)
-
-    mInventory.save()
-    d.State.save()
   }
 
   // function OnDevCommentaryChanged() {
