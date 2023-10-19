@@ -227,7 +227,7 @@
     const names = [mNames.draw()]
 
     // add another person for every nat 20
-    while (!mNames.isEmpty && roll("1d20") == 20) {
+    while (!mNames.isEmpty && roll("1d20") === 20) {
       names.push(mNames.draw())
     }
 
@@ -306,7 +306,7 @@
   // -- limits --
   function initTimeLimit() {
     return initLimit({
-      duration: 5 + roll("1d20"),
+      duration: 5 + roll("1d20!"),
       loop() {
         let now = seconds()
         if (this.t0 == null) {
@@ -328,7 +328,7 @@
 
   function initWordLimit() {
     return initLimit({
-      count: 1 + roll("1d6"),
+      count: 1 + roll("1d6!"),
       init() {
         drawLimit(`${this.count} words`)
       },
@@ -400,14 +400,23 @@
     }
   }
 
-  // roll dice in the form "3d10"
+  // roll dice in the form "3d10!"
   function roll(str) {
+    const explodes = str.endsWith("!")
+    if (explodes) {
+      str = str.slice(0, -1)
+    }
+
     const [count, sides] = str.split("d").map(Number)
 
     // make the rolls
     let total = 0
     for (let i = 0; i < count; i++) {
-      total += rand(sides) + 1
+      let r = rand(sides) + 1
+      if (explodes && r === sides) {
+        r += roll(`1d${sides}!`)
+      }
+      total += r
     }
 
     return total
