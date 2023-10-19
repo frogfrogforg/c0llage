@@ -7,9 +7,12 @@
         <a title="cruiseship" class="hotspot cursor-boat" href="./501cruiseship_deck.html">
             <rect x="79.47976684570312" y="411.3093566894531" width="254.86074829101562" height="154.1590118408203"></rect>
         </a>
-        <a title="chair" class="hotspot cursor-couch" href="javascript:void(0)">
+        <a title="chair" class="hotspot cursor-couch" href="javascript:void(0)" onclick="Frames.show('cruise-script')">
             <rect x="705.4650268554688" y="274.20623779296875" width="162.2438201904297" height="129.8871612548828"></rect>
         </a>
     </svg>
+    <a-dumpling title="History of the Cruise" id="cruise-script" x=70 y=20 w=80 h=50 hidden>
+        <d-iframe autoload src="/Jen/cruise-script.html"> </d-iframe>
+    </a-dumpling>
     <img class="background" preserveAspectRatio="none" id="ship" src="images/500birdbath-ship.png"></img>
 </body>

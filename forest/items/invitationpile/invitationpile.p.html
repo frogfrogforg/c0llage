@@ -1,0 +1,17 @@
+<!-- template: item {title: invitationpile} -->
+<head>
+    <script type='module'>
+      window.dragInvitationPile = (evt) => {
+        evt.dataTransfer.setData("text", "invitation");
+      }
+    </script>
+    <style>
+        .invitation-pile {
+            width:100%;
+            height:100%;
+        }
+    </style>
+</head>
+<body>
+    <img class='invitation-pile' draggable="true" ondragstart="dragInvitationPile(event)" src="/forest/items/invitationpile/pile.png">
+</body>

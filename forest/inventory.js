@@ -228,54 +228,21 @@ export class Inventory {
 
   // -- c/spawn
   /// spawn item element
-  spawn({
-    id,
-    src,
-    partial,
-    attrs,
-  }) {
-    const m = this
-
-    // add id and persistent flag
+  spawn({ attrs, ...record }) {
     attrs = {
       ...attrs,
-      id,
-      persistent: true,
+      persistent: true
     }
 
-    // build the attrs string
-    attrs = Object.entries(attrs)
-      .map(([name, val]) => `${name}=${JSON.stringify(val)}`)
-      .join(" ")
-
-    // template the html
-    const html = `
-      <a-dumpling ${attrs}>
-        <${partial ? "p-artial" : "d-iframe"}
-          src="${src}"
-          dumpling-id="${id}"
-          autoload
-        >
-      </a-dumpling>
-    `
-
-    // build el
-    let $el = document.createElement("div")
-    $el.innerHTML = html
-    $el = $el.firstElementChild
-    $el.id = id
-
-    // spawn it
-    m.$el.appendChild($el)
+    this.$el.spawn({
+      ...record,
+      attrs
+    })
   }
 
   /// remove item element
   despawn(id) {
-    const m = this
-    const $el = m.$el.querySelector(`#${id}`)
-    if ($el != null) {
-      $el.remove()
-    }
+    this.$el.despawn(id)
   }
 
   // -- c/clear
@@ -308,7 +275,7 @@ export class Inventory {
     // otherwise, spawn all of the top records
     else {
       for (const record of Object.values(m.top.records)) {
-        m.spawn(record)
+        m.$el.spawn(record)
       }
     }
   }

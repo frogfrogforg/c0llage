@@ -525,7 +525,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // move to permanent once visible, if tagged
     let pid = k.id.transient
-    if (m.visible && m.hasAttributeWithAliases(k.attr.permanent)) {
+    if (m.visible && m.hasAttrWithAliases(k.attr.permanent)) {
       pid = k.id.permanent
     }
 
@@ -1103,7 +1103,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // check for any attribute from a list of aliases
-  hasAttributeWithAliases(names) {
+  hasAttrWithAliases(names) {
     const m = this
 
     for (const name of names) {
@@ -1116,7 +1116,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // get first value for an attribute with a list of aliases
-  getAttributeWithAliases(names) {
+  getAttrWithAliases(names) {
     const m = this
 
     for (const name of names) {

@@ -56,14 +56,32 @@ const k = {
   },
   attr: {
     title: "title",
-    permanent: [
-      "permanent",
-      "persistent",
-    ],
+    w: {
+      val: ["width", "w"],
+      min: ["min-w", "w-min", "min-width", "width-min", "min-size", "size-min"],
+      max: ["max-w", "w-max", "width-max", "max-width", "max-size", "size-max"],
+    },
+    h: {
+      val: ["height", "h"],
+      min: ["min-h", "h-min", "min-height", "height-min", "min-size", "size-min"],
+      max: ["max-h", "h-max", "max-height", "height-max", "max-size", "size-max"],
+    },
+    x: {
+      val: ["x"],
+      min: ["x-min", "min-x", "pos-min", "min-pos"],
+      max: ["x-max", "max-x", "pos-max", "max-pos"],
+    },
+    y: {
+      val: ["y"],
+      min: ["y-min", "min-y", "pos-min", "min-pos"],
+      max: ["y-max", "max-y", "pos-max", "max-pos"],
+    },
+    permanent: ["permanent", "persistent"],
     hidden: "hidden",
     bodyClass: "bodyClass",
     holds: "holds",
-    kind: "kind"
+    kind: "kind",
+    extendsToEdges: "extends-to-edges"
   },
   tag: {
     iframe: new Set([
@@ -75,7 +93,28 @@ const k = {
       "D-IFRAME",
       "P-ARTIAL",
     ]),
-  }
+  },
+  events: {
+    // an event when a dumpling shows
+    show: "show-frame",
+    // an event when a dumpling hides
+    hide: "hide-frame",
+    // an event when the player drags
+    drag: "drag",
+    // an event when the player starts dragging
+    dragStart: "drag-start",
+    // an event when the player stops dragging
+    dragEnd: "drag-end",
+    // an event when the player scales
+    scale: "scale",
+    // an event when the player starts scaling
+    scaleStart: "scale-start",
+    // an event when the player stops scaling
+    scaleEnd: "scale-end",
+  },
+  // an event when the top z-index changes for a layer
+  // TODO: re-understand why this emits from window instead of dumpling
+  focusChange: "focus-change",
 }
 
 // -- template --
@@ -105,9 +144,6 @@ const kTemplate = `
 // -- c/focus
 // the default focus layer
 const kLayerDefault = "default"
-
-// the event when the top z-index changes for a layer
-const kEventFocusChange = "focus-change"
 
 // TODO: make this an attribute with these as default values?
 const MinContentHeight = 40
@@ -146,7 +182,7 @@ const DefaultTemperament = 'melancholic'
 
 // Frame random spawn tuning parameters, in %
 const FrameRng = {
-  margin: 2,
+  Margin: 2,
   MinSize: 20,
   MaxSize: 40
 }
@@ -174,16 +210,8 @@ const sTopIndexByLayer = {
 // -- impls --
 export class Dumpling extends HTMLParsedElement {
   // -- constants --
-  static ShowEvent = "show-frame"
-  static HideEvent = "hide-frame"
-
-  static DragEvent = "drag"
-  static DragStartEvent = "drag-start"
-  static DragEndEvent = "drag-end"
-
-  static ScaleEvent = "scale"
-  static ScaleStartEvent = "scale-start"
-  static ScaleEndEvent = "scale-end"
+  static ShowEvent = k.events.show
+  static HideEvent = k.events.hide
 
   // -- lifetime --
   parsedCallback() {
@@ -267,7 +295,7 @@ export class Dumpling extends HTMLParsedElement {
     // close button
     const closeButton = m.findByClass(k.class.close)
     if (!m.hasAttribute("no-close")) {
-      closeButton.addEventListener("click", m.onClose)
+      closeButton.addEventListener("click", m.onCloseClicked)
     } else {
       closeButton.style.display = 'none'
     }
@@ -311,35 +339,27 @@ export class Dumpling extends HTMLParsedElement {
     m.addToBag(dr.x, dr.y)
   }
 
-  onClose = () => {
-    const diframe = this.querySelector("d-iframe")
-    if (diframe != null) {
-      diframe.destroyIframe()
-    }
-
-    this.hide()
-  }
-
   initStyleFromAttributes() {
-    const fallbackAttributes = (...params) => {
-      for (const attrName of params) {
-        const attr = this.getAttribute(attrName)
-        if (attr != null) return attr;
-      }
-      return null
+    const m = this
+
+    // get parent margins if we extend to edges
+    let pMarginX = 0;
+    let pMarginY = 0
+
+    if (m.hasAttribute(k.attr.extendsToEdges)) {
+      const pRect = this.parentElement.getBoundingClientRect()
+      pMarginX = pRect.x / pRect.width * 100
+      pMarginY = pRect.y / pRect.height * 100
     }
 
+    // position dumpling
     let width = 0
     if (this.style.width === "") {
-      width = fallbackAttributes('width', 'w')
+      width = m.getAttrWithAliases(k.attr.w.val, parseFloat)
       if (width == null) {
-        const minSize = parseFloat(fallbackAttributes(
-          'min-w', 'w-min', 'min-width', 'width-min', 'min-size', 'size-min'))
-          || FrameRng.MinSize
-        const maxSize = parseFloat(fallbackAttributes(
-          'max-w', 'w-max', 'width-max', 'max-width', 'max-size', 'size-max'))
-          || FrameRng.MaxSize
-        width = (minSize + Math.random() * (maxSize - minSize))
+        const wMin = m.getAttrWithAliases(k.attr.w.min, parseFloat) || FrameRng.MinSize
+        const wMax = m.getAttrWithAliases(k.attr.w.max, parseFloat) || FrameRng.MaxSize
+        width = (wMin + Math.random() * (wMax - wMin))
       }
 
       this.style.width = width + '%'
@@ -347,15 +367,11 @@ export class Dumpling extends HTMLParsedElement {
 
     let height = 0
     if (this.style.height === "") {
-      height = fallbackAttributes('height', 'h')
+      height = m.getAttrWithAliases(k.attr.h.val, parseFloat)
       if (height == null) {
-        const minSize = parseFloat(fallbackAttributes(
-          'min-h', 'h-min', 'min-height', 'height-min', 'min-size', 'size-min'))
-          || FrameRng.MinSize
-        const maxSize = parseFloat(fallbackAttributes(
-          'max-h', 'h-max', 'max-height', 'height-max', 'max-size', 'size-max'))
-          || FrameRng.MaxSize
-        height = (minSize + Math.random() * (maxSize - minSize))
+        const hMin = m.getAttrWithAliases(k.attr.h.min, parseFloat) || FrameRng.MinSize
+        const hMax = m.getAttrWithAliases(k.attr.h.max, parseFloat) || FrameRng.MaxSize
+        height = (hMin + Math.random() * (hMax - hMin))
       }
 
       this.style.height = height + '%'
@@ -363,36 +379,22 @@ export class Dumpling extends HTMLParsedElement {
 
     // TODO: maybe have some aspect ratio attribute so that can be specified instead of both width and height
     if (this.style.left === "") {
-      let x = 0
-      if (this.attributes.x) {
-        x = this.attributes.x.value
-      } else {
-        const xMin = parseFloat(fallbackAttributes(
-          'x-min', 'min-x', 'pos-min', 'min-pos'))
-          || FrameRng.margin
-        const xMax = parseFloat(fallbackAttributes(
-          'x-max', 'max-x', 'pos-max', 'max-pos'))
-          || (100 - FrameRng.margin - width)
-        x =
-          xMin + Math.random() * (xMax - xMin)
+      let x = m.getAttrWithAliases(k.attr.x.val, parseFloat)
+      if (x == null) {
+        const xMin = m.getAttrWithAliases(k.attr.x.min, parseFloat) || FrameRng.Margin - pMarginX
+        const xMax = m.getAttrWithAliases(k.attr.x.max, parseFloat) || (100 - FrameRng.Margin - width) + pMarginX
+        x = xMin + Math.random() * (xMax - xMin)
       }
 
       this.style.left = x + '%'
     }
 
     if (this.style.top === "") {
-      let y = 0
-      if (this.attributes.y) {
-        y = this.attributes.y.value
-      } else {
-        const yMin = parseFloat(fallbackAttributes(
-          'y-min', 'min-y', 'pos-min', 'min-pos'))
-          || FrameRng.margin
-        const yMax = parseFloat(fallbackAttributes(
-          'y-max', 'max-y', 'pos-max', 'max-pos'))
-          || (100 - FrameRng.margin - height)
-        y =
-          yMin + Math.random() * (yMax - yMin)
+      let y = m.getAttrWithAliases(k.attr.y.val, parseFloat)
+      if (y == null) {
+        const yMin = m.getAttrWithAliases(k.attr.y.min, parseFloat) || FrameRng.Margin - pMarginY
+        const yMax = m.getAttrWithAliases(k.attr.y.max, parseFloat) || (100 - FrameRng.Margin - height) + pMarginY
+        y = yMin + Math.random() * (yMax - yMin)
       }
 
       this.style.top = y + '%'
@@ -413,7 +415,7 @@ export class Dumpling extends HTMLParsedElement {
     // listen to move/up on the parent to catch mouse events that are fast
     // enough to exit the frame
     const container = document.body
-    container.addEventListener("pointermove", this.onMouseMove)
+    container.addEventListener("pointermove", this.onMouseMoved)
     container.addEventListener("pointerup", this.onMouseUp)
 
     // end drag if mouse exits the window
@@ -426,7 +428,7 @@ export class Dumpling extends HTMLParsedElement {
     })
 
     // when the focused dumpling changes
-    window.addEventListener(kEventFocusChange, m.onFocusChange)
+    window.addEventListener(k.focusChange, m.onFocusChanged)
   }
 
   // -- commands --
@@ -445,12 +447,7 @@ export class Dumpling extends HTMLParsedElement {
     if (m.visible) {
       m.setVisible(false)
       m.addToParent()
-
-      m.dispatchEvent(new CustomEvent(
-        Dumpling.HideEvent,
-        { detail: m },
-      ))
-
+      m.sendEvent(k.events.hide)
     }
   }
 
@@ -461,11 +458,7 @@ export class Dumpling extends HTMLParsedElement {
     if (!m.visible) {
       m.setVisible(true)
       m.addToParent()
-
-      m.dispatchEvent(new CustomEvent(
-        Dumpling.ShowEvent,
-        { detail: m },
-      ))
+      m.sendEvent(k.events.show)
     }
 
     // TODO: bring to top anyways?
@@ -507,7 +500,7 @@ export class Dumpling extends HTMLParsedElement {
 
     // update visibility of frames
     window.dispatchEvent(new CustomEvent(
-      kEventFocusChange,
+      k.focusChange,
       { detail: { layer: m.layer } }
     ))
 
@@ -537,7 +530,7 @@ export class Dumpling extends HTMLParsedElement {
     let pid = k.id.transient
 
     // if permanent...
-    const isPermanent = m.hasAttributeWithAliases(k.attr.permanent)
+    const isPermanent = m.hasAttrWithAliases(k.attr.permanent)
     if (isPermanent) {
       // (if this is already in the inventory, remove it)
       const inventory = document.getElementById(k.id.permanent)
@@ -632,13 +625,21 @@ export class Dumpling extends HTMLParsedElement {
     $item.$bag = null
   }
 
+  sendEvent(type, detail = null) {
+    const m = this
+    m.dispatchEvent(new CustomEvent(type, { detail: detail || m }))
+  }
+
   // -- c/gesture
   /// create a gesture with the initial mouse position
   initGesture(type, m0) {
     const m = this
 
     // create the gesture
-    m.gesture = { type }
+    m.gesture = {
+      type,
+      isMoved: false
+    }
 
     // apply gesture style
     switch (m.gesture.type) {
@@ -689,6 +690,9 @@ export class Dumpling extends HTMLParsedElement {
     m.style.left = `${p0.x + dx}px`
     m.style.top = `${p0.y + dy}px`
 
+    // flag the gesture as moved (to know when we swap from % to px)
+    m.gesture.isMoved = true
+
     // also move any bagged dumplings
     if (m.$contents != null) {
       for (const $i of m.$contents) {
@@ -725,6 +729,16 @@ export class Dumpling extends HTMLParsedElement {
   close = this.hide
 
   // -- events --
+  onCloseClicked = () => {
+    const diframe = this.querySelector("d-iframe")
+    if (diframe != null) {
+      diframe.destroyIframe()
+    }
+
+    this.hide()
+  }
+
+  // -- e/mouse
   /// when the mouse button is pressed
   onMouseDown = (evt) => {
     const m = this
@@ -765,14 +779,14 @@ export class Dumpling extends HTMLParsedElement {
     // start the operation
     switch (m.gesture.type) {
     case Ops.Move:
-      m.onDragStart(); break;
+      m.onDragStarted(); break;
     case Ops.Scale:
-      m.onScaleStart(); break
+      m.onScaleStarted(); break
     }
   }
 
   /// when the mouse moves
-  onMouseMove = (evt) => {
+  onMouseMoved = (evt) => {
     if (this.gesture == null) {
       return
     }
@@ -787,9 +801,9 @@ export class Dumpling extends HTMLParsedElement {
 
     switch (this.gesture.type) {
       case Ops.Move:
-        this.onDrag(mx, my); break
+        this.onDragMoved(mx, my); break
       case Ops.Scale:
-        this.onScale(mx, my); break
+        this.onScaleChanged(mx, my); break
     }
   }
 
@@ -812,9 +826,9 @@ export class Dumpling extends HTMLParsedElement {
 
     switch (m.gesture.type) {
     case Ops.Move:
-      m.onDragEnd(mx, my); break
+      m.onDragEnded(mx, my); break
     case Ops.Scale:
-      m.onScaleEnd(); break;
+      m.onScaleEnded(); break;
     }
 
     // and clear it
@@ -826,7 +840,7 @@ export class Dumpling extends HTMLParsedElement {
 
   // -- e/drag
   /// when the drag starts
-  onDragStart() {
+  onDragStarted() {
     const m = this
 
     // if we're in a bag, remove ourselves
@@ -834,40 +848,48 @@ export class Dumpling extends HTMLParsedElement {
       m.$bag.removeItem(m)
     }
 
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.DragStartEvent,
-      { detail: m },
-    ))
+    // send event
+    m.sendEvent(k.events.dragStart)
   }
 
   /// when the drag gesture moves
-  onDrag(mx, my) {
+  onDragMoved(mx, my) {
     const m = this
 
     // move the dumpling and any bagged dumplings
     m.moveTo(mx, my)
 
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.DragEvent,
-      { detail: m },
-    ))
+    // send event
+    m.sendEvent(k.events.drag)
   }
 
   /// when the drag gesture finishes
-  onDragEnd(mx, my) {
+  onDragEnded(mx, my) {
     const m = this
+
+    // convert dumpling pos from px to %
+    if (m.gesture.isMoved) {
+      let x = parseFloat(m.style.left)
+      let y = parseFloat(m.style.top)
+
+      const rect = this.parentElement.getBoundingClientRect()
+      x = x / rect.width * 100
+      y = y / rect.height * 100
+
+      m.style.left = `${x}%`
+      m.style.top = `${y}%`
+    }
+
     // try to add to a bag at the mouse position
     m.addToBag(mx, my)
 
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.DragEndEvent,
-      { detail: m },
-    ))
+    // send event
+    m.sendEvent(k.events.dragEnd)
   }
 
   // -- e/scale
   /// when a scale gesture starts
-  onScaleStart() {
+  onScaleStarted() {
     const m = this
 
     // get dumpling rect
@@ -905,14 +927,12 @@ export class Dumpling extends HTMLParsedElement {
       }
     }
 
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.ScaleStartEvent,
-      { detail: m },
-    ))
+    // send event
+    m.sendEvent(k.events.scaleStart)
   }
 
   /// when a scale gesture changes
-  onScale(mx, my) {
+  onScaleChanged(mx, my) {
     const m = this
 
     const s0 = m.gesture.initialSize
@@ -983,14 +1003,12 @@ export class Dumpling extends HTMLParsedElement {
       }
     }
 
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.ScaleEvent,
-      { detail: m },
-    ))
+    // send event
+    m.sendEvent(k.events.scale)
   }
 
   /// when a scale gesture ends
-  onScaleEnd = () => {
+  onScaleEnded = () => {
     const m = this
 
     // remove any bagged dumplings that are no longer contained
@@ -1008,15 +1026,12 @@ export class Dumpling extends HTMLParsedElement {
       }
     }
 
-    m.dispatchEvent(new CustomEvent(
-      Dumpling.ScaleEndEvent,
-      { detail: m },
-    ))
+    m.sendEvent(k.events.scaleEnd)
   }
 
   // -- e/focus
   // when the focused dumpling changes for a layer
-  onFocusChange = (evt) => {
+  onFocusChanged = (evt) => {
     const m = this
     if (evt.detail.layer != m.layer) {
       return
@@ -1146,7 +1161,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // check for any attribute from a list of aliases
-  hasAttributeWithAliases(names) {
+  hasAttrWithAliases(names) {
     const m = this
 
     for (const name of names) {
@@ -1159,7 +1174,7 @@ export class Dumpling extends HTMLParsedElement {
   }
 
   // get first value for an attribute with a list of aliases
-  getAttributeWithAliases(names) {
+  getAttrWithAliases(names, parse = null) {
     const m = this
 
     for (const name of names) {
@@ -1167,11 +1182,19 @@ export class Dumpling extends HTMLParsedElement {
 
       // TODO: how to handle empty strings here (currently, ignoring them)
       if (val) {
-        return val
+        return parse != null ? parse(val) : val
       }
     }
 
     return null
+  }
+}
+
+// add listener methods for every event in k.events
+for (const eventName in k.events) {
+  const methodName = `on${eventName[0].toUpperCase() + eventName.slice(1)}`
+  Dumpling.prototype[methodName] = function (listener) {
+    this.addEventListener(k.events[eventName], listener)
   }
 }
 

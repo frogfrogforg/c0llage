@@ -84,18 +84,56 @@
 
     <a-dumpling hidden temperament="sanguine" id="afraid" x=0 y=69 width=69 height=42.0>
         <div style="color:#F5EDD2;background-color:black;width:100%;height:100%;font-size:10vmin;overflow-y:scroll;overflow-x: hidden;word-wrap:break-word;">
-            <div id="starNest" style="z-index:0;">
+            <div class="starNest" style="z-index:0;">
             </div>
             <div style="z-index:2;color:white;font-weight:bold;position:relative;margin:1vmin;">BE NOT AFRAID, FOR TODAY
                 I MEAN YOU NO HARM.
                 <BR><BR>ACTUALLY I WAS SORT OF ON A DATE.
-                <BR><BR>ACTUALLY I SORT OF CAN'T FIND MY DATE.
+                <BR><BR>ACTUALLY I SORT OF <a href="javascript:void(0);" onclick="Frames.show('mortal')">CAN'T FIND MY DATE.</a>
                 <BR><BR>YOU WOULD THINK THAT NOTHING COULD ESCAPE MY DIVINE SIGHT. YOU WOULD THINK
                 THAT THAT IF I AM IN ALL THINGS & IF ALL THINGS ARE IN ME, GETTING LOST WOULD BE A
                 LITTLE BIT IMPOSSIBLE.
-                <BR><BR>BUT THAT'S WHAT I LOVE ABOUT THIS MORTAL. HE NEVER STOPS SURPRISING ME :.:)
+                <BR><BR>BUT THAT'S WHAT I LOVE ABOUT THIS 
+                MORTAL. HE NEVER STOPS SURPRISING ME :.:)
             </div>
         </div>
+    </a-dumpling>
+
+    <a-dumpling hidden id="mortal" x=70 y=30 width=24 height=23>
+      <div>
+        <button onclick="Frames.show('busy')">
+          <i>Could i help you find your partner?</i>
+        </button>
+      </div>
+    </a-dumpling>
+
+    <a-dumpling hidden id="busy" x=30 y=2 width=69 height=42.0>
+        <div style="color:#F5EDD2;background-color:black;width:100%;height:100%;font-size:10vmin;overflow-y:scroll;overflow-x: hidden;word-wrap:break-word;">
+            <div class="starNest" style="z-index:0;">
+            </div>
+            <div style="z-index:2;color:white;font-weight:bold;position:relative;margin:1vmin;">
+            OH, WELL...
+            <BR><BR>
+            NO, NO, YOU 
+            <a href="javascript:void(0);" onclick="Frames.show('please')">SEEM BUSY</a>
+            <BR><BR>
+            I WOULDN'T WANT TO PUT YOU OUT OR ANYTHING
+            </div>
+        </div>
+    </a-dumpling>
+
+    <a-dumpling hidden id="please" x=70 y=30 width=24 height=23>
+      <div>
+        <button onclick="Frames.show('ok')">
+          <i>please, i am so invested in this now, you have no idea</i>
+        </button>
+      </div>
+    </a-dumpling>
+
+    <a-dumpling hidden id="ok" x=70 y=30 width=24 height=23>
+      <div>
+        TODO: hyperform should say ok and go into inventory?
+      </div>
     </a-dumpling>
 
     <s-cript target="assistant">
@@ -103,8 +141,7 @@
         ==> [once] intro
 
         --- intro
-        [cont] I've known this old manihedron for a long, long time.
-        [cont] As a pup, I used to deliver their newspaper.
+        [cont] I've known this old manihedron for a long, long time.  [cont] As a pup, I used to deliver their newspaper.
         [cont] Now all the news is on my internet pad.
         ==> click
 
@@ -120,8 +157,13 @@
             var div = document.createElement("div");
             div.setAttribute("class", "s");
             div.setAttribute("style", "z-index:0;");
+            
+            const starNests = document.getElementsByClassName('starNest')
 
-            document.getElementById("starNest").appendChild(div);
+            for (s of starNests) {
+              s.appendChild(div.cloneNode());
+            }
+
         }
     }
 

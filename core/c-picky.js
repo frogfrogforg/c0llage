@@ -1,14 +1,4 @@
 import { HTMLParsedElement } from "/lib/html-parsed-element@0.4.0.js"
-import { State } from "/core/state.js"
-
-// -- constants --
-const kPermittedAttrs = new Set([
-  "autoload",
-  "id",
-  "src",
-  "style",
-  "class",
-])
 
 // -- impls --
 class StateConditionalElement extends HTMLParsedElement {
@@ -43,7 +33,6 @@ class StateConditionalElement extends HTMLParsedElement {
 
   setChildrenVisibility(show) {
     [...this.children].forEach(child => {
-      console.log(child)
       child.style.display = show ? 'block' : 'none'
     })
   }
