@@ -1,4 +1,10 @@
 /* body */
+/* https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature */
+// prevent scroll to reload behaviour
+body {
+  overscroll-behavior: contain;
+}
+
 
 .Claribelle {
   position: absolute;
