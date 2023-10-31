@@ -271,3 +271,39 @@ s-cript {
   font-family:'Brush Script MT', cursive !important;
   font-size: 1.5em !important;
 }
+
+/* hyperform */
+.angel {
+  width: 100%;
+  transform: rotate(69deg);
+  transform-origin: center;
+  animation: charisma 12s infinite;
+  animation-timing-function: linear;
+}
+
+.angel-eyes {
+  width: 18%;
+  position: absolute;
+  z-index: 1;
+  animation: charismata 12s infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes charisma {
+  50% {
+      transform: rotate(69deg) translate(8%, 5%);
+      filter: hue-rotate(169deg);
+  }
+
+  100% {}
+}
+
+@keyframes charismata {
+  50% {
+      transform: translate(0%, 30%);
+      filter: hue-rotate(1600deg);
+      opacity: 80%;
+  }
+
+  100% {}
+}
